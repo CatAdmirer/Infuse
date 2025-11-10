@@ -1,0 +1,47 @@
+name: Infuse
+version: '1.8.0'
+main: com.catadmirer.infuseSMP.Infuse
+api-version: '1.21'
+author: "CatAdmirer"
+depend:
+  - packetevents
+softdepend: [PlaceholderAPI]
+commands:
+  infuse:
+    description: Base command for Infuse
+    usage: /infuse <gui|reload>
+  controls:
+    description: Toggle controls between offhand and mainhand.
+    usage: /controls
+  cleareffect:
+    description: Clear all effects from a player.
+    usage: /cleareffect <player>
+    permission: op
+  lspark:
+    description: Activates the first ability.
+    usage: /lspark
+  rspark:
+    description: Activates the second ability.
+    usage: /rspark
+  ldrain:
+    description: Drains the first ability.
+    usage: /ldrain
+  rdrain:
+    description: Drains the second ability.
+    usage: /rdrain
+  swap:
+    description: Swaps the effects between slots 1 and 2.
+    usage: /swap
+  trust:
+    description: Trust a player
+    usage: /trust <player>
+  untrust:
+    description: Untrust a player
+    usage: /untrust <player>
+  recipes:
+    description: Check the limits
+    usage: /recipes
+permissions:
+  ability.use:
+    description: Allows the player to use abilities.
+    default: false
