@@ -136,11 +136,8 @@ public class Emerald implements Listener {
                     return;
                 }
 
-                double chance = 0.15D;
-                PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
-                if (heroEffect != null && heroEffect.getAmplifier() > 200) {
-                    chance = 0.25D;
-                }
+                double chance = 0.15;
+                if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.25;
 
                 if (Math.random() < chance) {
                     ItemStack refund = consumedItem.clone();
