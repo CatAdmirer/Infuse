@@ -319,21 +319,26 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private Location findNearestBrewingStand(Location playerLocation) {
-        World world = playerLocation.getWorld();
         Location nearestLocation = null;
+        double nearestDist = Double.MAX_VALUE;
 
         for (int x = -5; x <= 5; ++x) {
             for (int y = -5; y <= 5; ++y) {
                 for (int z = -5; z <= 5; ++z) {
-                    Location checkLocation = playerLocation.clone().add((double) x, (double) y, (double) z);
-                    if (world.getBlockAt(checkLocation).getType() == Material.BREWING_STAND) {
-                        return checkLocation;
+                    Location checkLocation = playerLocation.clone().add(x, y, z);
+
+                    if (checkLocation.getBlock().getType() == Material.BREWING_STAND) {
+                        double checkDist = checkLocation.distance(playerLocation);
+                        if (checkDist < nearestDist) {
+                            nearestDist = checkDist;
+                            nearestLocation = checkLocation;
+                        }
                     }
                 }
             }
         }
 
-        return null;
+        return nearestLocation;
     }
 
     private BarColor getColorFromItemName(String itemName) {
