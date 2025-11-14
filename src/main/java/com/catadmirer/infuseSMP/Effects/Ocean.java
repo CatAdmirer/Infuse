@@ -1,6 +1,5 @@
 package com.catadmirer.infuseSMP.Effects;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,10 +42,7 @@ public class Ocean implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(var1.hasNext()) {
-                    Player p = (Player)var1.next();
+                for (Player p : Bukkit.getOnlinePlayers()) {
                     if (Ocean.this.hasImmortalHackEquipped2(p, "1") || (Ocean.this.hasImmortalHackEquipped2(p, "2"))) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
@@ -57,28 +53,16 @@ public class Ocean implements Listener {
         }).runTaskTimer(plugin, 0L, 20L);
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
+                for (Player gemHolder : Bukkit.getOnlinePlayers()) {
+                    if (!Ocean.this.hasImmortalHackEquipped2(gemHolder, "1") || (!Ocean.this.hasImmortalHackEquipped2(gemHolder, "2"))) continue;
 
-                while(true) {
-                    Player gemHolder;
-                    do {
-                        if (!var1.hasNext()) {
-                            return;
-                        }
-
-                        gemHolder = (Player)var1.next();
-                    } while(!Ocean.this.hasImmortalHackEquipped2(gemHolder, "1") || (!Ocean.this.hasImmortalHackEquipped2(gemHolder, "2")));
-
-                    Iterator var3 = gemHolder.getWorld().getPlayers().iterator();
-
-                    while(var3.hasNext()) {
-                        Player p = (Player)var3.next();
-                        if (!p.equals(gemHolder) && p.getLocation().distance(gemHolder.getLocation()) <= 5.0D && p.getLocation().getBlock().isLiquid()) {
+                    for (Player p : gemHolder.getWorld().getPlayers()) {
+                        if (!p.equals(gemHolder) && p.getLocation().distance(gemHolder.getLocation()) <= 5.0 && p.getLocation().getBlock().isLiquid()) {
                             int currentAir = p.getRemainingAir();
                             int newAir = Math.max(currentAir - 5, -20);
                             p.setRemainingAir(newAir);
                             if (newAir <= 0) {
-                                p.damage(1.0D);
+                                p.damage(1.0);
                             }
                         }
                     }
@@ -113,7 +97,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, ( (Integer) Infuse.getInstance().getCanfig("ocean_pulling.pull.interval")).longValue());
+        }.runTaskTimer(plugin, 0L, Infuse.getInstance().getCanfig("ocean_pulling.pull.interval"));
 
     }
 
@@ -195,9 +179,9 @@ public class Ocean implements Listener {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "ocean")) {
-            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            final double radius = 5.0D;
+            final double radius = 5.0;
             final World world = caster.getWorld();
             String gemName2 = Infuse.getInstance().getEffect("aug_ocean");
             boolean isAugmented =
@@ -205,12 +189,12 @@ public class Ocean implements Listener {
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("ocean.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("ocean.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("ocean.duration.default")).longValue();
-            long augmentedDuration = ((Integer) Infuse.getInstance().getCanfig("ocean.duration.augmented")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("ocean.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getCanfig("ocean.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);
@@ -241,13 +225,13 @@ public class Ocean implements Listener {
                                 p.getLocation().distance(caster.getLocation()) <= radius) {
 
                             Vector direction = caster.getLocation().toVector().subtract(p.getLocation().toVector()).normalize();
-                            p.setVelocity(direction.multiply(0.5D));
+                            p.setVelocity(direction.multiply(0.5));
 
                             if (p.getLocation().getBlock().isLiquid()) {
                                 int newOxygen = Math.max(p.getRemainingAir() - 20, -20);
                                 p.setRemainingAir(newOxygen);
                                 if (newOxygen <= 0) {
-                                    p.damage(2.0D);
+                                    p.damage(2.0);
                                 }
                             }
                         }

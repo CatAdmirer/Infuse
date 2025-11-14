@@ -7,13 +7,13 @@ import java.util.regex.Pattern;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,25 +42,16 @@ public class Speed implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(true) {
-                    Player p;
-                    do {
-                        if (!var1.hasNext()) {
-                            return;
-                        }
-
-                        p = (Player)var1.next();
-                    } while(!Speed.this.hasSpeed(p, "1") && !Speed.this.hasSpeed(p, "2"));
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (!Speed.this.hasSpeed(p, "1") && !Speed.this.hasSpeed(p, "2")) continue;
 
                     UUID uuid = p.getUniqueId();
-                    long lastHit = (Long)Speed.this.lastHitTime.getOrDefault(uuid, 0L);
+                    long lastHit = Speed.this.lastHitTime.getOrDefault(uuid, 0L);
                     if (System.currentTimeMillis() - lastHit > 1000L) {
                         Speed.this.speedLevels.put(uuid, 1);
                     }
 
-                    int currentLevel = (Integer)Speed.this.speedLevels.getOrDefault(uuid, 1);
+                    int currentLevel = Speed.this.speedLevels.getOrDefault(uuid, 1);
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, Math.max(0, currentLevel - 1), false, false, false));
                 }
             }
@@ -69,14 +60,12 @@ public class Speed implements Listener {
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
-        LivingEntity var3 = event.getEntity();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getEntity() instanceof Player player) {
             if (this.hasSpeed(player, "1") || this.hasSpeed(player, "2")) {
-                long startTime = (Long)this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
+                long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
-                double adjustedPullTimeMs = (double)pullTimeMs * 1.8D;
-                float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000.0D, 1.0D);
+                double adjustedPullTimeMs = pullTimeMs * 1.8;
+                float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000.0, 1.0);
                 event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
                 this.bowPullStartTime.remove(player.getUniqueId());
             }
@@ -95,19 +84,15 @@ public class Speed implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getDamager() instanceof Player player) {
             if (this.hasSpeed(player, "1") || this.hasSpeed(player, "2")) {
                 UUID uuid = player.getUniqueId();
                 long currentTime = System.currentTimeMillis();
-                long lastHit = (Long)this.lastHitTime.getOrDefault(uuid, 0L);
+                long lastHit = this.lastHitTime.getOrDefault(uuid, 0L);
                 if (currentTime - lastHit >= 50L) {
                     this.lastHitTime.put(uuid, currentTime);
-                    this.speedLevels.put(uuid, (Integer)this.speedLevels.getOrDefault(uuid, 1) + 1);
-                    Entity var9 = event.getEntity();
-                    if (var9 instanceof LivingEntity) {
-                        LivingEntity target = (LivingEntity)var9;
+                    this.speedLevels.put(uuid, this.speedLevels.getOrDefault(uuid, 1) + 1);
+                    if (event.getEntity() instanceof LivingEntity target) {
                         int currentNoDamageTicks = target.getNoDamageTicks();
                         target.setNoDamageTicks(currentNoDamageTicks / 2);
                     }
@@ -146,7 +131,7 @@ public class Speed implements Listener {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -192,7 +177,7 @@ public class Speed implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(209, 164, 75));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
             double playerVelocityMultiplier = Infuse.getInstance().getCanfig("speed.playerVelocityMultiplier");
@@ -210,13 +195,13 @@ public class Speed implements Listener {
                 Location currentLocation = player.getLocation();
                 double distance = previousLocation[0].distance(currentLocation);
 
-                if (distance > 0.1D) {
-                    Vector step = currentLocation.toVector().subtract(previousLocation[0].toVector()).normalize().multiply(0.3D);
+                if (distance > 0.1) {
+                    Vector step = currentLocation.toVector().subtract(previousLocation[0].toVector()).normalize().multiply(0.3);
                     Location particleLocation = previousLocation[0].clone();
 
-                    for (double d = 0.0D; d <= distance; d += step.length()) {
+                    for (double d = 0.0; d <= distance; d += step.length()) {
                         particleLocation.add(step);
-                        player.getWorld().spawnParticle(Particle.DUST, particleLocation, 5, 0.1D, 0.05D, 0.1D, 0.05D, dustOptions);
+                        player.getWorld().spawnParticle(Particle.DUST, particleLocation, 5, 0.1, 0.05, 0.1, 0.05, dustOptions);
                     }
 
                     previousLocation[0] = currentLocation.clone();
@@ -228,7 +213,7 @@ public class Speed implements Listener {
 
                 ticksPassed[0]++;
             }, 1L, 1L);
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("speed.duration.default")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("speed.duration.default");;
             CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
             String gemName2 = Infuse.getInstance().getEffect("aug_speed");
 
@@ -238,8 +223,8 @@ public class Speed implements Listener {
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(gemName2)));
 
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("speed.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("speed.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("speed.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getCanfig("speed.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

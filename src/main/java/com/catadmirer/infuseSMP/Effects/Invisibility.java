@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.Managers.DataManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class Invisibility implements Listener, PacketListener {
     
     private final Plugin plugin;
     private final DataManager trustManager;
-    private final Map<UUID, Integer> meleeHitCounter = new HashMap();
+    private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
     public Invisibility(Plugin plugin, DataManager trustManager) {
         this.plugin = plugin;
@@ -52,10 +51,7 @@ public class Invisibility implements Listener, PacketListener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(var1.hasNext()) {
-                    Player p = (Player)var1.next();
+                for (Player p : Bukkit.getOnlinePlayers()) {
                     if (Invisibility.this.hasImmortalHackEquipped2(p, "1") || Invisibility.this.hasImmortalHackEquipped2(p, "2")) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
@@ -91,9 +87,9 @@ public class Invisibility implements Listener, PacketListener {
 
             public void run() {
                 WrapperPlayServerUpdateHealth packet = new WrapperPlayServerUpdateHealth(
-                        20.0F,
                         20,
-                        5.0F);
+                        20,
+                        5);
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
                 this.elapsedTicks += 2;
                 if (this.elapsedTicks >= durationSeconds * 20) {
@@ -106,17 +102,14 @@ public class Invisibility implements Listener, PacketListener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        if (event.getEntity().getShooter() instanceof Player) {
-            Player shooter = (Player)event.getEntity().getShooter();
+        if (event.getEntity().getShooter() instanceof Player shooter) {
             if (this.hasImmortalHackEquipped2(shooter, "1") || this.hasImmortalHackEquipped2(shooter, "2")) {
                 if (event.getEntity() instanceof Arrow) {
-                    if (event.getHitEntity() instanceof Player) {
-                        Player target = (Player)event.getHitEntity();
+                    if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
                         this.hideHealthForPlayer(target, 4);
                         this.spawnBlackParticles(target, 4);
                     }
-
                 }
             }
         }
@@ -124,12 +117,10 @@ public class Invisibility implements Listener, PacketListener {
 
     @EventHandler
     public void onMeleeHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            if (event.getEntity() instanceof Player) {
-                Player attacker = (Player)event.getDamager();
-                Player target = (Player)event.getEntity();
+        if (event.getDamager() instanceof Player attacker) {
+            if (event.getEntity() instanceof Player target) {
                 if (this.hasImmortalHackEquipped2(attacker, "1") || this.hasImmortalHackEquipped2(attacker, "2")) {
-                    int count = (Integer)this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
+                    int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -137,7 +128,6 @@ public class Invisibility implements Listener, PacketListener {
                         this.spawnBlackParticles(target, 4);
                         this.meleeHitCounter.put(attacker.getUniqueId(), 0);
                     }
-
                 }
             }
         }
@@ -152,7 +142,7 @@ public class Invisibility implements Listener, PacketListener {
                 if (this.ticksElapsed >= this.maxTicks) {
                     this.cancel();
                 } else {
-                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0.0D, 1.0D, 0.0D), 3, 0.5D, 0.5D, 0.5D, 0.0D);
+                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0.0, 1.0, 0.0), 3, 0.5, 0.5, 0.5, 0.0);
                     this.ticksElapsed += 5;
                 }
             }
@@ -161,8 +151,7 @@ public class Invisibility implements Listener, PacketListener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.getTarget() instanceof Player) {
-            Player target = (Player)event.getTarget();
+        if (event.getTarget() instanceof Player target) {
             if (this.hasImmortalHackEquipped2(target, "1") || this.hasImmortalHackEquipped2(target, "1")) {
                 event.setCancelled(true);
             }
@@ -200,41 +189,32 @@ public class Invisibility implements Listener, PacketListener {
     public void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
-            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             String gemName2 = Infuse.getInstance().getEffect("aug_invis");
             boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
-            long invisDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("invisibility.cooldown.default")).longValue();
-            long invisAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("invisibility.cooldown.augmented")).longValue();
+            long invisDefaultCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.default");;
+            long invisAugmentedCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.augmented");;
             long invisCooldown = isAugmentedInvis ? invisAugmentedCooldown : invisDefaultCooldown;
 
-            long invisDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("invisibility.duration.default")).longValue();
-            long invisAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("invisibility.duration.augmented")).longValue();
+            long invisDefaultDuration = Infuse.getInstance().getCanfig("invisibility.duration.default");;
+            long invisAugmentedDuration = Infuse.getInstance().getCanfig("invisibility.duration.augmented");;
             long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
-            final double radius = 10.0D;
+            final double radius = 10.0;
             final long durationTicks = invisDuration * 20;
             final World world = caster.getWorld();
-            final Set<Player> vanishedPlayers = new HashSet();
-            Iterator var9 = Bukkit.getOnlinePlayers().iterator();
+            final Set<Player> vanishedPlayers = new HashSet<>();
 
-            Player vanished;
-            while(var9.hasNext()) {
-                vanished = (Player)var9.next();
-                if (vanished.getWorld().equals(world) && vanished.getLocation().distance(caster.getLocation()) <= radius && this.isTeammate(caster, vanished)) {
-                    vanishedPlayers.add(vanished);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getWorld().equals(world) && player.getLocation().distance(caster.getLocation()) <= radius && this.isTeammate(caster, player)) {
+                    vanishedPlayers.add(player);
                 }
             }
 
-            var9 = vanishedPlayers.iterator();
-
-            while(var9.hasNext()) {
-                vanished = (Player)var9.next();
-                Iterator var11 = Bukkit.getOnlinePlayers().iterator();
-
-                while(var11.hasNext()) {
-                    Player other = (Player)var11.next();
+            for (Player vanished : vanishedPlayers) {
+                for (Player other : Bukkit.getOnlinePlayers()) {
                     if (!other.equals(vanished) && !this.isTeammate(other, vanished)) {
                         other.hidePlayer(this.plugin, vanished);
                     }
@@ -247,14 +227,8 @@ public class Invisibility implements Listener, PacketListener {
                 public void run() {
                     if (this.ticksElapsed >= durationTicks) {
                         this.cancel();
-                        Iterator var16 = vanishedPlayers.iterator();
-
-                        while(var16.hasNext()) {
-                            Player vanished = (Player)var16.next();
-                            Iterator var20 = Bukkit.getOnlinePlayers().iterator();
-
-                            while(var20.hasNext()) {
-                                Player other = (Player)var20.next();
+                        for (Player vanished : vanishedPlayers) {
+                            for (Player other : Bukkit.getOnlinePlayers()) {
                                 other.showPlayer(Invisibility.this.plugin, vanished);
                             }
                         }
@@ -263,23 +237,20 @@ public class Invisibility implements Listener, PacketListener {
                         Location center = caster.getLocation();
 
                         for(int angle = 0; angle < 360; angle += 2) {
-                            double rad = Math.toRadians((double)angle);
+                            double rad = Math.toRadians(angle);
                             double baseX = center.getX() + radius * Math.cos(rad);
                             double baseZ = center.getZ() + radius * Math.sin(rad);
-                            DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 0, 0), 15.0F);
+                            DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 0, 0), 15);
 
                             for(int i = 0; i < 1; ++i) {
-                                double offsetX = (Math.random() - 0.5D) * 0.3D;
-                                double offsetZ = (Math.random() - 0.5D) * 0.3D;
+                                double offsetX = (Math.random() - 0.5) * 0.3;
+                                double offsetZ = (Math.random() - 0.5) * 0.3;
                                 Location particleLoc = new Location(world, baseX + offsetX, center.getY(), baseZ + offsetZ);
                                 world.spawnParticle(Particle.DUST, particleLoc, 1, dustOptions);
                             }
                         }
 
-                        Iterator var17 = Bukkit.getOnlinePlayers().iterator();
-
-                        while(var17.hasNext()) {
-                            Player p = (Player)var17.next();
+                        for (Player p : Bukkit.getOnlinePlayers()) {
                             if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !Invisibility.this.isTeammate(p, caster)) {
                                 p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
                                 Invisibility.this.hideHealthForPlayer(p, 2);

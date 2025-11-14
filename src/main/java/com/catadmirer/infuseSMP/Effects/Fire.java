@@ -7,7 +7,14 @@ import java.util.regex.Pattern;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.github.retrooper.packetevents.event.PacketListener;
-import org.bukkit.*;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -76,7 +83,7 @@ public class Fire implements Listener, PacketListener {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -127,23 +134,19 @@ public class Fire implements Listener, PacketListener {
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player)event.getEntity();
+        if (event.getEntity() instanceof Player player) {
             if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
-                if (event.getForce() >= 1.0F && event.getProjectile() instanceof Projectile) {
-                    Projectile projectile = (Projectile)event.getProjectile();
+                if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
                     projectile.setFireTicks(100);
                 }
-
             }
         }
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                Player player = (Player)event.getEntity();
                 if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
                     Material blockType = player.getLocation().getBlock().getType();
                     if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
@@ -157,11 +160,10 @@ public class Fire implements Listener, PacketListener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player)event.getDamager();
+        if (event.getDamager() instanceof Player player) {
             if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
                 UUID uuid = player.getUniqueId();
-                int count = (Integer)this.hitCounter.getOrDefault(uuid, 0) + 1;
+                int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 if (count >= 20) {
                     event.getEntity().setFireTicks(100);
                     count = 0;
@@ -196,9 +198,9 @@ public class Fire implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0F, 1.0F);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
-            for (Entity entity : player.getNearbyEntities(5.0D, 5.0D, 5.0D)) {
+            for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
                 }
@@ -217,12 +219,12 @@ public class Fire implements Listener, PacketListener {
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(gemName2)));
 
-            long sparkDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("fire.cooldown.default")).longValue();
-            long sparkAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("fire.cooldown.augmented")).longValue();
+            long sparkDefaultCooldown = Infuse.getInstance().getCanfig("fire.cooldown.default");
+            long sparkAugmentedCooldown = Infuse.getInstance().getCanfig("fire.cooldown.augmented");
             long sparkCooldown = isAugmentedFire ? sparkAugmentedCooldown : sparkDefaultCooldown;
 
-            long sparkDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("fire.duration.default")).longValue();
-            long sparkAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("fire.duration.augmented")).longValue();
+            long sparkDefaultDuration = Infuse.getInstance().getCanfig("fire.duration.default");
+            long sparkAugmentedDuration = Infuse.getInstance().getCanfig("fire.duration.augmented");
             long sparkDuration = isAugmentedFire ? sparkAugmentedDuration : sparkDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "fire", sparkDuration);
@@ -253,22 +255,19 @@ public class Fire implements Listener, PacketListener {
                     Location center = caster.getLocation();
                     World world = center.getWorld();
                     if (this.tick > 0 && this.tick % 20 == 0) {
-                        world.playSound(center, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1.0F, 1.0F);
+                        world.playSound(center, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
 
                         for(int angle = 0; angle < 360; angle += 20) {
-                            double rad = Math.toRadians((double)angle);
-                            double offsetX = 5.0D * Math.cos(rad);
-                            double offsetZ = 5.0D * Math.sin(rad);
-                            Location particleLoc = center.clone().add(offsetX, 0.1D, offsetZ);
-                            world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05D, 0.05D, 0.05D, 0.01D);
+                            double rad = Math.toRadians(angle);
+                            double offsetX = 5 * Math.cos(rad);
+                            double offsetZ = 5 * Math.sin(rad);
+                            Location particleLoc = center.clone().add(offsetX, 0.1, offsetZ);
+                            world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05, 0.05, 0.05, 0.01);
                         }
 
-                        Iterator var11 = world.getPlayers().iterator();
-
-                        while(var11.hasNext()) {
-                            Player target = (Player)var11.next();
-                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5.0D) {
-                                target.damage(8.0D, caster);
+                        for (Player target : world.getPlayers()) {
+                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5) {
+                                target.damage(8, caster);
                             }
                         }
                     }
@@ -281,17 +280,14 @@ public class Fire implements Listener, PacketListener {
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5.0D;
-        Iterator var6 = world.getPlayers().iterator();
-
-        while(var6.hasNext()) {
-            Player target = (Player)var6.next();
+        double explosionRadius = 5.0;
+        for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0D, 2.0D, 0.0D));
+                target.setVelocity(new Vector(0.0, 2.0, 0.0));
             }
         }
 
-        world.playSound(startLoc, Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
+        world.playSound(startLoc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         (new BukkitRunnable() {
             int tick = 0;
 
@@ -299,19 +295,19 @@ public class Fire implements Listener, PacketListener {
                 if (this.tick >= 60) {
                     this.cancel();
                 } else {
-                    double baseRadius = 5.0D;
-                    double spreadFactor = (double)this.tick * 0.1D;
+                    double baseRadius = 5;
+                    double spreadFactor = this.tick * 0.1;
                     double circleRadius = baseRadius + spreadFactor;
-                    double particleHeightOffset = (double)this.tick * 3.0D;
-                    if (particleHeightOffset > 30.0D) {
+                    double particleHeightOffset = this.tick * 3;
+                    if (particleHeightOffset > 30) {
                         this.cancel();
                     } else {
                         for(int angle = 0; angle < 360; ++angle) {
-                            double rad = Math.toRadians((double)angle);
+                            double rad = Math.toRadians(angle);
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0D, 0.0D, 0.0D, 0.0D, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;

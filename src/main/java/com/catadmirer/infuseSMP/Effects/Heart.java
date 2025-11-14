@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.Effects;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
     
-    private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap();
+    private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
     private final Infuse plugin;
 
@@ -47,28 +45,13 @@ public class Heart implements Listener {
     private void startHealthCheckTask() {
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                    if (maxHealthAttribute == null) continue;
+                    double currentMaxHealth = maxHealthAttribute.getBaseValue();
+                    if (!Heart.this.hasImmortalHackEquipped2(player, "1") && !Heart.this.hasImmortalHackEquipped2(player, "2")) continue;
 
-                while(true) {
-                    Player player;
-                    AttributeInstance maxHealthAttribute;
-                    double currentMaxHealth;
-                    do {
-                        do {
-                            if (!var1.hasNext()) {
-                                return;
-                            }
-
-                            player = (Player)var1.next();
-                            maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-                        } while(maxHealthAttribute == null);
-
-                        currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    } while(!Heart.this.hasImmortalHackEquipped2(player, "1") && !Heart.this.hasImmortalHackEquipped2(player, "2"));
-
-                    if (currentMaxHealth == 20.0D) {
-                        maxHealthAttribute.setBaseValue(30.0D);
-                    }
+                    if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
                 }
             }
         }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
@@ -102,18 +85,14 @@ public class Heart implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
-            Entity var4 = event.getEntity();
-            if (var4 instanceof LivingEntity) {
-                LivingEntity target = (LivingEntity)var4;
+        if (event.getDamager() instanceof Player player) {
+            if (event.getEntity() instanceof LivingEntity target) {
                 if (this.hasImmortalHackEquipped2(player, "1") || this.hasImmortalHackEquipped2(player, "2")) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
-                    this.hitCounts.putIfAbsent(playerUUID, new HashMap());
-                    Map<UUID, Integer> playerHits = (Map)this.hitCounts.get(playerUUID);
-                    int hitCount = (Integer)playerHits.getOrDefault(targetUUID, 0) + 1;
+                    this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
+                    Map<UUID, Integer> playerHits = this.hitCounts.get(playerUUID);
+                    int hitCount = playerHits.getOrDefault(targetUUID, 0) + 1;
                     playerHits.put(targetUUID, hitCount);
                     if (hitCount == 20) {
                         this.showAndUpdateHealthAboveEntity(target, player);
@@ -201,11 +180,11 @@ public class Heart implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
             final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(40.0D);
+                maxHealthAttribute.setBaseValue(40.0);
             }
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             String gemName2 = Infuse.getInstance().getEffect("aug_heart");
@@ -214,12 +193,12 @@ public class Heart implements Listener {
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("heart.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("heart.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("heart.cooldown.default");
+            long augmentedCooldown = Infuse.getInstance().getCanfig("heart.cooldown.augmented");
             long cooldown = isAugmentedHeart ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("heart.duration.default")).longValue();
-            long augmentedDuration = ((Integer) Infuse.getInstance().getCanfig("heart.duration.augmented")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("heart.duration.default");
+            long augmentedDuration = Infuse.getInstance().getCanfig("heart.duration.augmented");
             long duration = isAugmentedHeart ? augmentedDuration : defaultDuration;
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
@@ -228,7 +207,7 @@ public class Heart implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20.0D);
+                        maxHealthAttribute.setBaseValue(20.0);
                     }
                     player.sendMessage(ChatColor.RED + "Your Health Boost has ended.");
                 }
@@ -244,7 +223,7 @@ public class Heart implements Listener {
             public void run() {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0D);
+                    maxHealthAttribute.setBaseValue(20.0);
                 }
 
             }

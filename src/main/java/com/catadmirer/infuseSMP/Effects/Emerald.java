@@ -1,15 +1,11 @@
 package com.catadmirer.infuseSMP.Effects;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import org.bukkit.Bukkit;
+import java.util.List;
+import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -38,17 +34,8 @@ public class Emerald implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(true) {
-                    Player onlinePlayer;
-                    do {
-                        if (!var1.hasNext()) {
-                            return;
-                        }
-
-                        onlinePlayer = (Player)var1.next();
-                    } while(!Emerald.this.hasImmortalHackEquipped(onlinePlayer, "1") && !Emerald.this.hasImmortalHackEquipped(onlinePlayer, "2"));
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    if (!Emerald.this.hasImmortalHackEquipped(onlinePlayer, "1") && !Emerald.this.hasImmortalHackEquipped(onlinePlayer, "2")) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Emerald.this.applyPassiveEffects(onlinePlayer);
@@ -101,13 +88,13 @@ public class Emerald implements Listener {
     public void onPlayerExpChange(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
-            double multiplier = 1.5D;
+            double multiplier = 1.5;
             PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
             if (heroEffect != null && heroEffect.getAmplifier() >= 200) {
-                multiplier = 3.0D;
+                multiplier = 3;
             }
 
-            event.setAmount((int)((double)event.getAmount() * multiplier));
+            event.setAmount((int) (event.getAmount() * multiplier));
         }
 
     }
@@ -121,8 +108,7 @@ public class Emerald implements Listener {
                 event.getClass()
                         .getMethod("setEnchantmentBonus", int.class)
                         .invoke(event, 15);
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }
     }
 
@@ -146,8 +132,8 @@ public class Emerald implements Listener {
                     event.setItem(refund);
                     (new BukkitRunnable() {
                         public void run() {
-                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
-                            player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5D, 0.5D, 0.5D, 0.01D);
+                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                            player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
                         }
                     }).runTaskLater(this.plugin, 1L);
                 }
@@ -181,19 +167,19 @@ public class Emerald implements Listener {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
             String gemName2 = Infuse.getInstance().getEffect("aug_emerald");
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
             boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
 
-            long emeDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("emerald.cooldown.default")).longValue();
-            long emeAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("emerald.cooldown.augmented")).longValue();
+            long emeDefaultCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.default");
+            long emeAugmentedCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.augmented");
             long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
 
-            long emeDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("emerald.duration.default")).longValue();
-            long emeAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("emerald.duration.augmented")).longValue();
+            long emeDefaultDuration = Infuse.getInstance().getCanfig("emerald.duration.default");
+            long emeAugmentedDuration = Infuse.getInstance().getCanfig("emerald.duration.augmented");
             long emeDuration = isAugmentedEme ? emeAugmentedDuration : emeDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "emerald", emeDuration);

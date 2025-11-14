@@ -3,12 +3,13 @@ package com.catadmirer.infuseSMP.Commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.Augmented;
 import com.catadmirer.infuseSMP.Effects.Ender;
+import java.io.File;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -16,16 +17,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.util.*;
-
 public class Recipes implements CommandExecutor, Listener {
-
     private final Infuse plugin;
 
-    private Map<String, Object[]> potionRecipes = new HashMap<>();
+    private final Map<String,List<String>> potionShapes = new HashMap<>();
+    private final Map<String,Map<Character,String>> potionIngredients = new HashMap<>();
 
     public Recipes(Infuse plugin) {
         this.plugin = plugin;
@@ -33,8 +32,7 @@ public class Recipes implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             openGUI(player);
             return true;
         }
@@ -42,17 +40,16 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
-        Augmented augmented = new Augmented();
         ItemStack potionItem = null;
         switch (potionName) {
             case "emerald":
-                potionItem = augmented.createEME();
+                potionItem = Augmented.createEME();
                 break;
             case "feather":
-                potionItem = augmented.createFEATHER();
+                potionItem = Augmented.createFEATHER();
                 break;
             case "fire":
-                potionItem = augmented.createFIRE();
+                potionItem = Augmented.createFIRE();
                 break;
             case "end_first":
                 potionItem = Augmented.createENDER();
@@ -61,37 +58,37 @@ public class Recipes implements CommandExecutor, Listener {
                 potionItem = Ender.createEnderGem();
                 break;
             case "frost":
-                potionItem = augmented.createFROST();
+                potionItem = Augmented.createFROST();
                 break;
             case "haste":
-                potionItem = augmented.createHASTE();
+                potionItem = Augmented.createHASTE();
                 break;
             case "heart":
-                potionItem = augmented.createHEART();
+                potionItem = Augmented.createHEART();
                 break;
             case "invis":
-                potionItem = augmented.createINVIS();
+                potionItem = Augmented.createINVIS();
                 break;
             case "ocean":
-                potionItem = augmented.createOCEAN();
+                potionItem = Augmented.createOCEAN();
                 break;
             case "regen":
-                potionItem = augmented.createREGEN();
+                potionItem = Augmented.createREGEN();
                 break;
             case "speed":
-                potionItem = augmented.createSPEED();
+                potionItem = Augmented.createSPEED();
                 break;
             case "strength":
-                potionItem = augmented.createST();
+                potionItem = Augmented.createST();
                 break;
             case "thunder":
-                potionItem = augmented.createTHUNDER();
+                potionItem = Augmented.createTHUNDER();
                 break;
             case "apophis":
-                potionItem = augmented.createAPH();
+                potionItem = Augmented.createAPH();
                 break;
             case "thief":
-                potionItem = augmented.createTHF();
+                potionItem = Augmented.createTHF();
                 break;
         }
 
@@ -110,17 +107,16 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private ItemStack createPotion(String potionName) {
-        Augmented augmented = new Augmented();
         ItemStack potionItem = null;
         switch (potionName) {
             case "emerald":
-                potionItem = augmented.createEME();
+                potionItem = Augmented.createEME();
                 break;
             case "feather":
-                potionItem = augmented.createFEATHER();
+                potionItem = Augmented.createFEATHER();
                 break;
             case "fire":
-                potionItem = augmented.createFIRE();
+                potionItem = Augmented.createFIRE();
                 break;
             case "end_first":
                 potionItem = Augmented.createENDER();
@@ -129,46 +125,42 @@ public class Recipes implements CommandExecutor, Listener {
                 potionItem = Ender.createEnderGem();
                 break;
             case "frost":
-                potionItem = augmented.createFROST();
+                potionItem = Augmented.createFROST();
                 break;
             case "haste":
-                potionItem = augmented.createHASTE();
+                potionItem = Augmented.createHASTE();
                 break;
             case "heart":
-                potionItem = augmented.createHEART();
+                potionItem = Augmented.createHEART();
                 break;
             case "invis":
-                potionItem = augmented.createINVIS();
+                potionItem = Augmented.createINVIS();
                 break;
             case "ocean":
-                potionItem = augmented.createOCEAN();
+                potionItem = Augmented.createOCEAN();
                 break;
             case "regen":
-                potionItem = augmented.createREGEN();
+                potionItem = Augmented.createREGEN();
                 break;
             case "speed":
-                potionItem = augmented.createSPEED();
+                potionItem = Augmented.createSPEED();
                 break;
             case "strength":
-                potionItem = augmented.createST();
+                potionItem = Augmented.createST();
                 break;
             case "thunder":
-                potionItem = augmented.createTHUNDER();
+                potionItem = Augmented.createTHUNDER();
                 break;
             case "apophis":
-                potionItem = augmented.createAPH();
+                potionItem = Augmented.createAPH();
                 break;
             case "thief":
-                potionItem = augmented.createTHF();
+                potionItem = Augmented.createTHF();
                 break;
         }
 
         return potionItem;
     }
-
-
-
-
 
     public static void openGUI(Player player) {
         Map<String, Map<String, Integer>> craftLimits = loadCraftLimitsFromConfig();
@@ -190,8 +182,6 @@ public class Recipes implements CommandExecutor, Listener {
         player.openInventory(gui);
     }
 
-
-
     private static Map<String, Map<String, Integer>> loadCraftLimitsFromConfig() {
         Map<String, Map<String, Integer>> result = new HashMap<>();
 
@@ -200,14 +190,13 @@ public class Recipes implements CommandExecutor, Listener {
                 "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
         )) {
             Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", (Integer) Infuse.getInstance().getCanfig("craft_limits." + itemName + ".augmented_limit"));
-            limits.put("regular_limit", (Integer) Infuse.getInstance().getCanfig("craft_limits." + itemName + ".regular_limit"));
+            limits.put("augmented_limit", Infuse.getInstance().getCanfig("craft_limits." + itemName + ".augmented_limit"));
+            limits.put("regular_limit", Infuse.getInstance().getCanfig("craft_limits." + itemName + ".regular_limit"));
             result.put(itemName, limits);
         }
 
         return result;
     }
-
 
     private static void fillRemainingSlots(Inventory inventory) {
         ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
@@ -220,7 +209,6 @@ public class Recipes implements CommandExecutor, Listener {
         }
     }
 
-
     @EventHandler
     public void onInventoryClick2(InventoryClickEvent event) {
         if (event.getView().getTitle().equals("Recipes")) {
@@ -228,27 +216,18 @@ public class Recipes implements CommandExecutor, Listener {
         }
     }
 
-
-
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getView().getTitle().equals("Potion Crafting") && event.getCurrentItem() != null) {
             event.setCancelled(true);
             ItemStack clickedItem = event.getCurrentItem();
-            Player player = (Player) event.getWhoClicked();
+            HumanEntity player = event.getWhoClicked();
             if (clickedItem.getItemMeta() != null && clickedItem.getItemMeta().hasDisplayName()) {
-                String clickedItemName = clickedItem.getItemMeta().getDisplayName()
-                        .replace("§6", "")
-                        .toLowerCase()
-                        .replace(" potion", "")
-                        .replace(" ", "_");
                 openRecipeGUI(player, clickedItem);
             }
         }
     }
-
-
-
+    
     private void loadPotionRecipes() {
         File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(recipesFile);
@@ -259,26 +238,28 @@ public class Recipes implements CommandExecutor, Listener {
                 for (String key : config.getConfigurationSection("recipes." + potionName + ".ingredients").getKeys(false)) {
                     ingredients.put(key.charAt(0), config.getString("recipes." + potionName + ".ingredients." + key));
                 }
-                potionRecipes.put(potionName, new Object[] { shape, ingredients });
+                potionShapes.put(potionName, shape);
+                potionIngredients.put(potionName, ingredients);
             }
         }
     }
 
-
-    public void openRecipeGUI(Player player, ItemStack clickedItem) {
+    public void openRecipeGUI(HumanEntity player, ItemStack clickedItem) {
         String potionKey = getPotionKeyFromItem(clickedItem);
         if (potionKey == null) {
             player.sendMessage("§cNo recipe found for this potion.");
             return;
         }
+
         loadPotionRecipes();
-        Object[] recipeData = potionRecipes.get(potionKey);
-        if (recipeData == null) {
+        List<String> shape = potionShapes.get(potionKey);
+        Map<Character, String> ingredients = potionIngredients.get(potionKey);
+
+        if (shape == null) {
             player.sendMessage("Recipe is disabled/broken");
             return;
         }
-        List<String> shape = (List<String>) recipeData[0];
-        Map<Character, String> ingredients = (Map<Character, String>) recipeData[1];
+
         Inventory recipeGui = Bukkit.createInventory(null, 45, "Recipes");
         int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
         int slotIndex = 0;
@@ -301,40 +282,38 @@ public class Recipes implements CommandExecutor, Listener {
         player.openInventory(recipeGui);
     }
 
-
     private String getPotionKeyFromItem(ItemStack item) {
-        Augmented augmented = new Augmented();
-        if (augmented.ISST(item)) {
+        if (Augmented.ISST(item)) {
             return "strength";
         } else if (Augmented.ISHEART(item)) {
             return "heart";
-        } else if (augmented.ISREGEN(item)) {
+        } else if (Augmented.ISREGEN(item)) {
             return "regen";
-        } else if (augmented.ISINVIS(item)) {
+        } else if (Augmented.ISINVIS(item)) {
             return "invis";
-        } else if (augmented.ISEME(item)) {
+        } else if (Augmented.ISEME(item)) {
             return "emerald";
-        } else if (augmented.ISEND(item)) {
+        } else if (Augmented.ISEND(item)) {
             return "end_first";
         } else if (Ender.ISENDER(item)) {
             return "end_second";
-        } else if (augmented.ISSPEED(item)) {
+        } else if (Augmented.ISSPEED(item)) {
             return "speed";
-        } else if (augmented.ISHASTE(item)) {
+        } else if (Augmented.ISHASTE(item)) {
             return "haste";
-        } else if (augmented.ISFEATHER(item)) {
+        } else if (Augmented.ISFEATHER(item)) {
             return "feather";
-        } else if (augmented.ISOCEAN(item)) {
+        } else if (Augmented.ISOCEAN(item)) {
             return "ocean";
-        } else if (augmented.ISFROST(item)) {
+        } else if (Augmented.ISFROST(item)) {
             return "frost";
-        } else if (augmented.ISFIRE(item)) {
+        } else if (Augmented.ISFIRE(item)) {
             return "fire";
-        } else if (augmented.ISTHUNDER(item)) {
+        } else if (Augmented.ISTHUNDER(item)) {
             return "thunder";
-        } else if (augmented.ISAUGAPH(item)) {
+        } else if (Augmented.ISAUGAPH(item)) {
             return "apophis";
-        } else if (augmented.ISTHIEF(item)) {
+        } else if (Augmented.ISTHIEF(item)) {
             return "thief";
         } else {
             return null;

@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.Effects;
 
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +14,6 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,10 +32,7 @@ public class Haste implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                Iterator<? extends Player> var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(var1.hasNext()) {
-                    Player player = (Player)var1.next();
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     if (Haste.this.hasImmortalHackEquipped2(player, "1") || (Haste.this.hasImmortalHackEquipped2(player, "2"))) {
                         Haste.this.enchantItemIfApplicable(player);
                     }
@@ -107,19 +102,19 @@ public class Haste implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             String gemName = Infuse.getInstance().getEffect("aug_haste");
             boolean isAugmentedHaste =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName)));
-            long hasteDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("haste.cooldown.default")).longValue();
-            long hasteAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("haste.cooldown.augmented")).longValue();
+            long hasteDefaultCooldown = Infuse.getInstance().getCanfig("haste.cooldown.default");
+            long hasteAugmentedCooldown = Infuse.getInstance().getCanfig("haste.cooldown.augmented");
             long hasteCooldown = isAugmentedHaste ? hasteAugmentedCooldown : hasteDefaultCooldown;
 
-            long hasteDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("haste.duration.default")).longValue();
-            long hasteAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("haste.duration.augmented")).longValue();
+            long hasteDefaultDuration = Infuse.getInstance().getCanfig("haste.duration.default");
+            long hasteAugmentedDuration = Infuse.getInstance().getCanfig("haste.duration.augmented");
             long hasteDuration = isAugmentedHaste ? hasteAugmentedDuration : hasteDefaultDuration;
             player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
             CooldownManager.setDuration(playerUUID, "haste", hasteDuration);
@@ -130,16 +125,12 @@ public class Haste implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getEntity();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
             if (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasImmortalHackEquipped2(player, "1") || (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasImmortalHackEquipped2(player, "2"))) {
-                Entity var5 = event.getDamager();
-                if (var5 instanceof Player) {
-                    Player attacker = (Player)var5;
+                if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
-                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1.0F, 1.0F);
+                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
                         Bukkit.getScheduler().runTaskLater(Infuse.getInstance(), () -> {
                             this.stunShield(player);
                         }, 20L);

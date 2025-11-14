@@ -47,9 +47,9 @@ public class Frost implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Frost.this.hasImmortalHackEquipped2(player, "2") && !(player.getVelocity().lengthSquared() < 0.01D) || (Frost.this.hasImmortalHackEquipped2(player, "1") && !(player.getVelocity().lengthSquared() < 0.01D))) {
+                    if (Frost.this.hasImmortalHackEquipped2(player, "2") && !(player.getVelocity().lengthSquared() < 0.01) || (Frost.this.hasImmortalHackEquipped2(player, "1") && !(player.getVelocity().lengthSquared() < 0.01))) {
                         Frost.this.handleSwim(player);
-                        Material blockType = player.getLocation().subtract(0.0D, 1.0D, 0.0D).getBlock().getType();
+                        Material blockType = player.getLocation().subtract(0.0, 1.0, 0.0).getBlock().getType();
                         if (Frost.ICE_BLOCKS.contains(blockType)) {
                             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30, 2, false, false));
                         }
@@ -129,12 +129,10 @@ public class Frost implements Listener {
 
     @EventHandler
     public void onMeleeHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            if (event.getEntity() instanceof Player) {
-                Player attacker = (Player)event.getDamager();
-                final Player target = (Player)event.getEntity();
+        if (event.getDamager() instanceof Player attacker) {
+            if (event.getEntity() instanceof Player target) {
                 if (this.hasImmortalHackEquipped2(attacker, "1") || (this.hasImmortalHackEquipped2(attacker, "2"))) {
-                    int count = (Integer)this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
+                    int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
                         this.meleeHitCounter.put(attacker.getUniqueId(), 0);
@@ -188,26 +186,26 @@ public class Frost implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
             String gemName = Infuse.getInstance().getEffect("aug_frost");
-            caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             boolean isAugmentedFrost =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName)) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName))));
-            long frostDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("frost.cooldown.default")).longValue();
-            long frostAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("frost.cooldown.augmented")).longValue();
+            long frostDefaultCooldown = Infuse.getInstance().getCanfig("frost.cooldown.default");
+            long frostAugmentedCooldown = Infuse.getInstance().getCanfig("frost.cooldown.augmented");
             long frostCooldown = isAugmentedFrost ? frostAugmentedCooldown : frostDefaultCooldown;
 
-            long frostDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("frost.duration.default")).longValue();
-            long frostAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("frost.duration.augmented")).longValue();
+            long frostDefaultDuration = Infuse.getInstance().getCanfig("frost.duration.default");
+            long frostAugmentedDuration = Infuse.getInstance().getCanfig("frost.duration.augmented");
             long frostDuration = isAugmentedFrost ? frostAugmentedDuration : frostDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "frost", frostDuration);
             CooldownManager.setCooldown(playerUUID, "frost", frostCooldown);
 
             Location center = caster.getLocation();
-            double radius = 5.0D;
+            double radius = 5.0;
             World world = caster.getWorld();
             final Set<Player> affectedPlayers = new HashSet<>();
 
@@ -218,7 +216,7 @@ public class Frost implements Listener {
                     affectedPlayers.add(player);
                     AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
                     if (jumpAttribute != null) {
-                        jumpAttribute.setBaseValue(0.1D);
+                        jumpAttribute.setBaseValue(0.1);
                     }
                 }
             }
@@ -230,7 +228,7 @@ public class Frost implements Listener {
                     for (Player player : affectedPlayers) {
                         AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
                         if (jumpAttribute != null) {
-                            jumpAttribute.setBaseValue(0.42D);
+                            jumpAttribute.setBaseValue(0.42);
                         }
                     }
                     Frost.this.frozenAttackers.remove(caster.getUniqueId());
@@ -244,8 +242,8 @@ public class Frost implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
-        if (jumpAttribute != null && jumpAttribute.getBaseValue() == 0.1D) {
-            jumpAttribute.setBaseValue(0.42D);
+        if (jumpAttribute != null && jumpAttribute.getBaseValue() == 0.1) {
+            jumpAttribute.setBaseValue(0.42);
         }
 
     }
@@ -256,12 +254,10 @@ public class Frost implements Listener {
 
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player attacker = (Player)event.getDamager();
+        if (event.getDamager() instanceof Player attacker) {
             if (attacker.hasPotionEffect(PotionEffectType.UNLUCK)) {
                 PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
-                if (effect != null && effect.getAmplifier() >= 0 && this.frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player) {
-                    Player target = (Player)event.getEntity();
+                if (effect != null && effect.getAmplifier() >= 0 && this.frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
                     target.setFreezeTicks(200);
                 }
             }

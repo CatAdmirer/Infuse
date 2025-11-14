@@ -1,14 +1,13 @@
 package com.catadmirer.infuseSMP.Commands;
 
-import java.util.UUID;
-import java.util.regex.Pattern;
-
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +32,6 @@ public class Abilities implements CommandExecutor {
     private final Apophis aphopis;
     private final Thief thiefAbility;
 
-
     public Abilities(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
         this.emeraldAbility = new Emerald(plugin);
@@ -54,11 +52,10 @@ public class Abilities implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command.");
             return true;
         } else {
-            Player player = (Player) sender;
             UUID playerUUID = player.getUniqueId();
             String slot;
             if (label.contains("rspark")) {

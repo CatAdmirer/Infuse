@@ -1,13 +1,11 @@
 package com.catadmirer.infuseSMP.Effects;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import org.bukkit.Bukkit;
+import java.util.List;
+import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -64,18 +62,18 @@ public class Strength implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             String gemName2 = plugin.getEffect("aug_strength");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2))));
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("strength.duration.default")).longValue();
-            long augmentedDuration = ((Integer) Infuse.getInstance().getCanfig("strength.duration.augmented")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("strength.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getCanfig("strength.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("strength.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("strength.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("strength.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getCanfig("strength.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
             CooldownManager.setDuration(playerUUID, "strength", duration);
@@ -86,18 +84,16 @@ public class Strength implements Listener {
 
     @EventHandler
     public void extraDamage(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
-        if (damager instanceof Player) {
-            Player attacker = (Player)damager;
+        if (event.getDamager() instanceof Player attacker) {
             if (this.hasStrengthEquipped(attacker, "1") || this.hasStrengthEquipped(attacker, "2")) {
                 double damage = event.getDamage();
                 double health = attacker.getHealth();
-                if (health < 2.0D) {
-                    event.setDamage(damage + 3.0D);
-                } else if (health < 4.0D) {
-                    event.setDamage(damage + 2.0D);
-                } else if (health < 6.0D) {
-                    event.setDamage(damage + 1.0D);
+                if (health < 2.0) {
+                    event.setDamage(damage + 3.0);
+                } else if (health < 4.0) {
+                    event.setDamage(damage + 2.0);
+                } else if (health < 6.0) {
+                    event.setDamage(damage + 1.0);
                 }
             }
         }
@@ -106,34 +102,26 @@ public class Strength implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getDamager() instanceof Player player) {
             if (CooldownManager.isEffectActive(player.getUniqueId(), "strength") && !event.isCritical()) {
                 double originalDamage = event.getDamage();
-                double critDamage = originalDamage * 1.35D;
+                double critDamage = originalDamage * 1.35;
                 event.setDamage(critDamage);
                 Entity hitEntity = event.getEntity();
-                hitEntity.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0F, 1.0F);
-                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0.0D, hitEntity.getHeight() / 2.0D, 0.0D), 10);
+                hitEntity.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 1);
+                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0.0, hitEntity.getHeight() / 2.0, 0.0), 10);
             }
-
         }
     }
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
-        LivingEntity var3 = event.getEntity();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getEntity() instanceof Player player) {
             if (event.getBow() != null && event.getBow().getType() == Material.BOW && this.hasStrengthEquipped(player, "1") || event.getBow() != null && event.getBow().getType() == Material.BOW && this.hasStrengthEquipped(player, "2")) {
-                Entity var4 = event.getProjectile();
-                if (var4 instanceof Arrow) {
-                    Arrow arrow = (Arrow)var4;
+                if (event.getProjectile() instanceof Arrow arrow) {
                     arrow.setPierceLevel(100);
                 }
             }
-
         }
     }
 
@@ -155,15 +143,12 @@ public class Strength implements Listener {
 
     @EventHandler
     public void onEntityDamageMob(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Player) {
-            Player attacker = (Player)var3;
-            Entity var4 = event.getEntity();
-            if (var4 instanceof LivingEntity) {
-                LivingEntity entity = (LivingEntity)var4;
-                if (!(entity instanceof Player) && this.hasStrengthEquipped(attacker, "1") || (!(entity instanceof Player) && this.hasStrengthEquipped(attacker, "2"))) {
+        if (event.getDamager() instanceof Player attacker) {
+            if (event.getEntity() instanceof LivingEntity entity) {
+                if (entity instanceof Player) return;
+                if (this.hasStrengthEquipped(attacker, "1") || this.hasStrengthEquipped(attacker, "2")) {
                     double originalDamage = event.getDamage();
-                    event.setDamage(originalDamage * 2.0D);
+                    event.setDamage(originalDamage * 2.0);
                 }
             }
         }
@@ -172,16 +157,12 @@ public class Strength implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getEntity();
-        if (var3 instanceof Player) {
-            Player player = (Player)var3;
+        if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
             if (offHand.getType() == Material.SHIELD && player.isBlocking()) {
-                Entity var5 = event.getDamager();
-                if (var5 instanceof Player) {
-                    Player attacker = (Player)var5;
+                if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE") && this.hasStrengthEquipped(attacker, "1") || attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE") && this.hasStrengthEquipped(attacker, "2")) {
-                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1.0F, 1.0F);
+                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
                         Bukkit.getScheduler().runTaskLater(Infuse.getInstance(), () -> {
                             this.stunShield(player);
                         }, 20L);

@@ -2,11 +2,11 @@ package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.ApophisManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
-import org.bukkit.Bukkit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,9 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
@@ -31,11 +28,11 @@ public class DrainCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Only players can use this command.");
             return true;
         }
-        Player player = (Player) sender;
+
         String hackType;
         if (label.contains("rdrain")) {
             hackType = "2";
@@ -60,7 +57,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (ChatColor.stripColor(currentHack).equalsIgnoreCase("Apohpis Effect")
                 || ChatColor.stripColor(currentHack).equalsIgnoreCase("Augmented Apohpis Effect")) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), hackType);
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0D);
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
             EffectMapping mapping = EffectMapping.fromEffectName(currentHack);
             ItemStack glitchItem = mapping.createItem();
             player.getInventory().addItem(glitchItem);
@@ -80,7 +77,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0D);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
                 EffectMapping mapping = EffectMapping.fromEffectName(currentHack);
                 if (mapping != null) {
                     ItemStack glitchItem = mapping.createItem();
@@ -102,7 +99,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -110,4 +107,3 @@ public class DrainCommand implements CommandExecutor, Listener {
         return result.toString();
     }
 }
-

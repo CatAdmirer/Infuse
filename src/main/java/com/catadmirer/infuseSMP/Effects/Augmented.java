@@ -1,11 +1,11 @@
 package com.catadmirer.infuseSMP.Effects;
 
+import com.catadmirer.infuseSMP.Infuse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.catadmirer.infuseSMP.Infuse;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -20,7 +20,7 @@ public class Augmented {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -30,7 +30,7 @@ public class Augmented {
 
     public static ItemStack createEME() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_emerald");
             meta.setDisplayName(gemName);
@@ -46,7 +46,7 @@ public class Augmented {
 
     public static ItemStack createTHF() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_thief");
             meta.setDisplayName(gemName);
@@ -62,7 +62,7 @@ public class Augmented {
 
     public static ItemStack createFEATHER() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_feather");
             gemName = applyHexColors(gemName);
@@ -83,7 +83,7 @@ public class Augmented {
 
     public static ItemStack createFIRE() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_fire");
             gemName = applyHexColors(gemName);
@@ -105,7 +105,7 @@ public class Augmented {
 
     public static ItemStack createENDER() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_ender");
             meta.setDisplayName(gemName);
@@ -121,7 +121,7 @@ public class Augmented {
 
     public static ItemStack createAPH() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
             meta.setDisplayName(gemName2);
@@ -137,7 +137,7 @@ public class Augmented {
 
     public static ItemStack createFROST() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_frost");
             meta.setDisplayName(gemName);
@@ -153,7 +153,7 @@ public class Augmented {
 
     public static ItemStack createHASTE() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_haste");
             meta.setDisplayName(gemName);
@@ -169,7 +169,7 @@ public class Augmented {
 
     public static ItemStack createHEART() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_heart");
             meta.setDisplayName(gemName);
@@ -185,7 +185,7 @@ public class Augmented {
 
     public static ItemStack createINVIS() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_invis");
             meta.setDisplayName(gemName);
@@ -201,7 +201,7 @@ public class Augmented {
 
     public static ItemStack createOCEAN() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_ocean");
             meta.setDisplayName(gemName);
@@ -217,7 +217,7 @@ public class Augmented {
 
     public static ItemStack createREGEN() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_regen");
             meta.setDisplayName(gemName);
@@ -234,7 +234,7 @@ public class Augmented {
 
     public static ItemStack createSPEED() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_speed");
             gemName = applyHexColors(gemName);
@@ -255,7 +255,7 @@ public class Augmented {
 
     public static ItemStack createST() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_strength");
             meta.setDisplayName(gemName);
@@ -271,7 +271,7 @@ public class Augmented {
 
     public static ItemStack createTHUNDER() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("aug_thunder");
             meta.setDisplayName(gemName);

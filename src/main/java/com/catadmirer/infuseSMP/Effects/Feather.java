@@ -8,7 +8,14 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
-import org.bukkit.*;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,13 +33,12 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
     
     private final Plugin plugin;
-    private final Map<UUID, Integer> hitCounter = new HashMap();
+    private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     private final Set<UUID> spark = new HashSet<>();
 
@@ -48,43 +54,20 @@ public class Feather implements Listener {
     @EventHandler
     public void FeatherLand(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        double radius = 4.0D;
+        double radius = 4;
         UUID playerUUID = player.getUniqueId();
         if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "feathermace")) {
             CooldownManager.setDuration(playerUUID, "feathermace", 0L);
             Location loc = player.getLocation();
             World world = player.getWorld();
-            Iterator var8 = player.getNearbyEntities(radius, radius, radius).iterator();
 
-            while(true) {
-                LivingEntity target;
-                do {
-                    do {
-                        Entity entity;
-                        do {
-                            if (!var8.hasNext()) {
-                                world.spawnParticle(Particle.CLOUD, loc, 50, 0.0D, 0.0D, 0.0D, 2.0D);
-                                world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1.0F);
-                                Location anchor = player.getLocation();
-                                Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
-                                    if (player.isOnline()) {
-                                        Vector dashDirection = player.getEyeLocation().getDirection().normalize();
-                                        Vector launchVector = dashDirection.multiply(5);
-                                        player.setVelocity(launchVector);
-                                    }
-                                }, 1L);
-                                return;
-                            }
+            for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
 
-                            entity = (Entity)var8.next();
-                        } while(!(entity instanceof LivingEntity));
-
-                        target = (LivingEntity)entity;
-                    } while(target.equals(player));
-                } while(target instanceof Player && isTeammate(player, (Player)target));
+                if (!(entity instanceof LivingEntity target)) continue;
+                if (target instanceof Player targetPlayer && isTeammate(player, targetPlayer)) continue;
 
                 int damage = 8;
-                target.damage((double)damage);
+                target.damage(damage);
                 Vector knockback = new Vector(0, 1, 0);
                 target.setVelocity(target.getVelocity().add(knockback));
                 Location anchor = target.getLocation();
@@ -93,6 +76,17 @@ public class Feather implements Listener {
                     finalTarget.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
                 });
             }
+
+            world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
+            world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
+            Location anchor = player.getLocation();
+            Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+                if (player.isOnline()) {
+                    Vector dashDirection = player.getEyeLocation().getDirection().normalize();
+                    Vector launchVector = dashDirection.multiply(5);
+                    player.setVelocity(launchVector);
+                }
+            }, 1L);
         }
     }
 
@@ -102,15 +96,9 @@ public class Feather implements Listener {
 
     @EventHandler
     public void onPlayerHit(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player)event.getEntity();
-            if (event instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent damageByEntityEvent = (EntityDamageByEntityEvent)event;
-                if (!(damageByEntityEvent.getDamager() instanceof Player)) {
-                    return;
-                }
-
-                Player target = (Player)damageByEntityEvent.getDamager();
+        if (event.getEntity() instanceof Player player) {
+            if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
+                if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
                 if (!this.hasImmortalHackEquipped(player, "1") && !this.hasImmortalHackEquipped(player, "2")) {
                     return;
                 }
@@ -120,33 +108,30 @@ public class Feather implements Listener {
                 }
 
                 UUID uuid = player.getUniqueId();
-                int count = (Integer)this.hitCounter.getOrDefault(uuid, 0) + 1;
+                int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 this.hitCounter.put(uuid, count);
                 if (count >= 10) {
                     this.hitCounter.put(uuid, 0);
                     target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
-                    Location chargeLocation = player.getLocation().add(0.0D, 1.0D, 0.0D);
-                    WindCharge windCharge = (WindCharge)player.getWorld().spawn(chargeLocation, WindCharge.class);
-                    Location targetLocation = player.getLocation().subtract(0.0D, 1.0D, 0.0D);
+                    Location chargeLocation = player.getLocation().add(0, 1, 0);
+                    WindCharge windCharge = player.getWorld().spawn(chargeLocation, WindCharge.class);
+                    Location targetLocation = player.getLocation().subtract(0, 1, 0);
                     Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
                     windCharge.setVelocity(direction.multiply(1));
                     windCharge.setShooter(player);
-                    player.setVelocity(new Vector(0.0D, 0.5D, 0.0D));
+                    player.setVelocity(new Vector(0, 0.5, 0));
                 }
             }
-
         }
     }
 
     @EventHandler
     public void onPlayerFallDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                Player player = (Player)event.getEntity();
                 if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
                     event.setCancelled(true);
                 }
-
             }
         }
     }
@@ -171,34 +156,27 @@ public class Feather implements Listener {
 
     @EventHandler
     public void onWindChargeLaunch(ProjectileLaunchEvent event) {
-        Projectile var3 = event.getEntity();
-        if (var3 instanceof WindCharge) {
-            WindCharge fireball = (WindCharge)var3;
-            ProjectileSource var4 = fireball.getShooter();
-            if (var4 instanceof Player) {
-                Player player = (Player)var4;
+        if (event.getEntity() instanceof WindCharge windCharge) {
+            if (windCharge.getShooter() instanceof Player player) {
                 Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
-                fireball.setVelocity(direction);
+                windCharge.setVelocity(direction);
             }
         }
-
     }
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Player) {
-            Player attacker = (Player)var3;
+        if (event.getDamager() instanceof Player attacker) {
             if (this.hasImmortalHackEquipped(attacker, "1") || this.hasImmortalHackEquipped(attacker, "2")) {
-                double fallDistance = (double)attacker.getFallDistance();
-                if (fallDistance >= 7.0D) {
-                    attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1.0F, 1.0F);
+                double fallDistance = attacker.getFallDistance();
+                if (fallDistance >= 7) {
+                    attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
                     Location startLoc = attacker.getLocation();
                     World world = startLoc.getWorld();
                     Location particleLoc = event.getDamager().getLocation();
-                    world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-                    attacker.setVelocity(new Vector(0.0D, 1.8D, 0.0D));
-                    double multiplier = 1.1D;
+                    world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
+                    attacker.setVelocity(new Vector(0, 1.8, 0));
+                    double multiplier = 1.1;
                     event.setDamage(event.getDamage() * multiplier);
                 }
 
@@ -234,7 +212,7 @@ public class Feather implements Listener {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -275,7 +253,7 @@ public class Feather implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
             String gemName = Infuse.getInstance().getEffect("aug_feather");
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
@@ -286,11 +264,11 @@ public class Feather implements Listener {
                             stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(gemName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(gemName)));
-            long featherDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("feather.cooldown.default")).longValue();
-            long featherAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("feather.cooldown.augmented")).longValue();
+            long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
+            long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
             long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
-            long featherDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("feather.duration.default")).longValue();
-            long featherAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("feather.duration.augmented")).longValue();
+            long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
+            long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
             long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
             CooldownManager.setDuration(playerUUID, "feather", featherDuration);
             CooldownManager.setCooldown(playerUUID, "feather", featherCooldown);

@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +52,7 @@ import org.json.simple.parser.JSONParser;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
-    private final ConcurrentMap<UUID, String> hackManager = new ConcurrentHashMap();
+    private final ConcurrentMap<UUID, String> hackManager = new ConcurrentHashMap<>();
     private DataManager hackManager2;
     private Abilities abilitiesHandler;
 
@@ -437,8 +438,8 @@ public class Infuse extends JavaPlugin implements Listener {
         final Player player = event.getPlayer();
         (new BukkitRunnable() {
             public void run() {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0D);
-                player.setHealth(20.0D);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+                player.setHealth(20);
             }
         }).runTaskLater(this, 10L);
     }
@@ -447,14 +448,8 @@ public class Infuse extends JavaPlugin implements Listener {
         instance = null;
         this.getLogger().info("Infuse Plugin is disabling...");
         PacketEvents.getAPI().terminate();
-        Iterator var1 = Bukkit.getWorlds().iterator();
-
-        while(var1.hasNext()) {
-            World world = (World)var1.next();
-            Iterator var3 = world.getEntitiesByClass(EnderCrystal.class).iterator();
-
-            while(var3.hasNext()) {
-                Entity entity = (Entity)var3.next();
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntitiesByClass(EnderCrystal.class)) {
                 entity.remove();
             }
         }
@@ -546,8 +541,8 @@ public class Infuse extends JavaPlugin implements Listener {
     private void checkForUpdate() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
-                String currentVersion = getDescription().getVersion();
-                URL url = new URL("https://api.modrinth.com/v2/project/infusesmp/version");
+                String currentVersion = getPluginMeta().getVersion();
+                URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
                 connection.connect();
@@ -585,8 +580,8 @@ public class Infuse extends JavaPlugin implements Listener {
         player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
         player.sendMessage(ChatColor.GRAY + "Your ability mode is set to: " + controlMode);
         try {
-            String currentVersion = getDescription().getVersion();
-            URL url = new URL("https://api.modrinth.com/v2/project/infusesmp/version");
+            String currentVersion = getPluginMeta().getVersion();
+            URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
             connection.connect();

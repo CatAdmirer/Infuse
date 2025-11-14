@@ -3,9 +3,13 @@ package com.catadmirer.infuseSMP.Commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.ApophisManager;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
-import org.bukkit.Bukkit;
+import java.io.File;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,12 +22,6 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class EquipEffect implements Listener, CommandExecutor {
     private ApophisManager aphopisCommand;
 
@@ -35,7 +33,7 @@ public class EquipEffect implements Listener, CommandExecutor {
     public void onFIrstJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPlayedBefore() && (Boolean) Infuse.getInstance().getCanfig("join_effects_enabled")) {
+        if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getCanfig("join_effects_enabled")) {
             List<String> effects = Infuse.getInstance().getCanfig("join_effects");
             if (effects.isEmpty()) return;
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
@@ -76,7 +74,7 @@ public class EquipEffect implements Listener, CommandExecutor {
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String hexCode = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of(hexCode).toString();
+            String colorCode = ChatColor.of(hexCode).toString();
             matcher.appendReplacement(result, colorCode);
         }
         matcher.appendTail(result);
@@ -191,11 +189,10 @@ public class EquipEffect implements Listener, CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(String.valueOf(ChatColor.RED) + "Only players can use this command.");
             return true;
         } else {
-            Player player = (Player)sender;
             String hack1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
             String hack2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
             if (hack1 == null && hack2 == null) {

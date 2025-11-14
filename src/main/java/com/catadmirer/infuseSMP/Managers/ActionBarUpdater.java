@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
-    private final Set<UUID> playersWithActiveEffects = new HashSet();
+    private final Set<UUID> playersWithActiveEffects = new HashSet<>();
 
         public String removeAug(String key) {
             if (key.startsWith("aug_")) {
@@ -55,7 +55,7 @@ public class ActionBarUpdater extends BukkitRunnable {
                         firstEmoji = EffectMaps.getActiveEffect(stripped);
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        firstTime = this.formatTime(timeLeft, net.md_5.bungee.api.ChatColor.WHITE);
+                        firstTime = this.formatTime(timeLeft, ChatColor.WHITE);
                         firstEmoji = EffectMaps.getCooldownEffect(stripped);
                     } else {
                         firstEmoji = EffectMaps.getCooldownEffect(stripped);
@@ -79,7 +79,7 @@ public class ActionBarUpdater extends BukkitRunnable {
                         secondEmoji = EffectMaps.getActiveEffect(stripped);
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        secondTime = this.formatTime(timeLeft, net.md_5.bungee.api.ChatColor.WHITE);
+                        secondTime = this.formatTime(timeLeft, ChatColor.WHITE);
                         secondEmoji = EffectMaps.getCooldownEffect(stripped);
                     } else {
                         secondEmoji = EffectMaps.getCooldownEffect(stripped);
@@ -105,6 +105,6 @@ public class ActionBarUpdater extends BukkitRunnable {
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
         String var10000 = String.valueOf(color);
-        return var10000 + net.md_5.bungee.api.ChatColor.BOLD + timeString + ChatColor.RESET;
+        return var10000 + ChatColor.BOLD + timeString + ChatColor.RESET;
     }
 }

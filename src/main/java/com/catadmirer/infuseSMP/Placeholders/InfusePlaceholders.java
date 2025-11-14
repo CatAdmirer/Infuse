@@ -76,7 +76,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
                         return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, net.md_5.bungee.api.ChatColor.WHITE);
+                        return formatTime(timeLeft, ChatColor.WHITE);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
                         return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, net.md_5.bungee.api.ChatColor.WHITE);
+                        return formatTime(timeLeft, ChatColor.WHITE);
                     }
                 }
             }
@@ -169,7 +169,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
         String var10000 = String.valueOf(color);
-        return var10000 + String.valueOf(net.md_5.bungee.api.ChatColor.BOLD) + timeString + String.valueOf(net.md_5.bungee.api.ChatColor.RESET);
+        return var10000 + String.valueOf(ChatColor.BOLD) + timeString + String.valueOf(ChatColor.RESET);
     }
 }
 

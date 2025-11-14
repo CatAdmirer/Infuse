@@ -1,8 +1,10 @@
 package com.catadmirer.infuseSMP.Effects;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +12,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
-
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,13 +32,12 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
     
-    private final Set<UUID> activeSparks = new HashSet();
-    private final Map<UUID, Long> entityLightningCooldowns = new HashMap();
+    private final Set<UUID> activeSparks = new HashSet<>();
+    private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
 
     private DataManager trustManager;
 
@@ -55,7 +51,7 @@ public class Thunder implements Listener {
 
     public static ItemStack createTHUNDER() {
         ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
             String gemName = Infuse.getInstance().getEffect("thunder");
             meta.setDisplayName(gemName);
@@ -87,21 +83,15 @@ public class Thunder implements Listener {
 
     @EventHandler
     public void onTridentHit(EntityDamageByEntityEvent event) {
-        Entity var3 = event.getDamager();
-        if (var3 instanceof Trident) {
-            Trident trident = (Trident)var3;
+        if (event.getDamager() instanceof Trident trident) {
             if (!trident.hasMetadata("thunderProcessed")) {
                 trident.setMetadata("thunderProcessed", new FixedMetadataValue(plugin, true));
-                ProjectileSource var4 = trident.getShooter();
-                if (var4 instanceof Player) {
-                    Player attacker = (Player)var4;
+                if (trident.getShooter() instanceof Player attacker) {
                     if (this.hasImmortalHackEquipped(attacker)) {
-                        Entity var5 = event.getEntity();
-                        if (var5 instanceof LivingEntity) {
-                            LivingEntity target = (LivingEntity)var5;
+                        if (event.getEntity() instanceof LivingEntity target) {
                             target.getWorld().strikeLightningEffect(target.getLocation());
-                            target.damage(4.0D, attacker);
-                            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0D, 1.0D, 0.0D), 10, 0.5D, 0.5D, 0.5D, 0.0D, new DustOptions(Color.YELLOW, 1.5F));
+                            target.damage(4.0, attacker);
+                            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
                         }
                     }
                 }
@@ -141,7 +131,7 @@ public class Thunder implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !this.activeSparks.contains(playerUUID)) {
             this.activeSparks.add(playerUUID);
-            caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             String gemName2 = plugin.getEffect("aug_thunder");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
@@ -149,19 +139,19 @@ public class Thunder implements Listener {
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
                                     .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2))));
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("thunder.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("thunder.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.default");
+            long augmentedCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.augmented");
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("thunder.duration.default")).longValue();
-            long augmentedDuration = ((Integer) Infuse.getInstance().getCanfig("thunder.duration.augmented")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("thunder.duration.default");
+            long augmentedDuration = Infuse.getInstance().getCanfig("thunder.duration.augmented");
             long duration = isAugmented ? augmentedDuration : defaultDuration;
-            final int effectDuration = (int) (duration * 20L);
+            final long effectDuration = duration * 20;
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
-            final double radius = 10.0D;
+            final double radius = 10.0;
             final World world = caster.getWorld();
 
             new BukkitRunnable() {
@@ -176,18 +166,16 @@ public class Thunder implements Listener {
 
                     Location center = caster.getLocation();
                     for (Entity entity : world.getNearbyEntities(center, radius, radius, radius)) {
-                        if (!(entity instanceof LivingEntity)) continue;
-                        LivingEntity target = (LivingEntity) entity;
+                        if (!(entity instanceof LivingEntity target)) continue;
                         if (target.equals(caster)) continue;
 
-                        if (target instanceof Player) {
-                            Player p = (Player) target;
+                        if (target instanceof Player p) {
                             if (Thunder.this.isTeammate(p, caster)) continue;
                         }
 
                         target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4.0D, caster);
-                        world.spawnParticle(Particle.DUST, target.getLocation().add(0.0D, 1.0D, 0.0D), 10, 0.5D, 0.5D, 0.5D, 0.0D, new DustOptions(Color.YELLOW, 1.5F));
+                        target.damage(4.0, caster);
+                        world.spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
                     }
 
                     this.ticksElapsed += 20;
@@ -203,29 +191,27 @@ public class Thunder implements Listener {
 
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player attacker = (Player)event.getDamager();
+        if (event.getDamager() instanceof Player attacker) {
             if (this.hasImmortalHackEquipped(attacker)) {
-                if (event.getEntity() instanceof LivingEntity) {
-                    LivingEntity target = (LivingEntity)event.getEntity();
+                if (event.getEntity() instanceof LivingEntity target) {
                     UUID targetUUID = target.getUniqueId();
                     long currentTime = System.currentTimeMillis();
                     if (this.entityLightningCooldowns.containsKey(targetUUID)) {
-                        long lastStrikeTime = (Long)this.entityLightningCooldowns.get(targetUUID);
+                        long lastStrikeTime = this.entityLightningCooldowns.get(targetUUID);
                         if (currentTime - lastStrikeTime < 2000L) {
                             return;
                         }
                     }
 
                     this.entityLightningCooldowns.put(targetUUID, currentTime);
-                    List<Entity> nearbyEntities = target.getNearbyEntities(3.0D, 3.0D, 3.0D);
+                    List<Entity> nearbyEntities = target.getNearbyEntities(3.0, 3.0, 3.0);
                     Optional<Entity> nextChainTarget = nearbyEntities.stream().filter((e) -> {
                         return e instanceof LivingEntity && !e.equals(attacker);
                     }).findFirst();
                     if (nextChainTarget.isPresent()) {
                         target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4.0D, attacker);
-                        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0D, 1.0D, 0.0D), 10, 0.5D, 0.5D, 0.5D, 0.0D, new DustOptions(Color.YELLOW, 1.5F));
+                        target.damage(4.0, attacker);
+                        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
                         this.chainLightning(target, attacker);
                     }
 
@@ -235,8 +221,8 @@ public class Thunder implements Listener {
     }
 
     private void chainLightning(Entity startEntity, final Player attacker) {
-        final Set<Entity> processedEntities = new HashSet();
-        final Queue<Entity> queue = new LinkedList();
+        final Set<Entity> processedEntities = new HashSet<>();
+        final Queue<Entity> queue = new LinkedList<>();
         queue.add(startEntity);
         (new BukkitRunnable() {
             int strikes = 0;
@@ -246,7 +232,7 @@ public class Thunder implements Listener {
                     Entity currentEntity = null;
 
                     while(!queue.isEmpty()) {
-                        Entity candidate = (Entity)queue.poll();
+                        Entity candidate = queue.poll();
                         if (candidate instanceof LivingEntity && !processedEntities.contains(candidate)) {
                             currentEntity = candidate;
                             break;
@@ -258,18 +244,14 @@ public class Thunder implements Listener {
                         LivingEntity livingEntity = (LivingEntity)currentEntity;
                         if (!livingEntity.equals(attacker)) {
                             livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
-                            livingEntity.damage(4.0D, attacker);
-                            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0.0D, 1.0D, 0.0D), 10, 0.5D, 0.5D, 0.5D, 0.0D, new DustOptions(Color.YELLOW, 1.5F));
+                            livingEntity.damage(4.0, attacker);
+                            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
                             ++this.strikes;
-                            Iterator var3 = livingEntity.getNearbyEntities(3.0D, 3.0D, 3.0D).iterator();
-
-                            while(var3.hasNext()) {
-                                Entity entity = (Entity)var3.next();
+                            for (Entity entity : livingEntity.getNearbyEntities(3.0, 3.0, 3.0)) {
                                 if (entity instanceof LivingEntity && !processedEntities.contains(entity)) {
                                     queue.add(entity);
                                 }
                             }
-
                         }
                     }
                 } else {

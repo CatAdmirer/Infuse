@@ -1,15 +1,13 @@
 package com.catadmirer.infuseSMP.Commands;
 
-import java.util.*;
-import java.util.function.Supplier;
-
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
-import org.bukkit.Bukkit;
+import java.util.Map;
+import java.util.function.Supplier;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,17 +30,14 @@ public class GUI implements Listener, CommandExecutor {
         int[] magentaSlots = {0, 1, 2, 6, 7, 8, 9, 10, 16, 17, 18, 26, 27, 35};
         int[] purpleSlots = {36, 37, 43, 44, 45, 46, 47, 48, 50, 51, 52, 53};
         int[] blueSlots = {49};
-        int[] lightBlueSlots = {
-                3, 4, 5, 11, 13, 15, 19, 25, 28, 34, 38, 42
-        };
+        int[] lightBlueSlots = {3, 4, 5, 11, 13, 15, 19, 25, 28, 34, 38, 42};
         setItems(gui, magentaSlots, magenta);
         setItems(gui, purpleSlots, purple);
         setItems(gui, blueSlots, blue);
         setItems(gui, lightBlueSlots, lightBlue);
-        Augmented augmented = new Augmented();
         Map<Integer, ItemStack> infusedItems = Map.ofEntries(
                 Map.entry(12, Augmented.createFROST()),
-                Map.entry(14, augmented.createSPEED()),
+                Map.entry(14, Augmented.createSPEED()),
                 Map.entry(20, Augmented.createFEATHER()),
                 Map.entry(21, Augmented.createOCEAN()),
                 Map.entry(22, Augmented.createINVIS()),
@@ -50,10 +45,10 @@ public class GUI implements Listener, CommandExecutor {
                 Map.entry(24, Augmented.createEME()),
                 Map.entry(29, Augmented.createHEART()),
                 Map.entry(30, Augmented.createREGEN()),
-                Map.entry(31, augmented.createST()),
+                Map.entry(31, Augmented.createST()),
                 Map.entry(32, Augmented.createFIRE()),
                 Map.entry(33, Augmented.createHASTE()),
-                Map.entry(40, augmented.createTHUNDER())
+                Map.entry(40, Augmented.createTHUNDER())
         );
 
         infusedItems.forEach(gui::setItem);
@@ -112,16 +107,15 @@ public class GUI implements Listener, CommandExecutor {
         String title = event.getView().getTitle();
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
-        Augmented augmented = new Augmented();
         if (title.equals("§lInfuses")) {
             event.setCancelled(true);
             if (Augmented.ISFROST(clicked)) {
                 openDaGui(player, Augmented::createFROST, Frost::createFrost, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (augmented.ISSPEED(clicked)) {
+            } else if (Augmented.ISSPEED(clicked)) {
                 openDaGui(player, Augmented::createSPEED, Speed::createSPEED, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (augmented.ISST(clicked)) {
+            } else if (Augmented.ISST(clicked)) {
                 openDaGui(player, Augmented::createST, Strength::createStealthGem, Material.RED_STAINED_GLASS_PANE);
-            } else if (augmented.ISTHUNDER(clicked)) {
+            } else if (Augmented.ISTHUNDER(clicked)) {
                 openDaGui(player, Augmented::createTHUNDER, Thunder::createTHUNDER, Material.YELLOW_STAINED_GLASS_PANE);
             } else if (Augmented.ISTHIEF(clicked)) {
                 openDaGui(player, Augmented::createTHF, Thief::createTHF, Material.RED_STAINED_GLASS_PANE);
@@ -155,11 +149,9 @@ public class GUI implements Listener, CommandExecutor {
         }
     }
 
-
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("infuses")) {
-            if (sender instanceof Player) {
-                Player player = (Player)sender;
+            if (sender instanceof Player player) {
                 this.openSwordSelectionGUI(player);
             } else {
                 sender.sendMessage(String.valueOf(ChatColor.RED) + "Only players can use this command.");

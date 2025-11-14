@@ -62,7 +62,7 @@ public class Drop implements Listener {
     }
 
     private void playDustEffect(Player player, final boolean bottomToTop, EffectMapping itemName, Location location) {
-        final Location base = location.add(0.0D, 0.1D, 0.0D);
+        final Location base = location.add(0.0, 0.1, 0.0);
         final World world = location.getWorld();
         Color color = null;
         String itemthingy = itemName.getEffectName();
@@ -118,24 +118,24 @@ public class Drop implements Listener {
         }
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
-        final double radius = 0.6D;
+        final double radius = 0.6;
         (new BukkitRunnable() {
-            double y = 0.0D;
+            double y = 0.0;
 
             public void run() {
-                if (this.y > 2.0D) {
+                if (this.y > 2.0) {
                     this.cancel();
                 } else {
-                    double ringY = bottomToTop ? this.y : 2.0D - this.y;
+                    double ringY = bottomToTop ? this.y : 2.0 - this.y;
 
                     for(int i = 0; i < points; ++i) {
-                        double angle = 6.283185307179586D * (double)i / (double)points;
+                        double angle = Math.PI * 2 * i / points;
                         double x = Math.cos(angle) * radius;
                         double z = Math.sin(angle) * radius;
-                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0D, 0.0D, 0.0D, 1.0D, dust);
+                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0, 0.0, 0.0, 1.0, dust);
                     }
 
-                    this.y += 0.15D;
+                    this.y += 0.15;
                 }
             }
         }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
@@ -143,7 +143,7 @@ public class Drop implements Listener {
     }
 
     private void playDustEffectDrop(Player player, final boolean bottomToTop, EffectMapping itemName, Location location) {
-        final Location base = location.add(0.0D, -1.5D, 0.0D);
+        final Location base = location.add(0.0, -1.5, 0.0);
         final World world = location.getWorld();
         Color color = null;
         String itemthingy = itemName.getEffectName();
@@ -199,24 +199,24 @@ public class Drop implements Listener {
         }
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
-        final double radius = 0.6D;
+        final double radius = 0.6;
         (new BukkitRunnable() {
-            double y = 0.0D;
+            double y = 0.0;
 
             public void run() {
-                if (this.y > 2.0D) {
+                if (this.y > 2.0) {
                     this.cancel();
                 } else {
-                    double ringY = bottomToTop ? this.y : 2.0D - this.y;
+                    double ringY = bottomToTop ? this.y : 2.0 - this.y;
 
                     for(int i = 0; i < points; ++i) {
-                        double angle = 6.283185307179586D * (double)i / (double)points;
+                        double angle = Math.PI * 2 * i / points;
                         double x = Math.cos(angle) * radius;
                         double z = Math.sin(angle) * radius;
-                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0D, 0.0D, 0.0D, 1.0D, dust);
+                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0, 0.0, 0.0, 1.0, dust);
                     }
 
-                    this.y += 0.15D;
+                    this.y += 0.15;
                 }
             }
         }).runTaskTimer(Infuse.getInstance(), 0L, 1L);

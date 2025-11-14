@@ -32,17 +32,8 @@ public class Apophis implements Listener {
         this.startHealthCheckTask();
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(true) {
-                    Player onlinePlayer;
-                    do {
-                        if (!var1.hasNext()) {
-                            return;
-                        }
-
-                        onlinePlayer = (Player)var1.next();
-                    } while(!Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "1") && !Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "2"));
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    if (!Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "1") && !Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "2")) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Apophis.this.applyPassiveEffects(onlinePlayer);
@@ -76,7 +67,7 @@ public class Apophis implements Listener {
             public void run() {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0D);
+                    maxHealthAttribute.setBaseValue(20.0);
                 }
 
             }
@@ -86,31 +77,19 @@ public class Apophis implements Listener {
     private void startHealthCheckTask() {
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                    if (maxHealthAttribute == null) continue;
+                    double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                while(true) {
-                    Player player;
-                    AttributeInstance maxHealthAttribute;
-                    double currentMaxHealth;
-                    do {
-                        do {
-                            if (!var1.hasNext()) {
-                                return;
-                            }
+                    if (!Apophis.this.hasImmortalHackEquipped2(player, "1") && !Apophis.this.hasImmortalHackEquipped2(player, "2")) continue;
 
-                            player = (Player)var1.next();
-                            maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-                        } while(maxHealthAttribute == null);
-
-                        currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    } while(!Apophis.this.hasImmortalHackEquipped2(player, "1") && !Apophis.this.hasImmortalHackEquipped2(player, "2"));
-
-                    if (currentMaxHealth == 20.0D) {
-                        maxHealthAttribute.setBaseValue(30.0D);
+                    if (currentMaxHealth == 20) {
+                        maxHealthAttribute.setBaseValue(30);
                     }
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
+        }).runTaskTimer(Infuse.getInstance(), 0, 20);
     }
 
     private boolean hasImmortalHackEquipped2(Player player, String tier) {
@@ -171,26 +150,17 @@ public class Apophis implements Listener {
 
         if (event.getEntity() instanceof Player target) {
             if (sparkActive > 0) {
-                target.sendTitle(
-                        "\uE090",
-                        "",
-                        0,
-                        60,
-                        0
-                );
+                target.sendTitle("\uE090", "", 0, 60, 0);
             }
         }
     }
     public void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
             final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            Iterator var3 = player.getNearbyEntities(5.0D, 5.0D, 5.0D).iterator();
-
-            while(var3.hasNext()) {
-                Entity entity = (Entity)var3.next();
+            for (Entity entity : player.getNearbyEntities(5.0, 5.0, 5.0)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
                 }
@@ -203,7 +173,7 @@ public class Apophis implements Listener {
                 }
             }).runTaskLater(this.plugin, 20L);
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(40.0D);
+                maxHealthAttribute.setBaseValue(40.0);
             }
 
             String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
@@ -214,12 +184,12 @@ public class Apophis implements Listener {
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
 
-            long aphDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("apophis.cooldown.default")).longValue();
-            long aphAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("apophis.cooldown.augmented")).longValue();
+            long aphDefaultCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.default");;
+            long aphAugmentedCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.augmented");;
             long aphCooldown = isAugmentedAph ? aphAugmentedCooldown : aphDefaultCooldown;
 
-            long aphDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("apophis.duration.default")).longValue();
-            long aphAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("apophis.duration.augmented")).longValue();
+            long aphDefaultDuration = Infuse.getInstance().getCanfig("apophis.duration.default");;
+            long aphAugmentedDuration = Infuse.getInstance().getCanfig("apophis.duration.augmented");;
             long aphDuration = isAugmentedAph ? aphAugmentedDuration : aphDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "apophis", aphDuration);
@@ -227,7 +197,7 @@ public class Apophis implements Listener {
             (new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20.0D);
+                        maxHealthAttribute.setBaseValue(20.0);
                     }
                 }
             }).runTaskLater(Infuse.getInstance(), 1200L);
@@ -246,22 +216,19 @@ public class Apophis implements Listener {
                     Location center = caster.getLocation();
                     World world = center.getWorld();
                     if (this.tick > 0 && this.tick % 20 == 0) {
-                        world.playSound(center, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1.0F, 1.0F);
+                        world.playSound(center, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
 
                         for(int angle = 0; angle < 360; angle += 20) {
-                            double rad = Math.toRadians((double)angle);
-                            double offsetX = 5.0D * Math.cos(rad);
-                            double offsetZ = 5.0D * Math.sin(rad);
-                            Location particleLoc = center.clone().add(offsetX, 0.1D, offsetZ);
-                            world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05D, 0.05D, 0.05D, 0.01D);
+                            double rad = Math.toRadians(angle);
+                            double offsetX = 5.0 * Math.cos(rad);
+                            double offsetZ = 5.0 * Math.sin(rad);
+                            Location particleLoc = center.clone().add(offsetX, 0.1, offsetZ);
+                            world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05, 0.05, 0.05, 0.01);
                         }
 
-                        Iterator var11 = world.getPlayers().iterator();
-
-                        while(var11.hasNext()) {
-                            Player target = (Player)var11.next();
-                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5.0D) {
-                                target.damage(8.0D, caster);
+                        for (Player target : world.getPlayers()) {
+                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5.0) {
+                                target.damage(8.0, caster);
                             }
                         }
                     }
@@ -274,17 +241,14 @@ public class Apophis implements Listener {
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5.0D;
-        Iterator var6 = world.getPlayers().iterator();
-
-        while(var6.hasNext()) {
-            Player target = (Player)var6.next();
+        double explosionRadius = 5;
+        for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0D, 2.0D, 0.0D));
+                target.setVelocity(new Vector(0.0, 2.0, 0.0));
             }
         }
 
-        world.playSound(startLoc, Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
+        world.playSound(startLoc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         (new BukkitRunnable() {
             int tick = 0;
 
@@ -292,19 +256,19 @@ public class Apophis implements Listener {
                 if (this.tick >= 60) {
                     this.cancel();
                 } else {
-                    double baseRadius = 5.0D;
-                    double spreadFactor = (double)this.tick * 0.1D;
+                    double baseRadius = 5.0;
+                    double spreadFactor = this.tick * 0.1;
                     double circleRadius = baseRadius + spreadFactor;
-                    double particleHeightOffset = (double)this.tick * 3.0D;
-                    if (particleHeightOffset > 30.0D) {
+                    double particleHeightOffset = this.tick * 3.0;
+                    if (particleHeightOffset > 30.0) {
                         this.cancel();
                     } else {
                         for(int angle = 0; angle < 360; ++angle) {
-                            double rad = Math.toRadians((double)angle);
+                            double rad = Math.toRadians(angle);
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0D, 0.0D, 0.0D, 0.0D, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;

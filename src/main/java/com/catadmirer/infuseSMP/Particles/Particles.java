@@ -2,10 +2,8 @@ package com.catadmirer.infuseSMP.Particles;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
-import java.util.Iterator;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -13,15 +11,12 @@ import org.bukkit.entity.Player;
 public class Particles {
     public void startTask() {
         Bukkit.getGlobalRegionScheduler().runAtFixedRate(Infuse.getInstance(), (task) -> {
-            Iterator var2 = Bukkit.getOnlinePlayers().iterator();
-
-            while(var2.hasNext()) {
-                Player player = (Player)var2.next();
+            for (Player player : Bukkit.getOnlinePlayers()) {
                 this.applyParticlesForHack(player, "1");
                 this.applyParticlesForHack(player, "2");
             }
 
-        }, 1L, 19L);
+        }, 1, 19);
     }
 
     private void applyParticlesForHack(Player player, String type) {
@@ -120,7 +115,7 @@ public class Particles {
 
 
     public static void spawnDragon(Player player) {
-        player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0.0D, 1.0D, 0.0D), 32, 0.3D, 0.5D, 0.3D, 0.0D);
+        player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0.0, 1.0, 0.0), 32, 0.3, 0.5, 0.3, 0.0);
     }
 }
 

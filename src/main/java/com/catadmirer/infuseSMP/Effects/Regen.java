@@ -41,8 +41,7 @@ public class Regen implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player)event.getDamager();
+        if (event.getDamager() instanceof Player player) {
             if (this.hasRegenEquipped(player, "1") || this.hasRegenEquipped(player, "2")) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 1, false, false));
             }
@@ -51,13 +50,11 @@ public class Regen implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntityHeal(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player)event.getEntity();
+        if (event.getEntity() instanceof Player player) {
             if (this.hasRegenEquipped(player, "1") || this.hasRegenEquipped(player, "2")) {
-                if (event.getFinalDamage() <= 0.0D) {
-                    player.setSaturation(Math.min(player.getSaturation() + 6.0F, 20.0F));
+                if (event.getFinalDamage() <= 0.0) {
+                    player.setSaturation(Math.min(player.getSaturation() + 6, 20));
                 }
-
             }
         }
     }
@@ -91,11 +88,10 @@ public class Regen implements Listener {
 
     @EventHandler
     public void onEntityDamageByPlayer(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player damager = (Player)event.getDamager();
+        if (event.getDamager() instanceof Player damager) {
             if (CooldownManager.isEffectActive(damager.getUniqueId(), "regen")) {
                 double damage = event.getFinalDamage();
-                damager.setHealth(Math.min(damager.getHealth() + damage / 2.0D, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+                damager.setHealth(Math.min(damager.getHealth() + damage / 2.0, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
             }
         }
     }
@@ -108,17 +104,17 @@ public class Regen implements Listener {
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
-            long defaultCooldown = ((Integer) Infuse.getInstance().getCanfig("regen.cooldown.default")).longValue();
-            long augmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("regen.cooldown.augmented")).longValue();
+            long defaultCooldown = Infuse.getInstance().getCanfig("regen.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getCanfig("regen.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-            long defaultDuration = ((Integer) Infuse.getInstance().getCanfig("regen.duration.default")).longValue();
-            long augmentedDuration = ((Integer) Infuse.getInstance().getCanfig("regen.duration.augmented")).longValue();
+            long defaultDuration = Infuse.getInstance().getCanfig("regen.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getCanfig("regen.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
             CooldownManager.setCooldown(playerUUID, "regen", cooldown);
             CooldownManager.setDuration(playerUUID, "regen", duration);
 
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         }
     }
 

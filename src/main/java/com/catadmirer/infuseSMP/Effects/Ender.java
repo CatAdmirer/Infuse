@@ -5,7 +5,14 @@ import java.util.*;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import org.bukkit.*;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
@@ -171,16 +178,16 @@ public class Ender implements Listener {
                         (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(gemName)));
 
-        long featherDefaultCooldown = ((Integer) Infuse.getInstance().getCanfig("feather.cooldown.default")).longValue();
-        long featherAugmentedCooldown = ((Integer) Infuse.getInstance().getCanfig("feather.cooldown.augmented")).longValue();
+        long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
+        long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
         long endCooldown = isAugEnder ? featherAugmentedCooldown : featherDefaultCooldown;
-        long featherDefaultDuration = ((Integer) Infuse.getInstance().getCanfig("feather.duration.default")).longValue();
-        long featherAugmentedDuration = ((Integer) Infuse.getInstance().getCanfig("feather.duration.augmented")).longValue();
+        long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
+        long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
         long endDuration = isAugEnder ? featherAugmentedDuration : featherDefaultDuration;
 
         CooldownManager.setDuration(playerUUID, "ender", endDuration);
         CooldownManager.setCooldown(playerUUID, "ender", endCooldown);
-        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         Location startLoc = player.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
@@ -287,7 +294,7 @@ public class Ender implements Listener {
         }
         Fireball fireball = player.launchProjectile(Fireball.class);
         fireball.setIsIncendiary(false);
-        fireball.setYield(4F);
+        fireball.setYield(4);
         fireball.setCustomName("Cursing Projectile");
         dragonBreathCooldowns.put(uuid, 30);
 
@@ -307,8 +314,7 @@ public class Ender implements Listener {
         if (!(event.getEntity() instanceof Fireball fireball)) return;
         if (!"Cursing Projectile".equals(fireball.getCustomName())) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
-        Player shooter = (Player) fireball.getShooter();
-        if (shooter == null) return;
+        if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
         target.sendMessage(ChatColor.RED + "You have been cursed!");

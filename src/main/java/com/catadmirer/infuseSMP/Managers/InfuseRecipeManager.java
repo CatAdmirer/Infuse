@@ -158,12 +158,12 @@ public class InfuseRecipeManager implements Listener {
         private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
             if (Infuse.getInstance().<Boolean>getCanfig("brewing_particles")) {
                 World world = brewingStandLocation.getWorld();
-                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000.0D, brewingStandLocation.getZ());
+                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000.0, brewingStandLocation.getZ());
                 final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
                 crystal.setShowingBottom(false);
                 crystal.setInvulnerable(true);
                 crystal.setInvisible(true);
-                Location targetLoc = brewingStandLocation.clone().add(0.0D, 600.0D - brewingStandLocation.getY(), 0.0D);
+                Location targetLoc = brewingStandLocation.clone().add(0.0, 600.0 - brewingStandLocation.getY(), 0.0);
                 final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
                 marker.setMarker(true);
                 marker.setInvisible(true);
@@ -283,11 +283,11 @@ public class InfuseRecipeManager implements Listener {
 
 
         new BukkitRunnable() {
-            double progress = 1.0D;
-            final double progressDecrement = 1.0D / (ritualDuration * 20);
+            double progress = 1.0;
+            final double progressDecrement = 1.0 / (ritualDuration * 20);
 
             public void run() {
-                if (progress <= 0.0D) {
+                if (progress <= 0.0) {
                     activeBossBar.removeAll();
                     String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
                     String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
@@ -401,8 +401,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        if (!(event.getRecipe() instanceof ShapedRecipe)) return;
-        ShapedRecipe shaped = (ShapedRecipe) event.getRecipe();
+        if (!(event.getRecipe() instanceof ShapedRecipe shaped)) return;
         String recipeKey = shaped.getKey().getKey();
         if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
         Player player = (Player) event.getWhoClicked();
@@ -548,9 +547,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onPrepareCraft(PrepareItemCraftEvent event) {
-        if (!(event.getRecipe() instanceof ShapedRecipe)) return;
-
-        ShapedRecipe shaped = (ShapedRecipe) event.getRecipe();
+        if (!(event.getRecipe() instanceof ShapedRecipe shaped)) return;
         String recipeKey = shaped.getKey().getKey();
 
         if (!firstTimeRewards.containsKey(recipeKey) || !standardResults.containsKey(recipeKey)) return;

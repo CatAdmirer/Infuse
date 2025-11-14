@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.Managers;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -169,39 +170,39 @@ public class EffectMaps {
     public static final Map<String, net.md_5.bungee.api.ChatColor> color = new HashMap<>();
 
     static {
-        color.put("emerald", net.md_5.bungee.api.ChatColor.GREEN);
-        color.put("haste", net.md_5.bungee.api.ChatColor.GOLD);
-        color.put("heart", net.md_5.bungee.api.ChatColor.RED);
-        color.put("invis", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("frost", net.md_5.bungee.api.ChatColor.AQUA);
-        color.put("feather", net.md_5.bungee.api.ChatColor.of("#BEA3CA"));
-        color.put("thunder", net.md_5.bungee.api.ChatColor.YELLOW);
-        color.put("speed", net.md_5.bungee.api.ChatColor.of("#E8BD74"));
-        color.put("regen", net.md_5.bungee.api.ChatColor.RED);
-        color.put("ocean", net.md_5.bungee.api.ChatColor.BLUE);
-        color.put("fire", net.md_5.bungee.api.ChatColor.of("#E85720"));
-        color.put("strength", net.md_5.bungee.api.ChatColor.DARK_RED);
-        color.put("ender", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("apophis", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("thief", net.md_5.bungee.api.ChatColor.DARK_RED);
-        color.put("aug_strength", net.md_5.bungee.api.ChatColor.DARK_RED);
-        color.put("aug_thunder", net.md_5.bungee.api.ChatColor.YELLOW);
-        color.put("aug_speed", net.md_5.bungee.api.ChatColor.of("#E8BD74"));
-        color.put("aug_regen", net.md_5.bungee.api.ChatColor.RED);
-        color.put("aug_ocean", net.md_5.bungee.api.ChatColor.BLUE);
-        color.put("aug_emerald", net.md_5.bungee.api.ChatColor.GREEN);
-        color.put("aug_fire", net.md_5.bungee.api.ChatColor.of("#E85720"));
-        color.put("aug_invis", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("aug_frost", net.md_5.bungee.api.ChatColor.AQUA);
-        color.put("aug_haste", net.md_5.bungee.api.ChatColor.GOLD);
-        color.put("aug_heart", net.md_5.bungee.api.ChatColor.RED);
-        color.put("aug_feather", net.md_5.bungee.api.ChatColor.of("#BEA3CA"));
-        color.put("aug_ender", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("aug_apophis", net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        color.put("aug_thief", net.md_5.bungee.api.ChatColor.DARK_RED);
+        color.put("emerald", ChatColor.GREEN);
+        color.put("haste", ChatColor.GOLD);
+        color.put("heart", ChatColor.RED);
+        color.put("invis", ChatColor.DARK_PURPLE);
+        color.put("frost", ChatColor.AQUA);
+        color.put("feather", ChatColor.of("#BEA3CA"));
+        color.put("thunder", ChatColor.YELLOW);
+        color.put("speed", ChatColor.of("#E8BD74"));
+        color.put("regen", ChatColor.RED);
+        color.put("ocean", ChatColor.BLUE);
+        color.put("fire", ChatColor.of("#E85720"));
+        color.put("strength", ChatColor.DARK_RED);
+        color.put("ender", ChatColor.DARK_PURPLE);
+        color.put("apophis", ChatColor.DARK_PURPLE);
+        color.put("thief", ChatColor.DARK_RED);
+        color.put("aug_strength", ChatColor.DARK_RED);
+        color.put("aug_thunder", ChatColor.YELLOW);
+        color.put("aug_speed", ChatColor.of("#E8BD74"));
+        color.put("aug_regen", ChatColor.RED);
+        color.put("aug_ocean", ChatColor.BLUE);
+        color.put("aug_emerald", ChatColor.GREEN);
+        color.put("aug_fire", ChatColor.of("#E85720"));
+        color.put("aug_invis", ChatColor.DARK_PURPLE);
+        color.put("aug_frost", ChatColor.AQUA);
+        color.put("aug_haste", ChatColor.GOLD);
+        color.put("aug_heart", ChatColor.RED);
+        color.put("aug_feather", ChatColor.of("#BEA3CA"));
+        color.put("aug_ender", ChatColor.DARK_PURPLE);
+        color.put("aug_apophis", ChatColor.DARK_PURPLE);
+        color.put("aug_thief", ChatColor.DARK_RED);
     }
 
     public static net.md_5.bungee.api.ChatColor getColorEffect(String key) {
-        return color.getOrDefault(key, color.getOrDefault(key, net.md_5.bungee.api.ChatColor.GRAY));
+        return color.getOrDefault(key, color.getOrDefault(key, ChatColor.GRAY));
     }
 }
