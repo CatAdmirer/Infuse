@@ -18,7 +18,7 @@ import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Managers.*;
 import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.Placeholders.InfusePlaceholders;
-import com.catadmirer.infuseSMP.Trust.TrustCommand;
+import com.catadmirer.infuseSMP.Commands.TrustCommand;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;

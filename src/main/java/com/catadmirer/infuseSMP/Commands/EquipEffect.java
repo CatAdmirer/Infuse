@@ -94,9 +94,9 @@ public class EquipEffect implements Listener, CommandExecutor {
                     event.setCancelled(true);
                     player.sendMessage(String.valueOf(ChatColor.RED) + "Your inventory is full! Make space before unequipping.");
                 } else {
-                    this.handleLegendaryHack(player, mainHandItem, hackMapping.getHackName());
+                    this.handleLegendaryHack(player, mainHandItem, hackMapping.getEffectName());
                     this.consumeMainHandItem(player);
-                    String hackName = hackMapping.getHackName();
+                    String hackName = hackMapping.getEffectName();
                     if (hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
                             hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
                         aphopisCommand.disguiseAsAphopis(player);
@@ -180,7 +180,7 @@ public class EquipEffect implements Listener, CommandExecutor {
         String hackName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
         if (hackName != null) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), type);
-            EffectMapping hackMapping = EffectMapping.fromHackName(hackName);
+            EffectMapping hackMapping = EffectMapping.fromEffectName(hackName);
             if (hackMapping != null) {
                 ItemStack item = hackMapping.createItem();
                 player.getWorld().dropItemNaturally(player.getLocation(), item);

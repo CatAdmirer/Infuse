@@ -146,7 +146,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
         private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-            if (Infuse.getInstance().getCanfig("brewing_particles")) {
+            if (Infuse.getInstance().<Boolean>getCanfig("brewing_particles")) {
                 World world = brewingStandLocation.getWorld();
                 Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000.0D, brewingStandLocation.getZ());
                 final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
@@ -255,7 +255,7 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
 
         Bukkit.broadcastMessage(formattedMessage);
-        if (Infuse.getInstance().getCanfig("enable_discord_broadcasts")) {
+        if (Infuse.getInstance().<Boolean>getCanfig("enable_discord_broadcasts")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
         String webhookUrl = Infuse.getInstance().getCanfig("discord_webhook_url");
@@ -604,7 +604,7 @@ public class InfuseRecipeManager implements Listener {
                 && event.getClickedBlock().getType() == Material.BREWING_STAND) {
             event.setCancelled(true);
             Player player = event.getPlayer();
-            if (plugin.getCanfig("brewing_gui")) {
+            if (plugin.<Boolean>getCanfig("brewing_gui")) {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);

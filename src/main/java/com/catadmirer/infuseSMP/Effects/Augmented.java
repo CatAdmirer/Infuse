@@ -291,7 +291,7 @@ public class Augmented {
         return gem;
     }
 
-    public boolean ISST(ItemStack item) {
+    public static boolean ISST(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_strength");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
@@ -321,7 +321,7 @@ public class Augmented {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public boolean ISSPEED(ItemStack item) {
+    public static boolean ISSPEED(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_speed");
         gemName = applyHexColors(gemName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
@@ -354,7 +354,7 @@ public class Augmented {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public boolean ISTHUNDER(ItemStack item) {
+    public static boolean ISTHUNDER(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_thunder");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }

@@ -142,7 +142,7 @@ public class Ocean implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (Infuse.getInstance().getCanfig("invis_deaths")) {
+        if (Infuse.getInstance().<Boolean>getCanfig("invis_deaths")) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 String msg = Infuse.getInstance().getCanfig("invis.kill_invis");
                 msg = msg.replace("%victim%", victim.getName())

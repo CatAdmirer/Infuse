@@ -65,7 +65,7 @@ public class Drop implements Listener {
         final Location base = location.add(0.0D, 0.1D, 0.0D);
         final World world = location.getWorld();
         Color color = null;
-        String itemthingy = itemName.getHackName();
+        String itemthingy = itemName.getEffectName();
         String meowmeow = stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
@@ -146,7 +146,7 @@ public class Drop implements Listener {
         final Location base = location.add(0.0D, -1.5D, 0.0D);
         final World world = location.getWorld();
         Color color = null;
-        String itemthingy = itemName.getHackName();
+        String itemthingy = itemName.getEffectName();
         String meowmeow = stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);

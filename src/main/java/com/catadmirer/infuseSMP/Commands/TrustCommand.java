@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.Managers.EffectManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,9 +12,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class TrustCommand implements CommandExecutor {
     private final Infuse plugin;
-    private final DataManager dataManager;
+    private final EffectManager dataManager;
 
-    public TrustCommand(Infuse plugin, DataManager dataManager) {
+    public TrustCommand(Infuse plugin, EffectManager dataManager) {
         this.plugin = plugin;
         this.dataManager = dataManager;
     }
