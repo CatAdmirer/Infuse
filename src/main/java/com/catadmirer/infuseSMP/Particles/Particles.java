@@ -12,18 +12,18 @@ public class Particles {
     public void startTask() {
         Bukkit.getGlobalRegionScheduler().runAtFixedRate(Infuse.getInstance(), (task) -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                this.applyParticlesForHack(player, "1");
-                this.applyParticlesForHack(player, "2");
+                this.applyParticlesForEffect(player, "1");
+                this.applyParticlesForEffect(player, "2");
             }
 
         }, 1, 19);
     }
 
-    private void applyParticlesForHack(Player player, String type) {
-        String hackName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (hackName == null) return;
+    private void applyParticlesForEffect(Player player, String type) {
+        String effectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        if (effectName == null) return;
 
-        String stripped = ChatColor.stripColor(hackName);
+        String stripped = ChatColor.stripColor(effectName);
         Integer abilityId = EffectMaps.getEffectNumber(stripped);
         if (abilityId == null) return;
         switch (abilityId) {

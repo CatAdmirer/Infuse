@@ -15,7 +15,7 @@ commands:
     usage: /controls
   cleareffect:
     description: Clear all effects from a player.
-    usage: /cleareffect <player>
+    usage: /cleareffects <player>
     permission: op
   lspark:
     description: Activates the first ability.

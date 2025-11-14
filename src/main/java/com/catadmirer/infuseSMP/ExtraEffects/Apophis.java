@@ -33,7 +33,7 @@ public class Apophis implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "1") && !Apophis.this.hasImmortalHackEquipped2(onlinePlayer, "2")) continue;
+                    if (!Apophis.this.hasEffect(onlinePlayer, "1") && !Apophis.this.hasEffect(onlinePlayer, "2")) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Apophis.this.applyPassiveEffects(onlinePlayer);
@@ -82,7 +82,7 @@ public class Apophis implements Listener {
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                    if (!Apophis.this.hasImmortalHackEquipped2(player, "1") && !Apophis.this.hasImmortalHackEquipped2(player, "2")) continue;
+                    if (!Apophis.this.hasEffect(player, "1") && !Apophis.this.hasEffect(player, "2")) continue;
 
                     if (currentMaxHealth == 20) {
                         maxHealthAttribute.setBaseValue(30);
@@ -92,32 +92,32 @@ public class Apophis implements Listener {
         }).runTaskTimer(Infuse.getInstance(), 0, 20);
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("apophis");
-        String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("apophis");
+        String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public static boolean isEffect(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("apophis");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("apophis");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("apophis");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("apophis");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("apophis");
             meta.setColor(Color.fromRGB(69, 3, 62));
             meta.setLore(lore);
             meta.setCustomModelData(25);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     @EventHandler
@@ -128,11 +128,11 @@ public class Apophis implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = this.hasImmortalHackEquipped2(player, "2");
+            boolean isPrimary = this.hasEffect(player, "1");
+            boolean isSecondary = this.hasEffect(player, "2");
             UUID playerUUID = player.getUniqueId();
             if (!CooldownManager.isOnCooldown(playerUUID, "apophis") || CooldownManager.isOnCooldown(playerUUID, "apophis")) {
-                if (player.isSneaking() && isLegendary || !player.isSneaking() && isCommon) {
+                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
                     this.activateSpark(player);
                 }
@@ -176,13 +176,13 @@ public class Apophis implements Listener {
                 maxHealthAttribute.setBaseValue(40.0);
             }
 
-            String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
+            String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
 
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)))
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
 
             long aphDefaultCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.default");;
             long aphAugmentedCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.augmented");;

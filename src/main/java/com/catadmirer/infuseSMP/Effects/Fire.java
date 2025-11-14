@@ -42,7 +42,7 @@ public class Fire implements Listener, PacketListener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Fire.this.hasImmortalHackEquipped(player, "1") || Fire.this.hasImmortalHackEquipped(player, "2")) {
+                    if (Fire.this.hasEffect(player, "1") || Fire.this.hasEffect(player, "2")) {
                         Fire.this.applyFireResistance(player);
                         Fire.this.handleSwim(player);
                     }
@@ -56,12 +56,12 @@ public class Fire implements Listener, PacketListener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("fire");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("fire");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("fire"));
             for (int i = 0; i < lore.size(); i++) {
                 lore.set(i, applyHexColors(lore.get(i)));
@@ -70,10 +70,10 @@ public class Fire implements Listener, PacketListener {
             meta.setColor(Color.fromRGB(255, 165, 0));
             meta.setLore(lore);
             meta.setCustomModelData(3);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static String applyHexColors(String input) {
@@ -105,7 +105,7 @@ public class Fire implements Listener, PacketListener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inLava = player.isInLava();
         if (!event.isGliding()) {
-            if (inLava && Fire.this.hasImmortalHackEquipped(player, "1") || inLava && Fire.this.hasImmortalHackEquipped(player, "2")) {
+            if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
                 event.setCancelled(true);
             }
         }
@@ -116,7 +116,7 @@ public class Fire implements Listener, PacketListener {
         Player player = event.getPlayer();
         boolean inLava = player.isInLava();
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inLava && Fire.this.hasImmortalHackEquipped(player, "1") || inLava && Fire.this.hasImmortalHackEquipped(player, "2")) {
+        if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -125,17 +125,17 @@ public class Fire implements Listener, PacketListener {
     }
 
 
-    private boolean hasImmortalHackEquipped(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("fire");
-        String gemName2 = Infuse.getInstance().getEffect("aug_fire");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("fire");
+        String effectName2 = Infuse.getInstance().getEffect("aug_fire");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                 if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
                     projectile.setFireTicks(100);
                 }
@@ -147,7 +147,7 @@ public class Fire implements Listener, PacketListener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                     Material blockType = player.getLocation().getBlock().getType();
                     if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
                         event.setCancelled(true);
@@ -161,7 +161,7 @@ public class Fire implements Listener, PacketListener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 if (count >= 20) {
@@ -182,9 +182,9 @@ public class Fire implements Listener, PacketListener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
                     event.setCancelled(true);
@@ -207,7 +207,7 @@ public class Fire implements Listener, PacketListener {
             }
 
             this.spawnSparkEffect(player);
-            String gemName2 = Infuse.getInstance().getEffect("aug_fire");
+            String effectName2 = Infuse.getInstance().getEffect("aug_fire");
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
@@ -215,9 +215,9 @@ public class Fire implements Listener, PacketListener {
             }.runTaskLater(this.plugin, 20L);
             boolean isAugmentedFire =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(stripAllColors(gemName2))) ||
+                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(gemName2)));
+                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2)));
 
             long sparkDefaultCooldown = Infuse.getInstance().getCanfig("fire.cooldown.default");
             long sparkAugmentedCooldown = Infuse.getInstance().getCanfig("fire.cooldown.augmented");

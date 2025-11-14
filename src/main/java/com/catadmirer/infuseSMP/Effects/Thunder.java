@@ -50,19 +50,19 @@ public class Thunder implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("thunder");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("thunder");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(255, 255, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("thunder");
             meta.setLore(lore);
             meta.setCustomModelData(13);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static boolean isEffect(ItemStack item) {
@@ -73,12 +73,12 @@ public class Thunder implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped(Player player) {
-        String hack1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        String hack2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-        String gemName = plugin.getEffect("thunder");
-        String gemName2 = plugin.getEffect("aug_thunder");
-        return hack1 != null && (hack1.equals(gemName) || hack2 != null && (hack2.equals(gemName2)));
+    private boolean hasEffect(Player player) {
+        String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+        String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+        String effectName = plugin.getEffect("thunder");
+        String effectName2 = plugin.getEffect("aug_thunder");
+        return effect1 != null && (effect1.equals(effectName) || effect2 != null && (effect2.equals(effectName2)));
     }
 
     @EventHandler
@@ -87,7 +87,7 @@ public class Thunder implements Listener {
             if (!trident.hasMetadata("thunderProcessed")) {
                 trident.setMetadata("thunderProcessed", new FixedMetadataValue(plugin, true));
                 if (trident.getShooter() instanceof Player attacker) {
-                    if (this.hasImmortalHackEquipped(attacker)) {
+                    if (this.hasEffect(attacker)) {
                         if (event.getEntity() instanceof LivingEntity target) {
                             target.getWorld().strikeLightningEffect(target.getLocation());
                             target.damage(4.0, attacker);
@@ -107,9 +107,9 @@ public class Thunder implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasThunderEquipped(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasThunderEquipped(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasThunderEquipped(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasThunderEquipped(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "thunder")) {
                     event.setCancelled(true);
@@ -120,10 +120,10 @@ public class Thunder implements Listener {
     }
 
     private boolean hasThunderEquipped(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = plugin.getEffect("thunder");
-        String gemName2 = plugin.getEffect("aug_thunder");
-        return currentHack != null && (currentHack.equals(gemName) || (currentHack.equals(gemName2)));
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = plugin.getEffect("thunder");
+        String effectName2 = plugin.getEffect("aug_thunder");
+        return currentEffect != null && (currentEffect.equals(effectName) || (currentEffect.equals(effectName2)));
     }
 
     public void activateSpark(final Player caster) {
@@ -132,13 +132,13 @@ public class Thunder implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !this.activeSparks.contains(playerUUID)) {
             this.activeSparks.add(playerUUID);
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String gemName2 = plugin.getEffect("aug_thunder");
+            String effectName2 = plugin.getEffect("aug_thunder");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
-                            .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2)))) ||
+                            .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
-                                    .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2))));
+                                    .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
             long defaultCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.default");
             long augmentedCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.augmented");
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
@@ -192,7 +192,7 @@ public class Thunder implements Listener {
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (this.hasImmortalHackEquipped(attacker)) {
+            if (this.hasEffect(attacker)) {
                 if (event.getEntity() instanceof LivingEntity target) {
                     UUID targetUUID = target.getUniqueId();
                     long currentTime = System.currentTimeMillis();

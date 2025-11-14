@@ -33,7 +33,7 @@ public class Haste implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (Haste.this.hasImmortalHackEquipped2(player, "1") || (Haste.this.hasImmortalHackEquipped2(player, "2"))) {
+                    if (Haste.this.hasEffect(player, "1") || (Haste.this.hasEffect(player, "2"))) {
                         Haste.this.enchantItemIfApplicable(player);
                     }
                 }
@@ -43,19 +43,19 @@ public class Haste implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("haste");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("haste");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("haste");
             meta.setColor(Color.fromRGB(255, 204, 51));
             meta.setLore(lore);
             meta.setCustomModelData(5);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     private void enchantItemIfApplicable(Player player) {
@@ -79,9 +79,9 @@ public class Haste implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
                     event.setCancelled(true);
@@ -91,11 +91,11 @@ public class Haste implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("aug_haste");
-        String gemName2 = Infuse.getInstance().getEffect("haste");
-        return currentHack != null && (currentHack.equals(gemName2) || currentHack.equals(gemName));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("aug_haste");
+        String effectName2 = Infuse.getInstance().getEffect("haste");
+        return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
     public void activateSpark(Player player) {
@@ -103,12 +103,12 @@ public class Haste implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String gemName = Infuse.getInstance().getEffect("aug_haste");
+            String effectName = Infuse.getInstance().getEffect("aug_haste");
             boolean isAugmentedHaste =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName))) ||
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName)));
+                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)));
             long hasteDefaultCooldown = Infuse.getInstance().getCanfig("haste.cooldown.default");
             long hasteAugmentedCooldown = Infuse.getInstance().getCanfig("haste.cooldown.augmented");
             long hasteCooldown = isAugmentedHaste ? hasteAugmentedCooldown : hasteDefaultCooldown;
@@ -127,7 +127,7 @@ public class Haste implements Listener {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
-            if (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasImmortalHackEquipped2(player, "1") || (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasImmortalHackEquipped2(player, "2"))) {
+            if (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasEffect(player, "1") || (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasEffect(player, "2"))) {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);

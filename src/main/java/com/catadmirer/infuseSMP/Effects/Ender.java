@@ -54,10 +54,10 @@ public class Ender implements Listener {
             public void run() {
                 dragonBreathCooldowns.replaceAll((uuid, time) -> time > 0 ? time - 1 : 0);
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    boolean isLegendary = hasImmortalHackEquipped2(player, "1");
-                    boolean isCommon = hasImmortalHackEquipped2(player, "2");
+                    boolean isPrimary = hasEffect(player, "1");
+                    boolean isSecondary = hasEffect(player, "2");
 
-                    if (isLegendary || isCommon) {
+                    if (isPrimary || isSecondary) {
                         applyGlowingToUntrusted(player);
                     }
 
@@ -77,8 +77,8 @@ public class Ender implements Listener {
     }
 
     public static boolean isEffect(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("ender");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("ender");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
 
@@ -149,11 +149,11 @@ public class Ender implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = this.hasImmortalHackEquipped2(player, "2");
+            boolean isPrimary = this.hasEffect(player, "1");
+            boolean isSecondary = this.hasEffect(player, "2");
             UUID playerUUID = player.getUniqueId();
             if (!CooldownManager.isOnCooldown(playerUUID, "ender")) {
-                if (player.isSneaking() && isLegendary || !player.isSneaking() && isCommon) {
+                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
                     this.activateSpark(player);
                 }
@@ -171,12 +171,12 @@ public class Ender implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
-        String gemName = Infuse.getInstance().getEffect("aug_ender");
+        String effectName = Infuse.getInstance().getEffect("aug_ender");
         boolean isAugEnder =
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(gemName))) ||
+                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
                         (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(gemName)));
+                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName)));
 
         long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
         long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
@@ -237,27 +237,27 @@ public class Ender implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("ender");
-        String gemName2 = Infuse.getInstance().getEffect("aug_ender");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("ender");
+        String effectName2 = Infuse.getInstance().getEffect("aug_ender");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("ender");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("ender");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("ender");
             meta.setColor(Color.fromRGB(135, 18, 119));
             meta.setLore(lore);
             meta.setCustomModelData(25);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     @EventHandler
@@ -266,9 +266,9 @@ public class Ender implements Listener {
         Player player = event.getPlayer();
         Action action = event.getAction();
         if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-        boolean isLegendary = hasImmortalHackEquipped2(player, "1");
-        boolean isCommon = hasImmortalHackEquipped2(player, "2");
-        if (isLegendary || isCommon) {
+        boolean isPrimary = hasEffect(player, "1");
+        boolean isSecondary = hasEffect(player, "2");
+        if (isPrimary || isSecondary) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item.getType() != Material.DRAGON_BREATH) return;
 
@@ -335,8 +335,8 @@ public class Ender implements Listener {
     }
 
     public void applyGlowingToUntrusted(Player player) {
-        boolean isLegendary = hasImmortalHackEquipped2(player, "1");
-        boolean isCommon = hasImmortalHackEquipped2(player, "2");
+        boolean isPrimary = hasEffect(player, "1");
+        boolean isSecondary = hasEffect(player, "2");
         double radius = 10.0;
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
@@ -344,7 +344,7 @@ public class Ender implements Listener {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
             if (!trustManager.isTrusted(nearby, player)) {
-                if (isLegendary || isCommon) {
+                if (isPrimary || isSecondary) {
                     if (!nearby.hasPotionEffect(PotionEffectType.GLOWING)) {
                         nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
                     }

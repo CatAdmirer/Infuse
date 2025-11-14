@@ -29,44 +29,44 @@ public class Augmented {
     }
 
     public static ItemStack createEmerald() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_emerald");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_emerald");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_emerald");
             meta.setColor(Color.fromRGB(0, 255, 0));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createThief() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_thief");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_thief");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thief");
             meta.setColor(Color.fromRGB(255, 0, 0));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createFeather() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_feather");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_feather");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_feather"));
             meta.setColor(Color.fromRGB(255, 255, 255));
             for (int i = 0; i < lore.size(); i++) {
@@ -75,19 +75,19 @@ public class Augmented {
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createFire() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_fire");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_fire");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_fire"));
             meta.setColor(Color.fromRGB(255, 165, 0));
             for (int i = 0; i < lore.size(); i++) {
@@ -96,149 +96,149 @@ public class Augmented {
             meta.setLore(lore);
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
 
     public static ItemStack createEnder() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_ender");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_ender");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ender");
             meta.setColor(Color.fromRGB(135, 18, 119));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createApophis() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
-            meta.setDisplayName(gemName2);
+            String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+            meta.setDisplayName(effectName2);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_apophis");
             meta.setColor(Color.fromRGB(69, 3, 62));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createFrost() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_frost");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_frost");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_frost");
             meta.setColor(Color.fromRGB(0, 255, 255));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createHaste() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_haste");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_haste");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_haste");
             meta.setColor(Color.fromRGB(255, 204, 51));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createHeart() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_heart");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_heart");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_heart");
             meta.setColor(Color.RED);
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createInvis() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_invis");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_invis");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_invis");
             meta.setColor(Color.fromRGB(204, 51, 255));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createOcean() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_ocean");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_ocean");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ocean");
             meta.setColor(Color.fromRGB(0, 0, 255));
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createRegen() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_regen");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_regen");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(255, 0, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("aug_regen");
             meta.setLore(lore);
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createSpeed() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_speed");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_speed");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             meta.setColor(Color.AQUA);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_speed"));
             for (int i = 0; i < lore.size(); i++) {
@@ -247,119 +247,119 @@ public class Augmented {
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createStrength() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_strength");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_strength");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(139, 0, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("aug_strength");
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static ItemStack createThunder() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("aug_thunder");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("aug_thunder");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(255, 255, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thunder");
             meta.setLore(lore);
             meta.setCustomModelData(999);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static boolean isStrength(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_strength");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_strength");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isHeart(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_heart");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_heart");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isRegen(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_regen");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_regen");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isInvis(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_invis");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_invis");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isEmerald(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_emerald");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_emerald");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isEnder(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_ender");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_ender");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isSpeed(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_speed");
-        gemName = applyHexColors(gemName);
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_speed");
+        effectName = applyHexColors(effectName);
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isHaste(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_haste");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_haste");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFeather(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_feather");
-        gemName = applyHexColors(gemName);
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_feather");
+        effectName = applyHexColors(effectName);
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isOcean(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_ocean");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_ocean");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFrost(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_frost");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_frost");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFire(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_fire");
-        gemName = applyHexColors(gemName);
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_fire");
+        effectName = applyHexColors(effectName);
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isThunder(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("aug_thunder");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
+        String effectName = Infuse.getInstance().getEffect("aug_thunder");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isApophis(ItemStack item) {
-        String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName2);
+        String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName2);
     }
 
     public static boolean isThief(ItemStack item) {
-        String gemName2 = Infuse.getInstance().getEffect("aug_thief");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName2);
+        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName2);
     }
 }

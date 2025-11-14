@@ -39,9 +39,9 @@ public class Strength implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && hasStrengthEquipped(player, "1");
-            boolean isCommon = !player.isSneaking() && hasStrengthEquipped(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && hasStrengthEquipped(player, "1");
+            boolean isSecondary = !player.isSneaking() && hasStrengthEquipped(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
                     event.setCancelled(true);
@@ -52,10 +52,10 @@ public class Strength implements Listener {
     }
 
     private boolean hasStrengthEquipped(Player player, String tier) {
-        String gemName = plugin.getEffect("strength");
-        String gemName2 = plugin.getEffect("aug_strength");
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        return currentHack != null && currentHack.equals(gemName) || currentHack != null && currentHack.equals(gemName2);
+        String effectName = plugin.getEffect("strength");
+        String effectName2 = plugin.getEffect("aug_strength");
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
     public void activateSpark(Player player) {
@@ -63,11 +63,11 @@ public class Strength implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String gemName2 = plugin.getEffect("aug_strength");
+            String effectName2 = plugin.getEffect("aug_strength");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2)))) ||
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(gemName2))));
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
             long defaultDuration = Infuse.getInstance().getCanfig("strength.duration.default");;
             long augmentedDuration = Infuse.getInstance().getCanfig("strength.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
@@ -126,23 +126,23 @@ public class Strength implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("strength");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("strength");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(139, 0, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("strength");
             meta.setLore(lore);
             meta.setCustomModelData(11);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     @EventHandler
-    public void onEntityDamageMob(EntityDamageByEntityEvent event) {
+    public void onEntityDamaeffectob(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof LivingEntity entity) {
                 if (entity instanceof Player) return;

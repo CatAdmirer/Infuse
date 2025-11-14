@@ -67,9 +67,9 @@ public class Regen implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasRegenEquipped(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasRegenEquipped(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasRegenEquipped(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasRegenEquipped(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
                     event.setCancelled(true);
@@ -80,10 +80,10 @@ public class Regen implements Listener {
     }
 
     private boolean hasRegenEquipped(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("regen");
-        String gemName2 = plugin.getEffect("aug_regen");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("regen");
+        String effectName2 = plugin.getEffect("aug_regen");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     @EventHandler
@@ -99,11 +99,11 @@ public class Regen implements Listener {
     public void activateSpark(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-            String gemName2 = plugin.getEffect("aug_regen");
+            String effectName2 = plugin.getEffect("aug_regen");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
             long defaultCooldown = Infuse.getInstance().getCanfig("regen.cooldown.default");;
             long augmentedCooldown = Infuse.getInstance().getCanfig("regen.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
@@ -120,18 +120,18 @@ public class Regen implements Listener {
 
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("regen");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("regen");
+            meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(255, 0, 0));
             List<String> lore = Infuse.getInstance().getEffectLore("regen");
             meta.setLore(lore);
             meta.setCustomModelData(9);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 }

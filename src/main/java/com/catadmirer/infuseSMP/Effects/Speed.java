@@ -103,13 +103,13 @@ public class Speed implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
 
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("speed");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("speed");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             meta.setColor(Color.AQUA);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("speed"));
             for (int i = 0; i < lore.size(); i++) {
@@ -118,10 +118,10 @@ public class Speed implements Listener {
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setLore(lore);
             meta.setCustomModelData(10);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static String applyHexColors(String input) {
@@ -140,10 +140,10 @@ public class Speed implements Listener {
     }
 
     private boolean hasSpeed(Player player, String tier) {
-        String gemName = Infuse.getInstance().getEffect("speed");
-        String gemName2 = Infuse.getInstance().getEffect("aug_speed");
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+        String effectName = Infuse.getInstance().getEffect("speed");
+        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     @EventHandler
@@ -154,9 +154,9 @@ public class Speed implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
                     event.setCancelled(true);
@@ -166,11 +166,11 @@ public class Speed implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String gemName = Infuse.getInstance().getEffect("speed");
-        String gemName2 = Infuse.getInstance().getEffect("aug_speed");
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String effectName = Infuse.getInstance().getEffect("speed");
+        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public void activateSpark(final Player player) {
@@ -215,13 +215,13 @@ public class Speed implements Listener {
             }, 1L, 1L);
             long defaultDuration = Infuse.getInstance().getCanfig("speed.duration.default");;
             CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-            String gemName2 = Infuse.getInstance().getEffect("aug_speed");
+            String effectName2 = Infuse.getInstance().getEffect("aug_speed");
 
             boolean isAugmented =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(gemName2))) ||
+                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(gemName2)));
+                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName2)));
 
             long defaultCooldown = Infuse.getInstance().getCanfig("speed.cooldown.default");;
             long augmentedCooldown = Infuse.getInstance().getCanfig("speed.cooldown.augmented");;

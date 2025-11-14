@@ -43,7 +43,7 @@ public class Ocean implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (Ocean.this.hasImmortalHackEquipped2(p, "1") || (Ocean.this.hasImmortalHackEquipped2(p, "2"))) {
+                    if (Ocean.this.hasEffect(p, "1") || (Ocean.this.hasEffect(p, "2"))) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
                     }
@@ -53,11 +53,11 @@ public class Ocean implements Listener {
         }).runTaskTimer(plugin, 0L, 20L);
         (new BukkitRunnable() {
             public void run() {
-                for (Player gemHolder : Bukkit.getOnlinePlayers()) {
-                    if (!Ocean.this.hasImmortalHackEquipped2(gemHolder, "1") || (!Ocean.this.hasImmortalHackEquipped2(gemHolder, "2"))) continue;
+                for (Player effectHolder : Bukkit.getOnlinePlayers()) {
+                    if (!Ocean.this.hasEffect(effectHolder, "1") || (!Ocean.this.hasEffect(effectHolder, "2"))) continue;
 
-                    for (Player p : gemHolder.getWorld().getPlayers()) {
-                        if (!p.equals(gemHolder) && p.getLocation().distance(gemHolder.getLocation()) <= 5.0 && p.getLocation().getBlock().isLiquid()) {
+                    for (Player p : effectHolder.getWorld().getPlayers()) {
+                        if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5.0 && p.getLocation().getBlock().isLiquid()) {
                             int currentAir = p.getRemainingAir();
                             int newAir = Math.max(currentAir - 5, -20);
                             p.setRemainingAir(newAir);
@@ -72,19 +72,19 @@ public class Ocean implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player gemHolder : Bukkit.getOnlinePlayers()) {
-                    if (!CooldownManager.isEffectActive(gemHolder.getUniqueId(), "ocean")) {
+                for (Player effectHolder : Bukkit.getOnlinePlayers()) {
+                    if (!CooldownManager.isEffectActive(effectHolder.getUniqueId(), "ocean")) {
                         continue;
                     }
-                    if (!hasImmortalHackEquipped2(gemHolder, "1") || (!hasImmortalHackEquipped2(gemHolder, "2"))) continue;
-                    World world = gemHolder.getWorld();
-                    Location holderLoc = gemHolder.getLocation();
+                    if (!hasEffect(effectHolder, "1") || (!hasEffect(effectHolder, "2"))) continue;
+                    World world = effectHolder.getWorld();
+                    Location holderLoc = effectHolder.getLocation();
                     double radius = Infuse.getInstance().getCanfig("ocean_pulling.pull.radius");
                     double strength = Infuse.getInstance().getCanfig("ocean_pulling.pull.strength");
 
                     for (Player p : world.getPlayers()) {
-                        if (p.equals(gemHolder)) continue;
-                        if (isTrusted(gemHolder, p)) continue;
+                        if (p.equals(effectHolder)) continue;
+                        if (isTrusted(effectHolder, p)) continue;
                         if (p.getLocation().distance(holderLoc) <= radius) {
                             Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
                             if (direction.lengthSquared() > 0.0001) {
@@ -107,19 +107,19 @@ public class Ocean implements Listener {
 
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("ocean");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("ocean");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("ocean");
             meta.setColor(Color.fromRGB(0, 0, 255));
             meta.setLore(lore);
             meta.setCustomModelData(8);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     @EventHandler
@@ -156,9 +156,9 @@ public class Ocean implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
                     event.setCancelled(true);
@@ -168,11 +168,11 @@ public class Ocean implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("ocean");
-        String gemName2 = Infuse.getInstance().getEffect("aug_ocean");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals((gemName2)));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("ocean");
+        String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals((effectName2)));
     }
 
     public void activateSpark(final Player caster) {
@@ -183,12 +183,12 @@ public class Ocean implements Listener {
 
             final double radius = 5.0;
             final World world = caster.getWorld();
-            String gemName2 = Infuse.getInstance().getEffect("aug_ocean");
+            String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
             boolean isAugmented =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
             long defaultCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.default");;
             long augmentedCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;

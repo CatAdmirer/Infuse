@@ -47,7 +47,7 @@ public class Frost implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Frost.this.hasImmortalHackEquipped2(player, "2") && !(player.getVelocity().lengthSquared() < 0.01) || (Frost.this.hasImmortalHackEquipped2(player, "1") && !(player.getVelocity().lengthSquared() < 0.01))) {
+                    if (Frost.this.hasEffect(player, "2") && !(player.getVelocity().lengthSquared() < 0.01) || (Frost.this.hasEffect(player, "1") && !(player.getVelocity().lengthSquared() < 0.01))) {
                         Frost.this.handleSwim(player);
                         Material blockType = player.getLocation().subtract(0.0, 1.0, 0.0).getBlock().getType();
                         if (Frost.ICE_BLOCKS.contains(blockType)) {
@@ -61,19 +61,19 @@ public class Frost implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("frost");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("frost");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("frost");
             meta.setColor(Color.fromRGB(0, 255, 255));
             meta.setLore(lore);
             meta.setCustomModelData(4);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public void handleSwim(Player player) {
@@ -88,7 +88,7 @@ public class Frost implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         if (!event.isGliding()) {
-            if (inFrost && this.hasImmortalHackEquipped2(player, "1") || inFrost && hasImmortalHackEquipped2(player, "2")) {
+            if (inFrost && this.hasEffect(player, "1") || inFrost && hasEffect(player, "2")) {
                 event.setCancelled(true);
             }
         }
@@ -99,7 +99,7 @@ public class Frost implements Listener {
         Player player = event.getPlayer();
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inFrost && hasImmortalHackEquipped2(player, "1") || inFrost && hasImmortalHackEquipped2(player, "2")) {
+        if (inFrost && hasEffect(player, "1") || inFrost && hasEffect(player, "2")) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -131,7 +131,7 @@ public class Frost implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (this.hasImmortalHackEquipped2(attacker, "1") || (this.hasImmortalHackEquipped2(attacker, "2"))) {
+                if (this.hasEffect(attacker, "1") || (this.hasEffect(attacker, "2"))) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -162,9 +162,9 @@ public class Frost implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
                     event.setCancelled(true);
@@ -174,25 +174,25 @@ public class Frost implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("frost");
-        String gemName2 = Infuse.getInstance().getEffect("aug_frost");
-        return currentHack != null && currentHack.equals(gemName) || currentHack != null && currentHack.equals(gemName2);
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("frost");
+        String effectName2 = Infuse.getInstance().getEffect("aug_frost");
+        return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
     public void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
-            String gemName = Infuse.getInstance().getEffect("aug_frost");
+            String effectName = Infuse.getInstance().getEffect("aug_frost");
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             boolean isAugmentedFrost =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName)) ||
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName))));
+                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))));
             long frostDefaultCooldown = Infuse.getInstance().getCanfig("frost.cooldown.default");
             long frostAugmentedCooldown = Infuse.getInstance().getCanfig("frost.cooldown.augmented");
             long frostCooldown = isAugmentedFrost ? frostAugmentedCooldown : frostDefaultCooldown;

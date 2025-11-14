@@ -52,8 +52,8 @@ import org.json.simple.parser.JSONParser;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
-    private final ConcurrentMap<UUID, String> hackManager = new ConcurrentHashMap<>();
-    private DataManager hackManager2;
+    private final ConcurrentMap<UUID, String> effectManager = new ConcurrentHashMap<>();
+    private DataManager dataManager;
     private Abilities abilitiesHandler;
 
     private Particles particles;
@@ -200,7 +200,7 @@ public class Infuse extends JavaPlugin implements Listener {
             new ApophisManager(this, "AphopisPlayers/").getApophisFile();
             apophisCommand = new ApophisManager(this, "AphopisPlayers/");
             new InfuseRecipeManager(this);
-            this.hackManager2 = new DataManager(getDataFolder());
+            this.dataManager = new DataManager(getDataFolder());
             this.trustManager = new DataManager(getDataFolder());
             this.abilitiesHandler = new Abilities(trustManager, this);
             PacketEvents.getAPI().getEventManager().registerListener(
@@ -454,12 +454,12 @@ public class Infuse extends JavaPlugin implements Listener {
             }
         }
 
-        this.hackManager.clear();
+        this.effectManager.clear();
         this.getLogger().info("Infuse Plugin has been disabled!");
     }
 
     public DataManager getEffectManager() {
-        return hackManager2;
+        return dataManager;
     }
 
     private void registerEvents() {

@@ -35,7 +35,7 @@ public class Emerald implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!Emerald.this.hasImmortalHackEquipped(onlinePlayer, "1") && !Emerald.this.hasImmortalHackEquipped(onlinePlayer, "2")) continue;
+                    if (!Emerald.this.hasEffect(onlinePlayer, "1") && !Emerald.this.hasEffect(onlinePlayer, "2")) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Emerald.this.applyPassiveEffects(onlinePlayer);
@@ -53,26 +53,26 @@ public class Emerald implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("emerald");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("emerald");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("emerald");
             meta.setColor(Color.fromRGB(0, 255, 0));
             meta.setLore(lore);
             meta.setCustomModelData(1);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
-    private boolean hasImmortalHackEquipped(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("emerald");
-        String gemName2 = Infuse.getInstance().getEffect("aug_emerald");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("emerald");
+        String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     private boolean isSword(ItemStack item) {
@@ -87,7 +87,7 @@ public class Emerald implements Listener {
     @EventHandler
     public void onPlayerExpChange(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
             double multiplier = 1.5;
             PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
             if (heroEffect != null && heroEffect.getAmplifier() >= 200) {
@@ -103,7 +103,7 @@ public class Emerald implements Listener {
     public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
         Player player = event.getEnchanter();
 
-        if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
             try {
                 event.getClass()
                         .getMethod("setEnchantmentBonus", int.class)
@@ -118,7 +118,7 @@ public class Emerald implements Listener {
             final Player player = event.getPlayer();
             ItemStack consumedItem = event.getItem();
             int originalCount = consumedItem.getAmount();
-            if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                 if (consumedItem.getType() == Material.POTION) {
                     return;
                 }
@@ -147,10 +147,10 @@ public class Emerald implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = this.hasImmortalHackEquipped(player, "1");
-            boolean isCommon = this.hasImmortalHackEquipped(player, "2");
+            boolean isPrimary = this.hasEffect(player, "1");
+            boolean isSecondary = this.hasEffect(player, "2");
             if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-                if (player.isSneaking() && isLegendary || !player.isSneaking() && isCommon) {
+                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     if (CooldownManager.isOnCooldown(playerUUID, "emerald")) {
                         return;
                     }
@@ -166,13 +166,13 @@ public class Emerald implements Listener {
     public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-            String gemName2 = Infuse.getInstance().getEffect("aug_emerald");
+            String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
             boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)))
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
 
             long emeDefaultCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.default");
             long emeAugmentedCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.augmented");

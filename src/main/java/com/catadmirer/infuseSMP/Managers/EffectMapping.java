@@ -17,7 +17,7 @@ public enum EffectMapping {
     FROST(Infuse.getInstance().getEffect("frost"), Frost::isEffect, Frost::createEffect),
     HASTE(Infuse.getInstance().getEffect("haste"), Haste::isEffect, Haste::createEffect),
     HEART(Infuse.getInstance().getEffect("heart"), Heart::isEffect, Heart::createEffect),
-    INVISIBILITY(Infuse.getInstance().getEffect("invis"), Invisibility::isStealthGem, Invisibility::createEffect),
+    INVISIBILITY(Infuse.getInstance().getEffect("invis"), Invisibility::isEffect, Invisibility::createEffect),
     OCEAN(Infuse.getInstance().getEffect("ocean"), Ocean::isEffect, Ocean::createEffect),
     REGEN(Infuse.getInstance().getEffect("regen"), Regen::isEffect, Regen::createEffect),
     SPEED(Infuse.getInstance().getEffect("speed"), Speed::isEffect, Speed::createEffect),

@@ -30,7 +30,7 @@ public class EquipEffect implements Listener, CommandExecutor {
     }
 
     @EventHandler
-    public void onFIrstJoin(PlayerJoinEvent event) {
+    public void onFirstJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getCanfig("join_effects_enabled")) {
@@ -39,29 +39,29 @@ public class EquipEffect implements Listener, CommandExecutor {
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
             String effectName = Infuse.getInstance().getEffect(chosenKey);
             if (effectName == null) return;
-            equipHack(player, effectName, "2");
+            equipEffect(player, effectName, "2");
         }
     }
 
-    public void handleLegendaryHack(Player player, ItemStack item, String hackName) {
-        if (!this.equipHack(player, hackName, "1") && !this.equipHack(player, hackName, "2")) {
+    public void drainSecondaryEffect(Player player, ItemStack item, String effectName) {
+        if (!this.equipEffect(player, effectName, "1") && !this.equipEffect(player, effectName, "2")) {
             player.performCommand("rdrain");
             Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugins()[0], () -> {
-                this.equipHack(player, hackName, "2");
+                this.equipEffect(player, effectName, "2");
             }, 1L);
         }
 
     }
 
-    private boolean equipHack(Player player, String hackName, String type) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (currentHack != null) {
+    private boolean equipEffect(Player player, String effectName, String type) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        if (currentEffect != null) {
             return false;
         } else {
-            Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), type, hackName);
+            Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), type, effectName);
             String var10001 = String.valueOf(ChatColor.GREEN);
-            hackName = applyHexColors(hackName);
-            player.sendMessage(var10001 + "You have equipped " + hackName);
+            effectName = applyHexColors(effectName);
+            player.sendMessage(var10001 + "You have equipped " + effectName);
             this.consumeMainHandItem(player);
             return true;
         }
@@ -87,17 +87,17 @@ public class EquipEffect implements Listener, CommandExecutor {
         Player player = event.getPlayer();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
         if (mainHandItem != null && mainHandItem.getType() != Material.AIR) {
-            EffectMapping hackMapping = EffectMapping.fromItem(mainHandItem);
-            if (hackMapping != null) {
+            EffectMapping effect = EffectMapping.fromItem(mainHandItem);
+            if (effect != null) {
                 if (player.getInventory().firstEmpty() == -1) {
                     event.setCancelled(true);
                     player.sendMessage(String.valueOf(ChatColor.RED) + "Your inventory is full! Make space before unequipping.");
                 } else {
-                    this.handleLegendaryHack(player, mainHandItem, hackMapping.getEffectName());
+                    this.drainSecondaryEffect(player, mainHandItem, effect.getEffectName());
                     this.consumeMainHandItem(player);
-                    String hackName = hackMapping.getEffectName();
-                    if (hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
-                            hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
+                    String effectName = effect.getEffectName();
+                    if (effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
+                            effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
                         apophisCommand.disguiseAsApophis(player);
                     }
                 }
@@ -123,20 +123,20 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        String hack1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        String hack2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+        String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+        String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
         String dropMode = Infuse.getInstance().getConfig().getString("effect_drops", "Random");
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
             case "1":
-                if (hack1 != null) {
-                    this.dropHackOnDeath(player, "1");
+                if (effect1 != null) {
+                    this.dropEffectOnDeath(player, "1");
                 }
                 break;
 
             case "2":
-                if (hack2 != null) {
-                    this.dropHackOnDeath(player, "2");
+                if (effect2 != null) {
+                    this.dropEffectOnDeath(player, "2");
                 }
                 break;
 
@@ -145,13 +145,13 @@ public class EquipEffect implements Listener, CommandExecutor {
 
             case "random":
             default:
-                if (hack1 != null && hack2 != null) {
-                    String selectedHack = rand.nextBoolean() ? "1" : "2";
-                    this.dropHackOnDeath(player, selectedHack);
-                } else if (hack1 != null) {
-                    this.dropHackOnDeath(player, "1");
-                } else if (hack2 != null) {
-                    this.dropHackOnDeath(player, "2");
+                if (effect1 != null && effect2 != null) {
+                    String selectedEffect = rand.nextBoolean() ? "1" : "2";
+                    this.dropEffectOnDeath(player, selectedEffect);
+                } else if (effect1 != null) {
+                    this.dropEffectOnDeath(player, "1");
+                } else if (effect2 != null) {
+                    this.dropEffectOnDeath(player, "2");
                 }
                 break;
         }
@@ -175,13 +175,13 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
     }
 
-    private void dropHackOnDeath(Player player, String type) {
-        String hackName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (hackName != null) {
+    private void dropEffectOnDeath(Player player, String type) {
+        String effectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        if (effectName != null) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), type);
-            EffectMapping hackMapping = EffectMapping.fromEffectName(hackName);
-            if (hackMapping != null) {
-                ItemStack item = hackMapping.createItem();
+            EffectMapping effect = EffectMapping.fromEffectName(effectName);
+            if (effect != null) {
+                ItemStack item = effect.createItem();
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
             }
         }
@@ -193,14 +193,14 @@ public class EquipEffect implements Listener, CommandExecutor {
             sender.sendMessage(String.valueOf(ChatColor.RED) + "Only players can use this command.");
             return true;
         } else {
-            String hack1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-            String hack2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-            if (hack1 == null && hack2 == null) {
+            String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+            String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+            if (effect1 == null && effect2 == null) {
                 player.sendMessage(String.valueOf(ChatColor.RED) + "You do not have any effects equipped to swap.");
                 return true;
             } else {
-                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", hack2);
-                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", hack1);
+                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
+                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
                 player.sendMessage(String.valueOf(ChatColor.GREEN) + "Your Effects have been swapped.");
                 return true;
             }

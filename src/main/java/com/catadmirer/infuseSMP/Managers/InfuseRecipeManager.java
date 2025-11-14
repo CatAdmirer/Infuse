@@ -9,7 +9,6 @@ import java.util.*;
 
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
-import me.clip.placeholderapi.libs.kyori.adventure.text.format.NamedTextColor;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import org.bukkit.Bukkit;

@@ -66,9 +66,9 @@ public class Abilities implements CommandExecutor {
                 sender.sendMessage(ChatColor.RED + "Invalid command.");
                 return true;
             }
-            String equippedHack = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
+            String equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
 
-            if (equippedHack == null) {
+            if (equippedEffect == null) {
                 String msg = plugin.getMessages().getString(
                         "slot_empty",
                         "&cYou don't have any effect equipped in slot %slot%."
@@ -76,9 +76,9 @@ public class Abilities implements CommandExecutor {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
                 return true;
             } else {
-                String strippedHack = stripAllColors(equippedHack);
-                strippedHack = plugin.getEffectReversed(strippedHack);
-                Integer abilityId = EffectMaps.getEffectNumber(strippedHack);
+                String strippedEffect = stripAllColors(equippedEffect);
+                strippedEffect = plugin.getEffectReversed(strippedEffect);
+                Integer abilityId = EffectMaps.getEffectNumber(strippedEffect);
 
                 if (abilityId == null) {
                     player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");

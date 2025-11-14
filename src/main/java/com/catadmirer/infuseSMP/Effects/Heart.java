@@ -49,7 +49,7 @@ public class Heart implements Listener {
                     AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    if (!Heart.this.hasImmortalHackEquipped2(player, "1") && !Heart.this.hasImmortalHackEquipped2(player, "2")) continue;
+                    if (!Heart.this.hasEffect(player, "1") && !Heart.this.hasEffect(player, "2")) continue;
 
                     if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
                 }
@@ -58,26 +58,26 @@ public class Heart implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("heart");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("heart");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("heart");
             meta.setColor(Color.RED);
             meta.setLore(lore);
             meta.setCustomModelData(6);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static boolean isEffect(ItemStack item) {
-        String gemName = Infuse.getInstance().getEffect("heart");
+        String effectName = Infuse.getInstance().getEffect("heart");
         if (item != null && item.getType() == Material.POTION) {
             ItemMeta meta = item.getItemMeta();
-            return meta != null && meta.getDisplayName().equals(gemName) && meta.getCustomModelData() == 6;
+            return meta != null && meta.getDisplayName().equals(effectName) && meta.getCustomModelData() == 6;
         } else {
             return false;
         }
@@ -87,7 +87,7 @@ public class Heart implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
             if (event.getEntity() instanceof LivingEntity target) {
-                if (this.hasImmortalHackEquipped2(player, "1") || this.hasImmortalHackEquipped2(player, "2")) {
+                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
                     this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -138,7 +138,7 @@ public class Heart implements Listener {
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasImmortalHackEquipped2(player, "1") || this.hasImmortalHackEquipped2(player, "2")) {
+        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
             ItemStack item = event.getItem();
             if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
@@ -157,9 +157,9 @@ public class Heart implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
                     event.setCancelled(true);
@@ -169,11 +169,11 @@ public class Heart implements Listener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getEffect("heart");
-        String gemName2 = Infuse.getInstance().getEffect("aug_heart");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getEffect("heart");
+        String effectName2 = Infuse.getInstance().getEffect("aug_heart");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public void activateSpark(final Player player) {
@@ -187,12 +187,12 @@ public class Heart implements Listener {
                 maxHealthAttribute.setBaseValue(40.0);
             }
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            String gemName2 = Infuse.getInstance().getEffect("aug_heart");
+            String effectName2 = Infuse.getInstance().getEffect("aug_heart");
             boolean isAugmentedHeart =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2))) ||
+                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
             long defaultCooldown = Infuse.getInstance().getCanfig("heart.cooldown.default");
             long augmentedCooldown = Infuse.getInstance().getCanfig("heart.cooldown.augmented");
             long cooldown = isAugmentedHeart ? augmentedCooldown : defaultCooldown;

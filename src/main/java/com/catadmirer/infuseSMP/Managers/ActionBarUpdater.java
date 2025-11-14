@@ -43,9 +43,9 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (emptyEffectIcon) {
                 firstEmoji = "\uE058";
             }
-            String commonHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (commonHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(commonHack));
+            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
+            if (primaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(primaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);
@@ -67,9 +67,9 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (emptyEffectIcon) {
                 secondEmoji = "\uE058";
             }
-            String legendaryHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (legendaryHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(legendaryHack));
+            String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
+            if (secondaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(secondaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);

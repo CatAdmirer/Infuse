@@ -46,9 +46,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         UUID uuid = player.getUniqueId();
 
         if (params.equalsIgnoreCase("first_effect")) {
-            String commonHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (commonHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(commonHack));
+            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
+            if (primaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     if (CooldownManager.isEffectActive(uuid, key)) {
@@ -66,9 +66,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("first_time")) {
-            String commonHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (commonHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(commonHack));
+            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
+            if (primaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     if (CooldownManager.isEffectActive(uuid, key)) {
@@ -84,9 +84,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("second_effect")) {
-            String legendaryHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (legendaryHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(legendaryHack));
+            String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
+            if (secondaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(secondaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     if (CooldownManager.isEffectActive(uuid, key)) {
@@ -104,9 +104,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("second_time")) {
-            String legendaryHack = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (legendaryHack != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(legendaryHack));
+            String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
+            if (secondaryEffect != null) {
+                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(secondaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     if (CooldownManager.isEffectActive(uuid, key)) {

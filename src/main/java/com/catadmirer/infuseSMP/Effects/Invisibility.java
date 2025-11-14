@@ -52,7 +52,7 @@ public class Invisibility implements Listener, PacketListener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (Invisibility.this.hasImmortalHackEquipped2(p, "1") || Invisibility.this.hasImmortalHackEquipped2(p, "2")) {
+                    if (Invisibility.this.hasEffect(p, "1") || Invisibility.this.hasEffect(p, "2")) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
                 }
@@ -62,22 +62,22 @@ public class Invisibility implements Listener, PacketListener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getEffect("invis");
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getEffect("invis");
+            meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("invis");
             meta.setColor(Color.fromRGB(204, 51, 255));
             meta.setLore(lore);
             meta.setCustomModelData(7);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
-    public static boolean isStealthGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 7;
     }
 
@@ -103,7 +103,7 @@ public class Invisibility implements Listener, PacketListener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (this.hasImmortalHackEquipped2(shooter, "1") || this.hasImmortalHackEquipped2(shooter, "2")) {
+            if (this.hasEffect(shooter, "1") || this.hasEffect(shooter, "2")) {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -119,7 +119,7 @@ public class Invisibility implements Listener, PacketListener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (this.hasImmortalHackEquipped2(attacker, "1") || this.hasImmortalHackEquipped2(attacker, "2")) {
+                if (this.hasEffect(attacker, "1") || this.hasEffect(attacker, "2")) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -152,7 +152,7 @@ public class Invisibility implements Listener, PacketListener {
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player target) {
-            if (this.hasImmortalHackEquipped2(target, "1") || this.hasImmortalHackEquipped2(target, "1")) {
+            if (this.hasEffect(target, "1") || this.hasEffect(target, "1")) {
                 event.setCancelled(true);
             }
         }
@@ -167,9 +167,9 @@ public class Invisibility implements Listener, PacketListener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = player.isSneaking() && this.hasImmortalHackEquipped2(player, "1");
-            boolean isCommon = !player.isSneaking() && this.hasImmortalHackEquipped2(player, "2");
-            if (isLegendary || isCommon) {
+            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
+            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
+            if (isPrimary || isSecondary) {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
                     event.setCancelled(true);
@@ -179,22 +179,22 @@ public class Invisibility implements Listener, PacketListener {
         }
     }
 
-    private boolean hasImmortalHackEquipped2(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName2 = Infuse.getInstance().getEffect("aug_invis");
-        String gemName = Infuse.getInstance().getEffect("invis");
-        return currentHack != null && (currentHack.equals(gemName2) || currentHack.equals(gemName));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName2 = Infuse.getInstance().getEffect("aug_invis");
+        String effectName = Infuse.getInstance().getEffect("invis");
+        return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
     public void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String gemName2 = Infuse.getInstance().getEffect("aug_invis");
+            String effectName2 = Infuse.getInstance().getEffect("aug_invis");
             boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)))
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(gemName2)));
+                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
             long invisDefaultCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.default");;
             long invisAugmentedCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.augmented");;
             long invisCooldown = isAugmentedInvis ? invisAugmentedCooldown : invisDefaultCooldown;

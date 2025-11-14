@@ -99,7 +99,7 @@ public class Feather implements Listener {
         if (event.getEntity() instanceof Player player) {
             if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
                 if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!this.hasImmortalHackEquipped(player, "1") && !this.hasImmortalHackEquipped(player, "2")) {
+                if (!this.hasEffect(player, "1") && !this.hasEffect(player, "2")) {
                     return;
                 }
 
@@ -129,7 +129,7 @@ public class Feather implements Listener {
     public void onPlayerFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
                     event.setCancelled(true);
                 }
             }
@@ -139,7 +139,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (this.hasImmortalHackEquipped(player, "1") || this.hasImmortalHackEquipped(player, "2")) {
+        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item != null && item.getType() == Material.WIND_CHARGE) {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
@@ -167,7 +167,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (this.hasImmortalHackEquipped(attacker, "1") || this.hasImmortalHackEquipped(attacker, "2")) {
+            if (this.hasEffect(attacker, "1") || this.hasEffect(attacker, "2")) {
                 double fallDistance = attacker.getFallDistance();
                 if (fallDistance >= 7) {
                     attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
@@ -185,12 +185,12 @@ public class Feather implements Listener {
     }
 
     public static ItemStack createEffect() {
-        ItemStack gem = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)gem.getItemMeta();
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String gemName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§#BEA3CAFeather Effect");
-            gemName = applyHexColors(gemName);
-            meta.setDisplayName(gemName);
+            String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§#BEA3CAFeather Effect");
+            effectName = applyHexColors(effectName);
+            meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getMessages().getStringList("feather.effect_lore"));
             for (int i = 0; i < lore.size(); i++) {
                 lore.set(i, applyHexColors(lore.get(i)));
@@ -199,10 +199,10 @@ public class Feather implements Listener {
             meta.setColor(Color.fromRGB(255, 255, 255));
             meta.setLore(lore);
             meta.setCustomModelData(2);
-            gem.setItemMeta(meta);
+            effect.setItemMeta(meta);
         }
 
-        return gem;
+        return effect;
     }
 
     public static String applyHexColors(String input) {
@@ -220,11 +220,11 @@ public class Feather implements Listener {
         return result.toString();
     }
 
-    private boolean hasImmortalHackEquipped(Player player, String tier) {
-        String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String gemName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§fFeather Effect");
-        String gemName2 = Infuse.getInstance().getMessages().getString("aug_feather.effect_name", "§fAugmented Feather Effect");
-        return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
+    private boolean hasEffect(Player player, String tier) {
+        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
+        String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§fFeather Effect");
+        String effectName2 = Infuse.getInstance().getMessages().getString("aug_feather.effect_name", "§fAugmented Feather Effect");
+        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     @EventHandler
@@ -235,11 +235,11 @@ public class Feather implements Listener {
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("ability.use")) {
-            boolean isLegendary = this.hasImmortalHackEquipped(player, "1");
-            boolean isCommon = this.hasImmortalHackEquipped(player, "2");
+            boolean isPrimary = this.hasEffect(player, "1");
+            boolean isSecondary = this.hasEffect(player, "2");
             UUID playerUUID = player.getUniqueId();
             if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-                if (player.isSneaking() && isLegendary || !player.isSneaking() && isCommon) {
+                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
                     this.activateSpark(player);
                 }
@@ -252,7 +252,7 @@ public class Feather implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-            String gemName = Infuse.getInstance().getEffect("aug_feather");
+            String effectName = Infuse.getInstance().getEffect("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
@@ -261,9 +261,9 @@ public class Feather implements Listener {
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
             boolean isAugmentedFeather =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(gemName))) ||
+                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(gemName)));
+                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName)));
             long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
             long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
             long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;

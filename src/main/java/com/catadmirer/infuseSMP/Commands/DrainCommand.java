@@ -33,11 +33,11 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        String hackType;
+        String slot;
         if (label.contains("rdrain")) {
-            hackType = "2";
+            slot = "2";
         } else if (label.contains("ldrain")) {
-            hackType = "1";
+            slot = "1";
         } else {
             String msg = plugin.getMessages().getString("withdraw_invalid",
                     "&cInvalid usage. Use /rdrain or /ldrain");
@@ -45,20 +45,20 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        final String currentHack = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), hackType);
-        if (currentHack == null) {
+        final String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        if (currentEffect == null) {
             String msg = plugin.getMessages().getString("effect_none_equipped",
                     "&cYou don't have an Effect equipped in slot %slot%.");
-            msg = msg.replace("%slot%", hackType);
+            msg = msg.replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
-        if (ChatColor.stripColor(currentHack).equalsIgnoreCase("Apohpis Effect")
-                || ChatColor.stripColor(currentHack).equalsIgnoreCase("Augmented Apohpis Effect")) {
-            Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), hackType);
+        if (ChatColor.stripColor(currentEffect).equalsIgnoreCase("Apohpis Effect")
+                || ChatColor.stripColor(currentEffect).equalsIgnoreCase("Augmented Apohpis Effect")) {
+            Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-            EffectMapping mapping = EffectMapping.fromEffectName(currentHack);
+            EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
             ItemStack glitchItem = mapping.createItem();
             player.getInventory().addItem(glitchItem);
             apophisCommand.unsetApophis(Bukkit.getConsoleSender(), player.getName());
@@ -70,15 +70,15 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), hackType);
-        String currentHackColored = applyHexColors(currentHack);
-        player.sendMessage(ChatColor.GREEN + "You have drained your: " + currentHackColored);
+        Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
+        String currentEffectColored = applyHexColors(currentEffect);
+        player.sendMessage(ChatColor.GREEN + "You have drained your: " + currentEffectColored);
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-                EffectMapping mapping = EffectMapping.fromEffectName(currentHack);
+                EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
                 if (mapping != null) {
                     ItemStack glitchItem = mapping.createItem();
                     if (glitchItem != null) {
