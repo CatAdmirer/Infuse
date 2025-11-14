@@ -60,7 +60,7 @@ public class Frost implements Listener {
         }).runTaskTimer(plugin, 0L, 10L);
     }
 
-    public static ItemStack createFrost() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -107,7 +107,7 @@ public class Frost implements Listener {
         }
     }
 
-    public static boolean isStealthGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
             return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 4;
         } else {

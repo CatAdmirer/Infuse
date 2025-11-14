@@ -23,10 +23,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EquipEffect implements Listener, CommandExecutor {
-    private ApophisManager aphopisCommand;
+    private ApophisManager apophisCommand;
 
-    public EquipEffect(ApophisManager aphopisCommand) {
-        this.aphopisCommand = aphopisCommand;
+    public EquipEffect(ApophisManager apophisCommand) {
+        this.apophisCommand = apophisCommand;
     }
 
     @EventHandler
@@ -98,7 +98,7 @@ public class EquipEffect implements Listener, CommandExecutor {
                     String hackName = hackMapping.getEffectName();
                     if (hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
                             hackName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
-                        aphopisCommand.disguiseAsAphopis(player);
+                        apophisCommand.disguiseAsApophis(player);
                     }
                 }
             }
@@ -171,7 +171,7 @@ public class EquipEffect implements Listener, CommandExecutor {
         Player player = event.getPlayer();
         File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "AphopisPlayers/" + player.getUniqueId() + ".yml");
         if (disguiseFile.exists()) {
-            aphopisCommand.disguiseAsAphopis(player);
+            apophisCommand.disguiseAsApophis(player);
         }
     }
 

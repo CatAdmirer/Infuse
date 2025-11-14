@@ -63,7 +63,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private DataManager trustManager;
 
-    private ApophisManager aphopisCommand;
+    private ApophisManager apophisCommand;
 
     private FileConfiguration messages;
 
@@ -197,8 +197,8 @@ public class Infuse extends JavaPlugin implements Listener {
             effectsLore.put("thief", getMessages().getStringList("thief.effect_lore"));
             effectsLore.put("aug_thief", getMessages().getStringList("aug_thief.effect_lore"));
             PacketEvents.getAPI().init();
-            new ApophisManager(this, "AphopisPlayers/").getAphopisFile();
-            aphopisCommand = new ApophisManager(this, "AphopisPlayers/");
+            new ApophisManager(this, "AphopisPlayers/").getApophisFile();
+            apophisCommand = new ApophisManager(this, "AphopisPlayers/");
             new InfuseRecipeManager(this);
             this.hackManager2 = new DataManager(getDataFolder());
             this.trustManager = new DataManager(getDataFolder());
@@ -391,11 +391,11 @@ public class Infuse extends JavaPlugin implements Listener {
         this.getCommand("trust").setExecutor(new TrustCommand(this, trustManager));
         this.getCommand("untrust").setExecutor(new TrustCommand(this, trustManager));
         this.getCommand("recipes").setExecutor(new Recipes(this));
-        this.getCommand("swap").setExecutor(new EquipEffect(aphopisCommand));
+        this.getCommand("swap").setExecutor(new EquipEffect(apophisCommand));
         this.getCommand("infuse").setExecutor(new InfuseCommand());
         this.getCommand("infuse").setTabCompleter(new InfuseCommand());
-        this.getCommand("ldrain").setExecutor(new DrainCommand(this, aphopisCommand));
-        this.getCommand("rdrain").setExecutor(new DrainCommand(this, aphopisCommand));
+        this.getCommand("ldrain").setExecutor(new DrainCommand(this, apophisCommand));
+        this.getCommand("rdrain").setExecutor(new DrainCommand(this, apophisCommand));
         this.getCommand("rspark").setExecutor(this.abilitiesHandler);
         this.getCommand("lspark").setExecutor(this.abilitiesHandler);
         this.getCommand("controls").setExecutor(new CommandExecutor() {
@@ -476,7 +476,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipEffect(aphopisCommand), this);
+        Bukkit.getPluginManager().registerEvents(new EquipEffect(apophisCommand), this);
         Bukkit.getPluginManager().registerEvents(new Ocean(this, trustManager), this);
         Bukkit.getPluginManager().registerEvents(this, this);
         if (getConfig().getBoolean("extra_effects.Apophis")) {

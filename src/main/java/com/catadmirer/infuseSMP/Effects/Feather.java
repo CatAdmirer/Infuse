@@ -184,7 +184,7 @@ public class Feather implements Listener {
         }
     }
 
-    public static ItemStack createGlide() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -283,7 +283,7 @@ public class Feather implements Listener {
         }
     }
 
-    public static boolean isInvincibilityGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 2;
     }
 

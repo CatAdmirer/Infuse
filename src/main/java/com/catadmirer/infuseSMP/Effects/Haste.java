@@ -42,7 +42,7 @@ public class Haste implements Listener {
         }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    public static ItemStack createFake() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -145,7 +145,7 @@ public class Haste implements Listener {
         player.setCooldown(Material.SHIELD, 50);
     }
 
-    public static boolean isInvincibilityGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 5;
     }
 }

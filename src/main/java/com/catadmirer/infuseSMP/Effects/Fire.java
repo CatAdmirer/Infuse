@@ -55,7 +55,7 @@ public class Fire implements Listener, PacketListener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
     }
 
-    public static ItemStack createFIRE() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -317,7 +317,7 @@ public class Fire implements Listener, PacketListener {
         }).runTaskTimer(this.plugin, 0L, 1L);
     }
 
-    public static boolean isStrengthGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
             return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 3;
         } else {

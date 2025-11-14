@@ -19,11 +19,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
 
-    private ApophisManager aphopisCommand;
+    private ApophisManager apophisCommand;
 
-    public DrainCommand(Infuse plugin, ApophisManager aphopisCommand) {
+    public DrainCommand(Infuse plugin, ApophisManager apophisCommand) {
         this.plugin = plugin;
-        this.aphopisCommand = aphopisCommand;
+        this.apophisCommand = apophisCommand;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DrainCommand implements CommandExecutor, Listener {
             EffectMapping mapping = EffectMapping.fromEffectName(currentHack);
             ItemStack glitchItem = mapping.createItem();
             player.getInventory().addItem(glitchItem);
-            aphopisCommand.unsetAphopis(Bukkit.getConsoleSender(), player.getName());
+            apophisCommand.unsetApophis(Bukkit.getConsoleSender(), player.getName());
             return true;
         }
 

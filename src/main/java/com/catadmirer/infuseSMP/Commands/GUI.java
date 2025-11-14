@@ -36,27 +36,27 @@ public class GUI implements Listener, CommandExecutor {
         setItems(gui, blueSlots, blue);
         setItems(gui, lightBlueSlots, lightBlue);
         Map<Integer, ItemStack> infusedItems = Map.ofEntries(
-                Map.entry(12, Augmented.createFROST()),
-                Map.entry(14, Augmented.createSPEED()),
-                Map.entry(20, Augmented.createFEATHER()),
-                Map.entry(21, Augmented.createOCEAN()),
-                Map.entry(22, Augmented.createINVIS()),
-                Map.entry(23, Augmented.createENDER()),
-                Map.entry(24, Augmented.createEME()),
-                Map.entry(29, Augmented.createHEART()),
-                Map.entry(30, Augmented.createREGEN()),
-                Map.entry(31, Augmented.createST()),
-                Map.entry(32, Augmented.createFIRE()),
-                Map.entry(33, Augmented.createHASTE()),
-                Map.entry(40, Augmented.createTHUNDER())
+                Map.entry(12, Augmented.createFrost()),
+                Map.entry(14, Augmented.createSpeed()),
+                Map.entry(20, Augmented.createFeather()),
+                Map.entry(21, Augmented.createOcean()),
+                Map.entry(22, Augmented.createInvis()),
+                Map.entry(23, Augmented.createEnder()),
+                Map.entry(24, Augmented.createEmerald()),
+                Map.entry(29, Augmented.createHeart()),
+                Map.entry(30, Augmented.createRegen()),
+                Map.entry(31, Augmented.createStrength()),
+                Map.entry(32, Augmented.createFire()),
+                Map.entry(33, Augmented.createHaste()),
+                Map.entry(40, Augmented.createThunder())
         );
 
         infusedItems.forEach(gui::setItem);
         if ((Boolean) Infuse.getInstance().getCanfig("extra_effects.Thief")) {
-            gui.setItem(39, Augmented.createTHF());
+            gui.setItem(39, Augmented.createThief());
         }
         if ((Boolean) Infuse.getInstance().getCanfig("extra_effects.Apophis")) {
-            gui.setItem(41, Augmented.createAPH());
+            gui.setItem(41, Augmented.createApophis());
         }
         player.openInventory(gui);
     }
@@ -109,36 +109,36 @@ public class GUI implements Listener, CommandExecutor {
         if (clicked == null || clicked.getType() == Material.AIR) return;
         if (title.equals("§lInfuses")) {
             event.setCancelled(true);
-            if (Augmented.ISFROST(clicked)) {
-                openDaGui(player, Augmented::createFROST, Frost::createFrost, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISSPEED(clicked)) {
-                openDaGui(player, Augmented::createSPEED, Speed::createSPEED, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISST(clicked)) {
-                openDaGui(player, Augmented::createST, Strength::createStealthGem, Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.ISTHUNDER(clicked)) {
-                openDaGui(player, Augmented::createTHUNDER, Thunder::createTHUNDER, Material.YELLOW_STAINED_GLASS_PANE);
-            } else if (Augmented.ISTHIEF(clicked)) {
-                openDaGui(player, Augmented::createTHF, Thief::createTHF, Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.ISHEART(clicked)) {
-                openDaGui(player, Augmented::createHEART, Heart::createHeart, Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.ISEME(clicked)) {
-                openDaGui(player, Augmented::createEME, Emerald::createInvincibilityGem, Material.LIME_STAINED_GLASS_PANE);
-            } else if (Augmented.ISEND(clicked)) {
-                openDaGui(player, Augmented::createENDER, Ender::createEnderGem, Material.PURPLE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISAUGAPH(clicked)) {
-                openDaGui(player, Augmented::createAPH, Apophis::createAPH, Material.MAGENTA_STAINED_GLASS_PANE);
-            } else if (Augmented.ISFEATHER(clicked)) {
-                openDaGui(player, Augmented::createFEATHER, Feather::createGlide, Material.WHITE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISFIRE(clicked)) {
-                openDaGui(player, Augmented::createFIRE, Fire::createFIRE, Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISHASTE(clicked)) {
-                openDaGui(player, Augmented::createHASTE, Haste::createFake, Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISINVIS(clicked)) {
-                openDaGui(player, Augmented::createINVIS, Invisibility::createStealthGem, Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-            } else if (Augmented.ISOCEAN(clicked)) {
-                openDaGui(player, Augmented::createOCEAN, Ocean::createOcean, Material.BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.ISREGEN(clicked)) {
-                openDaGui(player, Augmented::createREGEN, Regen::createFake, Material.RED_STAINED_GLASS_PANE);
+            if (Augmented.isFrost(clicked)) {
+                openDaGui(player, Augmented::createFrost, Frost::createEffect, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+            } else if (Augmented.isSpeed(clicked)) {
+                openDaGui(player, Augmented::createSpeed, Speed::createEffect, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+            } else if (Augmented.isStrength(clicked)) {
+                openDaGui(player, Augmented::createStrength, Strength::createEffect, Material.RED_STAINED_GLASS_PANE);
+            } else if (Augmented.isThunder(clicked)) {
+                openDaGui(player, Augmented::createThunder, Thunder::createEffect, Material.YELLOW_STAINED_GLASS_PANE);
+            } else if (Augmented.isThief(clicked)) {
+                openDaGui(player, Augmented::createThief, Thief::createEffect, Material.RED_STAINED_GLASS_PANE);
+            } else if (Augmented.isHeart(clicked)) {
+                openDaGui(player, Augmented::createHeart, Heart::createEffect, Material.RED_STAINED_GLASS_PANE);
+            } else if (Augmented.isEmerald(clicked)) {
+                openDaGui(player, Augmented::createEmerald, Emerald::createEffect, Material.LIME_STAINED_GLASS_PANE);
+            } else if (Augmented.isEnder(clicked)) {
+                openDaGui(player, Augmented::createEnder, Ender::createEffect, Material.PURPLE_STAINED_GLASS_PANE);
+            } else if (Augmented.isApophis(clicked)) {
+                openDaGui(player, Augmented::createApophis, Apophis::createEffect, Material.MAGENTA_STAINED_GLASS_PANE);
+            } else if (Augmented.isFeather(clicked)) {
+                openDaGui(player, Augmented::createFeather, Feather::createEffect, Material.WHITE_STAINED_GLASS_PANE);
+            } else if (Augmented.isFire(clicked)) {
+                openDaGui(player, Augmented::createFire, Fire::createEffect, Material.ORANGE_STAINED_GLASS_PANE);
+            } else if (Augmented.isHaste(clicked)) {
+                openDaGui(player, Augmented::createHaste, Haste::createEffect, Material.ORANGE_STAINED_GLASS_PANE);
+            } else if (Augmented.isInvis(clicked)) {
+                openDaGui(player, Augmented::createInvis, Invisibility::createEffect, Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+            } else if (Augmented.isOcean(clicked)) {
+                openDaGui(player, Augmented::createOcean, Ocean::createEffect, Material.BLUE_STAINED_GLASS_PANE);
+            } else if (Augmented.isRegen(clicked)) {
+                openDaGui(player, Augmented::createRegen, Regen::createEffect, Material.RED_STAINED_GLASS_PANE);
             }
             return;
         }

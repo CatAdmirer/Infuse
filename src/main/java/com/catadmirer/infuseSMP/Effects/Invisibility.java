@@ -61,7 +61,7 @@ public class Invisibility implements Listener, PacketListener {
         }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    public static ItemStack createStealthGem() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {

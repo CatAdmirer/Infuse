@@ -102,7 +102,7 @@ public class Speed implements Listener {
         }
     }
 
-    public static ItemStack createSPEED() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
 
@@ -234,7 +234,7 @@ public class Speed implements Listener {
 
 
 
-    public static boolean isInvincibilityGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 10;
     }
 }

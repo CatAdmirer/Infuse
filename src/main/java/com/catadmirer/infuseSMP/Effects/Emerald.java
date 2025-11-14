@@ -52,7 +52,7 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
     }
 
-    public static ItemStack createInvincibilityGem() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -191,7 +191,7 @@ public class Emerald implements Listener {
         }
     }
 
-    public static boolean isInvincibilityGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 1;
     }
 }

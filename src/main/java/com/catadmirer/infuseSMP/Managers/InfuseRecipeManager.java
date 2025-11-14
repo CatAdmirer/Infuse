@@ -143,7 +143,7 @@ public class InfuseRecipeManager implements Listener {
                 case "end_second":
                     break;
                 case "apophis":
-                    this.Aphopis();
+                    this.Apophis();
                     break;
                 case "thief":
                     this.Thief();
@@ -661,32 +661,32 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Emerald() {
-        ItemStack firstTime = Augmented.createEME();
-        ItemStack standard = Emerald.createInvincibilityGem();
+        ItemStack firstTime = Augmented.createEmerald();
+        ItemStack standard = Emerald.createEffect();
         this.firstTimeRewards.put("emerald", firstTime);
         this.standardResults.put("emerald", standard);
         registerRecipeFromConfig("emerald", standard);
     }
 
     private void Feather() {
-        ItemStack firstTime = Augmented.createFEATHER();
-        ItemStack standard = Feather.createGlide();
+        ItemStack firstTime = Augmented.createFeather();
+        ItemStack standard = Feather.createEffect();
         this.firstTimeRewards.put("feather", firstTime);
         this.standardResults.put("feather", standard);
         registerRecipeFromConfig("feather", standard);
     }
 
     private void Fire() {
-        ItemStack firstTime = Augmented.createFIRE();
-        ItemStack standard = Fire.createFIRE();
+        ItemStack firstTime = Augmented.createFire();
+        ItemStack standard = Fire.createEffect();
         this.firstTimeRewards.put("fire", firstTime);
         this.standardResults.put("fire", standard);
         registerRecipeFromConfig("fire", standard);
     }
 
     private void Ender() {
-        ItemStack firstTime = Augmented.createENDER();
-        ItemStack standard = Ender.createEnderGem();
+        ItemStack firstTime = Augmented.createEnder();
+        ItemStack standard = Ender.createEffect();
         this.firstTimeRewards.put("end_first", firstTime);
         this.standardResults.put("end_second", standard);
 
@@ -695,48 +695,48 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Frost() {
-        ItemStack firstTime = Augmented.createFROST();
-        ItemStack standard = Frost.createFrost();
+        ItemStack firstTime = Augmented.createFrost();
+        ItemStack standard = Frost.createEffect();
         this.firstTimeRewards.put("frost", firstTime);
         this.standardResults.put("frost", standard);
         registerRecipeFromConfig("frost", standard);
     }
 
     private void Haste() {
-        ItemStack firstTime = Augmented.createHASTE();
-        ItemStack standard = Haste.createFake();
+        ItemStack firstTime = Augmented.createHaste();
+        ItemStack standard = Haste.createEffect();
         this.firstTimeRewards.put("haste", firstTime);
         this.standardResults.put("haste", standard);
         registerRecipeFromConfig("haste", standard);
     }
 
     private void Heart() {
-        ItemStack firstTime = Augmented.createHEART();
-        ItemStack standard = Heart.createHeart();
+        ItemStack firstTime = Augmented.createHeart();
+        ItemStack standard = Heart.createEffect();
         this.firstTimeRewards.put("heart", firstTime);
         this.standardResults.put("heart", standard);
         registerRecipeFromConfig("heart", standard);
     }
 
     private void Invis() {
-        ItemStack firstTime = Augmented.createINVIS();
-        ItemStack standard = Invisibility.createStealthGem();
+        ItemStack firstTime = Augmented.createInvis();
+        ItemStack standard = Invisibility.createEffect();
         this.firstTimeRewards.put("invis", firstTime);
         this.standardResults.put("invis", standard);
         registerRecipeFromConfig("invis", standard);
     }
 
     private void Ocean() {
-        ItemStack firstTime = Augmented.createOCEAN();
-        ItemStack standard = Ocean.createOcean();
+        ItemStack firstTime = Augmented.createOcean();
+        ItemStack standard = Ocean.createEffect();
         this.firstTimeRewards.put("ocean", firstTime);
         this.standardResults.put("ocean", standard);
         registerRecipeFromConfig("ocean", standard);
     }
 
     private void Regen() {
-        ItemStack firstTime = Augmented.createREGEN();
-        ItemStack standard = Regen.createFake();
+        ItemStack firstTime = Augmented.createRegen();
+        ItemStack standard = Regen.createEffect();
         this.firstTimeRewards.put("regen", firstTime);
         this.standardResults.put("regen", standard);
         registerRecipeFromConfig("regen", standard);
@@ -745,8 +745,8 @@ public class InfuseRecipeManager implements Listener {
     private void Speed() {
         Augmented augmented = new Augmented();
         Speed speed = new Speed(Infuse.getInstance());
-        ItemStack firstTime = augmented.createSPEED();
-        ItemStack standard = speed.createSPEED();
+        ItemStack firstTime = augmented.createSpeed();
+        ItemStack standard = speed.createEffect();
         this.firstTimeRewards.put("speed", firstTime);
         this.standardResults.put("speed", standard);
         registerRecipeFromConfig("speed", standard);
@@ -755,8 +755,8 @@ public class InfuseRecipeManager implements Listener {
     private void Strength() {
         Augmented augmented = new Augmented();
         Strength strength = new Strength(Infuse.getInstance());
-        ItemStack firstTime = augmented.createST();
-        ItemStack standard = strength.createStealthGem();
+        ItemStack firstTime = augmented.createStrength();
+        ItemStack standard = strength.createEffect();
         this.firstTimeRewards.put("strength", firstTime);
         this.standardResults.put("strength", standard);
         registerRecipeFromConfig("strength", standard);
@@ -765,24 +765,24 @@ public class InfuseRecipeManager implements Listener {
     private void Thunder() {
         Augmented augmented = new Augmented();
         Thunder thunder = new Thunder(Infuse.getInstance(), new DataManager(Infuse.getInstance().getDataFolder()));
-        ItemStack firstTime = augmented.createTHUNDER();
-        ItemStack standard = thunder.createTHUNDER();
+        ItemStack firstTime = augmented.createThunder();
+        ItemStack standard = thunder.createEffect();
         this.firstTimeRewards.put("thunder", firstTime);
         this.standardResults.put("thunder", standard);
         registerRecipeFromConfig("thunder", standard);
     }
 
-    private void Aphopis() {
-        ItemStack firstTime = Augmented.createAPH();
-        ItemStack standard = Apophis.createAPH();
+    private void Apophis() {
+        ItemStack firstTime = Augmented.createApophis();
+        ItemStack standard = Apophis.createEffect();
         this.firstTimeRewards.put("apophis", firstTime);
         this.standardResults.put("apophis", standard);
         registerRecipeFromConfig("apophis", standard);
     }
 
     private void Thief() {
-        ItemStack firstTime = Augmented.createTHF();
-        ItemStack standard = Thief.createTHF();
+        ItemStack firstTime = Augmented.createThief();
+        ItemStack standard = Thief.createEffect();
         this.firstTimeRewards.put("thief", firstTime);
         this.standardResults.put("thief", standard);
         registerRecipeFromConfig("thief", standard);

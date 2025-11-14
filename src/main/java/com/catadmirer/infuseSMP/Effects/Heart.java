@@ -57,7 +57,7 @@ public class Heart implements Listener {
         }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
     }
 
-    public static ItemStack createHeart() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -73,7 +73,7 @@ public class Heart implements Listener {
         return gem;
     }
 
-    public static boolean isHeartEffect(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("heart");
         if (item != null && item.getType() == Material.POTION) {
             ItemMeta meta = item.getItemMeta();

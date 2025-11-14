@@ -28,7 +28,7 @@ public class Augmented {
         return result.toString();
     }
 
-    public static ItemStack createEME() {
+    public static ItemStack createEmerald() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -44,7 +44,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createTHF() {
+    public static ItemStack createThief() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -60,7 +60,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createFEATHER() {
+    public static ItemStack createFeather() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -81,7 +81,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createFIRE() {
+    public static ItemStack createFire() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -103,7 +103,7 @@ public class Augmented {
     }
 
 
-    public static ItemStack createENDER() {
+    public static ItemStack createEnder() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -119,7 +119,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createAPH() {
+    public static ItemStack createApophis() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -135,7 +135,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createFROST() {
+    public static ItemStack createFrost() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -151,7 +151,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createHASTE() {
+    public static ItemStack createHaste() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -167,7 +167,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createHEART() {
+    public static ItemStack createHeart() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -183,7 +183,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createINVIS() {
+    public static ItemStack createInvis() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -199,7 +199,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createOCEAN() {
+    public static ItemStack createOcean() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -215,7 +215,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createREGEN() {
+    public static ItemStack createRegen() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -232,7 +232,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createSPEED() {
+    public static ItemStack createSpeed() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -253,7 +253,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createST() {
+    public static ItemStack createStrength() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -269,7 +269,7 @@ public class Augmented {
         return gem;
     }
 
-    public static ItemStack createTHUNDER() {
+    public static ItemStack createThunder() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -285,80 +285,80 @@ public class Augmented {
         return gem;
     }
 
-    public static boolean ISST(ItemStack item) {
+    public static boolean isStrength(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_strength");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISHEART(ItemStack item) {
+    public static boolean isHeart(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_heart");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISREGEN(ItemStack item) {
+    public static boolean isRegen(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_regen");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISINVIS(ItemStack item) {
+    public static boolean isInvis(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_invis");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISEME(ItemStack item) {
+    public static boolean isEmerald(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_emerald");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISEND(ItemStack item) {
+    public static boolean isEnder(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_ender");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISSPEED(ItemStack item) {
+    public static boolean isSpeed(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_speed");
         gemName = applyHexColors(gemName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISHASTE(ItemStack item) {
+    public static boolean isHaste(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_haste");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISFEATHER(ItemStack item) {
+    public static boolean isFeather(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_feather");
         gemName = applyHexColors(gemName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISOCEAN(ItemStack item) {
+    public static boolean isOcean(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_ocean");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISFROST(ItemStack item) {
+    public static boolean isFrost(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_frost");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISFIRE(ItemStack item) {
+    public static boolean isFire(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_fire");
         gemName = applyHexColors(gemName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISTHUNDER(ItemStack item) {
+    public static boolean isThunder(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("aug_thunder");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static boolean ISAUGAPH(ItemStack item) {
+    public static boolean isApophis(ItemStack item) {
         String gemName2 = Infuse.getInstance().getEffect("aug_apophis");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName2);
     }
 
-    public static boolean ISTHIEF(ItemStack item) {
+    public static boolean isThief(ItemStack item) {
         String gemName2 = Infuse.getInstance().getEffect("aug_thief");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName2);
     }

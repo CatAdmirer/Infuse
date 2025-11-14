@@ -29,7 +29,7 @@ public class Abilities implements CommandExecutor {
     private final Strength strengthAbility;
     private final Thunder thunderAbility;
     private final Ender enderAbility;
-    private final Apophis aphopis;
+    private final Apophis apophis;
     private final Thief thiefAbility;
 
     public Abilities(DataManager trustManager, Infuse plugin) {
@@ -47,7 +47,7 @@ public class Abilities implements CommandExecutor {
         this.strengthAbility = new Strength(plugin);
         this.thunderAbility = new Thunder(plugin, trustManager);
         this.enderAbility = new Ender(trustManager, plugin);
-        this.aphopis = new Apophis(plugin);
+        this.apophis = new Apophis(plugin);
         this.thiefAbility = new Thief(trustManager, plugin);
     }
 
@@ -137,13 +137,13 @@ public class Abilities implements CommandExecutor {
                         this.enderAbility.activateSpark(player);
                         break;
                     case 25:
-                        this.aphopis.activateSpark(player);
+                        this.apophis.activateSpark(player);
                         break;
                     case 26:
                         this.enderAbility.activateSpark(player);
                         break;
                     case 27:
-                        this.aphopis.activateSpark(player);
+                        this.apophis.activateSpark(player);
                         break;
                     case 28:
                         this.thiefAbility.activateSpark(player);

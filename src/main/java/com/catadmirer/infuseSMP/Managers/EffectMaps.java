@@ -53,36 +53,36 @@ public class EffectMaps {
     public static final Map<String, ItemStack> activeEffects = new HashMap<>();
 
     static {
-        activeEffects.put("emerald", Emerald.createInvincibilityGem());
-        activeEffects.put("haste", Haste.createFake());
-        activeEffects.put("heart", Heart.createHeart());
-        activeEffects.put("invis", Invisibility.createStealthGem());
-        activeEffects.put("frost", Frost.createFrost());
-        activeEffects.put("feather", Feather.createGlide());
-        activeEffects.put("thunder", Thunder.createTHUNDER());
-        activeEffects.put("speed", Speed.createSPEED());
-        activeEffects.put("regen", Regen.createFake());
-        activeEffects.put("ocean", Ocean.createOcean());
-        activeEffects.put("fire", Fire.createFIRE());
-        activeEffects.put("strength", Strength.createStealthGem());
-        activeEffects.put("ender", Ender.createEnderGem());
-        activeEffects.put("apophis", Apophis.createAPH());
-        activeEffects.put("thief", Thief.createTHF());
-        activeEffects.put("aug_strength", Augmented.createST());
-        activeEffects.put("aug_thunder", Augmented.createTHUNDER());
-        activeEffects.put("aug_speed", Augmented.createSPEED());
-        activeEffects.put("aug_regen", Augmented.createREGEN());
-        activeEffects.put("aug_ocean", Augmented.createOCEAN());
-        activeEffects.put("aug_emerald", Augmented.createEME());
-        activeEffects.put("aug_fire", Fire.createFIRE());
-        activeEffects.put("aug_invis", Augmented.createINVIS());
-        activeEffects.put("aug_frost", Augmented.createFROST());
-        activeEffects.put("aug_haste", Augmented.createHASTE());
-        activeEffects.put("aug_heart", Augmented.createHEART());
-        activeEffects.put("aug_feather", Augmented.createFEATHER());
-        activeEffects.put("aug_ender", Augmented.createENDER());
-        activeEffects.put("aug_apophis", Augmented.createAPH());
-        activeEffects.put("aug_thief", Augmented.createTHF());
+        activeEffects.put("emerald", Emerald.createEffect());
+        activeEffects.put("haste", Haste.createEffect());
+        activeEffects.put("heart", Heart.createEffect());
+        activeEffects.put("invis", Invisibility.createEffect());
+        activeEffects.put("frost", Frost.createEffect());
+        activeEffects.put("feather", Feather.createEffect());
+        activeEffects.put("thunder", Thunder.createEffect());
+        activeEffects.put("speed", Speed.createEffect());
+        activeEffects.put("regen", Regen.createEffect());
+        activeEffects.put("ocean", Ocean.createEffect());
+        activeEffects.put("fire", Fire.createEffect());
+        activeEffects.put("strength", Strength.createEffect());
+        activeEffects.put("ender", Ender.createEffect());
+        activeEffects.put("apophis", Apophis.createEffect());
+        activeEffects.put("thief", Thief.createEffect());
+        activeEffects.put("aug_strength", Augmented.createStrength());
+        activeEffects.put("aug_thunder", Augmented.createThunder());
+        activeEffects.put("aug_speed", Augmented.createSpeed());
+        activeEffects.put("aug_regen", Augmented.createRegen());
+        activeEffects.put("aug_ocean", Augmented.createOcean());
+        activeEffects.put("aug_emerald", Augmented.createEmerald());
+        activeEffects.put("aug_fire", Fire.createEffect());
+        activeEffects.put("aug_invis", Augmented.createInvis());
+        activeEffects.put("aug_frost", Augmented.createFrost());
+        activeEffects.put("aug_haste", Augmented.createHaste());
+        activeEffects.put("aug_heart", Augmented.createHeart());
+        activeEffects.put("aug_feather", Augmented.createFeather());
+        activeEffects.put("aug_ender", Augmented.createEnder());
+        activeEffects.put("aug_apophis", Augmented.createApophis());
+        activeEffects.put("aug_thief", Augmented.createThief());
     }
 
     public static ItemStack getEffectItem(String key) {

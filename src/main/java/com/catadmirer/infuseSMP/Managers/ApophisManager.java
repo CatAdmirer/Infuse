@@ -24,12 +24,12 @@ public class ApophisManager implements CommandExecutor {
 
     private final Set<UUID> apohpisActive = new HashSet<>();
 
-    private final File aphopisFile;
+    private final File apophisFile;
 
 
     public ApophisManager(Infuse plugin, String relativePath) {
         this.plugin = plugin;
-        this.aphopisFile = new File(plugin.getDataFolder(), relativePath);
+        this.apophisFile = new File(plugin.getDataFolder(), relativePath);
     }
 
     @Override
@@ -41,27 +41,27 @@ public class ApophisManager implements CommandExecutor {
 
         String playerName = args[0];
 
-        if (command.getName().equalsIgnoreCase("setaphopis")) {
+        if (command.getName().equalsIgnoreCase("setapophis")) {
             Player target = Bukkit.getPlayerExact(playerName);
             if (target == null) {
                 sender.sendMessage(ChatColor.RED + "Player not found or not online.");
                 return true;
             }
-            return disguiseAsAphopis(target);
+            return disguiseAsApophis(target);
         }
 
-        if (command.getName().equalsIgnoreCase("unsetaphopis")) {
-            return unsetAphopis(sender, playerName);
+        if (command.getName().equalsIgnoreCase("unsetapophis")) {
+            return unsetApophis(sender, playerName);
         }
 
         return false;
     }
 
-    public File getAphopisFile() {
-        return aphopisFile;
+    public File getApophisFile() {
+        return apophisFile;
     }
 
-    public boolean disguiseAsAphopis(Player target) {
+    public boolean disguiseAsApophis(Player target) {
         UUID uuid = target.getUniqueId();
         if (apohpisActive.contains(uuid)) {
             return false;
@@ -76,9 +76,9 @@ public class ApophisManager implements CommandExecutor {
                     "ewogICJ0aW1lc3RhbXAiIDogMTcxNzg4NTA2MDQwNywKICAicHJvZmlsZUlkIiA6ICJlZGUyYzdhMGFjNjM0MTNiYjA5ZDNmMGJlZTllYzhlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0aGVEZXZKYWRlIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MwOTBmY2NjMjBmMWM3ZWMyMDBkNGVkMDUxMjQwNjM3ZmRmNjE5ZDg1Nzg0NWZhNWRmNWJkMzM1MWJiMjBkOCIKICAgIH0KICB9Cn0=",
                     "mBgGwS28lqNz7rJCysD9SElJpA5q+34uTZK68JFXIFzuoN31KQg2VHjVDz+/nAr0yXdRwOrgL5rnRb2NbKBPyKSWdcB8A1nVHeNMpoJ5c5CzEERyOROUiTRxge/MIhYL7Fkj67fkh7Sc/l7BwDAf7/7OIgiAIleUTLZ9COnIN15gylTBldOo3JOka8TTNrI1i4QmnMsbgT0luQZzrUMRtZxIHNwx+26IevzCE+hpNdwiYqnDVZdayDLPVy1vv+i3C7AJGd9b7/2/qv0YmWxvT3uKrPR8+9fbSWltGx9ikrdXO17FrGc5u0gqmPWAaSSWw/NJmMhPenILh7/MvXA8mO2m7JeuhnM/EYzdOMB3qzvkUEVddFIngPl6LNE8XG1R+APFBsbpnpybB7dQphSud5DNfuZijqLDd735kykYlRMzw5VVGf7fONheLzSV42XRsIU+5IazHvmAZ4pxr72+r9bbS9vRW38ZgQIy6p8r4tLv9jfmqmcS9lEn1CAgDLAqZWGzIWeIgOdDsrWH4ia/1gj6oZVefRCr2dAS84NsOQUdoJDbS8G0+ArN+CWgnlcwOJCS6MB5kBmQl2FPvwLcSnnRcS66XKfH28Bu2/J3Hu5zRWbONuOLQTbYFxwftUtvS1IORKBCfWvlJTx5G/mz1KOGW89iOCpW8jdx8EmzpRI="
             )));
-            target.setDisplayName("§5Aphopis");
-            target.setPlayerListName("§5Aphopis");
-            target.setCustomName("§5Aphopis");
+            target.setDisplayName("§5Apophis");
+            target.setPlayerListName("§5Apophis");
+            target.setCustomName("§5Apophis");
             target.setCustomNameVisible(true);
             target.setPlayerProfile(profile);
             File disguiseFolder = new File(plugin.getDataFolder(), "AphopisPlayers");
@@ -94,7 +94,7 @@ public class ApophisManager implements CommandExecutor {
     }
 
 
-    public boolean unsetAphopis(CommandSender sender, String playerName) {
+    public boolean unsetApophis(CommandSender sender, String playerName) {
         Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) {
             sender.sendMessage(ChatColor.RED + "Player not found or not online.");

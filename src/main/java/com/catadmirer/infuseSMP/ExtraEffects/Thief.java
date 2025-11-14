@@ -182,7 +182,7 @@ public class Thief implements Listener, PacketListener {
         }
     }
 
-    public static ItemStack createTHF() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) gem.getItemMeta();
         if (meta != null) {
@@ -198,7 +198,7 @@ public class Thief implements Listener, PacketListener {
         return gem;
     }
 
-    public static boolean ISTHF(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("thief");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }

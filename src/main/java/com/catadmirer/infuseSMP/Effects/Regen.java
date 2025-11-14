@@ -31,7 +31,7 @@ public class Regen implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public static boolean isInvincibilityGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
             return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 9;
         } else {
@@ -119,7 +119,7 @@ public class Regen implements Listener {
     }
 
 
-    public static ItemStack createFake() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {

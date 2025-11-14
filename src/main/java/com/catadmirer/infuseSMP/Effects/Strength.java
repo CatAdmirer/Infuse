@@ -125,7 +125,7 @@ public class Strength implements Listener {
         }
     }
 
-    public static ItemStack createStealthGem() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
@@ -173,7 +173,7 @@ public class Strength implements Listener {
 
     }
 
-    public static boolean isStealthGem(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
             return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 11;
         } else {

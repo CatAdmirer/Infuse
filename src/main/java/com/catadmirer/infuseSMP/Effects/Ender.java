@@ -76,7 +76,7 @@ public class Ender implements Listener {
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
-    public static boolean ISENDER(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("ender");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
@@ -244,7 +244,7 @@ public class Ender implements Listener {
         return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
     }
 
-    public static ItemStack createEnderGem() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {

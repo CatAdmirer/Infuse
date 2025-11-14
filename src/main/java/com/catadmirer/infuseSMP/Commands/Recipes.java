@@ -64,22 +64,22 @@ public class Recipes implements CommandExecutor, Listener {
 
     private static ItemStack createPotion(String potionName) {
         return switch (potionName) {
-            case "emerald" -> Augmented.createEME();
-            case "feather" -> Augmented.createFEATHER();
-            case "fire" -> Augmented.createFIRE();
-            case "end_first" -> Augmented.createENDER();
-            case "end_second" -> Ender.createEnderGem();
-            case "frost" -> Augmented.createFROST();
-            case "haste" -> Augmented.createHASTE();
-            case "heart" -> Augmented.createHEART();
-            case "invis" -> Augmented.createINVIS();
-            case "ocean" -> Augmented.createOCEAN();
-            case "regen" -> Augmented.createREGEN();
-            case "speed" -> Augmented.createSPEED();
-            case "strength" -> Augmented.createST();
-            case "thunder" -> Augmented.createTHUNDER();
-            case "apophis" -> Augmented.createAPH();
-            case "thief" -> Augmented.createTHF();
+            case "emerald" -> Augmented.createEmerald();
+            case "feather" -> Augmented.createFeather();
+            case "fire" -> Augmented.createFire();
+            case "end_first" -> Augmented.createEnder();
+            case "end_second" -> Ender.createEffect();
+            case "frost" -> Augmented.createFrost();
+            case "haste" -> Augmented.createHaste();
+            case "heart" -> Augmented.createHeart();
+            case "invis" -> Augmented.createInvis();
+            case "ocean" -> Augmented.createOcean();
+            case "regen" -> Augmented.createRegen();
+            case "speed" -> Augmented.createSpeed();
+            case "strength" -> Augmented.createStrength();
+            case "thunder" -> Augmented.createThunder();
+            case "apophis" -> Augmented.createApophis();
+            case "thief" -> Augmented.createThief();
             default -> null;
         };
     }

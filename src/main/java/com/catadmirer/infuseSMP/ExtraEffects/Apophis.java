@@ -99,12 +99,12 @@ public class Apophis implements Listener {
         return currentHack != null && (currentHack.equals(gemName) || currentHack.equals(gemName2));
     }
 
-    public static boolean ISPAPH(ItemStack item) {
+    public static boolean isEffect(ItemStack item) {
         String gemName = Infuse.getInstance().getEffect("apophis");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(gemName);
     }
 
-    public static ItemStack createAPH() {
+    public static ItemStack createEffect() {
         ItemStack gem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)gem.getItemMeta();
         if (meta != null) {
