@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -36,10 +36,10 @@ public class Feather implements Listener {
 
     private final Set<UUID> spark = new HashSet<>();
 
-    private final EffectManager trustManager;
+    private final DataManager trustManager;
 
 
-    public Feather(Plugin plugin, EffectManager trustManager) {
+    public Feather(Plugin plugin, DataManager trustManager) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

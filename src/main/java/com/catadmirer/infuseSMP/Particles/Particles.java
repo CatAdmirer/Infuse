@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -8,7 +8,7 @@ import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -36,7 +36,7 @@ public class Abilities implements CommandExecutor {
     private final CooldownManager cooldownManager = new CooldownManager();
 
 
-    public Abilities(EffectManager trustManager, Infuse plugin) {
+    public Abilities(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
         this.emeraldAbility = new Emerald(plugin);
         this.featherAbility = new Feather(plugin, trustManager);

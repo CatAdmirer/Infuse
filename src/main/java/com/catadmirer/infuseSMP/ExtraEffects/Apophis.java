@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;

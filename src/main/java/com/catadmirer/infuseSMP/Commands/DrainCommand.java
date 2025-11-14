@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.ApophisManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

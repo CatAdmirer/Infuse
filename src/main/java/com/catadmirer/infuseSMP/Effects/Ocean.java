@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -34,9 +34,9 @@ public class Ocean implements Listener {
     
     private final Plugin plugin;
 
-    private final EffectManager trustManager;
+    private final DataManager trustManager;
 
-    public Ocean(Plugin plugin, EffectManager trustManager) {
+    public Ocean(Plugin plugin, DataManager trustManager) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

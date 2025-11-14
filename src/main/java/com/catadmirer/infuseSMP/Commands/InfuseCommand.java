@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

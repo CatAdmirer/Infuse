@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EffectManager {
+public class DataManager {
 
     private final File dataFile;
     private FileConfiguration config;
     private final Map<UUID, Set<UUID>> trustMap = new HashMap<>();
 
-    public EffectManager(File dataFolder) {
+    public DataManager(File dataFolder) {
         File oldFile = new File(dataFolder, "player_hacks.yml");
         this.dataFile = new File(dataFolder, "playerdata.yml");
         if (oldFile.exists() && !dataFile.exists()) {

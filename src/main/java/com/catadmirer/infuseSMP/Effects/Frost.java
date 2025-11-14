@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -36,11 +36,11 @@ public class Frost implements Listener {
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
 
-    private EffectManager trustManager;
+    private DataManager trustManager;
 
     private final Infuse plugin;
 
-    public Frost(EffectManager trustManager, Infuse plugin) {
+    public Frost(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

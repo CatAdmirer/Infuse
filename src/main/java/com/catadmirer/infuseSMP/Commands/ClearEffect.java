@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,10 +42,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Invisibility implements Listener, PacketListener {
     
     private final Plugin plugin;
-    private final EffectManager trustManager;
+    private final DataManager trustManager;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap();
 
-    public Invisibility(Plugin plugin, EffectManager trustManager) {
+    public Invisibility(Plugin plugin, DataManager trustManager) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

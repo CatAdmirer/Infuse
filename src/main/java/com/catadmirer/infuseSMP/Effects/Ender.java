@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -35,11 +35,11 @@ public class Ender implements Listener {
 
     private final Set<UUID> processingDamage = new HashSet<>();
 
-    private EffectManager trustManager;
+    private DataManager trustManager;
 
     private final Set<UUID> curseChain = new HashSet<>();
 
-    public Ender(EffectManager trustManager, Infuse plugin) {
+    public Ender(DataManager trustManager, Infuse plugin) {
         this.trustManager = trustManager;
         this.plugin = plugin;
         new BukkitRunnable() {

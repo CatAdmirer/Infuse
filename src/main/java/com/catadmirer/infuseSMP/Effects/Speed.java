@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;

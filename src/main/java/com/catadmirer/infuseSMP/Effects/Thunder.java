@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -42,11 +42,11 @@ public class Thunder implements Listener {
     private final Set<UUID> activeSparks = new HashSet();
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap();
 
-    private EffectManager trustManager;
+    private DataManager trustManager;
 
     private final Infuse plugin;
 
-    public Thunder(Infuse plugin, EffectManager trustManager) {
+    public Thunder(Infuse plugin, DataManager trustManager) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

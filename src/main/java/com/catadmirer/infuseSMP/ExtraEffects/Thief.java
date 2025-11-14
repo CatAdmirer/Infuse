@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
@@ -46,7 +46,7 @@ public class Thief implements Listener, PacketListener {
     private Map<UUID, BossBar> shapeshiftedBossBars = new HashMap<>();
     private Map<UUID, Integer> shapeshiftTimeLeft = new HashMap<>();
 
-    private final EffectManager trustManager;
+    private final DataManager trustManager;
 
     private final Emerald emeraldAbility;
     private final Feather featherAbility;
@@ -63,7 +63,7 @@ public class Thief implements Listener, PacketListener {
     private final Ender enderAbility;
     private final Apophis aphopis;
 
-    public Thief(EffectManager trustManager, Infuse plugin) {
+    public Thief(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
         this.trustManager = trustManager;
         this.emeraldAbility = new Emerald(plugin);

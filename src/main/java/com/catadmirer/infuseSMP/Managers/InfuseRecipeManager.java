@@ -759,7 +759,7 @@ public class InfuseRecipeManager implements Listener {
 
     private void Thunder() {
         Augmented augmented = new Augmented(Infuse.getInstance());
-        Thunder thunder = new Thunder(Infuse.getInstance(), new EffectManager(Infuse.getInstance().getDataFolder()));
+        Thunder thunder = new Thunder(Infuse.getInstance(), new DataManager(Infuse.getInstance().getDataFolder()));
         ItemStack firstTime = augmented.createTHUNDER();
         ItemStack standard = thunder.createTHUNDER();
         this.firstTimeRewards.put("thunder", firstTime);

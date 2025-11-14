@@ -54,7 +54,7 @@ import org.json.simple.parser.JSONParser;
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
     private final ConcurrentMap<UUID, String> hackManager = new ConcurrentHashMap();
-    private EffectManager hackManager2;
+    private DataManager hackManager2;
     private Abilities abilitiesHandler;
 
     private Particles particles;
@@ -67,7 +67,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private File aphopis;
 
-    private EffectManager trustManager;
+    private DataManager trustManager;
 
     private ApophisManager aphopisCommand;
 
@@ -206,8 +206,8 @@ public class Infuse extends JavaPlugin implements Listener {
             aphopis = new ApophisManager(this, "AphopisPlayers/").getAphopisFile();
             aphopisCommand = new ApophisManager(this, "AphopisPlayers/");
             new InfuseRecipeManager(this);
-            this.hackManager2 = new EffectManager(getDataFolder());
-            this.trustManager = new EffectManager(getDataFolder());
+            this.hackManager2 = new DataManager(getDataFolder());
+            this.trustManager = new DataManager(getDataFolder());
             this.abilitiesHandler = new Abilities(trustManager, this);
             PacketEvents.getAPI().getEventManager().registerListener(
                     new Invisibility(this, trustManager), PacketListenerPriority.HIGHEST);
@@ -422,7 +422,7 @@ public class Infuse extends JavaPlugin implements Listener {
                     player.sendMessage(ChatColor.RED + "Invalid option. Use 'Offhand' or 'Command'.");
                     return true;
                 }
-                EffectManager dataManager = Infuse.getInstance().getEffectManager();
+                DataManager dataManager = Infuse.getInstance().getEffectManager();
                 dataManager.setControlDefault(player.getUniqueId(), choice);
                 boolean offhandEnabled = choice.equals("Offhand");
                 player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
@@ -470,7 +470,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.getLogger().info("Infuse Plugin has been disabled!");
     }
 
-    public EffectManager getEffectManager() {
+    public DataManager getEffectManager() {
         return hackManager2;
     }
 
@@ -585,7 +585,7 @@ public class Infuse extends JavaPlugin implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        EffectManager dataManager = Infuse.getInstance().getEffectManager();
+        DataManager dataManager = Infuse.getInstance().getEffectManager();
         String controlMode = dataManager.getControlDefault(player.getUniqueId());
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
