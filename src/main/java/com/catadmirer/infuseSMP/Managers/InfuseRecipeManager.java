@@ -9,10 +9,17 @@ import java.util.*;
 
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
+import me.clip.placeholderapi.libs.kyori.adventure.text.format.NamedTextColor;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -51,6 +58,9 @@ public class InfuseRecipeManager implements Listener {
     private BossBar activeBossBar;
 
     FileConfiguration recipesConfig;
+
+    LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
+    PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
@@ -207,11 +217,11 @@ public class InfuseRecipeManager implements Listener {
 
         isRitualActive = true;
 
-        final String itemName = craftedItem.getItemMeta().getDisplayName();
+        Component itemName = craftedItem.getItemMeta().displayName();
+        TextColor itemColor = itemName.color();
+        String formattedItemName = legacySection.serialize(Component.text("\uD83E\uDDEA ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" \uD83E\uDDEA")));
+
         BarColor barColor = this.getColorFromItemName(recipeKey);
-        String lastColors = ChatColor.getLastColors(itemName);
-        ChatColor itemColor = lastColors.isEmpty() ? ChatColor.WHITE : ChatColor.getByChar(lastColors.charAt(1));
-        String formattedItemName = itemColor + "\uD83E\uDDEA " + ChatColor.BOLD + itemName + " \uD83E\uDDEA";
         this.activeBossBar = Bukkit.createBossBar(formattedItemName, barColor, BarStyle.SOLID);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -239,7 +249,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedMessage = messageTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", itemName)
+                .replace("%item%", legacySection.serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -247,7 +257,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedDiscordMessage = discordTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", ChatColor.stripColor(itemName))
+                .replace("%item%", plaintext.serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -280,7 +290,7 @@ public class InfuseRecipeManager implements Listener {
                 if (progress <= 0.0D) {
                     activeBossBar.removeAll();
                     String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
-                    String finishedMessage = finishedTemplate.replace("%item%", itemName);
+                    String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
                     Bukkit.broadcastMessage(ChatColor.WHITE + finishedMessage);
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;

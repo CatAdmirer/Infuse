@@ -9,7 +9,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

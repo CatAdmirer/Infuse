@@ -10,7 +10,8 @@ import com.catadmirer.infuseSMP.Managers.DataManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;

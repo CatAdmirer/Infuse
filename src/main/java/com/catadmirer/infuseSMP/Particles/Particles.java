@@ -4,7 +4,8 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import java.util.Iterator;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
