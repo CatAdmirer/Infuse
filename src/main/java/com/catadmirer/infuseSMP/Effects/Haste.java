@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -30,10 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Haste implements Listener {
     
-    private final Plugin plugin;
-
     public Haste(Plugin plugin) {
-        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {

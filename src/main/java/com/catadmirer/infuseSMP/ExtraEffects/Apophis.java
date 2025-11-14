@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -27,9 +26,6 @@ import java.util.*;
 
 public class Apophis implements Listener {
     private Infuse plugin;
-
-
-    
 
     public Apophis(Infuse plugin) {
         this.plugin = plugin;

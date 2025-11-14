@@ -1,14 +1,8 @@
 package com.catadmirer.infuseSMP.Particles;
 
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import java.util.Iterator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -16,10 +10,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 public class Particles {
-
-    
-    private final CooldownManager cooldownManager = new CooldownManager();
-
     public void startTask() {
         Bukkit.getGlobalRegionScheduler().runAtFixedRate(Infuse.getInstance(), (task) -> {
             Iterator var2 = Bukkit.getOnlinePlayers().iterator();

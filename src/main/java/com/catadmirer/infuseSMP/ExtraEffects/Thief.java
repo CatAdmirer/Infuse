@@ -1,6 +1,5 @@
 package com.catadmirer.infuseSMP.ExtraEffects;
 
-import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
@@ -48,38 +47,9 @@ public class Thief implements Listener, PacketListener {
 
     private final DataManager trustManager;
 
-    private final Emerald emeraldAbility;
-    private final Feather featherAbility;
-    private final Fire fireAbility;
-    private final Frost frostAbility;
-    private final Haste hasteAbility;
-    private final Heart heartAbility;
-    private final Invisibility invisibilityAbility;
-    private final Ocean oceanAbility;
-    private final Regen regenAbility;
-    private final Speed speedAbility;
-    private final Strength strengthAbility;
-    private final Thunder thunderAbility;
-    private final Ender enderAbility;
-    private final Apophis aphopis;
-
     public Thief(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
         this.trustManager = trustManager;
-        this.emeraldAbility = new Emerald(plugin);
-        this.featherAbility = new Feather(plugin, trustManager);
-        this.fireAbility = new Fire(plugin);
-        this.frostAbility = new Frost(trustManager, plugin);
-        this.hasteAbility = new Haste(plugin);
-        this.heartAbility = new Heart(plugin);
-        this.invisibilityAbility = new Invisibility(plugin, trustManager);
-        this.oceanAbility = new Ocean(plugin, trustManager);
-        this.regenAbility = new Regen(plugin);
-        this.speedAbility = new Speed(plugin);
-        this.strengthAbility = new Strength(plugin);
-        this.thunderAbility = new Thunder(plugin, trustManager);
-        this.enderAbility = new Ender(trustManager, plugin);
-        this.aphopis = new Apophis(plugin);
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         new BukkitRunnable() {
             public void run() {

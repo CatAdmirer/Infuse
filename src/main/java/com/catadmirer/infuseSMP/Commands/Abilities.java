@@ -7,7 +7,6 @@ import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import org.bukkit.ChatColor;
@@ -33,7 +32,6 @@ public class Abilities implements CommandExecutor {
     private final Ender enderAbility;
     private final Apophis aphopis;
     private final Thief thiefAbility;
-    private final CooldownManager cooldownManager = new CooldownManager();
 
 
     public Abilities(DataManager trustManager, Infuse plugin) {

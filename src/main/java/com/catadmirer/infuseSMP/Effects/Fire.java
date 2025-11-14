@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.github.retrooper.packetevents.event.PacketListener;
 import org.bukkit.*;
 import org.bukkit.entity.*;

@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
@@ -22,8 +21,6 @@ public class ApophisManager implements CommandExecutor {
 
     private final Infuse plugin;
 
-    private Apophis aphopis;
-
     private final Set<UUID> apohpisActive = new HashSet<>();
 
     private final File aphopisFile;
@@ -31,7 +28,6 @@ public class ApophisManager implements CommandExecutor {
 
     public ApophisManager(Infuse plugin, String relativePath) {
         this.plugin = plugin;
-        aphopis = new Apophis(plugin);
         this.aphopisFile = new File(plugin.getDataFolder(), relativePath);
     }
 

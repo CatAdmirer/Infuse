@@ -1,8 +1,6 @@
 package com.catadmirer.infuseSMP.Managers;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -17,12 +15,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
     private final Set<UUID> playersWithActiveEffects = new HashSet();
-
-    private Infuse plugin;
-
-    public ActionBarUpdater(Infuse plugin) {
-        this.plugin = plugin;
-    }
 
         public String removeAug(String key) {
             if (key.startsWith("aug_")) {

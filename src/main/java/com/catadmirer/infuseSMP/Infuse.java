@@ -30,7 +30,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EnderCrystal;
@@ -42,9 +41,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONArray;
@@ -61,11 +58,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private final Map<UUID, PlayerProfile> originalProfiles = new HashMap<>();
     private final Map<UUID, Integer> activeSkinModifiers = new HashMap<>();
-
-    private final Map<String, ItemStack> standardResults = new HashMap<>();
-    private final Map<String, ItemStack> firstTimeRewards = new HashMap<>();
-
-    private File aphopis;
 
     private DataManager trustManager;
 
@@ -203,7 +195,7 @@ public class Infuse extends JavaPlugin implements Listener {
             effectsLore.put("thief", getMessages().getStringList("thief.effect_lore"));
             effectsLore.put("aug_thief", getMessages().getStringList("aug_thief.effect_lore"));
             PacketEvents.getAPI().init();
-            aphopis = new ApophisManager(this, "AphopisPlayers/").getAphopisFile();
+            new ApophisManager(this, "AphopisPlayers/").getAphopisFile();
             aphopisCommand = new ApophisManager(this, "AphopisPlayers/");
             new InfuseRecipeManager(this);
             this.hackManager2 = new DataManager(getDataFolder());
@@ -218,7 +210,7 @@ public class Infuse extends JavaPlugin implements Listener {
             this.registerCommands();
             checkForUpdate();
             this.registerEvents();
-            (new ActionBarUpdater(this)).runTaskTimer(this, 0L, 20L);
+            new ActionBarUpdater().runTaskTimer(this, 0L, 20L);
             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new InfusePlaceholders(this).register();
                 getLogger().info("Placeholders Enabled!");
@@ -481,7 +473,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         this.particles.startTask();
 
-        Bukkit.getPluginManager().registerEvents(new GUI(this), this);
+        Bukkit.getPluginManager().registerEvents(new GUI(), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new Frost((trustManager), this), this);
         Bukkit.getPluginManager().registerEvents(new Invisibility(this, trustManager), this);
@@ -501,7 +493,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
         Bukkit.getPluginManager().registerEvents(new Ender((trustManager), this), this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffect(this, new EquipEffect(aphopisCommand)), this);
+        Bukkit.getPluginManager().registerEvents(new ClearEffect(), this);
     }
 
     @EventHandler

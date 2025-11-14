@@ -22,12 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class GUI implements Listener, CommandExecutor {
-    private final Infuse plugin;
-
-    public GUI(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
     public static void openSwordSelectionGUI(Player player) {
         Inventory gui = Bukkit.createInventory(null, 54, "§lInfuses");
         ItemStack magenta = createPane(Material.MAGENTA_STAINED_GLASS_PANE);
@@ -44,7 +38,7 @@ public class GUI implements Listener, CommandExecutor {
         setItems(gui, purpleSlots, purple);
         setItems(gui, blueSlots, blue);
         setItems(gui, lightBlueSlots, lightBlue);
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         Map<Integer, ItemStack> infusedItems = Map.ofEntries(
                 Map.entry(12, Augmented.createFROST()),
                 Map.entry(14, augmented.createSPEED()),
@@ -117,7 +111,7 @@ public class GUI implements Listener, CommandExecutor {
         String title = event.getView().getTitle();
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         if (title.equals("§lInfuses")) {
             event.setCancelled(true);
             if (Augmented.ISFROST(clicked)) {

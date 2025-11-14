@@ -143,7 +143,7 @@ public class Frost implements Listener {
                             final int freezeDuration = 200;
 
                             public void run() {
-                                if (this.ticksElapsed >= 200) {
+                                if (this.ticksElapsed >= freezeDuration) {
                                     target.setFreezeTicks(0);
                                     this.cancel();
                                 } else {

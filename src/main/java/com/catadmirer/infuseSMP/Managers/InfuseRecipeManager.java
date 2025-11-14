@@ -208,7 +208,6 @@ public class InfuseRecipeManager implements Listener {
         isRitualActive = true;
 
         final String itemName = craftedItem.getItemMeta().getDisplayName();
-        final String updatedItemName = itemName.replace("Effect", "");
         BarColor barColor = this.getColorFromItemName(recipeKey);
         String lastColors = ChatColor.getLastColors(itemName);
         ChatColor itemColor = lastColors.isEmpty() ? ChatColor.WHITE : ChatColor.getByChar(lastColors.charAt(1));
@@ -439,7 +438,6 @@ public class InfuseRecipeManager implements Listener {
         }
 
         ItemStack augmentedItem = firstTimeRewards.get(recipeKey);
-        ItemStack regularItem = standardResults.get(recipeKey);
 
         boolean isAugmented = result.isSimilar(augmentedItem);
 
@@ -738,7 +736,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Speed() {
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         Speed speed = new Speed(Infuse.getInstance());
         ItemStack firstTime = augmented.createSPEED();
         ItemStack standard = speed.createSPEED();
@@ -748,7 +746,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Strength() {
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         Strength strength = new Strength(Infuse.getInstance());
         ItemStack firstTime = augmented.createST();
         ItemStack standard = strength.createStealthGem();
@@ -758,7 +756,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Thunder() {
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         Thunder thunder = new Thunder(Infuse.getInstance(), new DataManager(Infuse.getInstance().getDataFolder()));
         ItemStack firstTime = augmented.createTHUNDER();
         ItemStack standard = thunder.createTHUNDER();

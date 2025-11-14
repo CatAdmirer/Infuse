@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -196,9 +195,7 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
             AlsoParticles.spawnEffect(player, Color.fromRGB(209, 164, 75));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            double dashMultiplier = Infuse.getInstance().getCanfig("speed.dashMultiplier");
             double playerVelocityMultiplier = Infuse.getInstance().getCanfig("speed.playerVelocityMultiplier");
-            Vector dashVector = direction.clone().multiply(dashMultiplier);
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(230, 220, 170), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};

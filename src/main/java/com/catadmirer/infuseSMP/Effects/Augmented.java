@@ -13,12 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class Augmented {
-    private final Infuse plugin;
-
-    public Augmented(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
     public static String applyHexColors(String input) {
         String regex = "(#(?:[0-9a-fA-F]{6}))";
         Pattern pattern = Pattern.compile(regex);

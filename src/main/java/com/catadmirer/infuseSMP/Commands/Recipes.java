@@ -42,7 +42,7 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
-        Augmented augmented = new Augmented(Infuse.getInstance());
+        Augmented augmented = new Augmented();
         ItemStack potionItem = null;
         switch (potionName) {
             case "emerald":
@@ -110,7 +110,7 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private ItemStack createPotion(String potionName) {
-        Augmented augmented = new Augmented(plugin);
+        Augmented augmented = new Augmented();
         ItemStack potionItem = null;
         switch (potionName) {
             case "emerald":
@@ -303,7 +303,7 @@ public class Recipes implements CommandExecutor, Listener {
 
 
     private String getPotionKeyFromItem(ItemStack item) {
-        Augmented augmented = new Augmented(plugin);
+        Augmented augmented = new Augmented();
         if (augmented.ISST(item)) {
             return "strength";
         } else if (Augmented.ISHEART(item)) {
