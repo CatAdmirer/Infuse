@@ -3,8 +3,13 @@ package com.catadmirer.infuseSMP.Commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.Augmented;
 import com.catadmirer.infuseSMP.Effects.Ender;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -15,7 +20,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -40,57 +46,7 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
-        ItemStack potionItem = null;
-        switch (potionName) {
-            case "emerald":
-                potionItem = Augmented.createEME();
-                break;
-            case "feather":
-                potionItem = Augmented.createFEATHER();
-                break;
-            case "fire":
-                potionItem = Augmented.createFIRE();
-                break;
-            case "end_first":
-                potionItem = Augmented.createENDER();
-                break;
-            case "end_second":
-                potionItem = Ender.createEnderGem();
-                break;
-            case "frost":
-                potionItem = Augmented.createFROST();
-                break;
-            case "haste":
-                potionItem = Augmented.createHASTE();
-                break;
-            case "heart":
-                potionItem = Augmented.createHEART();
-                break;
-            case "invis":
-                potionItem = Augmented.createINVIS();
-                break;
-            case "ocean":
-                potionItem = Augmented.createOCEAN();
-                break;
-            case "regen":
-                potionItem = Augmented.createREGEN();
-                break;
-            case "speed":
-                potionItem = Augmented.createSPEED();
-                break;
-            case "strength":
-                potionItem = Augmented.createST();
-                break;
-            case "thunder":
-                potionItem = Augmented.createTHUNDER();
-                break;
-            case "apophis":
-                potionItem = Augmented.createAPH();
-                break;
-            case "thief":
-                potionItem = Augmented.createTHF();
-                break;
-        }
+        ItemStack potionItem = createPotion(potionName);
 
         if (potionItem != null) {
             ItemMeta meta = potionItem.getItemMeta();
@@ -106,60 +62,26 @@ public class Recipes implements CommandExecutor, Listener {
         return potionItem;
     }
 
-    private ItemStack createPotion(String potionName) {
-        ItemStack potionItem = null;
-        switch (potionName) {
-            case "emerald":
-                potionItem = Augmented.createEME();
-                break;
-            case "feather":
-                potionItem = Augmented.createFEATHER();
-                break;
-            case "fire":
-                potionItem = Augmented.createFIRE();
-                break;
-            case "end_first":
-                potionItem = Augmented.createENDER();
-                break;
-            case "end_second":
-                potionItem = Ender.createEnderGem();
-                break;
-            case "frost":
-                potionItem = Augmented.createFROST();
-                break;
-            case "haste":
-                potionItem = Augmented.createHASTE();
-                break;
-            case "heart":
-                potionItem = Augmented.createHEART();
-                break;
-            case "invis":
-                potionItem = Augmented.createINVIS();
-                break;
-            case "ocean":
-                potionItem = Augmented.createOCEAN();
-                break;
-            case "regen":
-                potionItem = Augmented.createREGEN();
-                break;
-            case "speed":
-                potionItem = Augmented.createSPEED();
-                break;
-            case "strength":
-                potionItem = Augmented.createST();
-                break;
-            case "thunder":
-                potionItem = Augmented.createTHUNDER();
-                break;
-            case "apophis":
-                potionItem = Augmented.createAPH();
-                break;
-            case "thief":
-                potionItem = Augmented.createTHF();
-                break;
-        }
-
-        return potionItem;
+    private static ItemStack createPotion(String potionName) {
+        return switch (potionName) {
+            case "emerald" -> Augmented.createEME();
+            case "feather" -> Augmented.createFEATHER();
+            case "fire" -> Augmented.createFIRE();
+            case "end_first" -> Augmented.createENDER();
+            case "end_second" -> Ender.createEnderGem();
+            case "frost" -> Augmented.createFROST();
+            case "haste" -> Augmented.createHASTE();
+            case "heart" -> Augmented.createHEART();
+            case "invis" -> Augmented.createINVIS();
+            case "ocean" -> Augmented.createOCEAN();
+            case "regen" -> Augmented.createREGEN();
+            case "speed" -> Augmented.createSPEED();
+            case "strength" -> Augmented.createST();
+            case "thunder" -> Augmented.createTHUNDER();
+            case "apophis" -> Augmented.createAPH();
+            case "thief" -> Augmented.createTHF();
+            default -> null;
+        };
     }
 
     public static void openGUI(Player player) {
@@ -283,40 +205,24 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     private String getPotionKeyFromItem(ItemStack item) {
-        if (Augmented.ISST(item)) {
-            return "strength";
-        } else if (Augmented.ISHEART(item)) {
-            return "heart";
-        } else if (Augmented.ISREGEN(item)) {
-            return "regen";
-        } else if (Augmented.ISINVIS(item)) {
-            return "invis";
-        } else if (Augmented.ISEME(item)) {
-            return "emerald";
-        } else if (Augmented.ISEND(item)) {
-            return "end_first";
-        } else if (Ender.ISENDER(item)) {
-            return "end_second";
-        } else if (Augmented.ISSPEED(item)) {
-            return "speed";
-        } else if (Augmented.ISHASTE(item)) {
-            return "haste";
-        } else if (Augmented.ISFEATHER(item)) {
-            return "feather";
-        } else if (Augmented.ISOCEAN(item)) {
-            return "ocean";
-        } else if (Augmented.ISFROST(item)) {
-            return "frost";
-        } else if (Augmented.ISFIRE(item)) {
-            return "fire";
-        } else if (Augmented.ISTHUNDER(item)) {
-            return "thunder";
-        } else if (Augmented.ISAUGAPH(item)) {
-            return "apophis";
-        } else if (Augmented.ISTHIEF(item)) {
-            return "thief";
-        } else {
-            return null;
-        }
+        return switch (EffectMapping.fromItem(item)) {
+            case APOPHIS, AUG_APOPHIS -> "apophis";
+            case EMERALD, AUG_EMERALD -> "emerald";
+            case ENDER -> "end_second";
+            case AUG_ENDER -> "end_first";
+            case FEATHER, AUG_FEATHER -> "feather";
+            case FIRE, AUG_FIRE -> "fire";
+            case FROST, AUG_FROST -> "frost";
+            case HASTE, AUG_HASTE -> "haste";
+            case HEART, AUG_HEART -> "heart";
+            case INVISIBILITY, AUG_INVISIBILITY -> "invis";
+            case OCEAN, AUG_OCEAN -> "ocean";
+            case REGEN, AUG_REGEN -> "regen";
+            case SPEED, AUG_SPEED -> "speed";
+            case STRENGTH, AUG_STRENGTH -> "strength";
+            case THIEF, AUG_THIEF -> "thief";
+            case THUNDER, AUG_THUNDER -> "thunder";
+            default -> null;
+        };
     }
 }
