@@ -1,0 +1,12 @@
+Use persistent data containers for effect IDS.  Setting custom model data makes it harder on the resource pack devs.
+To get the character for the action bar:
+  - If there is no effect in the slot, use "\ue901"
+  - If there is an effect, use:
+    ```
+    int status = 0;
+    if (effect.getAugmented()) status += 2;
+    if (CooldownManager.isEffectActive(playerUUID, toInt())) status += 1;
+
+    char emoji = (char) Integer.parseInt("E" + status + String.format("%02d", effect.getId()), 16);
+    char = "E{status}{String.format("%02d", effect.getId())}"
+    ```
