@@ -40,7 +40,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -529,13 +528,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
     public FileConfiguration getMessages() {
         return messages;
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Craft Limits")) {
-            event.setCancelled(true);
-        }
     }
 
     private void checkForUpdate() {

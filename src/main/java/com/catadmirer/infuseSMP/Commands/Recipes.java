@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.Commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.Augmented;
 import com.catadmirer.infuseSMP.Effects.Ender;
+import com.catadmirer.infuseSMP.Inventories.RecipeGUI;
+import com.catadmirer.infuseSMP.Inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -45,7 +46,7 @@ public class Recipes implements CommandExecutor, Listener {
         return false;
     }
 
-    private static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
+    public static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
         ItemStack potionItem = createPotion(potionName);
 
         if (potionItem != null) {
@@ -62,7 +63,7 @@ public class Recipes implements CommandExecutor, Listener {
         return potionItem;
     }
 
-    private static ItemStack createPotion(String potionName) {
+    public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
             case "emerald" -> Augmented.createEmerald();
             case "feather" -> Augmented.createFeather();
@@ -85,21 +86,8 @@ public class Recipes implements CommandExecutor, Listener {
     }
 
     public static void openGUI(Player player) {
-        Map<String, Map<String, Integer>> craftLimits = loadCraftLimitsFromConfig();
-        Inventory gui = Bukkit.createInventory(null, 36, "Potion Crafting");
-        int[] customSlots = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33};
-        int index = 0;
-        for (String potionName : craftLimits.keySet()) {
-            if (index >= customSlots.length) break;
-
-            Map<String, Integer> limits = craftLimits.get(potionName);
-            int augmentedLimit = limits.get("augmented_limit");
-            int regularLimit = limits.get("regular_limit");
-            ItemStack potion = createPotionWithModifiedLore(potionName, augmentedLimit, regularLimit);
-            gui.setItem(customSlots[index] - 1, potion);
-
-            index++;
-        }
+        Inventory gui = new RecipeListGUI(loadCraftLimitsFromConfig()).getInventory();
+        
         fillRemainingSlots(gui);
         player.openInventory(gui);
     }
@@ -120,7 +108,7 @@ public class Recipes implements CommandExecutor, Listener {
         return result;
     }
 
-    private static void fillRemainingSlots(Inventory inventory) {
+    public static void fillRemainingSlots(Inventory inventory) {
         ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         ItemMeta meta = stainedGlassPane.getItemMeta();
         meta.setDisplayName("§7");
@@ -133,14 +121,14 @@ public class Recipes implements CommandExecutor, Listener {
 
     @EventHandler
     public void onInventoryClick2(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Recipes")) {
+        if (event.getInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Potion Crafting") && event.getCurrentItem() != null) {
+        if (event.getInventory().getHolder() instanceof RecipeListGUI && event.getCurrentItem() != null) {
             event.setCancelled(true);
             ItemStack clickedItem = event.getCurrentItem();
             HumanEntity player = event.getWhoClicked();
@@ -182,24 +170,7 @@ public class Recipes implements CommandExecutor, Listener {
             return;
         }
 
-        Inventory recipeGui = Bukkit.createInventory(null, 45, "Recipes");
-        int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
-        int slotIndex = 0;
-        for (String row : shape) {
-            for (char ch : row.toCharArray()) {
-                String ingredientName = ingredients.get(ch);
-                if (ingredientName != null) {
-                    Material material = Material.getMaterial(ingredientName.toUpperCase());
-                    if (material != null) {
-                        ItemStack ingredientItem = new ItemStack(material);
-                        recipeGui.setItem(ingredientSlots[slotIndex], ingredientItem);
-                    }
-                }
-                slotIndex++;
-            }
-        }
-        recipeGui.setItem(25, createPotion(potionKey));
-        fillRemainingSlots(recipeGui);
+        Inventory recipeGui = new RecipeGUI(potionKey, shape, ingredients).getInventory();
         player.closeInventory();
         player.openInventory(recipeGui);
     }

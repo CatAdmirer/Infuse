@@ -9,6 +9,7 @@ import java.util.*;
 
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
 import com.catadmirer.infuseSMP.ExtraEffects.Thief;
+import com.catadmirer.infuseSMP.Inventories.BrewingStandGUI;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import org.bukkit.Bukkit;
@@ -46,7 +47,6 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class InfuseRecipeManager implements Listener {
@@ -612,26 +612,8 @@ public class InfuseRecipeManager implements Listener {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);
-                Inventory gui = Bukkit.createInventory(null, 27, "Choose GUI");
-                ItemStack filler = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-                ItemMeta fillerMeta = filler.getItemMeta();
-                fillerMeta.setDisplayName(" ");
-                filler.setItemMeta(fillerMeta);
-                for (int i = 0; i < gui.getSize(); i++) {
-                    gui.setItem(i, filler);
-                }
-                ItemStack craftingItem = new ItemStack(Material.CRAFTING_TABLE);
-                ItemMeta craftingMeta = craftingItem.getItemMeta();
-                craftingMeta.setDisplayName("§4Open Crafting");
-                craftingItem.setItemMeta(craftingMeta);
-                ItemStack brewingItem = new ItemStack(Material.BREWING_STAND);
-                ItemMeta brewingMeta = brewingItem.getItemMeta();
-                brewingMeta.setDisplayName("§4Open Brewing");
-                brewingItem.setItemMeta(brewingMeta);
-                gui.setItem(11, craftingItem);
-                gui.setItem(15, brewingItem);
-
-                player.openInventory(gui);
+                
+                player.openInventory(new BrewingStandGUI().getInventory());
             } else {
                 player.openWorkbench(null, true);
             }
@@ -640,7 +622,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Choose GUI")) {
+        if (event.getInventory().getHolder() instanceof BrewingStandGUI) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             ItemStack clicked = event.getCurrentItem();
