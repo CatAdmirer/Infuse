@@ -59,7 +59,7 @@ public class Emerald implements Listener {
             String effectName = Infuse.getInstance().getEffect("emerald");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("emerald");
-            meta.setColor(Color.fromRGB(0, 255, 0));
+            meta.setColor(Color.LIME);
             meta.setLore(lore);
             meta.setCustomModelData(1);
             effect.setItemMeta(meta);

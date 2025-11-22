@@ -68,7 +68,7 @@ public class Invisibility implements Listener, PacketListener {
             String effectName = Infuse.getInstance().getEffect("invis");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("invis");
-            meta.setColor(Color.fromRGB(204, 51, 255));
+            meta.setColor(Color.fromRGB(0xCC33FF));
             meta.setLore(lore);
             meta.setCustomModelData(7);
             effect.setItemMeta(meta);
@@ -240,7 +240,7 @@ public class Invisibility implements Listener, PacketListener {
                             double rad = Math.toRadians(angle);
                             double baseX = center.getX() + radius * Math.cos(rad);
                             double baseZ = center.getZ() + radius * Math.sin(rad);
-                            DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 0, 0), 15);
+                            DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
 
                             for(int i = 0; i < 1; ++i) {
                                 double offsetX = (Math.random() - 0.5) * 0.3;

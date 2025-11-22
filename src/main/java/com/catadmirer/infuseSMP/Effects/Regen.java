@@ -125,7 +125,7 @@ public class Regen implements Listener {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("regen");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(255, 0, 0));
+            meta.setColor(Color.RED);
             List<String> lore = Infuse.getInstance().getEffectLore("regen");
             meta.setLore(lore);
             meta.setCustomModelData(9);

@@ -251,7 +251,7 @@ public class Ender implements Listener {
             String effectName = Infuse.getInstance().getEffect("ender");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("ender");
-            meta.setColor(Color.fromRGB(135, 18, 119));
+            meta.setColor(Color.fromRGB(0x871277));
             meta.setLore(lore);
             meta.setCustomModelData(25);
             effect.setItemMeta(meta);

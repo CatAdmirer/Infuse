@@ -34,79 +34,79 @@ public class Particles {
                 AlsoParticles.spawnAugmented(player, Color.GREEN);
                 break;
             case 2:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(190, 163, 202));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xBEA3CA));
                 break;
             case 3:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(190, 163, 202));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xBEA3CA));
                 break;
             case 4:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(252, 120, 3));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFC7803));
                 break;
             case 5:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(252, 120, 3));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFC7803));
                 break;
             case 6:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0, 255, 255));
+                AlsoParticles.spawnEffect2(player, Color.AQUA);
                 break;
             case 7:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0, 255, 255));
+                AlsoParticles.spawnAugmented(player, Color.AQUA);
                 break;
             case 8:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(185, 108, 0));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xB96C00));
                 break;
             case 9:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(185, 108, 0));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xB96C00));
                 break;
             case 10:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(252, 0, 70));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFC0046));
                 break;
             case 11:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(252, 0, 70));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFC0046));
                 break;
             case 14:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0, 90, 252));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x005AFC));
                 break;
             case 15:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0, 90, 252));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x005AFC));
                 break;
             case 16:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(255, 3, 239));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFF03EF));
                 break;
             case 17:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(255, 3, 239));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFF03EF));
                 break;
             case 18:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(209, 164, 75));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xD1A44B));
                 break;
             case 19:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(209, 164, 75));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xD1A44B));
                 break;
             case 20:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(139, 0, 0));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x8B0000));
                 break;
             case 21:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(139, 0, 0));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x8B0000));
                 break;
             case 22:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(252, 237, 0));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFCED00));
                 break;
             case 23:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(252, 237, 0));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFCED00));
                 break;
             case 24, 26:
                 spawnDragon(player);
                 break;
             case 25:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(69, 3, 62));
+                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x45033E));
                 break;
             case 27:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(69, 3, 62));
+                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x45033E));
                 break;
             case 28:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(255, 0, 0));
+                AlsoParticles.spawnEffect2(player, Color.RED);
                 break;
             case 29:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(255, 0, 0));
+                AlsoParticles.spawnAugmented(player, Color.RED);
                 break;
             default:
                 break;

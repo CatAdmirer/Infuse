@@ -189,7 +189,7 @@ public class Thief implements Listener, PacketListener {
             String effectName = Infuse.getInstance().getEffect("thief");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("thief");
-            meta.setColor(Color.fromRGB(255, 0, 0));
+            meta.setColor(Color.RED);
             meta.setLore(lore);
             meta.setCustomModelData(26);
             effect.setItemMeta(meta);
@@ -821,7 +821,7 @@ public class Thief implements Listener, PacketListener {
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
             String effectName = Infuse.getInstance().getEffect("aug_thief");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            AlsoParticles.spawnEffect(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);
@@ -1033,7 +1033,7 @@ public class Thief implements Listener, PacketListener {
                         double rad = Math.toRadians(angle);
                         double baseX = center.getX() + radius * Math.cos(rad);
                         double baseZ = center.getZ() + radius * Math.sin(rad);
-                        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0, 0, 0), 15);
+                        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.BLACK, 15);
                         for(int i = 0; i < 1; ++i) {
                             double offsetX = (Math.random() - 0.5) * 0.3;
                             double offsetZ = (Math.random() - 0.5) * 0.3;

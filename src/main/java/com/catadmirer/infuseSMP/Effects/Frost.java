@@ -67,7 +67,7 @@ public class Frost implements Listener {
             String effectName = Infuse.getInstance().getEffect("frost");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("frost");
-            meta.setColor(Color.fromRGB(0, 255, 255));
+            meta.setColor(Color.AQUA);
             meta.setLore(lore);
             meta.setCustomModelData(4);
             effect.setItemMeta(meta);

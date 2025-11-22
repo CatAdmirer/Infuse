@@ -35,7 +35,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_emerald");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_emerald");
-            meta.setColor(Color.fromRGB(0, 255, 0));
+            meta.setColor(Color.LIME);
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -51,7 +51,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_thief");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thief");
-            meta.setColor(Color.fromRGB(255, 0, 0));
+            meta.setColor(Color.RED);
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -68,7 +68,7 @@ public class Augmented {
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_feather"));
-            meta.setColor(Color.fromRGB(255, 255, 255));
+            meta.setColor(Color.WHITE);
             for (int i = 0; i < lore.size(); i++) {
                 lore.set(i, applyHexColors(lore.get(i)));
             }
@@ -89,7 +89,7 @@ public class Augmented {
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_fire"));
-            meta.setColor(Color.fromRGB(255, 165, 0));
+            meta.setColor(Color.fromRGB(0xFFA500));
             for (int i = 0; i < lore.size(); i++) {
                 lore.set(i, applyHexColors(lore.get(i)));
             }
@@ -110,7 +110,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_ender");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ender");
-            meta.setColor(Color.fromRGB(135, 18, 119));
+            meta.setColor(Color.fromRGB(0x871277));
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -126,7 +126,7 @@ public class Augmented {
             String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
             meta.setDisplayName(effectName2);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_apophis");
-            meta.setColor(Color.fromRGB(69, 3, 62));
+            meta.setColor(Color.fromRGB(0x45033E));
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -142,7 +142,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_frost");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_frost");
-            meta.setColor(Color.fromRGB(0, 255, 255));
+            meta.setColor(Color.AQUA);
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -158,7 +158,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_haste");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_haste");
-            meta.setColor(Color.fromRGB(255, 204, 51));
+            meta.setColor(Color.fromRGB(0xFFCC33));
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -190,7 +190,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_invis");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_invis");
-            meta.setColor(Color.fromRGB(204, 51, 255));
+            meta.setColor(Color.fromRGB(0xCC33FF));
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -206,7 +206,7 @@ public class Augmented {
             String effectName = Infuse.getInstance().getEffect("aug_ocean");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ocean");
-            meta.setColor(Color.fromRGB(0, 0, 255));
+            meta.setColor(Color.BLUE);
             meta.setLore(lore);
             meta.setCustomModelData(999);
             effect.setItemMeta(meta);
@@ -221,7 +221,7 @@ public class Augmented {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("aug_regen");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(255, 0, 0));
+            meta.setColor(Color.RED);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_regen");
             meta.setLore(lore);
             meta.setLore(lore);
@@ -259,7 +259,7 @@ public class Augmented {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("aug_strength");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(139, 0, 0));
+            meta.setColor(Color.fromRGB(0x8B0000));
             List<String> lore = Infuse.getInstance().getEffectLore("aug_strength");
             meta.setLore(lore);
             meta.setCustomModelData(999);
@@ -275,7 +275,7 @@ public class Augmented {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("aug_thunder");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(255, 255, 0));
+            meta.setColor(Color.YELLOW);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thunder");
             meta.setLore(lore);
             meta.setCustomModelData(999);
@@ -354,12 +354,12 @@ public class Augmented {
     }
 
     public static boolean isApophis(ItemStack item) {
-        String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName2);
+        String effectName = Infuse.getInstance().getEffect("aug_apophis");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isThief(ItemStack item) {
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName2);
+        String effectName = Infuse.getInstance().getEffect("aug_thief");
+        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 }

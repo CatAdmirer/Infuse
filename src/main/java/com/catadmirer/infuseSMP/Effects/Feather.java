@@ -196,7 +196,7 @@ public class Feather implements Listener {
                 lore.set(i, applyHexColors(lore.get(i)));
             }
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setColor(Color.fromRGB(255, 255, 255));
+            meta.setColor(Color.WHITE);
             meta.setLore(lore);
             meta.setCustomModelData(2);
             effect.setItemMeta(meta);
@@ -254,7 +254,7 @@ public class Feather implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
             String effectName = Infuse.getInstance().getEffect("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            AlsoParticles.spawnEffect(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);

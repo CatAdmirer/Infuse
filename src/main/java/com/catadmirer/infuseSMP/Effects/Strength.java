@@ -131,7 +131,7 @@ public class Strength implements Listener {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("strength");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(139, 0, 0));
+            meta.setColor(Color.fromRGB(0x8B0000));
             List<String> lore = Infuse.getInstance().getEffectLore("strength");
             meta.setLore(lore);
             meta.setCustomModelData(11);

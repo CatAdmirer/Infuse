@@ -49,7 +49,7 @@ public class Haste implements Listener {
             String effectName = Infuse.getInstance().getEffect("haste");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("haste");
-            meta.setColor(Color.fromRGB(255, 204, 51));
+            meta.setColor(Color.fromRGB(0xFFCC33));
             meta.setLore(lore);
             meta.setCustomModelData(5);
             effect.setItemMeta(meta);
