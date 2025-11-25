@@ -10,3 +10,6 @@ To get the character for the action bar:
     char emoji = (char) Integer.parseInt("E" + status + String.format("%02d", effect.getId()), 16);
     char = "E{status}{String.format("%02d", effect.getId())}"
     ```
+
+Player Schedulers!  They cancel automatically if the player goes offline.
+    player.getScheduler().runDelayed(plugin, task -> { if (maxHealthAttribute != null) maxHealthAttribute.setBaseValue(20); }, null, 1200);
