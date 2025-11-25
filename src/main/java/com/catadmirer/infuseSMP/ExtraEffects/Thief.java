@@ -837,8 +837,8 @@ public class Thief implements Listener, PacketListener {
             long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");;
             long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");;
             long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
-            CooldownManager.setDuration(playerUUID, "feather", featherDuration);
-            CooldownManager.setCooldown(playerUUID, "feather", featherCooldown * 2);
+            CooldownManager.setDuration(playerUUID, "thief", featherDuration);
+            CooldownManager.setCooldown(playerUUID, "thief", featherCooldown * 2);
             Location anchor = player.getLocation();
             Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
                 if (player.isOnline()) {
