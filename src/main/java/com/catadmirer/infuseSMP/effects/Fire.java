@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.github.retrooper.packetevents.event.PacketListener;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -31,7 +30,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Fire implements Listener, PacketListener {
+public class Fire implements Listener {
     
     private static Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();

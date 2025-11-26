@@ -14,13 +14,11 @@ import java.util.stream.Collectors;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 
@@ -200,12 +198,6 @@ public class Infuse extends JavaPlugin implements Listener {
             this.dataManager = new DataManager(getDataFolder());
             this.trustManager = new DataManager(getDataFolder());
             this.abilitiesHandler = new Abilities(this);
-            PacketEvents.getAPI().getEventManager().registerListener(
-                    new Invisibility(this, trustManager), PacketListenerPriority.HIGHEST);
-            PacketEvents.getAPI().getEventManager().registerListener(
-                    new Thief(trustManager, this), PacketListenerPriority.HIGHEST);
-            PacketEvents.getAPI().getEventManager().registerListener(
-                    new Fire(this), PacketListenerPriority.HIGHEST);
             this.registerCommands();
             checkForUpdate();
             this.registerEvents();

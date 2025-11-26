@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.*;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
@@ -38,7 +37,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Invisibility implements Listener, PacketListener {
+public class Invisibility implements Listener {
     
     private static Plugin plugin;
     private static DataManager trustManager;

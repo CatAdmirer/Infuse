@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.particles.AlsoParticles;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -36,7 +35,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-public class Thief implements Listener, PacketListener {
+public class Thief implements Listener {
 
     private final Plugin plugin;
     
