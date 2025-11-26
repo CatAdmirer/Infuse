@@ -132,24 +132,18 @@ public class Thunder implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !this.activeSparks.contains(playerUUID)) {
             this.activeSparks.add(playerUUID);
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffect("aug_thunder");
-            boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
-                            .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
-                                    .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-            long defaultCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.default");
-            long augmentedCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.augmented");
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = Infuse.getInstance().getCanfig("thunder.duration.default");
-            long augmentedDuration = Infuse.getInstance().getCanfig("thunder.duration.augmented");
-            long duration = isAugmented ? augmentedDuration : defaultDuration;
-            final long effectDuration = duration * 20;
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thunder").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "thunder.cooldown.augmented" : "thunder.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "thunder.duration.augmented" : "thunder.duration.default");
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
+
+            final long effectDuration = duration * 20;
 
             final double radius = 10.0;
             final World world = caster.getWorld();

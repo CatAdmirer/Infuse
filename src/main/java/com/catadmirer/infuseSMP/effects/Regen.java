@@ -99,20 +99,15 @@ public class Regen implements Listener {
     public void activateSpark(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-            String effectName2 = plugin.getEffect("aug_regen");
-            boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getCanfig("regen.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("regen.cooldown.augmented");;
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-            long defaultDuration = Infuse.getInstance().getCanfig("regen.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("regen.duration.augmented");;
-            long duration = isAugmented ? augmentedDuration : defaultDuration;
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_regen").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            CooldownManager.setCooldown(playerUUID, "regen", cooldown);
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "regen.cooldown.augmented" : "regen.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "regen.duration.augmented" : "regen.duration.default");
+
             CooldownManager.setDuration(playerUUID, "regen", duration);
+            CooldownManager.setCooldown(playerUUID, "regen", cooldown);
 
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         }

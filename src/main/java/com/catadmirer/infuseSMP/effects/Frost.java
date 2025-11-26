@@ -185,24 +185,18 @@ public class Frost implements Listener {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
-            String effectName = Infuse.getInstance().getEffect("aug_frost");
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
-            boolean isAugmentedFrost =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))));
-            long frostDefaultCooldown = Infuse.getInstance().getCanfig("frost.cooldown.default");
-            long frostAugmentedCooldown = Infuse.getInstance().getCanfig("frost.cooldown.augmented");
-            long frostCooldown = isAugmentedFrost ? frostAugmentedCooldown : frostDefaultCooldown;
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_frost").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long frostDefaultDuration = Infuse.getInstance().getCanfig("frost.duration.default");
-            long frostAugmentedDuration = Infuse.getInstance().getCanfig("frost.duration.augmented");
-            long frostDuration = isAugmentedFrost ? frostAugmentedDuration : frostDefaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "frost.cooldown.augmented" : "frost.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "frost.duration.augmented" : "frost.duration.default");
 
-            CooldownManager.setDuration(playerUUID, "frost", frostDuration);
-            CooldownManager.setCooldown(playerUUID, "frost", frostCooldown);
+            CooldownManager.setDuration(playerUUID, "frost", duration);
+            CooldownManager.setCooldown(playerUUID, "frost", cooldown);
 
             Location center = caster.getLocation();
             double radius = 5.0;
@@ -233,7 +227,7 @@ public class Frost implements Listener {
                     }
                     Frost.this.frozenAttackers.remove(caster.getUniqueId());
                 }
-            }.runTaskLater(plugin, frostDuration * 20L);
+            }.runTaskLater(plugin, duration * 20L);
         }
     }
 

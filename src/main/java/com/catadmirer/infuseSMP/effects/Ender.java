@@ -171,22 +171,17 @@ public class Ender implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
-        String effectName = Infuse.getInstance().getEffect("aug_ender");
-        boolean isAugEnder =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName)));
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_ender").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
-        long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
-        long endCooldown = isAugEnder ? featherAugmentedCooldown : featherDefaultCooldown;
-        long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
-        long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
-        long endDuration = isAugEnder ? featherAugmentedDuration : featherDefaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "ender.cooldown.augmented" : "ender.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "ender.duration.augmented" : "ender.duration.default");
 
-        CooldownManager.setDuration(playerUUID, "ender", endDuration);
-        CooldownManager.setCooldown(playerUUID, "ender", endCooldown);
+        CooldownManager.setDuration(playerUUID, "ender", duration);
+        CooldownManager.setCooldown(playerUUID, "ender", cooldown);
+
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         Location startLoc = player.getEyeLocation();

@@ -176,24 +176,18 @@ public class Apophis implements Listener {
                 maxHealthAttribute.setBaseValue(40.0);
             }
 
-            String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_apophis").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "apophis.cooldown.augmented" : "apophis.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "apophis.duration.augmented" : "apophis.duration.default");
+
+            CooldownManager.setDuration(playerUUID, "apophis", duration);
+            CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
 
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-
-            long aphDefaultCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.default");;
-            long aphAugmentedCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.augmented");;
-            long aphCooldown = isAugmentedAph ? aphAugmentedCooldown : aphDefaultCooldown;
-
-            long aphDefaultDuration = Infuse.getInstance().getCanfig("apophis.duration.default");;
-            long aphAugmentedDuration = Infuse.getInstance().getCanfig("apophis.duration.augmented");;
-            long aphDuration = isAugmentedAph ? aphAugmentedDuration : aphDefaultDuration;
-
-            CooldownManager.setDuration(playerUUID, "apophis", aphDuration);
-            CooldownManager.setCooldown(playerUUID, "apophis", aphCooldown);
+            
             (new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {

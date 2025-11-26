@@ -63,18 +63,13 @@ public class Strength implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffect("aug_strength");
-            boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-            long defaultDuration = Infuse.getInstance().getCanfig("strength.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("strength.duration.augmented");;
-            long duration = isAugmented ? augmentedDuration : defaultDuration;
 
-            long defaultCooldown = Infuse.getInstance().getCanfig("strength.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("strength.cooldown.augmented");;
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_strength").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "strength.cooldown.augmented" : "strength.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "strength.duration.augmented" : "strength.duration.default");
 
             CooldownManager.setDuration(playerUUID, "strength", duration);
             CooldownManager.setCooldown(playerUUID, "strength", cooldown);

@@ -183,19 +183,13 @@ public class Ocean implements Listener {
 
             final double radius = 5.0;
             final World world = caster.getWorld();
-            String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
-            boolean isAugmented =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.augmented");;
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_ocean").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long defaultDuration = Infuse.getInstance().getCanfig("ocean.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("ocean.duration.augmented");;
-            long duration = isAugmented ? augmentedDuration : defaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "ocean.cooldown.augmented" : "ocean.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "ocean.duration.augmented" : "ocean.duration.default");
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);
             CooldownManager.setCooldown(playerUUID, "ocean", cooldown);

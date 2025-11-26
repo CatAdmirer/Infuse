@@ -189,20 +189,19 @@ public class Invisibility implements Listener, PacketListener {
         UUID playerUUID = caster.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = Infuse.getInstance().getEffect("aug_invis");
-            boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long invisDefaultCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.default");;
-            long invisAugmentedCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.augmented");;
-            long invisCooldown = isAugmentedInvis ? invisAugmentedCooldown : invisDefaultCooldown;
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_invis").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long invisDefaultDuration = Infuse.getInstance().getCanfig("invisibility.duration.default");;
-            long invisAugmentedDuration = Infuse.getInstance().getCanfig("invisibility.duration.augmented");;
-            long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "invisibility.cooldown.augmented" : "invisibility.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "invisibility.duration.augmented" : "invisibility.duration.default");
+
+            CooldownManager.setDuration(playerUUID, "invisibility", duration);
+            CooldownManager.setCooldown(playerUUID, "invisibility", cooldown);
+
             final double radius = 10.0;
-            final long durationTicks = invisDuration * 20;
+            final long durationTicks = duration * 20;
             final World world = caster.getWorld();
             final Set<Player> vanishedPlayers = new HashSet<>();
 
@@ -260,9 +259,6 @@ public class Invisibility implements Listener, PacketListener {
                     }
                 }
             }).runTaskTimer(this.plugin, 0L, 10L);
-
-            CooldownManager.setDuration(playerUUID, "invis", invisDuration);
-            CooldownManager.setCooldown(playerUUID, "invis", invisCooldown);
         }
     }
 

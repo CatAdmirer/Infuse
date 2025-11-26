@@ -187,19 +187,13 @@ public class Heart implements Listener {
                 maxHealthAttribute.setBaseValue(40.0);
             }
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            String effectName2 = Infuse.getInstance().getEffect("aug_heart");
-            boolean isAugmentedHeart =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getCanfig("heart.cooldown.default");
-            long augmentedCooldown = Infuse.getInstance().getCanfig("heart.cooldown.augmented");
-            long cooldown = isAugmentedHeart ? augmentedCooldown : defaultCooldown;
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_heart").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long defaultDuration = Infuse.getInstance().getCanfig("heart.duration.default");
-            long augmentedDuration = Infuse.getInstance().getCanfig("heart.duration.augmented");
-            long duration = isAugmentedHeart ? augmentedDuration : defaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "heart.cooldown.augmented" : "heart.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "heart.duration.augmented" : "heart.duration.default");
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);

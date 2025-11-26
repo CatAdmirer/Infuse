@@ -90,18 +90,15 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
             active.add(playerUUID);
-            String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
 
-            long emeDefaultCooldown = Infuse.getInstance().getCanfig("thief.cooldown.default");;
-            long emeAugmentedCooldown = Infuse.getInstance().getCanfig("thief.cooldown.augmented");;
-            long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "thief.cooldown.augmented" : "thief.cooldown.default");
+
             CooldownManager.setDuration(playerUUID, "thief", 0);
-            CooldownManager.setCooldown(playerUUID, "thief", emeCooldown);
+            CooldownManager.setCooldown(playerUUID, "thief", cooldown);
         }
     }
 
@@ -339,24 +336,18 @@ public class Thief implements Listener, PacketListener {
             maxHealthAttribute.setBaseValue(40.0);
         }
 
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long aphDefaultCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.default");;
-        long aphAugmentedCooldown = Infuse.getInstance().getCanfig("apophis.cooldown.augmented");;
-        long aphCooldown = isAugmentedAph ? aphAugmentedCooldown : aphDefaultCooldown;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "apophis.cooldown.augmented" : "apophis.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "apophis.duration.augmented" : "apophis.duration.default");
 
-        long aphDefaultDuration = Infuse.getInstance().getCanfig("apophis.duration.default");;
-        long aphAugmentedDuration = Infuse.getInstance().getCanfig("apophis.duration.augmented");;
-        long aphDuration = isAugmentedAph ? aphAugmentedDuration : aphDefaultDuration;
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
 
-        CooldownManager.setDuration(playerUUID, "thief", aphDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", aphCooldown * 2);
         (new BukkitRunnable() {
             public void run() {
                 if (maxHealthAttribute != null) {
@@ -403,20 +394,13 @@ public class Thief implements Listener, PacketListener {
 
     public void activateEnder(Player player) {
         UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
-                        .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
-                                .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-        long endFirstDuration = Infuse.getInstance().getCanfig("ender.duration.augmented");;
-        long endFirstCooldown = Infuse.getInstance().getCanfig("ender.cooldown.augmented");;
-        long endSecondDuration = Infuse.getInstance().getCanfig("ender.duration.default");;
-        long endSecondCooldown = Infuse.getInstance().getCanfig("ender.cooldown.default");;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long cooldown = isAugmented ? endFirstCooldown : endSecondCooldown;
-        long duration = isAugmented ? endFirstDuration : endSecondDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "ender.cooldown.augmented" : "ender.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "ender.duration.augmented" : "ender.duration.default");
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -462,24 +446,18 @@ public class Thief implements Listener, PacketListener {
         final UUID playerUUID = caster.getUniqueId();
         this.activeSparks.add(playerUUID);
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
-                        .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
-                                .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-        long defaultCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.default");;
-        long augmentedCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.augmented");;
-        long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long defaultDuration = Infuse.getInstance().getCanfig("thunder.duration.default");;
-        long augmentedDuration = Infuse.getInstance().getCanfig("thunder.duration.augmented");;
-        long duration = isAugmented ? augmentedDuration : defaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "thunder.cooldown.augmented" : "thunder.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "thunder.duration.augmented" : "thunder.duration.default");
+
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+
         final long effectDuration = duration * 20;
-
-        CooldownManager.setDuration(playerUUID, "thunder", duration);
-        CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
         final double radius = 10.0;
         final World world = caster.getWorld();
@@ -515,24 +493,16 @@ public class Thief implements Listener, PacketListener {
 
     public void activateRegen(final Player player) {
         final UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-        long defaultCooldown = Infuse.getInstance().getCanfig("regen.cooldown.default");;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long augmentedCooldown = Infuse.getInstance().getCanfig("regen.cooldown.augmented");;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "regen.cooldown.augmented" : "regen.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "regen.duration.augmented" : "regen.duration.default");
 
-        long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-        long defaultDuration = Infuse.getInstance().getCanfig("regen.duration.default");;
-
-        long augmentedDuration = Infuse.getInstance().getCanfig("regen.duration.augmented");;
-
-        long duration = isAugmented ? augmentedDuration : defaultDuration;
-
-        CooldownManager.setCooldown(playerUUID, "thief", cooldown);
-        CooldownManager.setDuration(playerUUID, "thief", duration * 2);
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
     }
@@ -541,28 +511,19 @@ public class Thief implements Listener, PacketListener {
 
     public void activateFrost(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
-        String effectName = Infuse.getInstance().getEffect("aug_thief");
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "frost.cooldown.augmented" : "frost.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "frost.duration.augmented" : "frost.duration.default");
+
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
-        boolean isAugmentedFrost =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))));
-        long frostDefaultCooldown = Infuse.getInstance().getCanfig("frost.cooldown.default");;
-
-        long frostAugmentedCooldown = Infuse.getInstance().getCanfig("frost.cooldown.augmented");;
-
-        long frostCooldown = isAugmentedFrost ? frostAugmentedCooldown : frostDefaultCooldown;
-
-        long frostDefaultDuration = Infuse.getInstance().getCanfig("frost.duration.default");;
-
-        long frostAugmentedDuration = Infuse.getInstance().getCanfig("frost.duration.augmented");;
-
-        long frostDuration = isAugmentedFrost ? frostAugmentedDuration : frostDefaultDuration;
-
-        CooldownManager.setDuration(playerUUID, "thief", frostDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", frostCooldown * 2);
 
         Location center = caster.getLocation();
         double radius = 5.0;
@@ -591,28 +552,19 @@ public class Thief implements Listener, PacketListener {
                 }
                 frozenAttackers.remove(caster.getUniqueId());
             }
-        }.runTaskLater(plugin, frostDuration * 20L);
+        }.runTaskLater(plugin, duration * 20L);
     }
 
     public void activateStrength(Player player) {
         UUID playerUUID = player.getUniqueId();
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-        long defaultDuration = Infuse.getInstance().getCanfig("strength.duration.default");;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long augmentedDuration = Infuse.getInstance().getCanfig("strength.duration.augmented");;
-
-        long duration = isAugmented ? augmentedDuration : defaultDuration;
-
-        long defaultCooldown = Infuse.getInstance().getCanfig("strength.cooldown.default");;
-
-        long augmentedCooldown = Infuse.getInstance().getCanfig("strength.cooldown.augmented");;
-
-        long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "strength.cooldown.augmented" : "strength.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "strength.duration.augmented" : "strength.duration.default");
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -645,20 +597,14 @@ public class Thief implements Listener, PacketListener {
             }
         }.runTaskLater(this.plugin, 10L);
 
-        long defaultDuration = Infuse.getInstance().getCanfig("speed.duration.default");;
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "speed.cooldown.augmented" : "speed.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "speed.duration.augmented" : "speed.duration.default");
 
-        long defaultCooldown = Infuse.getInstance().getCanfig("speed.cooldown.default");;
-
-        long augmentedCooldown = Infuse.getInstance().getCanfig("speed.cooldown.augmented");;
-
-        long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+        CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
     }
 
@@ -688,22 +634,13 @@ public class Thief implements Listener, PacketListener {
             maxHealthAttribute.setBaseValue(40.0);
         }
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmentedHeart =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-        long defaultCooldown = Infuse.getInstance().getCanfig("health.cooldown.default");;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long augmentedCooldown = Infuse.getInstance().getCanfig("health.cooldown.augmented");;
-
-        long cooldown = isAugmentedHeart ? augmentedCooldown : defaultCooldown;
-
-        long defaultDuration = Infuse.getInstance().getCanfig("health.duration.default");;
-
-        long augmentedDuration = Infuse.getInstance().getCanfig("health.duration.augmented");;
-        long duration = isAugmentedHeart ? augmentedDuration : defaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "heart.cooldown.augmented" : "heart.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "heart.duration.augmented" : "heart.duration.default");
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -719,23 +656,18 @@ public class Thief implements Listener, PacketListener {
 
     public void activateEmerald(Player player) {
         UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-        boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long emeDefaultCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.default");;
-        long emeAugmentedCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.augmented");;
-        long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
-        long emeDefaultDuration = Infuse.getInstance().getCanfig("emerald.duration.default");;
-        long emeAugmentedDuration = Infuse.getInstance().getCanfig("emerald.duration.augmented");;
-        long emeDuration = isAugmentedEme ? emeAugmentedDuration : emeDefaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "emerald.cooldown.augmented" : "emerald.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "emerald.duration.augmented" : "emerald.duration.default");
 
-        CooldownManager.setDuration(playerUUID, "thief", emeDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", emeCooldown * 2);
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
     }
 
     public void activateFire(final Player player) {
@@ -749,28 +681,22 @@ public class Thief implements Listener, PacketListener {
         }
 
         this.spawnSparkEffect(player);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        
         new BukkitRunnable() {
             public void run() {
                 player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
             }
         }.runTaskLater(this.plugin, 20L);
-        boolean isAugmentedFire =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long sparkDefaultCooldown = Infuse.getInstance().getCanfig("fire.cooldown.default");;
-        long sparkAugmentedCooldown = Infuse.getInstance().getCanfig("fire.cooldown.augmented");;
-        long sparkCooldown = isAugmentedFire ? sparkAugmentedCooldown : sparkDefaultCooldown;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "fire.cooldown.augmented" : "fire.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "fire.duration.augmented" : "fire.duration.default");
 
-        long sparkDefaultDuration = Infuse.getInstance().getCanfig("fire.duration.default");;
-        long sparkAugmentedDuration = Infuse.getInstance().getCanfig("fire.duration.augmented");;
-        long sparkDuration = isAugmentedFire ? sparkAugmentedDuration : sparkDefaultDuration;
-
-        CooldownManager.setDuration(playerUUID, "thief", sparkDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", sparkCooldown * 2);
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
     }
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
@@ -819,26 +745,22 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
-            String effectName = Infuse.getInstance().getEffect("aug_thief");
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                    augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "feather.cooldown.augmented" : "feather.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "feather.duration.augmented" : "feather.duration.default");
+
+            CooldownManager.setDuration(playerUUID, "thief", duration);
+            CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+            
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
-            boolean isAugmentedFeather =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName)));
-            long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");;
-            long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");;
-            long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
-            long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");;
-            long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");;
-            long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
-            CooldownManager.setDuration(playerUUID, "thief", featherDuration);
-            CooldownManager.setCooldown(playerUUID, "thief", featherCooldown * 2);
             Location anchor = player.getLocation();
             Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
                 if (player.isOnline()) {
@@ -900,21 +822,18 @@ public class Thief implements Listener, PacketListener {
     public void activateHaste(Player player) {
         UUID playerUUID = player.getUniqueId();
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmentedHaste =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)));
-        long hasteDefaultCooldown = Infuse.getInstance().getCanfig("haste.cooldown.default");;
-        long hasteAugmentedCooldown = Infuse.getInstance().getCanfig("haste.cooldown.augmented");;
-        long hasteCooldown = isAugmentedHaste ? hasteAugmentedCooldown : hasteDefaultCooldown;
-        long hasteDefaultDuration = Infuse.getInstance().getCanfig("haste.duration.default");;
-        long hasteAugmentedDuration = Infuse.getInstance().getCanfig("haste.duration.augmented");;
-        long hasteDuration = isAugmentedHaste ? hasteAugmentedDuration : hasteDefaultDuration;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "haste.cooldown.augmented" : "haste.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "haste.duration.augmented" : "haste.duration.default");
+
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
-        CooldownManager.setDuration(playerUUID, "thief", hasteDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", hasteCooldown * 2);
     }
 
     public void activateOcean(final Player caster) {
@@ -923,22 +842,17 @@ public class Thief implements Listener, PacketListener {
 
         final double radius = 5.0;
         final World world = caster.getWorld();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmented =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-        long defaultCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.default");;
-        long augmentedCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.augmented");;
-        long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long defaultDuration = Infuse.getInstance().getCanfig("ocean.duration.default");;
-        long augmentedDuration = Infuse.getInstance().getCanfig("ocean.duration.augmented");;
-        long duration = isAugmented ? augmentedDuration : defaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "ocean.cooldown.augmented" : "ocean.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "ocean.duration.augmented" : "ocean.duration.default");
 
-        CooldownManager.setDuration(playerUUID, "thief", duration * 2);
+        CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+
         final long durationTicks = duration * 20L;
         new BukkitRunnable() {
             long ticksElapsed = 0L;
@@ -983,20 +897,19 @@ public class Thief implements Listener, PacketListener {
     public void activateInvis(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-        long invisDefaultCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.default");;
-        long invisAugmentedCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.augmented");;
-        long invisCooldown = isAugmentedInvis ? invisAugmentedCooldown : invisDefaultCooldown;
+        
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long invisDefaultDuration = Infuse.getInstance().getCanfig("invisibility.duration.default");;
-        long invisAugmentedDuration = Infuse.getInstance().getCanfig("invisibility.duration.augmented");;
-        long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
+        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "invis.cooldown.augmented" : "invis.cooldown.default");
+        long duration = Infuse.getInstance().getCanfig(isAugmented ? "invis.duration.augmented" : "invis.duration.default");
+
+        CooldownManager.setDuration(playerUUID, "thief", duration);
+        CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
+
         final double radius = 10.0;
-        final long durationTicks = invisDuration;
+        final long durationTicks = duration;
         final World world = caster.getWorld();
         final Set<Player> vanishedPlayers = new HashSet<>();
 
@@ -1053,9 +966,6 @@ public class Thief implements Listener, PacketListener {
                 }
             }
         }).runTaskTimer(this.plugin, 0L, 10L);
-
-        CooldownManager.setDuration(playerUUID, "thief", invisDuration);
-        CooldownManager.setCooldown(playerUUID, "thief", invisCooldown * 2);
     }
 
     private boolean isTeammate(Player player, Player caster) {

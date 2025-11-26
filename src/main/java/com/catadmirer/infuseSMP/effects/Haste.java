@@ -103,22 +103,18 @@ public class Haste implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName = Infuse.getInstance().getEffect("aug_haste");
-            boolean isAugmentedHaste =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)));
-            long hasteDefaultCooldown = Infuse.getInstance().getCanfig("haste.cooldown.default");
-            long hasteAugmentedCooldown = Infuse.getInstance().getCanfig("haste.cooldown.augmented");
-            long hasteCooldown = isAugmentedHaste ? hasteAugmentedCooldown : hasteDefaultCooldown;
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_haste").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long hasteDefaultDuration = Infuse.getInstance().getCanfig("haste.duration.default");
-            long hasteAugmentedDuration = Infuse.getInstance().getCanfig("haste.duration.augmented");
-            long hasteDuration = isAugmentedHaste ? hasteAugmentedDuration : hasteDefaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "haste.cooldown.augmented" : "haste.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "haste.duration.augmented" : "haste.duration.default");
+
+            CooldownManager.setDuration(playerUUID, "haste", duration);
+            CooldownManager.setCooldown(playerUUID, "haste", cooldown);
+
             player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
-            CooldownManager.setDuration(playerUUID, "haste", hasteDuration);
-            CooldownManager.setCooldown(playerUUID, "haste", hasteCooldown);
         }
     }
 

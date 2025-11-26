@@ -213,20 +213,15 @@ public class Speed implements Listener {
 
                 ticksPassed[0]++;
             }, 1L, 1L);
-            long defaultDuration = Infuse.getInstance().getCanfig("speed.duration.default");;
-            CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-            String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_speed").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            boolean isAugmented =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName2)));
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "speed.cooldown.augmented" : "speed.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "speed.duration.augmented" : "speed.duration.default");
 
-            long defaultCooldown = Infuse.getInstance().getCanfig("speed.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("speed.cooldown.augmented");;
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-
+            CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);
         }
     }

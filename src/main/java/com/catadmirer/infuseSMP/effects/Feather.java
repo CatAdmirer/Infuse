@@ -259,19 +259,17 @@ public class Feather implements Listener {
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
-            boolean isAugmentedFeather =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName)));
-            long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
-            long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
-            long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
-            long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
-            long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
-            long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
-            CooldownManager.setDuration(playerUUID, "feather", featherDuration);
-            CooldownManager.setCooldown(playerUUID, "feather", featherCooldown);
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_feather").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "feather.cooldown.augmented" : "feather.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "feather.duration.augmented" : "feather.duration.default");
+
+            CooldownManager.setDuration(playerUUID, "feather", duration);
+            CooldownManager.setCooldown(playerUUID, "feather", cooldown);
+
             Location anchor = player.getLocation();
             Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
                 if (player.isOnline()) {

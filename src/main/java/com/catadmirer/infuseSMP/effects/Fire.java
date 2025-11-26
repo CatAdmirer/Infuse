@@ -207,28 +207,22 @@ public class Fire implements Listener, PacketListener {
             }
 
             this.spawnSparkEffect(player);
-            String effectName2 = Infuse.getInstance().getEffect("aug_fire");
+            
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
             }.runTaskLater(this.plugin, 20L);
-            boolean isAugmentedFire =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2)));
+            
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_fire").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long sparkDefaultCooldown = Infuse.getInstance().getCanfig("fire.cooldown.default");
-            long sparkAugmentedCooldown = Infuse.getInstance().getCanfig("fire.cooldown.augmented");
-            long sparkCooldown = isAugmentedFire ? sparkAugmentedCooldown : sparkDefaultCooldown;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "fire.cooldown.augmented" : "fire.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "fire.duration.augmented" : "fire.duration.default");
 
-            long sparkDefaultDuration = Infuse.getInstance().getCanfig("fire.duration.default");
-            long sparkAugmentedDuration = Infuse.getInstance().getCanfig("fire.duration.augmented");
-            long sparkDuration = isAugmentedFire ? sparkAugmentedDuration : sparkDefaultDuration;
-
-            CooldownManager.setDuration(playerUUID, "fire", sparkDuration);
-            CooldownManager.setCooldown(playerUUID, "fire", sparkCooldown);
+            CooldownManager.setDuration(playerUUID, "fire", duration);
+            CooldownManager.setCooldown(playerUUID, "fire", cooldown);
         }
     }
 

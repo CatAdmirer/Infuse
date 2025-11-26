@@ -166,24 +166,19 @@ public class Emerald implements Listener {
     public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-            String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-            boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
 
-            long emeDefaultCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.default");
-            long emeAugmentedCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.augmented");
-            long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_emerald").toLowerCase());
+            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
+                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long emeDefaultDuration = Infuse.getInstance().getCanfig("emerald.duration.default");
-            long emeAugmentedDuration = Infuse.getInstance().getCanfig("emerald.duration.augmented");
-            long emeDuration = isAugmentedEme ? emeAugmentedDuration : emeDefaultDuration;
+            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "emerald.cooldown.augmented" : "emerald.cooldown.default");
+            long duration = Infuse.getInstance().getCanfig(isAugmented ? "emerald.duration.augmented" : "emerald.duration.default");
 
-            CooldownManager.setDuration(playerUUID, "emerald", emeDuration);
-            CooldownManager.setCooldown(playerUUID, "emerald", emeCooldown);
+            CooldownManager.setDuration(playerUUID, "emerald", duration);
+            CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
+
             (new BukkitRunnable() {
                 public void run() {
                 }
