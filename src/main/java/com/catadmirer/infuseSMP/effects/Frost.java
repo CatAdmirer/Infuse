@@ -192,8 +192,8 @@ public class Frost implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "frost.cooldown.augmented" : "frost.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "frost.duration.augmented" : "frost.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "frost.cooldown.augmented" : "frost.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "frost.duration.augmented" : "frost.duration.default");
 
             CooldownManager.setDuration(playerUUID, "frost", duration);
             CooldownManager.setCooldown(playerUUID, "frost", cooldown);

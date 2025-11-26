@@ -137,8 +137,8 @@ public class Thunder implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "thunder.cooldown.augmented" : "thunder.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "thunder.duration.augmented" : "thunder.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "thunder.cooldown.augmented" : "thunder.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "thunder.duration.augmented" : "thunder.duration.default");
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);

@@ -100,8 +100,8 @@ public class Recipes implements CommandExecutor, Listener {
                 "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
         )) {
             Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", Infuse.getInstance().getCanfig("craft_limits." + itemName + ".augmented_limit"));
-            limits.put("regular_limit", Infuse.getInstance().getCanfig("craft_limits." + itemName + ".regular_limit"));
+            limits.put("augmented_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".augmented_limit"));
+            limits.put("regular_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".regular_limit"));
             result.put(itemName, limits);
         }
 

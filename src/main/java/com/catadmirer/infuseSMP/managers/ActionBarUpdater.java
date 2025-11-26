@@ -38,7 +38,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             UUID uuid = player.getUniqueId();
             if (this.playersWithActiveEffects.contains(uuid)) continue;
             String firstTime = "";
-            boolean emptyEffectIcon = Infuse.getInstance().getCanfig("empty_effect_icon");
+            boolean emptyEffectIcon = Infuse.getInstance().getConfig("empty_effect_icon");
             String firstEmoji = "";
             if (emptyEffectIcon) {
                 firstEmoji = "\uE058";

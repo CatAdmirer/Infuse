@@ -176,8 +176,8 @@ public class Ender implements Listener {
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-        long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "ender.cooldown.augmented" : "ender.cooldown.default");
-        long duration = Infuse.getInstance().getCanfig(isAugmented ? "ender.duration.augmented" : "ender.duration.default");
+        long cooldown = Infuse.getInstance().getConfig(isAugmented ? "ender.cooldown.augmented" : "ender.cooldown.default");
+        long duration = Infuse.getInstance().getConfig(isAugmented ? "ender.duration.augmented" : "ender.duration.default");
 
         CooldownManager.setDuration(playerUUID, "ender", duration);
         CooldownManager.setCooldown(playerUUID, "ender", cooldown);

@@ -42,7 +42,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        boolean emptyEffectIcon = plugin.getCanfig("empty_effect_icon");
+        boolean emptyEffectIcon = plugin.getConfig("empty_effect_icon");
         UUID uuid = player.getUniqueId();
 
         if (params.equalsIgnoreCase("first_effect")) {

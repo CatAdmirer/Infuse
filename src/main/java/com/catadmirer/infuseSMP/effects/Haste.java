@@ -108,8 +108,8 @@ public class Haste implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "haste.cooldown.augmented" : "haste.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "haste.duration.augmented" : "haste.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "haste.cooldown.augmented" : "haste.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "haste.duration.augmented" : "haste.duration.default");
 
             CooldownManager.setDuration(playerUUID, "haste", duration);
             CooldownManager.setCooldown(playerUUID, "haste", cooldown);

@@ -218,8 +218,8 @@ public class Fire implements Listener, PacketListener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "fire.cooldown.augmented" : "fire.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "fire.duration.augmented" : "fire.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "fire.cooldown.augmented" : "fire.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "fire.duration.augmented" : "fire.duration.default");
 
             CooldownManager.setDuration(playerUUID, "fire", duration);
             CooldownManager.setCooldown(playerUUID, "fire", cooldown);

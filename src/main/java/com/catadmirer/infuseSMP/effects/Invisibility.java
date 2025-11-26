@@ -194,8 +194,8 @@ public class Invisibility implements Listener, PacketListener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "invisibility.cooldown.augmented" : "invisibility.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "invisibility.duration.augmented" : "invisibility.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "invisibility.cooldown.augmented" : "invisibility.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "invisibility.duration.augmented" : "invisibility.duration.default");
 
             CooldownManager.setDuration(playerUUID, "invisibility", duration);
             CooldownManager.setCooldown(playerUUID, "invisibility", cooldown);

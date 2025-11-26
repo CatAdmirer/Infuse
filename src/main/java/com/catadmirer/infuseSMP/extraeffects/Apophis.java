@@ -180,8 +180,8 @@ public class Apophis implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "apophis.cooldown.augmented" : "apophis.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "apophis.duration.augmented" : "apophis.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "apophis.cooldown.augmented" : "apophis.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "apophis.duration.augmented" : "apophis.duration.default");
 
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);

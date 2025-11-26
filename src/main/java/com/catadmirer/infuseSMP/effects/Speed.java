@@ -180,7 +180,7 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(0xD1A44B));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            double playerVelocityMultiplier = Infuse.getInstance().getCanfig("speed.playerVelocityMultiplier");
+            double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
@@ -218,8 +218,8 @@ public class Speed implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "speed.cooldown.augmented" : "speed.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "speed.duration.augmented" : "speed.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "speed.cooldown.augmented" : "speed.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "speed.duration.augmented" : "speed.duration.default");
 
             CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

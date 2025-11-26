@@ -192,8 +192,8 @@ public class Heart implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "heart.cooldown.augmented" : "heart.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "heart.duration.augmented" : "heart.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "heart.cooldown.augmented" : "heart.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "heart.duration.augmented" : "heart.duration.default");
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);

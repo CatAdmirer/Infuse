@@ -33,8 +33,8 @@ public class EquipEffect implements Listener, CommandExecutor {
     public void onFirstJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getCanfig("join_effects_enabled")) {
-            List<String> effects = Infuse.getInstance().getCanfig("join_effects");
+        if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getConfig("join_effects_enabled")) {
+            List<String> effects = Infuse.getInstance().getConfig("join_effects");
             if (effects.isEmpty()) return;
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
             String effectName = Infuse.getInstance().getEffect(chosenKey);

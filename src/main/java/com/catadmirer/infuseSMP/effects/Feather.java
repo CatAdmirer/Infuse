@@ -264,8 +264,8 @@ public class Feather implements Listener {
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
-            long cooldown = Infuse.getInstance().getCanfig(isAugmented ? "feather.cooldown.augmented" : "feather.cooldown.default");
-            long duration = Infuse.getInstance().getCanfig(isAugmented ? "feather.duration.augmented" : "feather.duration.default");
+            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "feather.cooldown.augmented" : "feather.cooldown.default");
+            long duration = Infuse.getInstance().getConfig(isAugmented ? "feather.duration.augmented" : "feather.duration.default");
 
             CooldownManager.setDuration(playerUUID, "feather", duration);
             CooldownManager.setCooldown(playerUUID, "feather", cooldown);

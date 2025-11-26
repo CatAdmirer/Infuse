@@ -40,10 +40,10 @@ public class EffectInventory implements InventoryHolder {
         inventory.setItem(33, Augmented.createHaste());
         inventory.setItem(40, Augmented.createThunder());
 
-        if (Infuse.getInstance().<Boolean>getCanfig("extra_effects.Thief")) {
+        if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Thief")) {
             inventory.setItem(39, Augmented.createThief());
         }
-        if (Infuse.getInstance().<Boolean>getCanfig("extra_effects.Apophis")) {
+        if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Apophis")) {
             inventory.setItem(41, Augmented.createApophis());
         }
     }
