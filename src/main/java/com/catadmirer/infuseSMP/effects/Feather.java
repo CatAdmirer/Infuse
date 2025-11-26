@@ -37,16 +37,16 @@ import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
     
-    private final Plugin plugin;
+    private static Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
-    private final Set<UUID> spark = new HashSet<>();
+    private static final Set<UUID> spark = new HashSet<>();
 
     private final DataManager trustManager;
 
 
     public Feather(Plugin plugin, DataManager trustManager) {
-        this.plugin = plugin;
+        Feather.plugin = plugin;
         this.trustManager = trustManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -248,7 +248,7 @@ public class Feather implements Listener {
         }
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
@@ -271,7 +271,7 @@ public class Feather implements Listener {
             CooldownManager.setCooldown(playerUUID, "feather", cooldown);
 
             player.getScheduler().runDelayed(plugin, t -> {
-                    CooldownManager.setDuration(playerUUID, "feathermace", 5L);
+                CooldownManager.setDuration(playerUUID, "feathermace", 5L);
             }, null, 10L);
 
             spark.add(playerUUID);

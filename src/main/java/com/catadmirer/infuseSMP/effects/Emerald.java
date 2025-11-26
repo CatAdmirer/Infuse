@@ -163,7 +163,7 @@ public class Emerald implements Listener {
         }
     }
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);

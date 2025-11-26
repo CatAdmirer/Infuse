@@ -86,7 +86,7 @@ public class Thief implements Listener, PacketListener {
         }
     }
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
             active.add(playerUUID);
@@ -214,7 +214,7 @@ public class Thief implements Listener, PacketListener {
         return key;
     }
 
-    private final Set<UUID> active = new HashSet<>();
+    private static final Set<UUID> active = new HashSet<>();
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {

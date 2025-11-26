@@ -16,39 +16,9 @@ import org.bukkit.entity.Player;
 
 public class Abilities implements CommandExecutor {
     private final Infuse plugin;
-    private final Emerald emeraldAbility;
-    private final Feather featherAbility;
-    private final Fire fireAbility;
-    private final Frost frostAbility;
-    private final Haste hasteAbility;
-    private final Heart heartAbility;
-    private final Invisibility invisibilityAbility;
-    private final Ocean oceanAbility;
-    private final Regen regenAbility;
-    private final Speed speedAbility;
-    private final Strength strengthAbility;
-    private final Thunder thunderAbility;
-    private final Ender enderAbility;
-    private final Apophis apophis;
-    private final Thief thiefAbility;
 
     public Abilities(DataManager trustManager, Infuse plugin) {
         this.plugin = plugin;
-        this.emeraldAbility = new Emerald(plugin);
-        this.featherAbility = new Feather(plugin, trustManager);
-        this.fireAbility = new Fire(plugin);
-        this.frostAbility = new Frost(trustManager, plugin);
-        this.hasteAbility = new Haste(plugin);
-        this.heartAbility = new Heart(plugin);
-        this.invisibilityAbility = new Invisibility(plugin, trustManager);
-        this.oceanAbility = new Ocean(plugin, trustManager);
-        this.regenAbility = new Regen(plugin);
-        this.speedAbility = new Speed(plugin);
-        this.strengthAbility = new Strength(plugin);
-        this.thunderAbility = new Thunder(plugin, trustManager);
-        this.enderAbility = new Ender(trustManager, plugin);
-        this.apophis = new Apophis(plugin);
-        this.thiefAbility = new Thief(trustManager, plugin);
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -69,10 +39,7 @@ public class Abilities implements CommandExecutor {
             String equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
 
             if (equippedEffect == null) {
-                String msg = plugin.getMessages().getString(
-                        "slot_empty",
-                        "&cYou don't have any effect equipped in slot %slot%."
-                ).replace("%slot%", slot);
+                String msg = plugin.getMessages().getString("slot_empty", "&cYou don't have any effect equipped in slot %slot%.").replace("%slot%", slot);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
                 return true;
             } else {
@@ -87,69 +54,69 @@ public class Abilities implements CommandExecutor {
                 switch (abilityId) {
                     case 0:
                     case 1:
-                        this.emeraldAbility.activateSpark(player);
+                        Emerald.activateSpark(player);
                         break;
                     case 2:
                     case 3:
-                        this.featherAbility.activateSpark(player);
+                        Feather.activateSpark(player);
                         break;
                     case 4:
                     case 5:
-                        this.fireAbility.activateSpark(player);
+                        Fire.activateSpark(player);
                         break;
                     case 6:
                     case 7:
-                        this.frostAbility.activateSpark(player);
+                        Frost.activateSpark(player);
                         break;
                     case 8:
                     case 9:
-                        this.hasteAbility.activateSpark(player);
+                        Haste.activateSpark(player);
                         break;
                     case 10:
                     case 11:
-                        this.heartAbility.activateSpark(player);
+                        Heart.activateSpark(player);
                         break;
                     case 12:
                     case 13:
-                        this.invisibilityAbility.activateSpark(player);
+                        Invisibility.activateSpark(player);
                         break;
                     case 14:
                     case 15:
-                        this.oceanAbility.activateSpark(player);
+                        Ocean.activateSpark(player);
                         break;
                     case 16:
                     case 17:
-                        this.regenAbility.activateSpark(player);
+                        Regen.activateSpark(player);
                         break;
                     case 18:
                     case 19:
-                        this.speedAbility.activateSpark(player);
+                        Speed.activateSpark(player);
                         break;
                     case 20:
                     case 21:
-                        this.strengthAbility.activateSpark(player);
+                        Strength.activateSpark(player);
                         break;
                     case 22:
                     case 23:
-                        this.thunderAbility.activateSpark(player);
+                        Thunder.activateSpark(player);
                         break;
                     case 24:
-                        this.enderAbility.activateSpark(player);
+                        Ender.activateSpark(player);
                         break;
                     case 25:
-                        this.apophis.activateSpark(player);
+                        Apophis.activateSpark(player);
                         break;
                     case 26:
-                        this.enderAbility.activateSpark(player);
+                        Ender.activateSpark(player);
                         break;
                     case 27:
-                        this.apophis.activateSpark(player);
+                        Apophis.activateSpark(player);
                         break;
                     case 28:
-                        this.thiefAbility.activateSpark(player);
+                        Thief.activateSpark(player);
                         break;
                     case 29:
-                        this.thiefAbility.activateSpark(player);
+                        Thief.activateSpark(player);
                         break;
                     default:
                         player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");

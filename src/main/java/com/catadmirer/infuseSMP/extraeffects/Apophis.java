@@ -25,10 +25,10 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class Apophis implements Listener {
-    private Infuse plugin;
+    private static Infuse plugin;
 
     public Apophis(Infuse plugin) {
-        this.plugin = plugin;
+        Apophis.plugin = plugin;
         this.startHealthCheckTask();
         (new BukkitRunnable() {
             public void run() {
@@ -134,7 +134,7 @@ public class Apophis implements Listener {
             if (!CooldownManager.isOnCooldown(playerUUID, "apophis") || CooldownManager.isOnCooldown(playerUUID, "apophis")) {
                 if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
 
             }
@@ -154,7 +154,7 @@ public class Apophis implements Listener {
             }
         }
     }
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -166,12 +166,12 @@ public class Apophis implements Listener {
                 }
             }
 
-            this.spawnSparkEffect(player);
+            spawnSparkEffect(player);
             (new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
-            }).runTaskLater(this.plugin, 20L);
+            }).runTaskLater(plugin, 20L);
             if (maxHealthAttribute != null) {
                 maxHealthAttribute.setBaseValue(40.0);
             }
@@ -198,13 +198,13 @@ public class Apophis implements Listener {
         }
     }
 
-    private void spawnSparkEffect(final Player caster) {
+    private static void spawnSparkEffect(final Player caster) {
         (new BukkitRunnable() {
             int tick = 0;
 
             public void run() {
                 if (this.tick >= 100) {
-                    Apophis.this.startDarkRedDustEffect(caster.getLocation(), caster);
+                    startDarkRedDustEffect(caster.getLocation(), caster);
                     this.cancel();
                 } else {
                     Location center = caster.getLocation();
@@ -230,10 +230,10 @@ public class Apophis implements Listener {
                     ++this.tick;
                 }
             }
-        }).runTaskTimer(this.plugin, 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 
-    private void startDarkRedDustEffect(final Location startLoc, Player caster) {
+    private static void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
         double explosionRadius = 5;
         for (Player target : world.getPlayers()) {
@@ -269,7 +269,7 @@ public class Apophis implements Listener {
                     }
                 }
             }
-        }).runTaskTimer(this.plugin, 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 }
 

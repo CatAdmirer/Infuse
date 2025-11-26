@@ -32,13 +32,13 @@ import org.bukkit.util.Vector;
 
 public class Speed implements Listener {
     
-    private final Plugin plugin;
+    private static Plugin plugin;
     private final Map<UUID, Integer> speedLevels = new HashMap<>();
     private final Map<UUID, Long> lastHitTime = new HashMap<>();
     private final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
     public Speed(Plugin plugin) {
-        this.plugin = plugin;
+        Speed.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -160,7 +160,7 @@ public class Speed implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -173,7 +173,7 @@ public class Speed implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {

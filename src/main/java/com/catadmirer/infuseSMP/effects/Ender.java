@@ -155,7 +155,7 @@ public class Ender implements Listener {
             if (!CooldownManager.isOnCooldown(playerUUID, "ender")) {
                 if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
 
             }
@@ -167,7 +167,7 @@ public class Ender implements Listener {
     }
 
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
@@ -207,7 +207,7 @@ public class Ender implements Listener {
         }
     }
 
-    private boolean isSafeTeleportLocation(Location loc) {
+    private static boolean isSafeTeleportLocation(Location loc) {
         World world = loc.getWorld();
         if (world == null) return false;
 

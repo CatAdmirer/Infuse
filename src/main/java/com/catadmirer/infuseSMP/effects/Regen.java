@@ -96,7 +96,7 @@ public class Regen implements Listener {
         }
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
             String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_regen").toLowerCase());

@@ -34,12 +34,12 @@ public class Heart implements Listener {
     
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
-    private final Infuse plugin;
+    private static Infuse plugin;
 
     public Heart(Infuse plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, Infuse.getInstance());
         this.startHealthCheckTask();
-        this.plugin = plugin;
+        Heart.plugin = plugin;
     }
 
     private void startHealthCheckTask() {
@@ -114,7 +114,7 @@ public class Heart implements Listener {
                 } else {
                     this.cancel();
                     entity.setCustomNameVisible(false);
-                    entity.setCustomName((String)null);
+                    entity.setCustomName(null);
                 }
             }
         };
@@ -123,7 +123,7 @@ public class Heart implements Listener {
             public void run() {
                 updateTask.cancel();
                 entity.setCustomNameVisible(false);
-                entity.setCustomName((String)null);
+                entity.setCustomName(null);
             }
         }).runTaskLater(Infuse.getInstance(), 200L);
     }
@@ -163,7 +163,7 @@ public class Heart implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -176,7 +176,7 @@ public class Heart implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
