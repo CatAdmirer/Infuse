@@ -270,12 +270,9 @@ public class Feather implements Listener {
             CooldownManager.setDuration(playerUUID, "feather", duration);
             CooldownManager.setCooldown(playerUUID, "feather", cooldown);
 
-            Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-                if (player.isOnline()) {
+            player.getScheduler().runDelayed(plugin, t -> {
                     CooldownManager.setDuration(playerUUID, "feathermace", 5L);
-                }
-            }, 10L);
+            }, null, 10L);
 
             spark.add(playerUUID);
         }
