@@ -199,7 +199,7 @@ public class Infuse extends JavaPlugin implements Listener {
             new InfuseRecipeManager(this);
             this.dataManager = new DataManager(getDataFolder());
             this.trustManager = new DataManager(getDataFolder());
-            this.abilitiesHandler = new Abilities(trustManager, this);
+            this.abilitiesHandler = new Abilities(this);
             PacketEvents.getAPI().getEventManager().registerListener(
                     new Invisibility(this, trustManager), PacketListenerPriority.HIGHEST);
             PacketEvents.getAPI().getEventManager().registerListener(
