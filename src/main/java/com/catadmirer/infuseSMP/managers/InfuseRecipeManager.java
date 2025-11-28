@@ -9,7 +9,7 @@ import java.util.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
-import com.catadmirer.infuseSMP.inventories.BrewingStandGUI;
+import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import com.catadmirer.infuseSMP.Infuse;
 import org.bukkit.Bukkit;
 import net.kyori.adventure.text.Component;
@@ -612,7 +612,7 @@ public class InfuseRecipeManager implements Listener {
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);
                 
-                player.openInventory(new BrewingStandGUI().getInventory());
+                player.openInventory(new StationSelectionMenu().getInventory());
             } else {
                 player.openWorkbench(null, true);
             }
@@ -621,7 +621,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof BrewingStandGUI) {
+        if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             ItemStack clicked = event.getCurrentItem();
