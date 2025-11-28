@@ -8,10 +8,10 @@ import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,8 +30,12 @@ import org.bukkit.entity.Player;
 public class Recipes implements CommandExecutor, Listener {
     private final Infuse plugin;
 
-    private final Map<String,List<String>> potionShapes = new HashMap<>();
-    private final Map<String,Map<Character,String>> potionIngredients = new HashMap<>();
+    private final Map<String, List<String>> potionShapes = new HashMap<>();
+    private final Map<String, Map<Character, String>> potionIngredients = new HashMap<>();
+
+    public static final List<String> recipeKeys = List.of("emerald", "feather", "fire", "end_first",
+            "end_second", "frost", "haste", "heart", "invis", "ocean", "regen", "speed", "strength",
+            "thunder", "apophis", "thief");
 
     public Recipes(Infuse plugin) {
         this.plugin = plugin;
@@ -43,26 +47,44 @@ public class Recipes implements CommandExecutor, Listener {
             openGUI(player);
             return true;
         }
+
         return false;
     }
 
-    public static ItemStack createPotionWithModifiedLore(String potionName, int augmentedLimit, int regularLimit) {
+    /**
+     * Create a potion effect with the effect limits for lore rather than the default lore.
+     * 
+     * @param potionName The name of the potion to create.
+     * 
+     * @return The effect item with modified lore.
+     */
+    public static ItemStack createPotionWithModifiedLore(String potionName) {
+        // Creating the potion from the key
         ItemStack potionItem = createPotion(potionName);
+        if (potionItem == null) return null;
 
-        if (potionItem != null) {
-            ItemMeta meta = potionItem.getItemMeta();
-            if (meta != null) {
-                List<String> lore = new ArrayList<>();
-                lore.add("§7Augmented Limit: §b" + augmentedLimit);
-                lore.add("§7Regular Limit: §b" + regularLimit);
-                meta.setLore(lore);
-                potionItem.setItemMeta(meta);
-            }
+        // Getting the craft limits from the config
+        List<Integer> limits = loadCraftLimitsFromConfig(potionName);
+
+        ItemMeta meta = potionItem.getItemMeta();
+        if (meta != null) {
+            List<String> lore = new ArrayList<>();
+            lore.add("§7Augmented Limit: §b" + limits.get(0));
+            lore.add("§7Regular Limit: §b" + limits.get(1));
+            meta.setLore(lore);
+            potionItem.setItemMeta(meta);
         }
 
         return potionItem;
     }
 
+    /**
+     * Creates a potion item based on a recipe key.
+     * 
+     * @param potionName The recipe key to identify
+     * 
+     * @return An effect as a potion.
+     */
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
             case "emerald" -> Augmented.createEmerald();
@@ -85,29 +107,35 @@ public class Recipes implements CommandExecutor, Listener {
         };
     }
 
+    /**
+     * Opens the recipe list gui for a player.
+     * 
+     * @param player The player to open the gui for.
+     */
     public static void openGUI(Player player) {
-        Inventory gui = new RecipeListGUI(loadCraftLimitsFromConfig()).getInventory();
-        
+        Inventory gui = new RecipeListGUI().getInventory();
+
         fillRemainingSlots(gui);
         player.openInventory(gui);
     }
 
-    private static Map<String, Map<String, Integer>> loadCraftLimitsFromConfig() {
-        Map<String, Map<String, Integer>> result = new HashMap<>();
-
-        for (String itemName : Arrays.asList(
-                "emerald","feather","fire","end_first","end_second","frost",
-                "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
-        )) {
-            Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".augmented_limit"));
-            limits.put("regular_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".regular_limit"));
-            result.put(itemName, limits);
-        }
-
-        return result;
+    /**
+     * Loads the craft limits from the config.
+     * 
+     * @return A map of the craft limits for each effect.
+     */
+    private static List<Integer> loadCraftLimitsFromConfig(String recipeKey) {
+        return List.of(
+            Infuse.getInstance().getConfig("craft_limits." + recipeKey + ".augmented_limit"),
+            Infuse.getInstance().getConfig("craft_limits." + recipeKey + ".regular_limit"));
     }
 
+    /**
+     * Utility function that fills all empty slots of an inventory with red stained glass panes with
+     * empty names.
+     * 
+     * @param inventory The inventory to fill with panes.
+     */
     public static void fillRemainingSlots(Inventory inventory) {
         ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         ItemMeta meta = stainedGlassPane.getItemMeta();
@@ -119,26 +147,42 @@ public class Recipes implements CommandExecutor, Listener {
         }
     }
 
+    /**
+     * Inventory click handler for the RecipeGUI inventory
+     * 
+     * @param event an InventoryClickEvent
+     */
     @EventHandler
-    public void onInventoryClick2(InventoryClickEvent event) {
+    public void recipeGUIHandler(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);
         }
     }
 
+    /**
+     * Inventory click handler for the RecipeListGUI inventory
+     * 
+     * @param event an InventoryClickEvent
+     */
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof RecipeListGUI && event.getCurrentItem() != null) {
+    public void recipeListGUIHandler(InventoryClickEvent event) {
+        if (event.getInventory().getHolder() instanceof RecipeListGUI
+                && event.getCurrentItem() != null) {
             event.setCancelled(true);
+
+            // Getting the clicked item and opening the recipe menu for the item.
             ItemStack clickedItem = event.getCurrentItem();
-            HumanEntity player = event.getWhoClicked();
             if (clickedItem.getItemMeta() != null && clickedItem.getItemMeta().hasDisplayName()) {
-                openRecipeGUI(player, clickedItem);
+                openRecipeGUI(event.getWhoClicked(), clickedItem);
             }
         }
     }
-    
+
+    /**
+     * Loads the potion recipes from the recipes.yml file.
+     */
     private void loadPotionRecipes() {
+        // Loading the recipes file
         File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(recipesFile);
         for (String potionName : config.getConfigurationSection("recipes").getKeys(false)) {
@@ -148,33 +192,51 @@ public class Recipes implements CommandExecutor, Listener {
                 for (String key : config.getConfigurationSection("recipes." + potionName + ".ingredients").getKeys(false)) {
                     ingredients.put(key.charAt(0), config.getString("recipes." + potionName + ".ingredients." + key));
                 }
+
                 potionShapes.put(potionName, shape);
                 potionIngredients.put(potionName, ingredients);
             }
         }
     }
 
+    /**
+     * Opens the recipe gui for a player based on the item they clicked.
+     * 
+     * @param player The player to open the inventory for.
+     * @param clickedItem The item to get the recipe for.
+     */
     public void openRecipeGUI(HumanEntity player, ItemStack clickedItem) {
+        // Getting the potion key from the clicked item
         String potionKey = getPotionKeyFromItem(clickedItem);
         if (potionKey == null) {
             player.sendMessage("§cNo recipe found for this potion.");
             return;
         }
 
+        // Loading the recipes
         loadPotionRecipes();
+
+        // Getting the recipe info for the effect
         List<String> shape = potionShapes.get(potionKey);
         Map<Character, String> ingredients = potionIngredients.get(potionKey);
 
+        // Erroring out if the recipe is not found
         if (shape == null) {
             player.sendMessage("Recipe is disabled/broken");
             return;
         }
 
+        // Opening the recipe gui
         Inventory recipeGui = new RecipeGUI(potionKey, shape, ingredients).getInventory();
         player.closeInventory();
         player.openInventory(recipeGui);
     }
 
+    /**
+     * Gets a string recipe key from an ItemStack. These keys are NOT reversible and cannot be used
+     * to 100% identify an effect. This is an identifier for the recipes.
+     */
+    @Nullable
     private String getPotionKeyFromItem(ItemStack item) {
         return switch (EffectMapping.fromItem(item)) {
             case APOPHIS, AUG_APOPHIS -> "apophis";

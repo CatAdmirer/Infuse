@@ -3,11 +3,9 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMaps;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -25,24 +23,26 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            sender.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
+            player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
             return true;
         }
 
         switch (args[0].toLowerCase()) {
             case "gui":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+
                 GUI.openSwordSelectionGUI(player);
                 break;
 
             case "reload":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+
                 Infuse.getInstance().reloadDaConfig(player);
                 break;
             case "recipes":
@@ -50,23 +50,27 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 break;
             case "giveeffect":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+
                 if (args.length != 3) {
-                    sender.sendMessage("§cInvalid Argument! Please use /infuse giveEffect <Player> <aug_fire|ocean>");
+                    player.sendMessage("§cInvalid Argument! Please use /infuse giveEffect <Player> <aug_fire|ocean>");
                     return true;
                 }
+
                 Player target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
-                    sender.sendMessage("§cPlayer not found or not online.");
+                    player.sendMessage("§cPlayer not found or not online.");
                     return true;
                 }
+
                 String effectKey = args[2].toLowerCase();
                 if (EffectMaps.getEffectItem(effectKey) == null) {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
                     return true;
                 }
+
                 target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
                 String name = Infuse.getInstance().getEffect(effectKey);
                 String effectName = Infuse.getInstance().stripAllColors(name);
@@ -75,83 +79,112 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 break;
             case "seteffect":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+                
                 if (args.length != 4) {
-                    sender.sendMessage("§cInvalid Argument! Please use /infuse setEffect <Player> <aug_fire|ocean> <1|2>");
+                    player.sendMessage("§cInvalid Argument! Please use /infuse setEffect <player> <aug_fire|ocean> <1|2>");
                     return true;
                 }
-                Player namearg = Bukkit.getPlayer(args[1]);
-                if (namearg == null || !namearg.isOnline()) {
-                    sender.sendMessage("§cPlayer not found or not online.");
+                
+                // Getting the player and making sure they are online.
+                target = Bukkit.getPlayer(args[1]);
+                if (target == null || !target.isOnline()) {
+                    player.sendMessage("§cInvalid Argument!  Could not find a player named \"" + args[1] + "\".  Make sure they are online.");
                     return true;
                 }
-                String effectky = args[2].toLowerCase();
-                if (EffectMaps.getEffectItem(effectky) == null) {
-                    player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
+                
+                // Getting the effect key and verifying its integrity.
+                effectKey = args[2].toLowerCase();
+                if (EffectMaps.getEffectItem(effectKey) == null) {
+                    player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference.");
                     return true;
                 }
-                String effect = Infuse.getInstance().getEffect(effectky);
-                Infuse.getInstance().getEffectManager().setEffect(namearg.getUniqueId(), args[3], effect);
+                
+                // Getting the string to put in storage.
+                String effect = Infuse.getInstance().getEffect(effectKey);
+
+                // Getting the slot to put the effect into and validating it.
+                String slot = args[3];
+                if (!slot.equals("1") && !slot.equals("2")) {
+                    player.sendMessage("§cInvalid Argument! Could not identify slot " + slot + ".  Please use \"1\" or \"2\".");
+                    return true;
+                }
+
+                // Setting the effect
+                Infuse.getInstance().getEffectManager().setEffect(target.getUniqueId(), args[3], effect);
+                player.sendMessage("§aSuccessfully set the effect in slot " + slot + " of player " + target.getName() + " to " + effectKey + ".");
                 break;
             case "cleareffect":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+
                 if (args.length != 2) {
-                    sender.sendMessage("§cInvalid Argument! Please use /infuse clearEffect <Player>");
+                    player.sendMessage("§cInvalid Argument! Please use /infuse clearEffect <player>");
                     return true;
                 }
-                Player arg1 = Bukkit.getPlayer(args[1]);
-                String arg1Name = arg1.getName();
-                if (arg1 == null || !arg1.isOnline()) {
-                    sender.sendMessage("§cPlayer not found or not online.");
+
+                // Getting the player and making sure they are online
+                target = Bukkit.getPlayer(args[1]);
+                if (target == null || !target.isOnline()) {
+                    player.sendMessage("§cPlayer not found or not online.");
                     return true;
                 }
-                Infuse.getInstance().getEffectManager().removeEffect(arg1.getUniqueId(), "2");
-                Infuse.getInstance().getEffectManager().removeEffect(arg1.getUniqueId(), "1");
-                player.sendMessage(ChatColor.GREEN + "Cleared " + arg1Name + "'s effects");
+
+                // Removing the effects from the player
+                Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "1");
+                Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "2");
+                player.sendMessage(ChatColor.GREEN + "Cleared " + target.getName() + "'s effects");
                 break;
             case "cooldown":
                 if (!player.isOp()) {
-                    sender.sendMessage("§cYou must be OP to run this command.");
+                    player.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
+
                 if (args.length != 2) {
-                    sender.sendMessage("§cInvalid Argument! Please use /infuse Cooldown <Player>");
+                    player.sendMessage("§cInvalid Argument! Please use /infuse cooldown <Player>");
                     return true;
                 }
-                Player arg3 = Bukkit.getPlayer(args[1]);
-                String arg1meow = arg3.getName();
-                if (arg3 == null || !arg3.isOnline()) {
-                    sender.sendMessage("§cPlayer not found or not online.");
+                
+                // Getting the player and making sure they are online
+                target = Bukkit.getPlayer(args[1]);
+                if (target == null || !target.isOnline()) {
+                    player.sendMessage("§cPlayer not found or not online.");
                     return true;
                 }
-                CooldownManager.removeAllCooldowns(arg3.getUniqueId());
-                player.sendMessage(ChatColor.GREEN + "Cleared " + arg1meow + "'s cooldown");
+
+                // Removing cooldowns from the player
+                CooldownManager.removeAllCooldowns(target.getUniqueId());
+                player.sendMessage("§aRemoved " + target.getName() + "'s cooldown");
                 break;
             case "controls":
                 if (args.length != 2) {
-                    player.sendMessage("§cInvalid Argument! Please use /infuse controls <Offhand|Command>");
-                    return true;
-                }
-                String choice = args[1];
-                if (!choice.equalsIgnoreCase("Offhand") && !choice.equalsIgnoreCase("Command")) {
-                    player.sendMessage("§cInvalid Argument! Please use /infuse controls <Offhand|Command>");
+                    player.sendMessage("§cInvalid Argument! Please use /infuse controls <offhand|command>");
                     return true;
                 }
 
+                // Getting the control mode and validating the input.
+                String choice = args[1].toLowerCase();
+                if (!choice.equals("offhand") && !choice.equals("command")) {
+                    player.sendMessage("§cInvalid Argument! Please use /infuse controls <offhand|command>");
+                    return true;
+                }
+
+                // Setting the control mode for the user.
                 Infuse.getInstance().getEffectManager().setControlDefault(player.getUniqueId(), choice);
 
-                boolean offhandEnabled = choice.equalsIgnoreCase("Offhand");
+                // Assigning the permission for offhand use if the user chose offhand mode
+                boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
                 player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
 
                 player.sendMessage("§4Your controls are now " + choice);
                 break;
             default:
-                sender.sendMessage("§cPlease take reference to the tab completions they took me time :(");
+                sender.sendMessage("§cPlease use the tab completions as a reference.");
                 break;
         }
 
@@ -161,94 +194,47 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        // Only tabcompleting for players
         if (!(sender instanceof Player player)) {
-            return Collections.emptyList();
+            return Arrays.asList();
         }
-
-        List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            if (!player.isOp()) {
-                completions.addAll(Arrays.asList("Recipes", "Controls"));
-            } else {
-                completions.addAll(Arrays.asList("GUI", "Reload", "Recipes", "Controls", "giveEffect", "setEffect", "clearEffect", "Cooldown"));
-            }
-            completions = completions.stream()
-                    .filter(opt -> opt.toLowerCase().startsWith(args[0].toLowerCase()))
-                    .collect(Collectors.toList());
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("controls")) {
-            completions.addAll(Arrays.asList("Offhand", "Command"));
-            completions = completions.stream()
-                    .filter(opt -> opt.toLowerCase().startsWith(args[1].toLowerCase()))
-                    .collect(Collectors.toList());
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("giveEffect")) {
+            List<String> completions = Arrays.asList("recipes", "controls");
+            
             if (player.isOp()) {
-                completions.addAll(
-                        Bukkit.getOnlinePlayers().stream()
-                                .map(player2 -> player2.getName())
-                                .toList()
-                );
+                completions.addAll(Arrays.asList("gui", "reload", "giveEffect", "setEffect", "clearEffect", "cooldown"));
+            }
 
-                completions = completions.stream()
-                        .filter(opt -> opt.toLowerCase().startsWith(args[1].toLowerCase()))
-                        .collect(Collectors.toList());
-            }
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("setEffect")) {
-            if (player.isOp()) {
-                completions.addAll(
-                        Bukkit.getOnlinePlayers().stream()
-                                .map(player2 -> player2.getName())
-                                .toList()
-                );
-
-                completions = completions.stream()
-                        .filter(opt -> opt.toLowerCase().startsWith(args[1].toLowerCase()))
-                        .collect(Collectors.toList());
-            }
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("clearEffect")) {
-            if (player.isOp()) {
-                completions.addAll(
-                        Bukkit.getOnlinePlayers().stream()
-                                .map(player2 -> player2.getName())
-                                .toList()
-                );
-
-                completions = completions.stream()
-                        .filter(opt -> opt.toLowerCase().startsWith(args[1].toLowerCase()))
-                        .collect(Collectors.toList());
-            }
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("Cooldown")) {
-            if (player.isOp()) {
-                completions.addAll(
-                        Bukkit.getOnlinePlayers().stream()
-                                .map(player2 -> player2.getName())
-                                .toList()
-                );
-
-                completions = completions.stream()
-                        .filter(opt -> opt.toLowerCase().startsWith(args[1].toLowerCase()))
-                        .collect(Collectors.toList());
-            }
-        } else if (args.length == 3 && args[0].equalsIgnoreCase("giveEffect")) {
-            if (player.isOp()) {
-                completions.addAll(EffectMaps.color.keySet().stream()
-                        .filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase()))
-                        .toList());
+            return completions.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).sorted().toList();
+        }
+        
+        if (args.length == 2) {
+            switch (args[0].toLowerCase()) {
+                case "controls":
+                    return Stream.of("offhand", "command").filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
+                case "giveeffect":
+                case "seteffect":
+                case "cleareffect":
+                case "cooldown":
+                    if (!player.isOp()) return Arrays.asList();
+                    return Bukkit.getOnlinePlayers().stream().map(p -> p.getName()).filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
             }
         }
-        else if (args.length == 3 && args[0].equalsIgnoreCase("setEffect")) {
-            if (player.isOp()) {
-                completions.addAll(EffectMaps.color.keySet().stream()
-                        .filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase()))
-                        .toList());
+        
+        if (args.length == 3) {
+            switch(args[0].toLowerCase()) {
+                case "giveEffect":
+                case "setEffect":
+                    if (!player.isOp()) return Arrays.asList();
+                    return EffectMaps.color.keySet().stream().filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
-        else if (args.length == 4 && args[0].equalsIgnoreCase("setEffect")) {
-            if (player.isOp()) {
-                completions.addAll(Arrays.asList("1", "2"));
-            }
+        
+        if (args.length == 4 && args[0].equalsIgnoreCase("setEffect") && player.isOp()) {
+            return Stream.of("1", "2").filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
         }
 
-        return completions;
+        return Arrays.asList();
     }
 }

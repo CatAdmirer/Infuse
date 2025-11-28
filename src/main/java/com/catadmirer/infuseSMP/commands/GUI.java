@@ -1,16 +1,15 @@
 package com.catadmirer.infuseSMP.commands;
 
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.inventories.EffectInventory;
 import com.catadmirer.infuseSMP.inventories.EffectLevelInventory;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,50 +22,42 @@ public class GUI implements Listener, CommandExecutor {
         player.openInventory(new EffectInventory().getInventory());
     }
 
-    private void augmentedOrRegular(Player player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
+    private void augmentedOrRegular(HumanEntity player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
         player.openInventory(new EffectLevelInventory(augmented, regular, backgroundColor).getInventory());
     }
 
     @EventHandler
-    public void onClicky(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
+    public void onClick(InventoryClickEvent event) {
+        HumanEntity player = event.getWhoClicked();
         Inventory clickedInventory = event.getClickedInventory();
 
+        // Ignoring if the player clicked on an empty slot.
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
 
-        if (clickedInventory instanceof EffectInventory) {
+        // Only running if the inventory is an EffectInventory
+        if (clickedInventory.getHolder() instanceof EffectInventory) {
+            // Cancelling the click event to prevent the player from getting the item.
             event.setCancelled(true);
-            if (Augmented.isFrost(clicked)) {
-                augmentedOrRegular(player, Augmented.createFrost(), Frost.createEffect(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isSpeed(clicked)) {
-                augmentedOrRegular(player, Augmented.createSpeed(), Speed.createEffect(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isStrength(clicked)) {
-                augmentedOrRegular(player, Augmented.createStrength(), Strength.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isThunder(clicked)) {
-                augmentedOrRegular(player, Augmented.createThunder(), Thunder.createEffect(), Material.YELLOW_STAINED_GLASS_PANE);
-            } else if (Augmented.isThief(clicked)) {
-                augmentedOrRegular(player, Augmented.createThief(), Thief.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isHeart(clicked)) {
-                augmentedOrRegular(player, Augmented.createHeart(), Heart.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isEmerald(clicked)) {
-                augmentedOrRegular(player, Augmented.createEmerald(), Emerald.createEffect(), Material.LIME_STAINED_GLASS_PANE);
-            } else if (Augmented.isEnder(clicked)) {
-                augmentedOrRegular(player, Augmented.createEnder(), Ender.createEffect(), Material.PURPLE_STAINED_GLASS_PANE);
-            } else if (Augmented.isApophis(clicked)) {
-                augmentedOrRegular(player, Augmented.createApophis(), Apophis.createEffect(), Material.MAGENTA_STAINED_GLASS_PANE);
-            } else if (Augmented.isFeather(clicked)) {
-                augmentedOrRegular(player, Augmented.createFeather(), Feather.createEffect(), Material.WHITE_STAINED_GLASS_PANE);
-            } else if (Augmented.isFire(clicked)) {
-                augmentedOrRegular(player, Augmented.createFire(), Fire.createEffect(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.isHaste(clicked)) {
-                augmentedOrRegular(player, Augmented.createHaste(), Haste.createEffect(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.isInvis(clicked)) {
-                augmentedOrRegular(player, Augmented.createInvis(), Invisibility.createEffect(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-            } else if (Augmented.isOcean(clicked)) {
-                augmentedOrRegular(player, Augmented.createOcean(), Ocean.createEffect(), Material.BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isRegen(clicked)) {
-                augmentedOrRegular(player, Augmented.createRegen(), Regen.createEffect(), Material.RED_STAINED_GLASS_PANE);
+
+            // Determining the next menu to open
+            switch (EffectMapping.fromItem(clicked)) {
+                case AUG_APOPHIS -> augmentedOrRegular(player, EffectMapping.AUG_APOPHIS.createItem(), EffectMapping.APOPHIS.createItem(), Material.MAGENTA_STAINED_GLASS_PANE);
+                case AUG_EMERALD -> augmentedOrRegular(player, EffectMapping.AUG_EMERALD.createItem(), EffectMapping.EMERALD.createItem(), Material.LIME_STAINED_GLASS_PANE);
+                case AUG_ENDER -> augmentedOrRegular(player, EffectMapping.AUG_ENDER.createItem(), EffectMapping.ENDER.createItem(), Material.PURPLE_STAINED_GLASS_PANE);
+                case AUG_FEATHER -> augmentedOrRegular(player, EffectMapping.AUG_FEATHER.createItem(), EffectMapping.FEATHER.createItem(), Material.WHITE_STAINED_GLASS_PANE);
+                case AUG_FIRE -> augmentedOrRegular(player, EffectMapping.AUG_FIRE.createItem(), EffectMapping.FIRE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
+                case AUG_FROST -> augmentedOrRegular(player, EffectMapping.AUG_FROST.createItem(), EffectMapping.FROST.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+                case AUG_HASTE -> augmentedOrRegular(player, EffectMapping.AUG_HASTE.createItem(), EffectMapping.HASTE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
+                case AUG_HEART -> augmentedOrRegular(player, EffectMapping.AUG_HEART.createItem(), EffectMapping.HEART.createItem(), Material.RED_STAINED_GLASS_PANE);
+                case AUG_INVISIBILITY -> augmentedOrRegular(player, EffectMapping.AUG_INVISIBILITY.createItem(), EffectMapping.INVISIBILITY.createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+                case AUG_OCEAN -> augmentedOrRegular(player, EffectMapping.AUG_OCEAN.createItem(), EffectMapping.OCEAN.createItem(), Material.BLUE_STAINED_GLASS_PANE);
+                case AUG_REGEN -> augmentedOrRegular(player, EffectMapping.AUG_REGEN.createItem(), EffectMapping.REGEN.createItem(), Material.RED_STAINED_GLASS_PANE);
+                case AUG_SPEED -> augmentedOrRegular(player, EffectMapping.AUG_SPEED.createItem(), EffectMapping.SPEED.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+                case AUG_STRENGTH -> augmentedOrRegular(player, EffectMapping.AUG_STRENGTH.createItem(), EffectMapping.STRENGTH.createItem(), Material.RED_STAINED_GLASS_PANE);
+                case AUG_THIEF -> augmentedOrRegular(player, EffectMapping.AUG_THIEF.createItem(), EffectMapping.THIEF.createItem(), Material.RED_STAINED_GLASS_PANE);
+                case AUG_THUNDER -> augmentedOrRegular(player, EffectMapping.AUG_THUNDER.createItem(), EffectMapping.THUNDER.createItem(), Material.YELLOW_STAINED_GLASS_PANE);
+                default -> {}
             }
         }
 
@@ -79,6 +70,7 @@ public class GUI implements Listener, CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("infuses")) {
+            // Opening the gui for players only.
             if (sender instanceof Player player) {
                 openSwordSelectionGUI(player);
             } else {

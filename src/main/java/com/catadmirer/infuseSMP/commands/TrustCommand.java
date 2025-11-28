@@ -63,6 +63,14 @@ public class TrustCommand implements CommandExecutor {
         return false;
     }
 
+    /**
+     * Util function to get a message from the config.
+     * 
+     * @param path The config path to check for a message.
+     * @param defaultMessage The default message to return.
+     * 
+     * @return
+     */
     private String getMessage(String path, String defaultMessage) {
         FileConfiguration messages = plugin.getMessages();
         String message = messages.getString(path, defaultMessage);
