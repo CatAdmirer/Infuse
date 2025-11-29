@@ -723,30 +723,24 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Speed() {
-        Augmented augmented = new Augmented();
-        Speed speed = new Speed(Infuse.getInstance());
-        ItemStack firstTime = augmented.createSpeed();
-        ItemStack standard = speed.createEffect();
+        ItemStack firstTime = Augmented.createSpeed();
+        ItemStack standard = Speed.createEffect();
         this.firstTimeRewards.put("speed", firstTime);
         this.standardResults.put("speed", standard);
         registerRecipeFromConfig("speed", standard);
     }
 
     private void Strength() {
-        Augmented augmented = new Augmented();
-        Strength strength = new Strength(Infuse.getInstance());
-        ItemStack firstTime = augmented.createStrength();
-        ItemStack standard = strength.createEffect();
+        ItemStack firstTime = Augmented.createStrength();
+        ItemStack standard = Strength.createEffect();
         this.firstTimeRewards.put("strength", firstTime);
         this.standardResults.put("strength", standard);
         registerRecipeFromConfig("strength", standard);
     }
 
     private void Thunder() {
-        Augmented augmented = new Augmented();
-        Thunder thunder = new Thunder(Infuse.getInstance(), new DataManager(Infuse.getInstance().getDataFolder()));
-        ItemStack firstTime = augmented.createThunder();
-        ItemStack standard = thunder.createEffect();
+        ItemStack firstTime = Augmented.createThunder();
+        ItemStack standard = Thunder.createEffect();
         this.firstTimeRewards.put("thunder", firstTime);
         this.standardResults.put("thunder", standard);
         registerRecipeFromConfig("thunder", standard);
