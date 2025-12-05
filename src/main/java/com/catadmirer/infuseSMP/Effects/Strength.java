@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import java.util.List;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public class Strength implements Listener {
 
@@ -125,20 +126,41 @@ public class Strength implements Listener {
         }
     }
 
-    public static ItemStack createEffect() {
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
         ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("strength");
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_strength" : "strength"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_strength" : "strength"));
             meta.setColor(Color.fromRGB(0x8B0000));
-            List<String> lore = Infuse.getInstance().getEffectLore("strength");
-            meta.setLore(lore);
-            meta.setCustomModelData(11);
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 21 : 20);
+
             effect.setItemMeta(meta);
         }
 
         return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 20;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 21;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
     }
 
     @EventHandler
@@ -171,14 +193,6 @@ public class Strength implements Listener {
             }
         }
 
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
-            return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 11;
-        } else {
-            return false;
-        }
     }
 
     private void stunShield(Player player) {

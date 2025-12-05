@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
@@ -69,6 +70,8 @@ public class Infuse extends JavaPlugin implements Listener {
     private final Map<String, String> effectNames = new HashMap<>();
     private final Map<String, List<String>> effectLore = new HashMap<>();
     private final Map<String, Object> settings = new HashMap<>();
+
+    public static NamespacedKey EFFECT_ID = NamespacedKey.fromString("infuse:effect_id");
 
     private File messagesFile;
 

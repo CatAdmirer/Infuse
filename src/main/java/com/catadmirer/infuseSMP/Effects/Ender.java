@@ -3,10 +3,10 @@ package com.catadmirer.infuseSMP.Effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
@@ -32,6 +32,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -79,12 +80,6 @@ public class Ender implements Listener {
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
-
-    public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("ender");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
-    }
-
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
@@ -241,27 +236,48 @@ public class Ender implements Listener {
         }
     }
 
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_ender" : "ender"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_ender" : "ender"));
+            meta.setColor(Color.fromRGB(0x871277));
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 26 : 24);
+
+            effect.setItemMeta(meta);
+        }
+
+        return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 24;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 26;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
+    }
+
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         String effectName = Infuse.getInstance().getEffect("ender");
         String effectName2 = Infuse.getInstance().getEffect("aug_ender");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("ender");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("ender");
-            meta.setColor(Color.fromRGB(0x871277));
-            meta.setLore(lore);
-            meta.setCustomModelData(25);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     @EventHandler

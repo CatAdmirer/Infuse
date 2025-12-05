@@ -4,11 +4,10 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.Particles;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -36,9 +35,9 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -58,6 +57,43 @@ public class Feather implements Listener {
         this.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_feather" : "feather"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_feather" : "feather"));
+            meta.setColor(Color.WHITE);
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 3 : 2);
+
+            effect.setItemMeta(meta);
+        }
+
+        return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 2;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 3;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
     }
 
     @EventHandler
@@ -193,27 +229,6 @@ public class Feather implements Listener {
         }
     }
 
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§#BEA3CAFeather Effect");
-            effectName = applyHexColors(effectName);
-            meta.setDisplayName(effectName);
-            List<String> lore = new ArrayList<>(Infuse.getInstance().getMessages().getStringList("feather.effect_lore"));
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, applyHexColors(lore.get(i)));
-            }
-            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setColor(Color.WHITE);
-            meta.setLore(lore);
-            meta.setCustomModelData(2);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
     public static String applyHexColors(String input) {
         String regex = "(#(?:[0-9a-fA-F]{6}))";
         Pattern pattern = Pattern.compile(regex);
@@ -290,9 +305,5 @@ public class Feather implements Listener {
 
             spark.add(playerUUID);
         }
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 2;
     }
 }

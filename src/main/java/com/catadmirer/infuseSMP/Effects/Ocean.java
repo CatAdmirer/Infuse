@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.Effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import java.util.List;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,6 +22,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -103,21 +104,41 @@ public class Ocean implements Listener {
         return dataManager.isTrusted(caster, player);
     }
 
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
 
-    public static ItemStack createEffect() {
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
         ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("ocean");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("ocean");
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_ocean" : "ocean"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_ocean" : "ocean"));
             meta.setColor(Color.BLUE);
-            meta.setLore(lore);
-            meta.setCustomModelData(8);
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 15 : 14);
+
             effect.setItemMeta(meta);
         }
 
         return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 14;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 15;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
     }
 
     @EventHandler
@@ -140,10 +161,6 @@ public class Ocean implements Listener {
                 }
             }
         }
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 8;
     }
 
     @EventHandler

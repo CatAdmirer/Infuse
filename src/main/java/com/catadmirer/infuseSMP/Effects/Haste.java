@@ -2,8 +2,8 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -40,20 +41,41 @@ public class Haste implements Listener {
         }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    public static ItemStack createEffect() {
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
         ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("haste");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("haste");
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_haste" : "haste"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_haste" : "haste"));
             meta.setColor(Color.fromRGB(0xFFCC33));
-            meta.setLore(lore);
-            meta.setCustomModelData(5);
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 9 : 8);
+
             effect.setItemMeta(meta);
         }
 
         return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 8;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 9;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
     }
 
     private void enchantItemIfApplicable(Player player) {
@@ -141,9 +163,5 @@ public class Haste implements Listener {
 
     private void stunShield(Player player) {
         player.setCooldown(Material.SHIELD, 50);
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 5;
     }
 }

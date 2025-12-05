@@ -1,7 +1,9 @@
 package com.catadmirer.infuseSMP.Inventories;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.Augmented;
+import com.catadmirer.infuseSMP.Effects.*;
+import com.catadmirer.infuseSMP.ExtraEffects.*;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -26,25 +28,25 @@ public class EffectInventory implements InventoryHolder {
         setItems(inventory, lightBlueSlots, createPane(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
         inventory.setItem(49, createPane(Material.BLUE_STAINED_GLASS_PANE));
 
-        inventory.setItem(12, Augmented.createFrost());
-        inventory.setItem(14, Augmented.createSpeed());
-        inventory.setItem(20, Augmented.createFeather());
-        inventory.setItem(21, Augmented.createOcean());
-        inventory.setItem(22, Augmented.createInvis());
-        inventory.setItem(23, Augmented.createEnder());
-        inventory.setItem(24, Augmented.createEmerald());
-        inventory.setItem(29, Augmented.createHeart());
-        inventory.setItem(30, Augmented.createRegen());
-        inventory.setItem(31, Augmented.createStrength());
-        inventory.setItem(32, Augmented.createFire());
-        inventory.setItem(33, Augmented.createHaste());
-        inventory.setItem(40, Augmented.createThunder());
+        inventory.setItem(12, Frost.createAugmented());
+        inventory.setItem(14, Speed.createAugmented());
+        inventory.setItem(20, Feather.createAugmented());
+        inventory.setItem(21, Ocean.createAugmented());
+        inventory.setItem(22, Invisibility.createAugmented());
+        inventory.setItem(23, Ender.createAugmented());
+        inventory.setItem(24, Emerald.createAugmented());
+        inventory.setItem(29, Heart.createAugmented());
+        inventory.setItem(30, Regen.createAugmented());
+        inventory.setItem(31, Strength.createAugmented());
+        inventory.setItem(32, Fire.createAugmented());
+        inventory.setItem(33, Haste.createAugmented());
+        inventory.setItem(40, Thunder.createAugmented());
 
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Thief")) {
-            inventory.setItem(39, Augmented.createThief());
+            inventory.setItem(39, Thief.createAugmented());
         }
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Apophis")) {
-            inventory.setItem(41, Augmented.createApophis());
+            inventory.setItem(41, Apophis.createAugmented());
         }
     }
 

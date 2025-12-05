@@ -2,7 +2,8 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import java.util.List;
+import com.catadmirer.infuseSMP.util.EffectUtil;
+
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +26,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,6 +57,43 @@ public class Apophis implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 2, false, false));
+    }
+
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
+        ItemStack effect = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effect.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_apophis" : "apophis"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_apophis" : "apophis"));
+            meta.setColor(Color.fromRGB(0x45033E));
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 27 : 25);
+
+            effect.setItemMeta(meta);
+        }
+
+        return effect;
+    }
+
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 25;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 27;
+    }
+
+    public static boolean isEffect(ItemStack item) {
+        return isRegular(item) || isAugmented(item);
     }
 
     private boolean isSword(ItemStack item) {
@@ -103,27 +142,6 @@ public class Apophis implements Listener {
         String effectName = Infuse.getInstance().getEffect("apophis");
         String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("apophis");
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("apophis");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("apophis");
-            meta.setColor(Color.fromRGB(0x45033E));
-            meta.setLore(lore);
-            meta.setCustomModelData(25);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     @EventHandler

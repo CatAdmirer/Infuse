@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.Effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
@@ -49,28 +51,41 @@ public class Thunder implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public static ItemStack createEffect() {
+    public static ItemStack createRegular() {
+        return createEffect(false);
+    }
+
+    public static ItemStack createAugmented() {
+        return createEffect(true);
+    }
+
+    public static ItemStack createEffect(boolean augmented) {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("thunder");
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_thunder" : "thunder"));
+            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_thunder" : "thunder"));
             meta.setColor(Color.YELLOW);
-            List<String> lore = Infuse.getInstance().getEffectLore("thunder");
-            meta.setLore(lore);
-            meta.setCustomModelData(13);
+
+            if (augmented) meta.setCustomModelData(999);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 23 : 22);
+
             effect.setItemMeta(meta);
         }
 
         return effect;
     }
 
+    public static boolean isRegular(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 22;
+    }
+
+    public static boolean isAugmented(ItemStack item) {
+        return EffectUtil.getIdFromItem(item) == 23;
+    }
+
     public static boolean isEffect(ItemStack item) {
-        if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
-            return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 13;
-        } else {
-            return false;
-        }
+        return isRegular(item) || isAugmented(item);
     }
 
     private boolean hasEffect(Player player) {

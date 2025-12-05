@@ -37,36 +37,36 @@ public class GUI implements Listener, CommandExecutor {
 
         if (clickedInventory instanceof EffectInventory) {
             event.setCancelled(true);
-            if (Augmented.isFrost(clicked)) {
-                augmentedOrRegular(player, Augmented.createFrost(), Frost.createEffect(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isSpeed(clicked)) {
-                augmentedOrRegular(player, Augmented.createSpeed(), Speed.createEffect(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isStrength(clicked)) {
-                augmentedOrRegular(player, Augmented.createStrength(), Strength.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isThunder(clicked)) {
-                augmentedOrRegular(player, Augmented.createThunder(), Thunder.createEffect(), Material.YELLOW_STAINED_GLASS_PANE);
-            } else if (Augmented.isThief(clicked)) {
-                augmentedOrRegular(player, Augmented.createThief(), Thief.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isHeart(clicked)) {
-                augmentedOrRegular(player, Augmented.createHeart(), Heart.createEffect(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Augmented.isEmerald(clicked)) {
-                augmentedOrRegular(player, Augmented.createEmerald(), Emerald.createEffect(), Material.LIME_STAINED_GLASS_PANE);
-            } else if (Augmented.isEnder(clicked)) {
-                augmentedOrRegular(player, Augmented.createEnder(), Ender.createEffect(), Material.PURPLE_STAINED_GLASS_PANE);
-            } else if (Augmented.isApophis(clicked)) {
-                augmentedOrRegular(player, Augmented.createApophis(), Apophis.createEffect(), Material.MAGENTA_STAINED_GLASS_PANE);
-            } else if (Augmented.isFeather(clicked)) {
-                augmentedOrRegular(player, Augmented.createFeather(), Feather.createEffect(), Material.WHITE_STAINED_GLASS_PANE);
-            } else if (Augmented.isFire(clicked)) {
-                augmentedOrRegular(player, Augmented.createFire(), Fire.createEffect(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.isHaste(clicked)) {
-                augmentedOrRegular(player, Augmented.createHaste(), Haste.createEffect(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Augmented.isInvis(clicked)) {
-                augmentedOrRegular(player, Augmented.createInvis(), Invisibility.createEffect(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-            } else if (Augmented.isOcean(clicked)) {
-                augmentedOrRegular(player, Augmented.createOcean(), Ocean.createEffect(), Material.BLUE_STAINED_GLASS_PANE);
-            } else if (Augmented.isRegen(clicked)) {
-                augmentedOrRegular(player, Augmented.createRegen(), Regen.createEffect(), Material.RED_STAINED_GLASS_PANE);
+            if (Frost.isAugmented(clicked)) {
+                augmentedOrRegular(player, Frost.createAugmented(), Frost.createRegular(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+            } else if (Speed.isAugmented(clicked)) {
+                augmentedOrRegular(player, Speed.createAugmented(), Speed.createRegular(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+            } else if (Strength.isAugmented(clicked)) {
+                augmentedOrRegular(player, Strength.createAugmented(), Strength.createRegular(), Material.RED_STAINED_GLASS_PANE);
+            } else if (Thunder.isAugmented(clicked)) {
+                augmentedOrRegular(player, Thunder.createAugmented(), Thunder.createRegular(), Material.YELLOW_STAINED_GLASS_PANE);
+            } else if (Thief.isAugmented(clicked)) {
+                augmentedOrRegular(player, Thief.createAugmented(), Thief.createRegular(), Material.RED_STAINED_GLASS_PANE);
+            } else if (Heart.isAugmented(clicked)) {
+                augmentedOrRegular(player, Heart.createAugmented(), Heart.createRegular(), Material.RED_STAINED_GLASS_PANE);
+            } else if (Emerald.isAugmented(clicked)) {
+                augmentedOrRegular(player, Emerald.createAugmented(), Emerald.createRegular(), Material.LIME_STAINED_GLASS_PANE);
+            } else if (Ender.isAugmented(clicked)) {
+                augmentedOrRegular(player, Ender.createAugmented(), Ender.createRegular(), Material.PURPLE_STAINED_GLASS_PANE);
+            } else if (Apophis.isAugmented(clicked)) {
+                augmentedOrRegular(player, Apophis.createAugmented(), Apophis.createRegular(), Material.MAGENTA_STAINED_GLASS_PANE);
+            } else if (Feather.isAugmented(clicked)) {
+                augmentedOrRegular(player, Feather.createAugmented(), Feather.createRegular(), Material.WHITE_STAINED_GLASS_PANE);
+            } else if (Fire.isAugmented(clicked)) {
+                augmentedOrRegular(player, Fire.createAugmented(), Fire.createRegular(), Material.ORANGE_STAINED_GLASS_PANE);
+            } else if (Haste.isAugmented(clicked)) {
+                augmentedOrRegular(player, Haste.createAugmented(), Haste.createRegular(), Material.ORANGE_STAINED_GLASS_PANE);
+            } else if (Invisibility.isAugmented(clicked)) {
+                augmentedOrRegular(player, Invisibility.createAugmented(), Invisibility.createRegular(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+            } else if (Ocean.isAugmented(clicked)) {
+                augmentedOrRegular(player, Ocean.createAugmented(), Ocean.createRegular(), Material.BLUE_STAINED_GLASS_PANE);
+            } else if (Regen.isAugmented(clicked)) {
+                augmentedOrRegular(player, Regen.createAugmented(), Regen.createRegular(), Material.RED_STAINED_GLASS_PANE);
             }
         }
 
@@ -87,7 +87,7 @@ public class GUI implements Listener, CommandExecutor {
 
             return true;
         }
-        
+
         return false;
     }
 }
