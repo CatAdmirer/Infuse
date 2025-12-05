@@ -59,9 +59,8 @@ public class EquipEffect implements Listener, CommandExecutor {
             return false;
         } else {
             Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), type, effectName);
-            String var10001 = String.valueOf(ChatColor.GREEN);
             effectName = applyHexColors(effectName);
-            player.sendMessage(var10001 + "You have equipped " + effectName);
+            player.sendMessage("§aYou have equipped " + effectName);
             this.consumeMainHandItem(player);
             return true;
         }
@@ -91,13 +90,13 @@ public class EquipEffect implements Listener, CommandExecutor {
             if (effect != null) {
                 if (player.getInventory().firstEmpty() == -1) {
                     event.setCancelled(true);
-                    player.sendMessage(String.valueOf(ChatColor.RED) + "Your inventory is full! Make space before unequipping.");
+                    player.sendMessage("§cYour inventory is full! Make space before unequipping.");
                 } else {
                     this.drainSecondaryEffect(player, mainHandItem, effect.getEffectName());
                     this.consumeMainHandItem(player);
                     String effectName = effect.getEffectName();
-                    if (effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
-                            effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
+                    if (effectName.equalsIgnoreCase("§5Apohpis Effect") ||
+                            effectName.equalsIgnoreCase("§5Augmented Apohpis Effect")) {
                         apophisCommand.disguiseAsApophis(player);
                     }
                 }
@@ -190,18 +189,18 @@ public class EquipEffect implements Listener, CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(String.valueOf(ChatColor.RED) + "Only players can use this command.");
+            sender.sendMessage("§cOnly players can use this command.");
             return true;
         } else {
             String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
             String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
             if (effect1 == null && effect2 == null) {
-                player.sendMessage(String.valueOf(ChatColor.RED) + "You do not have any effects equipped to swap.");
+                player.sendMessage("§cYou do not have any effects equipped to swap.");
                 return true;
             } else {
                 Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
                 Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
-                player.sendMessage(String.valueOf(ChatColor.GREEN) + "Your Effects have been swapped.");
+                player.sendMessage("§aYour Effects have been swapped.");
                 return true;
             }
         }

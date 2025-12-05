@@ -15,10 +15,18 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
-    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
-    maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
-    maven { url = "https://repo.dmulloy2.net/repository/public/" }
-    maven { url = 'https://libraries.minecraft.net/' }
+    maven { 
+        url = uri("https://repo.codemc.io/repository/maven-releases/")
+    }
+    maven { 
+        url = uri("https://repo.codemc.io/repository/maven-snapshots/")
+    }
+    maven { 
+        url = "https://repo.dmulloy2.net/repository/public/"
+    }
+    maven { 
+        url = 'https://libraries.minecraft.net/'
+    }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
@@ -34,7 +42,6 @@ dependencies {
     compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
     compileOnly 'me.clip:placeholderapi:2.11.6'
     implementation 'com.mojang:authlib:1.5.21'
-    implementation 'org.json:json:20250517'
 }
 
 tasks {

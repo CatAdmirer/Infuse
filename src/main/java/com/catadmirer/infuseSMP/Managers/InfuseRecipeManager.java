@@ -206,7 +206,7 @@ public class InfuseRecipeManager implements Listener {
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
         if (isRitualActive) {
-            player.sendMessage(ChatColor.RED + "A ritual is already in progress!");
+            player.sendMessage("§cA ritual is already in progress!");
             return;
         }
         final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
@@ -234,13 +234,13 @@ public class InfuseRecipeManager implements Listener {
         String worldName = brewingStandLocation.getWorld().getName();
         String dimensionMessage;
         if (worldName.equalsIgnoreCase("world")) {
-            dimensionMessage = ChatColor.GREEN + "Overworld";
+            dimensionMessage = "§aOverworld";
         } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            dimensionMessage = ChatColor.DARK_PURPLE + "End";
+            dimensionMessage = "§5End";
         } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            dimensionMessage = ChatColor.DARK_RED + "Nether";
+            dimensionMessage = "§4Nether";
         } else {
-            dimensionMessage = ChatColor.GRAY + worldName;
+            dimensionMessage = "§7" + worldName;
         }
 
         String messageTemplate = plugin.getMessages().getString("effect_broadcast");
@@ -294,7 +294,7 @@ public class InfuseRecipeManager implements Listener {
                     activeBossBar.removeAll();
                     String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
                     String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
-                    Bukkit.broadcastMessage(ChatColor.WHITE + finishedMessage);
+                    Bukkit.broadcastMessage("§f" + finishedMessage);
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
                     this.cancel();
@@ -455,7 +455,7 @@ public class InfuseRecipeManager implements Listener {
 
         if (isAugmented) {
             if (isRitualActive) {
-                player.sendMessage(ChatColor.RED + "A ritual is already in progress!");
+                player.sendMessage("§cA ritual is already in progress!");
                 event.setCancelled(true);
                 return;
             }

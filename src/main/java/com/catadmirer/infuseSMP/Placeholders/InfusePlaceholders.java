@@ -64,12 +64,11 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return null;
     }
 
-    private String formatTime(long totalSeconds, net.md_5.bungee.api.ChatColor color) {
+    private String formatTime(long totalSeconds, String color) {
         long minutes = totalSeconds / 60L;
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
-        String var10000 = String.valueOf(color);
-        return var10000 + String.valueOf(ChatColor.BOLD) + timeString + String.valueOf(ChatColor.RESET);
+        return color + "§l" + timeString + "§r";
     }
 
     public String getEffectKey(boolean useEmptyIcon, UUID uuid, String slot) {
@@ -106,7 +105,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         }
 
         if (CooldownManager.isOnCooldown(uuid, key)) {
-            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, ChatColor.WHITE);
+            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, "§f");
         }
 
         return "";

@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.ExtraEffects.*;
 import java.util.HashMap;
 import java.util.Map;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
 public class EffectMaps {
@@ -12,7 +11,7 @@ public class EffectMaps {
     public static final Map<String, ItemStack> activeEffects = new HashMap<>();
     public static final Map<String, Character> cooldownEffect = new HashMap<>();
     public static final Map<String, Character> activeEffect = new HashMap<>();
-    public static final Map<String, ChatColor> color = new HashMap<>();
+    public static final Map<String, String> color = new HashMap<>();
 
     static {
         effectNumber.put("emerald", 0);
@@ -139,39 +138,39 @@ public class EffectMaps {
         activeEffect.put("aug_apophis", (char) 0xe056);
         activeEffect.put("aug_thief", (char) 0xe062);
 
-        color.put("emerald", ChatColor.GREEN);
-        color.put("haste", ChatColor.GOLD);
-        color.put("heart", ChatColor.RED);
-        color.put("invis", ChatColor.DARK_PURPLE);
-        color.put("frost", ChatColor.AQUA);
-        color.put("feather", ChatColor.of("#BEA3CA"));
-        color.put("thunder", ChatColor.YELLOW);
-        color.put("speed", ChatColor.of("#E8BD74"));
-        color.put("regen", ChatColor.RED);
-        color.put("ocean", ChatColor.BLUE);
-        color.put("fire", ChatColor.of("#E85720"));
-        color.put("strength", ChatColor.DARK_RED);
-        color.put("ender", ChatColor.DARK_PURPLE);
-        color.put("apophis", ChatColor.DARK_PURPLE);
-        color.put("thief", ChatColor.DARK_RED);
-        color.put("aug_strength", ChatColor.DARK_RED);
-        color.put("aug_thunder", ChatColor.YELLOW);
-        color.put("aug_speed", ChatColor.of("#E8BD74"));
-        color.put("aug_regen", ChatColor.RED);
-        color.put("aug_ocean", ChatColor.BLUE);
-        color.put("aug_emerald", ChatColor.GREEN);
-        color.put("aug_fire", ChatColor.of("#E85720"));
-        color.put("aug_invis", ChatColor.DARK_PURPLE);
-        color.put("aug_frost", ChatColor.AQUA);
-        color.put("aug_haste", ChatColor.GOLD);
-        color.put("aug_heart", ChatColor.RED);
-        color.put("aug_feather", ChatColor.of("#BEA3CA"));
-        color.put("aug_ender", ChatColor.DARK_PURPLE);
-        color.put("aug_apophis", ChatColor.DARK_PURPLE);
-        color.put("aug_thief", ChatColor.DARK_RED);
+        color.put("emerald", "§a");
+        color.put("haste", "§6");
+        color.put("heart", "§c");
+        color.put("invis", "§5");
+        color.put("frost", "§b");
+        color.put("feather", "§x§B§E§A§3§C§A");
+        color.put("thunder", "§e");
+        color.put("speed", "§x§E§8§B§D§7§4");
+        color.put("regen", "§c");
+        color.put("ocean", "§9");
+        color.put("fire", "§x§E§8§5§7§2§0");
+        color.put("strength", "§4");
+        color.put("ender", "§5");
+        color.put("apophis", "§5");
+        color.put("thief", "§4");
+        color.put("aug_strength", "§4");
+        color.put("aug_thunder", "§e");
+        color.put("aug_speed", "§x§E§8§B§D§7§4");
+        color.put("aug_regen", "§c");
+        color.put("aug_ocean", "§9");
+        color.put("aug_emerald", "§a");
+        color.put("aug_fire", "§x§E§8§5§7§2§0");
+        color.put("aug_invis", "§5");
+        color.put("aug_frost", "§b");
+        color.put("aug_haste", "§6");
+        color.put("aug_heart", "§c");
+        color.put("aug_feather", "§x§B§E§A§3§C§A");
+        color.put("aug_ender", "§5");
+        color.put("aug_apophis", "§5");
+        color.put("aug_thief", "§4");
     }
 
-    public static Integer getEffectNumber(String key) {
+    public static Integer getEffectId(String key) {
         return effectNumber.getOrDefault(key, -1);
     }
 
@@ -187,7 +186,7 @@ public class EffectMaps {
         return activeEffect.getOrDefault(key, (char) 0);
     }
 
-    public static ChatColor getColorEffect(String key) {
-        return color.getOrDefault(key, ChatColor.GRAY);
+    public static String getColorEffect(String key) {
+        return color.getOrDefault(key, "§7");
     }
 }

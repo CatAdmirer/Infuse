@@ -146,12 +146,12 @@ public class Ocean implements Listener {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 String msg = Infuse.getInstance().getConfig("invis.kill_invis");
                 msg = msg.replace("%victim%", victim.getName())
-                        .replace("%killer%", ChatColor.GRAY + "" + TextDecoration.OBFUSCATED + ("Someone"));
+                        .replace("%killer%", "§7§kSomeone");
                 event.deathMessage(Component.text(msg));
             } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 if (killer != null) {
                     String msg = Infuse.getInstance().getConfig("invis.death_invis");
-                    msg = msg.replace("%victim%", ChatColor.GRAY + "" + TextDecoration.OBFUSCATED + ("Someone"))
+                    msg = msg.replace("%victim%", "§7§kSomeone")
                             .replace("%killer%", killer.getName());
                     event.deathMessage(Component.text(msg));
                 }

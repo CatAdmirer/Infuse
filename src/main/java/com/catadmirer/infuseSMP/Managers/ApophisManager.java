@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +31,7 @@ public class ApophisManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <player>");
+            sender.sendMessage("§cUsage: /" + label + " <player>");
             return true;
         }
 
@@ -41,7 +40,7 @@ public class ApophisManager implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("setapophis")) {
             Player target = Bukkit.getPlayerExact(playerName);
             if (target == null) {
-                sender.sendMessage(ChatColor.RED + "Player not found or not online.");
+                sender.sendMessage("§cPlayer not found or not online.");
                 return true;
             }
             return disguiseAsApophis(target);
@@ -94,7 +93,7 @@ public class ApophisManager implements CommandExecutor {
     public boolean unsetApophis(CommandSender sender, String playerName) {
         Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "Player not found or not online.");
+            sender.sendMessage("§cPlayer not found or not online.");
             return false;
         }
 

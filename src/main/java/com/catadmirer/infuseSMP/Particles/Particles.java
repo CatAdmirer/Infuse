@@ -17,7 +17,7 @@ public class Particles {
                 applyParticlesForEffect(player, "2");
             }
 
-        }, 1, 19);
+        }, 1, 20);
     }
 
     private void applyParticlesForEffect(Player player, String type) {
@@ -25,7 +25,7 @@ public class Particles {
         if (effectName == null) return;
 
         String stripped = ChatColor.stripColor(effectName);
-        Integer abilityId = EffectMaps.getEffectNumber(stripped);
+        Integer abilityId = EffectMaps.getEffectId(stripped);
         if (abilityId == null) return;
 
         final double regularRadius = 0;

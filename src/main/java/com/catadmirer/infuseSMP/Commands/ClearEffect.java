@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +12,7 @@ public class ClearEffect implements Listener, CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("cleareffects")) {
             if (args.length != 1) {
-                sender.sendMessage(String.valueOf(ChatColor.RED) + "Usage: /cleareffects <player>");
+                sender.sendMessage("§cUsage: /cleareffects <player>");
                 return true;
             } else {
                 Player target = Bukkit.getPlayer(args[0]);

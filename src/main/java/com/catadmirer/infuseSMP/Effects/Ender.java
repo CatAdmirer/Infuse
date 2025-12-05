@@ -303,7 +303,7 @@ public class Ender implements Listener {
 
         int cooldown = dragonBreathCooldowns.getOrDefault(uuid, 0);
         if (cooldown > 0) {
-            player.sendMessage(ChatColor.RED + "You must wait " + cooldown + " seconds before using Dragon's Breath again!");
+            player.sendMessage("§cYou must wait " + cooldown + " seconds before using Dragon's Breath again!");
             return;
         }
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -318,7 +318,7 @@ public class Ender implements Listener {
         fireball.setCustomName("Cursing Projectile");
         dragonBreathCooldowns.put(uuid, 30);
 
-        player.sendMessage(ChatColor.GREEN + "You shot a cursing fireball! Cooldown started.");
+        player.sendMessage("§aYou shot a cursing fireball! Cooldown started.");
     }
 
     @EventHandler
@@ -337,7 +337,7 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
-        target.sendMessage(ChatColor.RED + "You have been cursed!");
+        target.sendMessage("§cYou have been cursed!");
         removeCurseLater(target.getUniqueId(), 20 * 60);
     }
 
@@ -348,7 +348,7 @@ public class Ender implements Listener {
                 cursedPlayers.remove(playerUUID);
                 Player player = Bukkit.getPlayer(playerUUID);
                 if (player != null && player.isOnline()) {
-                    player.sendMessage(ChatColor.GREEN + "The curse has worn off.");
+                    player.sendMessage("§aThe curse has worn off.");
                 }
             }
         }.runTaskLater(plugin, delayTicks);

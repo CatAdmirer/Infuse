@@ -120,7 +120,7 @@ public class Heart implements Listener {
                 } else {
                     this.cancel();
                     entity.setCustomNameVisible(false);
-                    entity.setCustomName((String)null);
+                    entity.setCustomName(null);
                 }
             }
         };
@@ -129,15 +129,14 @@ public class Heart implements Listener {
             public void run() {
                 updateTask.cancel();
                 entity.setCustomNameVisible(false);
-                entity.setCustomName((String)null);
+                entity.setCustomName(null);
             }
         }).runTaskLater(Infuse.getInstance(), 200L);
     }
 
     private void updateHealthDisplay(LivingEntity entity) {
         double health = entity.getHealth();
-        String var10000 = String.valueOf(ChatColor.RED);
-        String healthText = var10000 + String.valueOf(ChatColor.BOLD) + "❤ " + String.format("%.1f", health);
+        String healthText = "§c§l❤ " + String.format("%.1f", health);
         entity.setCustomName(healthText);
     }
 
@@ -215,7 +214,7 @@ public class Heart implements Listener {
                     if (maxHealthAttribute != null) {
                         maxHealthAttribute.setBaseValue(20);
                     }
-                    player.sendMessage(ChatColor.RED + "Your Health Boost has ended.");
+                    player.sendMessage("§cYour Health Boost has ended.");
                 }
             }.runTaskLater(Infuse.getInstance(), duration * 20L);
         }

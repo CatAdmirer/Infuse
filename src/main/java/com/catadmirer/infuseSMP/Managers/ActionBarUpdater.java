@@ -5,8 +5,6 @@ import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,12 +13,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class ActionBarUpdater extends BukkitRunnable {
     private final Set<UUID> playersWithActiveEffects = new HashSet<>();
 
-        public String removeAug(String key) {
-            if (key.startsWith("aug_")) {
-                return key.substring(4);
-            }
-            return key;
+    public String removeAug(String key) {
+        if (key.startsWith("aug_")) {
+            return key.substring(4);
         }
+        return key;
+    }
 
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -37,14 +35,13 @@ public class ActionBarUpdater extends BukkitRunnable {
                 String stripped = Infuse.getInstance().getEffectReversed(MessageUtil.stripAllColors(primaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
-                    net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);
                     if (CooldownManager.isEffectActive(uuid, key)) {
                         long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                        firstTime = this.formatTime(timeLeft, color);
+                        firstTime = this.formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
                         firstEmoji = EffectMaps.getActiveEffect(stripped);
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        firstTime = this.formatTime(timeLeft, ChatColor.WHITE);
+                        firstTime = this.formatTime(timeLeft, "§f");
                         firstEmoji = EffectMaps.getCooldownEffect(stripped);
                     } else {
                         firstEmoji = EffectMaps.getCooldownEffect(stripped);
@@ -61,14 +58,13 @@ public class ActionBarUpdater extends BukkitRunnable {
                 String stripped = Infuse.getInstance().getEffectReversed(MessageUtil.stripAllColors(secondaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
-                    net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);
                     if (CooldownManager.isEffectActive(uuid, key)) {
                         long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                        secondTime = this.formatTime(timeLeft, color);
+                        secondTime = this.formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
                         secondEmoji = EffectMaps.getActiveEffect(stripped);
                     } else if (CooldownManager.isOnCooldown(uuid, key)) {
                         long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        secondTime = this.formatTime(timeLeft, ChatColor.WHITE);
+                        secondTime = this.formatTime(timeLeft, "§f");
                         secondEmoji = EffectMaps.getCooldownEffect(stripped);
                     } else {
                         secondEmoji = EffectMaps.getCooldownEffect(stripped);
@@ -83,17 +79,16 @@ public class ActionBarUpdater extends BukkitRunnable {
 
             String finalMessage = actionBar.toString().trim();
             if (!finalMessage.isEmpty()) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(finalMessage));
+                player.sendActionBar(TextComponent.fromLegacy(finalMessage));
             }
         }
     }
 
 
-    private String formatTime(long totalSeconds, net.md_5.bungee.api.ChatColor color) {
+    private String formatTime(long totalSeconds, String color) {
         long minutes = totalSeconds / 60L;
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
-        String var10000 = String.valueOf(color);
-        return var10000 + ChatColor.BOLD + timeString + ChatColor.RESET;
+        return color + "§l" + timeString + "§r";
     }
 }

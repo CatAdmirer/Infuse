@@ -61,7 +61,7 @@ public class Drop implements Listener {
         String strippedName = MessageUtil.stripAllColors(effectName);
         strippedName = ChatColor.stripColor(strippedName);
         String itemNameChanged = plugin.getEffectReversed(strippedName);
-        Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
+        Integer abilityId = EffectMaps.getEffectId(itemNameChanged);
 
         Color color = switch (abilityId) {
             case 0, 1 -> Color.GREEN;
@@ -115,7 +115,7 @@ public class Drop implements Listener {
         String meowmeow = MessageUtil.stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
-        Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
+        Integer abilityId = EffectMaps.getEffectId(itemNameChanged);
         switch (abilityId) {
             case 0, 1:
                 color = Color.GREEN;

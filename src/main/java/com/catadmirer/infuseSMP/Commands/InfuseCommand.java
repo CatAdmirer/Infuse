@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,7 +43,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage("§cYou must be OP to run this command.");
                     return true;
                 }
-                Infuse.getInstance().reloadDaConfig(player);
+                player.sendMessage("§aInfuse reloaded in " + Infuse.getInstance().loadConfig() + "ms!");
                 break;
             case "recipes":
                 Recipes.openGUI(player);
@@ -71,8 +70,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
                 String name = Infuse.getInstance().getEffectName(effectKey);
                 String effectName = MessageUtil.stripAllColors(name);
-                ChatColor color = EffectMaps.getColorEffect(effectKey);
-                target.sendMessage(color + "You received the " + effectName);
+                target.sendMessage(EffectMaps.getColorEffect(effectKey) + "You received the " + effectName);
                 break;
             case "seteffect":
                 if (!player.isOp()) {
@@ -113,7 +111,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
                 Infuse.getInstance().getEffectManager().removeEffect(arg1.getUniqueId(), "2");
                 Infuse.getInstance().getEffectManager().removeEffect(arg1.getUniqueId(), "1");
-                player.sendMessage(ChatColor.GREEN + "Cleared " + arg1Name + "'s effects");
+                player.sendMessage("§aCleared " + arg1Name + "'s effects");
                 break;
             case "cooldown":
                 if (!player.isOp()) {
@@ -131,7 +129,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 CooldownManager.removeAllCooldowns(arg3.getUniqueId());
-                player.sendMessage(ChatColor.GREEN + "Cleared " + arg1meow + "'s cooldown");
+                player.sendMessage("§aCleared " + arg1meow + "'s cooldown");
                 break;
             case "controls":
                 if (args.length != 2) {

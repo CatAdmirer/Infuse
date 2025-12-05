@@ -66,13 +66,13 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage(ChatColor.RED + "Your inventory is full! Make space before unequipping.");
+            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
             return true;
         }
 
         Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
         String currentEffectColored = applyHexColors(currentEffect);
-        player.sendMessage(ChatColor.GREEN + "You have drained your: " + currentEffectColored);
+        player.sendMessage("§aYou have drained your: " + currentEffectColored);
 
         new BukkitRunnable() {
             @Override
