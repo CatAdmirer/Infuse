@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.Commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,7 +71,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
                 target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
                 String name = Infuse.getInstance().getEffect(effectKey);
-                String effectName = Infuse.getInstance().stripAllColors(name);
+                String effectName = MessageUtil.stripAllColors(name);
                 ChatColor color = EffectMaps.getColorEffect(effectKey);
                 target.sendMessage(color + "You received the " + effectName);
                 break;

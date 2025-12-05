@@ -6,8 +6,9 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import java.util.UUID;
-import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -76,7 +77,7 @@ public class Abilities implements CommandExecutor {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
                 return true;
             } else {
-                String strippedEffect = stripAllColors(equippedEffect);
+                String strippedEffect = MessageUtil.stripAllColors(equippedEffect);
                 strippedEffect = plugin.getEffectReversed(strippedEffect);
                 Integer abilityId = EffectMaps.getEffectNumber(strippedEffect);
 
@@ -158,15 +159,5 @@ public class Abilities implements CommandExecutor {
                 return true;
             }
         }
-    }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
     }
 }

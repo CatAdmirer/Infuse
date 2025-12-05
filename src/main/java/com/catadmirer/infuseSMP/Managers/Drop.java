@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -10,8 +12,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.regex.Pattern;
 
 public class Drop implements Listener {
 
@@ -49,24 +49,12 @@ public class Drop implements Listener {
 
     }
 
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])" +
-                        "|(�x(�[0-9a-fA-F]){6})" +
-                        "|�"
-        );
-        return pattern.matcher(input).replaceAll("");
-    }
-
     private void playDustEffect(Player player, final boolean bottomToTop, EffectMapping itemName, Location location) {
         final Location base = location.add(0.0, 0.1, 0.0);
         final World world = location.getWorld();
         Color color = null;
         String itemthingy = itemName.getEffectName();
-        String meowmeow = stripAllColors(itemthingy);
+        String meowmeow = MessageUtil.stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
         Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
@@ -147,7 +135,7 @@ public class Drop implements Listener {
         final World world = location.getWorld();
         Color color = null;
         String itemthingy = itemName.getEffectName();
-        String meowmeow = stripAllColors(itemthingy);
+        String meowmeow = MessageUtil.stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
         Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);

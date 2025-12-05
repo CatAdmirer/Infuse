@@ -8,6 +8,8 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -261,9 +263,9 @@ public class Feather implements Listener {
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
             boolean isAugmentedFeather =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName))) ||
+                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName)));
+                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName)));
             long featherDefaultCooldown = Infuse.getInstance().getConfig("feather.cooldown.default");
             long featherAugmentedCooldown = Infuse.getInstance().getConfig("feather.cooldown.augmented");
             long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
@@ -285,15 +287,5 @@ public class Feather implements Listener {
 
     public static boolean isEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 2;
-    }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
     }
 }

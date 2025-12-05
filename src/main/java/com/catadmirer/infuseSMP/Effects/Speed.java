@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -70,16 +72,6 @@ public class Speed implements Listener {
                 this.bowPullStartTime.remove(player.getUniqueId());
             }
         }
-    }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
     }
 
     @EventHandler
@@ -219,9 +211,9 @@ public class Speed implements Listener {
 
             boolean isAugmented =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName2))) ||
+                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName2)));
+                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName2)));
 
             long defaultCooldown = Infuse.getInstance().getConfig("speed.cooldown.default");;
             long augmentedCooldown = Infuse.getInstance().getConfig("speed.cooldown.augmented");;

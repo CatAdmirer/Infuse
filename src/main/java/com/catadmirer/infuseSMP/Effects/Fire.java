@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import com.github.retrooper.packetevents.event.PacketListener;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -215,9 +216,9 @@ public class Fire implements Listener, PacketListener {
             }.runTaskLater(this.plugin, 20L);
             boolean isAugmentedFire =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2))) ||
+                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(MessageUtil.stripAllColors(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2)));
+                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(MessageUtil.stripAllColors(effectName2)));
 
             long sparkDefaultCooldown = Infuse.getInstance().getConfig("fire.cooldown.default");
             long sparkAugmentedCooldown = Infuse.getInstance().getConfig("fire.cooldown.augmented");
@@ -231,17 +232,6 @@ public class Fire implements Listener, PacketListener {
             CooldownManager.setCooldown(playerUUID, "fire", sparkCooldown);
         }
     }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
-    }
-
 
     private void spawnSparkEffect(final Player caster) {
         (new BukkitRunnable() {

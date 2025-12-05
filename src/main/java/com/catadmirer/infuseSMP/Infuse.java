@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.catadmirer.infuseSMP.Commands.*;
@@ -19,6 +18,7 @@ import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Managers.*;
 import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.Placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import com.catadmirer.infuseSMP.Commands.TrustCommand;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
@@ -363,27 +363,15 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public String getEffectReversed(String displayName) {
-        String strippedName = stripAllColors(displayName);
+        String strippedName = MessageUtil.stripAllColors(displayName);
 
         for (Map.Entry<String, String> entry : effects.entrySet()) {
-            if (stripAllColors(entry.getValue()).equalsIgnoreCase(strippedName)) {
+            if (MessageUtil.stripAllColors(entry.getValue()).equalsIgnoreCase(strippedName)) {
                 return entry.getKey();
             }
         }
 
         return null;
-    }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])" +
-                        "|(�x(�[0-9a-fA-F]){6})" +
-                        "�"
-        );
-        return pattern.matcher(input).replaceAll("");
     }
 
     private void registerCommands() {

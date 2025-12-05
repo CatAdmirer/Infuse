@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.Placeholders;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.md_5.bungee.api.ChatColor;
@@ -42,127 +44,26 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         boolean useEmptyIcon = plugin.getConfig("empty_effect_icon");
         UUID uuid = player.getUniqueId();
 
-        if (params.equalsIgnoreCase("first_effect")) {
-            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (primaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
-                String key = removeAug(stripped);
-                if (key != null) {
-                    if (CooldownManager.isEffectActive(uuid, key)) {
-                        return EffectMaps.getActiveEffect(stripped);
-                    } else {
-                        return EffectMaps.getCooldownEffect(stripped);
-                    }
-                }
-            }
-
-            if (useEmptyIcon) {
-                return "\uE058";
-            }
-
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("second_effect")) {
-            String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (secondaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(secondaryEffect));
-                String key = removeAug(stripped);
-                if (key != null) {
-                    if (CooldownManager.isEffectActive(uuid, key)) {
-                        return EffectMaps.getActiveEffect(stripped);
-                    } else {
-                        return EffectMaps.getCooldownEffect(stripped);
-                    }
-                }
-            }
-
-            if (useEmptyIcon) {
-                return "\uE058";
-            }
-
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("first_time")) {
-            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (primaryEffect == null)
-                return "";
-
-            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
-            String key = removeAug(stripped);
-            if (key == null)
-                return "";
-
-            if (CooldownManager.isEffectActive(uuid, key)) {
-                long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-                return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
-            } else if (CooldownManager.isOnCooldown(uuid, key)) {
-                long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
-                return formatTime(timeLeft, ChatColor.WHITE);
-            }
-        }
-
-        if (params.equalsIgnoreCase("second_time")) {
-            String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (secondaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(secondaryEffect));
-                String key = removeAug(stripped);
-                if (key != null) {
-                    if (CooldownManager.isEffectActive(uuid, key)) {
-                        long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
-                    } else if (CooldownManager.isOnCooldown(uuid, key)) {
-                        long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, ChatColor.WHITE);
-                    }
-                }
-            }
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("first_effect_raw")) {
-            String strip = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (strip != null) {
-                String stripped = stripAllColors(strip);
-                return stripped;
-            }
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("second_effect_raw")) {
-            String strip = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (strip != null) {
-                String stripped = stripAllColors(strip);
-                return stripped;
-            }
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("first_effect_name")) {
-            String strip = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (strip != null) {
-                return strip;
-            }
-            return "";
-        }
-
-        if (params.equalsIgnoreCase("second_effect_name")) {
-            String strip = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (strip != null) {
-                return strip;
-            }
-            return "";
+        switch (params.toLowerCase()) {
+            case "first_effect":
+                return getEffectKey(useEmptyIcon, uuid, "1");
+            case "second_effect":
+                return getEffectKey(useEmptyIcon, uuid, "2");
+            case "first_time":
+                return getTime(uuid, "1");
+            case "second_time":
+                return getTime(uuid, "2");
+            case "first_effect_raw":
+                return getEffectRaw(uuid, "1");
+            case "second_effect_raw":
+                return getEffectRaw(uuid, "2");
+            case "first_effect_name":
+                return getEffectName(uuid, "1");
+            case "second_effect_name":
+                return getEffectName(uuid, "2");
         }
 
         return null;
-    }
-
-    public static String stripAllColors(String input) {
-        if (input == null)
-            return null;
-        return input.replaceAll("§#[A-Fa-f0-9]{6}", "")
-                .replaceAll("§[0-9a-fk-orK-OR]", "");
     }
 
     private String formatTime(long totalSeconds, net.md_5.bungee.api.ChatColor color) {
@@ -171,5 +72,59 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         String timeString = minutes + ":" + String.format("%02d", seconds);
         String var10000 = String.valueOf(color);
         return var10000 + String.valueOf(ChatColor.BOLD) + timeString + String.valueOf(ChatColor.RESET);
+    }
+
+    public String getEffectKey(boolean useEmptyIcon, UUID uuid, String slot) {
+        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect != null) {
+            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(effect));
+            String key = removeAug(stripped);
+            if (key != null) {
+                if (CooldownManager.isEffectActive(uuid, key)) {
+                    return EffectMaps.getActiveEffect(stripped);
+                } else {
+                    return EffectMaps.getCooldownEffect(stripped);
+                }
+            }
+        }
+
+        if (useEmptyIcon) {
+            return "\uE058";
+        }
+
+        return "";
+    }
+
+    public String getTime(UUID uuid, String slot) {
+        String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (primaryEffect == null) return "";
+
+        String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
+        String key = removeAug(stripped);
+        if (key == null) return "";
+
+        if (CooldownManager.isEffectActive(uuid, key)) {
+            return formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, EffectMaps.getColorEffect(stripped));
+        }
+        
+        if (CooldownManager.isOnCooldown(uuid, key)) {
+            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, ChatColor.WHITE);
+        }
+
+        return "";
+    }
+
+    public String getEffectRaw(UUID uuid, String slot) {
+        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect != null) return MessageUtil.stripAllColors(effect);
+
+        return "";
+    }
+
+    public String getEffectName(UUID uuid, String slot) {
+        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect != null) return effect;
+
+        return "";
     }
 }

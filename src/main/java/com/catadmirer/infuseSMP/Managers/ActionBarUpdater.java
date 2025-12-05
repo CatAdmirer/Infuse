@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.util.MessageUtil;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,16 +25,6 @@ public class ActionBarUpdater extends BukkitRunnable {
             return key;
         }
 
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
-    }
-
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = player.getUniqueId();
@@ -45,7 +37,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             }
             String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
             if (primaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(primaryEffect));
+                String stripped = Infuse.getInstance().getEffectReversed(MessageUtil.stripAllColors(primaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);
@@ -69,7 +61,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             }
             String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
             if (secondaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(stripAllColors(secondaryEffect));
+                String stripped = Infuse.getInstance().getEffectReversed(MessageUtil.stripAllColors(secondaryEffect));
                 String key = removeAug(stripped);
                 if (key != null) {
                     net.md_5.bungee.api.ChatColor color = EffectMaps.getColorEffect(stripped);
