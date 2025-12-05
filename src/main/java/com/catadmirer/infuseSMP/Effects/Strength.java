@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class Strength implements Listener {
-    
+
 
     private final Infuse plugin;
 
@@ -88,12 +88,12 @@ public class Strength implements Listener {
             if (this.hasStrengthEquipped(attacker, "1") || this.hasStrengthEquipped(attacker, "2")) {
                 double damage = event.getDamage();
                 double health = attacker.getHealth();
-                if (health < 2.0) {
-                    event.setDamage(damage + 3.0);
-                } else if (health < 4.0) {
-                    event.setDamage(damage + 2.0);
-                } else if (health < 6.0) {
-                    event.setDamage(damage + 1.0);
+                if (health < 2) {
+                    event.setDamage(damage + 3);
+                } else if (health < 4) {
+                    event.setDamage(damage + 2);
+                } else if (health < 6) {
+                    event.setDamage(damage + 1);
                 }
             }
         }
@@ -109,7 +109,7 @@ public class Strength implements Listener {
                 event.setDamage(critDamage);
                 Entity hitEntity = event.getEntity();
                 hitEntity.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 1);
-                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0.0, hitEntity.getHeight() / 2.0, 0.0), 10);
+                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0, hitEntity.getHeight() / 2, 0), 10);
             }
         }
     }
@@ -148,7 +148,7 @@ public class Strength implements Listener {
                 if (entity instanceof Player) return;
                 if (this.hasStrengthEquipped(attacker, "1") || this.hasStrengthEquipped(attacker, "2")) {
                     double originalDamage = event.getDamage();
-                    event.setDamage(originalDamage * 2.0);
+                    event.setDamage(originalDamage * 2);
                 }
             }
         }

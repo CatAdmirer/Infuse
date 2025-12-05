@@ -104,7 +104,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         if (CooldownManager.isEffectActive(uuid, key)) {
             return formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, EffectMaps.getColorEffect(stripped));
         }
-        
+
         if (CooldownManager.isOnCooldown(uuid, key)) {
             return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, ChatColor.WHITE);
         }

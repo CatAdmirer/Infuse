@@ -54,78 +54,50 @@ public class Drop implements Listener {
 
     }
 
-    private void playDustEffect(Player player, final boolean bottomToTop, EffectMapping itemName, Location location) {
-        final Location base = location.add(0.0, 0.1, 0.0);
+    private void playDustEffect(Player player, final boolean bottomToTop, EffectMapping effect, Location location) {
+        final Location base = location.add(0, 0.1, 0);
         final World world = location.getWorld();
-        Color color = null;
-        String itemthingy = itemName.getEffectName();
-        String meowmeow = MessageUtil.stripAllColors(itemthingy);
-        meowmeow = ChatColor.stripColor(meowmeow);
-        String itemNameChanged = plugin.getEffectReversed(meowmeow);
+        String effectName = effect.getEffectName();
+        String strippedName = MessageUtil.stripAllColors(effectName);
+        strippedName = ChatColor.stripColor(strippedName);
+        String itemNameChanged = plugin.getEffectReversed(strippedName);
         Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
-        switch (abilityId) {
-            case 0, 1:
-                color = Color.GREEN;
-                break;
-            case 2, 3:
-                color = Color.fromRGB(0xBEA3CA);
-                break;
-            case 4, 5:
-                color = Color.fromRGB(0xFC7803);
-                break;
-            case 6, 7:
-                color = Color.AQUA;
-                break;
-            case 8, 9:
-                color = Color.fromRGB(0xB96C00);
-                break;
-            case 10, 11:
-                color = Color.fromRGB(0xFC0046);
-                break;
-            case 14, 15:
-                color = Color.fromRGB(0x005AFC);
-                break;
-            case 16, 17:
-                color = Color.fromRGB(0xFF03EF);
-                break;
-            case 18, 19:
-                color = Color.fromRGB(0xD1A44B);
-                break;
-            case 20, 21:
-                color = Color.fromRGB(0x8B0000);
-                break;
-            case 22, 23:
-                color = Color.fromRGB(0xFCED00);
-                break;
-            case 24, 26:
-                color = Color.PURPLE;
-                break;
-            case 25, 27:
-                color = Color.fromRGB(0x45033E);
-                break;
-            case 28, 29:
-                color = Color.RED;
-                break;
-            default:
-                break;
-        }
+
+        Color color = switch (abilityId) {
+            case 0, 1 -> Color.GREEN;
+            case 2, 3 -> Color.fromRGB(0xBEA3CA);
+            case 4, 5 -> Color.fromRGB(0xFC7803);
+            case 6, 7 -> Color.AQUA;
+            case 8, 9 -> Color.fromRGB(0xB96C00);
+            case 10, 11 -> Color.fromRGB(0xFC0046);
+            case 14, 15 -> Color.fromRGB(0x005AFC);
+            case 16, 17 -> Color.fromRGB(0xFF03EF);
+            case 18, 19 -> Color.fromRGB(0xD1A44B);
+            case 20, 21 -> Color.fromRGB(0x8B0000);
+            case 22, 23 -> Color.fromRGB(0xFCED00);
+            case 24, 26 -> Color.PURPLE;
+            case 25, 27 -> Color.fromRGB(0x45033E);
+            case 28, 29 -> Color.RED;
+            default -> null;
+        };
+
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;
         (new BukkitRunnable() {
-            double y = 0.0;
+            double y = 0;
 
             public void run() {
-                if (this.y > 2.0) {
+                if (this.y > 2) {
                     this.cancel();
                 } else {
-                    double ringY = bottomToTop ? this.y : 2.0 - this.y;
+                    double ringY = bottomToTop ? this.y : 2 - this.y;
 
                     for(int i = 0; i < points; ++i) {
                         double angle = Math.PI * 2 * i / points;
                         double x = Math.cos(angle) * radius;
                         double z = Math.sin(angle) * radius;
-                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0, 0.0, 0.0, 1.0, dust);
+                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0, 0, 0, 1, dust);
                     }
 
                     this.y += 0.15;
@@ -136,7 +108,7 @@ public class Drop implements Listener {
     }
 
     private void playDustEffectDrop(Player player, final boolean bottomToTop, EffectMapping itemName, Location location) {
-        final Location base = location.add(0.0, -1.5, 0.0);
+        final Location base = location.add(0, -1.5, 0);
         final World world = location.getWorld();
         Color color = null;
         String itemthingy = itemName.getEffectName();
@@ -194,19 +166,19 @@ public class Drop implements Listener {
         final int points = 16;
         final double radius = 0.6;
         (new BukkitRunnable() {
-            double y = 0.0;
+            double y = 0;
 
             public void run() {
-                if (this.y > 2.0) {
+                if (this.y > 2) {
                     this.cancel();
                 } else {
-                    double ringY = bottomToTop ? this.y : 2.0 - this.y;
+                    double ringY = bottomToTop ? this.y : 2 - this.y;
 
                     for(int i = 0; i < points; ++i) {
                         double angle = Math.PI * 2 * i / points;
                         double x = Math.cos(angle) * radius;
                         double z = Math.sin(angle) * radius;
-                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0.0, 0.0, 0.0, 1.0, dust);
+                        world.spawnParticle(Particle.DUST, base.clone().add(x, ringY, z), 0, 0, 0, 0, 1, dust);
                     }
 
                     this.y += 0.15;

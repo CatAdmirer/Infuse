@@ -35,7 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Speed implements Listener {
-    
+
     private final Plugin plugin;
     private final Map<UUID, Integer> speedLevels = new HashMap<>();
     private final Map<UUID, Long> lastHitTime = new HashMap<>();
@@ -69,7 +69,7 @@ public class Speed implements Listener {
                 long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
                 double adjustedPullTimeMs = pullTimeMs * 1.8;
-                float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000.0, 1.0);
+                float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000, 1);
                 event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
                 this.bowPullStartTime.remove(player.getUniqueId());
             }
@@ -193,7 +193,7 @@ public class Speed implements Listener {
                     Vector step = currentLocation.toVector().subtract(previousLocation[0].toVector()).normalize().multiply(0.3);
                     Location particleLocation = previousLocation[0].clone();
 
-                    for (double d = 0.0; d <= distance; d += step.length()) {
+                    for (double d = 0; d <= distance; d += step.length()) {
                         particleLocation.add(step);
                         player.getWorld().spawnParticle(Particle.DUST, particleLocation, 5, 0.1, 0.05, 0.1, 0.05, dustOptions);
                     }

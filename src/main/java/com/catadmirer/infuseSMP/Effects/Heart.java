@@ -29,7 +29,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
-    
+
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
     private final Infuse plugin;
@@ -182,7 +182,7 @@ public class Heart implements Listener {
 
             final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(40.0);
+                maxHealthAttribute.setBaseValue(40);
             }
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             String effectName2 = Infuse.getInstance().getEffect("aug_heart");
@@ -205,7 +205,7 @@ public class Heart implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20.0);
+                        maxHealthAttribute.setBaseValue(20);
                     }
                     player.sendMessage(ChatColor.RED + "Your Health Boost has ended.");
                 }
@@ -221,7 +221,7 @@ public class Heart implements Listener {
             public void run() {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0);
+                    maxHealthAttribute.setBaseValue(20);
                 }
 
             }

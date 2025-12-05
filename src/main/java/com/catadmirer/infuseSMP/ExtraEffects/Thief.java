@@ -51,7 +51,7 @@ import org.bukkit.util.Vector;
 public class Thief implements Listener, PacketListener {
 
     private final Plugin plugin;
-    
+
 
     private Map<UUID, UUID> shapeshiftedPlayers = new HashMap<>();
     private Map<UUID, BossBar> shapeshiftedBossBars = new HashMap<>();
@@ -134,7 +134,7 @@ public class Thief implements Listener, PacketListener {
     private void startShapeshiftTimer(Player killer) {
         int shapeshiftTime = 3600;
         BossBar bossBar = Bukkit.createBossBar("Shapeshift", BarColor.PINK, BarStyle.SOLID);
-        bossBar.setProgress(1.0);
+        bossBar.setProgress(1);
         bossBar.addPlayer(killer);
         shapeshiftedBossBars.put(killer.getUniqueId(), bossBar);
         shapeshiftTimeLeft.putIfAbsent(killer.getUniqueId(), shapeshiftTime);
@@ -144,7 +144,7 @@ public class Thief implements Listener, PacketListener {
                 Integer timeLeft = shapeshiftTimeLeft.get(killer.getUniqueId());
 
                 if (timeLeft != null && timeLeft > 0) {
-                    double progress = timeLeft / 3600.0;
+                    double progress = timeLeft / 3600;
                     bossBar.setProgress(progress);
                     shapeshiftTimeLeft.put(killer.getUniqueId(), timeLeft - 1);
                 } else {
@@ -348,7 +348,7 @@ public class Thief implements Listener, PacketListener {
             }
         }).runTaskLater(this.plugin, 20L);
         if (maxHealthAttribute != null) {
-            maxHealthAttribute.setBaseValue(40.0);
+            maxHealthAttribute.setBaseValue(40);
         }
 
         String effectName2 = Infuse.getInstance().getEffect("aug_thief");
@@ -372,7 +372,7 @@ public class Thief implements Listener, PacketListener {
         (new BukkitRunnable() {
             public void run() {
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0);
+                    maxHealthAttribute.setBaseValue(20);
                 }
             }
         }).runTaskLater(Infuse.getInstance(), 1200L);
@@ -394,15 +394,15 @@ public class Thief implements Listener, PacketListener {
 
                         for(int angle = 0; angle < 360; angle += 20) {
                             double rad = Math.toRadians(angle);
-                            double offsetX = 5.0 * Math.cos(rad);
-                            double offsetZ = 5.0 * Math.sin(rad);
+                            double offsetX = 5 * Math.cos(rad);
+                            double offsetZ = 5 * Math.sin(rad);
                             Location particleLoc = center.clone().add(offsetX, 0.1, offsetZ);
                             world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05, 0.05, 0.05, 0.01);
                         }
 
                         for (Player target : world.getPlayers()) {
-                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5.0) {
-                                target.damage(8.0, caster);
+                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5) {
+                                target.damage(8, caster);
                             }
                         }
                     }
@@ -493,7 +493,7 @@ public class Thief implements Listener, PacketListener {
         CooldownManager.setDuration(playerUUID, "thunder", duration);
         CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
-        final double radius = 10.0;
+        final double radius = 10;
         final World world = caster.getWorld();
 
         new BukkitRunnable() {
@@ -515,8 +515,8 @@ public class Thief implements Listener, PacketListener {
                     }
 
                     target.getWorld().strikeLightningEffect(target.getLocation());
-                    target.damage(4.0, caster);
-                    world.spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new Particle.DustOptions(Color.YELLOW, 1.5F));
+                    target.damage(4, caster);
+                    world.spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new Particle.DustOptions(Color.YELLOW, 1.5F));
                 }
 
                 this.ticksElapsed += 20;
@@ -577,7 +577,7 @@ public class Thief implements Listener, PacketListener {
         CooldownManager.setCooldown(playerUUID, "thief", frostCooldown * 2);
 
         Location center = caster.getLocation();
-        double radius = 5.0;
+        double radius = 5;
         World world = caster.getWorld();
         final Set<Player> affectedPlayers = new HashSet<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -636,12 +636,12 @@ public class Thief implements Listener, PacketListener {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         final org.bukkit.util.Vector direction = player.getEyeLocation().getDirection().normalize();
-        double dashMultiplier = plugin.getConfig().getDouble("speed.dashMultiplier", 20.0);
+        double dashMultiplier = plugin.getConfig().getDouble("speed.dashMultiplier", 20);
         org.bukkit.util.Vector dashVector = direction.clone().multiply(dashMultiplier);
 
         final Location startLocation = player.getLocation();
         final Location endLocation = startLocation.clone().add(dashVector);
-        double playerVelocityMultiplier = plugin.getConfig().getDouble("speed.playerVelocityMultiplier", 2.0);
+        double playerVelocityMultiplier = plugin.getConfig().getDouble("speed.playerVelocityMultiplier", 2);
         player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
 
         player.getWorld().spawnParticle(Particle.CLOUD, startLocation, 50, 0.5, 0.5, 0.5, 0.1);
@@ -650,7 +650,7 @@ public class Thief implements Listener, PacketListener {
             public void run() {
                 double distance = startLocation.distance(endLocation);
                 Vector step = direction.clone().multiply(0.5);
-                for (double d = 0.0; d <= distance; d += step.length()) {
+                for (double d = 0; d <= distance; d += step.length()) {
                     Location currentLocation = startLocation.clone().add(step.clone().multiply(d));
                     player.getWorld().spawnParticle(Particle.CLOUD, currentLocation, 5, 0.1, 0.1, 0.1, 0.05);
                 }
@@ -685,7 +685,7 @@ public class Thief implements Listener, PacketListener {
                 event.setDamage(critDamage);
                 Entity hitEntity = event.getEntity();
                 hitEntity.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 1);
-                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0.0, hitEntity.getHeight() / 2.0, 0.0), 10);
+                hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0, hitEntity.getHeight() / 2, 0), 10);
             }
 
         }
@@ -697,7 +697,7 @@ public class Thief implements Listener, PacketListener {
 
         final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (maxHealthAttribute != null) {
-            maxHealthAttribute.setBaseValue(40.0);
+            maxHealthAttribute.setBaseValue(40);
         }
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         String effectName2 = Infuse.getInstance().getEffect("aug_thief");
@@ -723,7 +723,7 @@ public class Thief implements Listener, PacketListener {
         new BukkitRunnable() {
             public void run() {
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0);
+                    maxHealthAttribute.setBaseValue(20);
                 }
             }
         }.runTaskLater(plugin, duration * 20L);
@@ -754,7 +754,7 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
-        for (Entity entity : player.getNearbyEntities(5.0, 5.0, 5.0)) {
+        for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
             if (entity instanceof LivingEntity && entity != player) {
                 entity.setFireTicks(100);
             }
@@ -788,10 +788,10 @@ public class Thief implements Listener, PacketListener {
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
         double explosionRadius = 5;
-        
+
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0, 2.0, 0.0));
+                target.setVelocity(new Vector(0, 2, 0));
             }
         }
 
@@ -803,11 +803,11 @@ public class Thief implements Listener, PacketListener {
                 if (this.tick >= 60) {
                     this.cancel();
                 } else {
-                    double baseRadius = 5.0;
+                    double baseRadius = 5;
                     double spreadFactor = this.tick * 0.1;
                     double circleRadius = baseRadius + spreadFactor;
-                    double particleHeightOffset = this.tick * 3.0;
-                    if (particleHeightOffset > 30.0) {
+                    double particleHeightOffset = this.tick * 3;
+                    if (particleHeightOffset > 30) {
                         this.cancel();
                     } else {
                         for(int angle = 0; angle < 360; ++angle) {
@@ -815,7 +815,7 @@ public class Thief implements Listener, PacketListener {
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0, 0, 0, 0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;
@@ -865,7 +865,7 @@ public class Thief implements Listener, PacketListener {
     @EventHandler
     public void FeatherLand(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        double radius = 4.0;
+        double radius = 4;
         UUID playerUUID = player.getUniqueId();
         if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "thiefmace")) {
             CooldownManager.setDuration(playerUUID, "thiefmace", 0L);
@@ -893,7 +893,7 @@ public class Thief implements Listener, PacketListener {
         for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
             if (entity instanceof LivingEntity livingEntity) {
                 player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1, 1);
-                livingEntity.damage(10.0);
+                livingEntity.damage(10);
             }
         }
     }
@@ -933,7 +933,7 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = caster.getUniqueId();
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-        final double radius = 5.0;
+        final double radius = 5;
         final World world = caster.getWorld();
         String effectName2 = Infuse.getInstance().getEffect("aug_thief");
         boolean isAugmented =
@@ -981,7 +981,7 @@ public class Thief implements Listener, PacketListener {
                             int newOxygen = Math.max(p.getRemainingAir() - 20, -20);
                             p.setRemainingAir(newOxygen);
                             if (newOxygen <= 0) {
-                                p.damage(2.0);
+                                p.damage(2);
                             }
                         }
                     }
@@ -1007,7 +1007,7 @@ public class Thief implements Listener, PacketListener {
         long invisDefaultDuration = Infuse.getInstance().getConfig("invisibility.duration.default");;
         long invisAugmentedDuration = Infuse.getInstance().getConfig("invisibility.duration.augmented");;
         long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
-        final double radius = 10.0;
+        final double radius = 10;
         final long durationTicks = invisDuration;
         final World world = caster.getWorld();
         final Set<Player> vanishedPlayers = new HashSet<>();

@@ -45,7 +45,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
-    
+
     private final Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 

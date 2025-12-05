@@ -37,7 +37,7 @@ import org.bukkit.util.Vector;
 
 public class Frost implements Listener {
     private final Set<UUID> frozenAttackers = new HashSet<>();
-    
+
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
 
@@ -54,7 +54,7 @@ public class Frost implements Listener {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
                     if (Frost.this.hasEffect(player, "2") && !(player.getVelocity().lengthSquared() < 0.01) || (Frost.this.hasEffect(player, "1") && !(player.getVelocity().lengthSquared() < 0.01))) {
                         Frost.this.handleSwim(player);
-                        Material blockType = player.getLocation().subtract(0.0, 1.0, 0.0).getBlock().getType();
+                        Material blockType = player.getLocation().subtract(0, 1, 0).getBlock().getType();
                         if (Frost.ICE_BLOCKS.contains(blockType)) {
                             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30, 2, false, false));
                         }
@@ -162,7 +162,7 @@ public class Frost implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void handleOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
@@ -210,7 +210,7 @@ public class Frost implements Listener {
             CooldownManager.setCooldown(playerUUID, "frost", frostCooldown);
 
             Location center = caster.getLocation();
-            double radius = 5.0;
+            double radius = 5;
             World world = caster.getWorld();
             final Set<Player> affectedPlayers = new HashSet<>();
 

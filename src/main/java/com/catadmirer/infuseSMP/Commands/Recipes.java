@@ -87,7 +87,7 @@ public class Recipes implements CommandExecutor, Listener {
 
     public static void openGUI(Player player) {
         Inventory gui = new RecipeListGUI(loadCraftLimitsFromConfig()).getInventory();
-        
+
         fillRemainingSlots(gui);
         player.openInventory(gui);
     }
@@ -137,7 +137,7 @@ public class Recipes implements CommandExecutor, Listener {
             }
         }
     }
-    
+
     private void loadPotionRecipes() {
         File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(recipesFile);

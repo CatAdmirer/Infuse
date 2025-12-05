@@ -23,7 +23,7 @@ public class CooldownManager {
             long timeLeft = playerDurations.get(key) - System.currentTimeMillis();
             return timeLeft > 0 ? timeLeft : 0;
         }
-        
+
         return 0;
     }
 
@@ -59,7 +59,7 @@ public class CooldownManager {
             long timeLeft = playerCooldowns.get(key) - System.currentTimeMillis();
             return timeLeft > 0 ? timeLeft : 0;
         }
-        
+
         return 0;
     }
 

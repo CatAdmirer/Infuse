@@ -116,13 +116,13 @@ public class Infuse extends JavaPlugin implements Listener {
                         settings.put(effect + ".duration.augmented", getConfig().getInt(effect + ".duration.augmented", 0));
                     }
                     if (effect.equals("speed")) {
-                        settings.put("speed.dashMultiplier", getConfig().getDouble("speed.dashMultiplier", 20.0));
-                        settings.put("speed.playerVelocityMultiplier", getConfig().getDouble("speed.playerVelocityMultiplier", 2.0));
+                        settings.put("speed.dashMultiplier", getConfig().getDouble("speed.dashMultiplier", 20));
+                        settings.put("speed.playerVelocityMultiplier", getConfig().getDouble("speed.playerVelocityMultiplier", 2));
                     }
                 }
             }
             settings.put("ocean_pulling.pull.interval", getConfig().getInt("ocean_pulling.pull.interval", 20));
-            settings.put("ocean_pulling.pull.radius", getConfig().getDouble("ocean_pulling.pull.radius", 5.0));
+            settings.put("ocean_pulling.pull.radius", getConfig().getDouble("ocean_pulling.pull.radius", 5));
             settings.put("ocean_pulling.pull.strength", getConfig().getDouble("ocean_pulling.pull.strength", 0.3));
             settings.put("extra_effects.Apophis", getConfig().getBoolean("extra_effects.Apophis", false));
             settings.put("extra_effects.Thief", getConfig().getBoolean("extra_effects.Thief", false));
@@ -278,13 +278,13 @@ public class Infuse extends JavaPlugin implements Listener {
                     settings.put(effect + ".duration.augmented", getConfig().getInt(effect + ".duration.augmented", 0));
                 }
                 if (effect.equals("speed")) {
-                    settings.put("speed.dashMultiplier", getConfig().getDouble("speed.dashMultiplier", 20.0));
-                    settings.put("speed.playerVelocityMultiplier", getConfig().getDouble("speed.playerVelocityMultiplier", 2.0));
+                    settings.put("speed.dashMultiplier", getConfig().getDouble("speed.dashMultiplier", 20));
+                    settings.put("speed.playerVelocityMultiplier", getConfig().getDouble("speed.playerVelocityMultiplier", 2));
                 }
             }
         }
         settings.put("ocean_pulling.pull.interval", getConfig().getInt("ocean_pulling.pull.interval", 20));
-        settings.put("ocean_pulling.pull.radius", getConfig().getDouble("ocean_pulling.pull.radius", 5.0));
+        settings.put("ocean_pulling.pull.radius", getConfig().getDouble("ocean_pulling.pull.radius", 5));
         settings.put("ocean_pulling.pull.strength", getConfig().getDouble("ocean_pulling.pull.strength", 0.3));
         settings.put("extra_effects.Apophis", getConfig().getBoolean("extra_effects.Apophis", false));
         settings.put("extra_effects.Thief", getConfig().getBoolean("extra_effects.Thief", false));

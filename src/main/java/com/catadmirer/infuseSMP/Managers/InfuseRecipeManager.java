@@ -161,12 +161,12 @@ public class InfuseRecipeManager implements Listener {
         private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
             if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
                 World world = brewingStandLocation.getWorld();
-                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000.0, brewingStandLocation.getZ());
+                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
                 final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
                 crystal.setShowingBottom(false);
                 crystal.setInvulnerable(true);
                 crystal.setInvisible(true);
-                Location targetLoc = brewingStandLocation.clone().add(0.0, 600.0 - brewingStandLocation.getY(), 0.0);
+                Location targetLoc = brewingStandLocation.clone().add(0, 600 - brewingStandLocation.getY(), 0);
                 final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
                 marker.setMarker(true);
                 marker.setInvisible(true);
@@ -286,11 +286,11 @@ public class InfuseRecipeManager implements Listener {
 
 
         new BukkitRunnable() {
-            double progress = 1.0;
-            final double progressDecrement = 1.0 / (ritualDuration * 20);
+            double progress = 1;
+            final double progressDecrement = 1 / (ritualDuration * 20);
 
             public void run() {
-                if (progress <= 0.0) {
+                if (progress <= 0) {
                     activeBossBar.removeAll();
                     String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
                     String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
@@ -616,7 +616,7 @@ public class InfuseRecipeManager implements Listener {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);
-                
+
                 player.openInventory(new BrewingStandGUI().getInventory());
             } else {
                 player.openWorkbench(null, true);

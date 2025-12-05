@@ -73,7 +73,7 @@ public class Apophis implements Listener {
             public void run() {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0);
+                    maxHealthAttribute.setBaseValue(20);
                 }
 
             }
@@ -166,7 +166,7 @@ public class Apophis implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
             final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            for (Entity entity : player.getNearbyEntities(5.0, 5.0, 5.0)) {
+            for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
                 }
@@ -179,7 +179,7 @@ public class Apophis implements Listener {
                 }
             }).runTaskLater(this.plugin, 20L);
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(40.0);
+                maxHealthAttribute.setBaseValue(40);
             }
 
             String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
@@ -203,7 +203,7 @@ public class Apophis implements Listener {
             (new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20.0);
+                        maxHealthAttribute.setBaseValue(20);
                     }
                 }
             }).runTaskLater(Infuse.getInstance(), 1200L);
@@ -226,15 +226,15 @@ public class Apophis implements Listener {
 
                         for(int angle = 0; angle < 360; angle += 20) {
                             double rad = Math.toRadians(angle);
-                            double offsetX = 5.0 * Math.cos(rad);
-                            double offsetZ = 5.0 * Math.sin(rad);
+                            double offsetX = 5 * Math.cos(rad);
+                            double offsetZ = 5 * Math.sin(rad);
                             Location particleLoc = center.clone().add(offsetX, 0.1, offsetZ);
                             world.spawnParticle(Particle.LAVA, particleLoc, 10, 0.05, 0.05, 0.05, 0.01);
                         }
 
                         for (Player target : world.getPlayers()) {
-                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5.0) {
-                                target.damage(8.0, caster);
+                            if (!target.equals(caster) && target.getLocation().distance(center) <= 5) {
+                                target.damage(8, caster);
                             }
                         }
                     }
@@ -250,7 +250,7 @@ public class Apophis implements Listener {
         double explosionRadius = 5;
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0, 2.0, 0.0));
+                target.setVelocity(new Vector(0, 2, 0));
             }
         }
 
@@ -262,11 +262,11 @@ public class Apophis implements Listener {
                 if (this.tick >= 60) {
                     this.cancel();
                 } else {
-                    double baseRadius = 5.0;
+                    double baseRadius = 5;
                     double spreadFactor = this.tick * 0.1;
                     double circleRadius = baseRadius + spreadFactor;
-                    double particleHeightOffset = this.tick * 3.0;
-                    if (particleHeightOffset > 30.0) {
+                    double particleHeightOffset = this.tick * 3;
+                    if (particleHeightOffset > 30) {
                         this.cancel();
                     } else {
                         for(int angle = 0; angle < 360; ++angle) {
@@ -274,7 +274,7 @@ public class Apophis implements Listener {
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0, 0, 0, 0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;

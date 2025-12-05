@@ -174,15 +174,15 @@ public class EffectMaps {
     public static Integer getEffectNumber(String key) {
         return effectNumber.getOrDefault(key, -1);
     }
-    
+
     public static ItemStack getEffectItem(String key) {
         return activeEffects.get(key);
     }
-    
+
     public static char getCooldownEffect(String key) {
         return cooldownEffect.getOrDefault(key, (char) 0);
     }
-    
+
     public static char getActiveEffect(String key) {
         return activeEffect.getOrDefault(key, (char) 0);
     }

@@ -29,7 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ocean implements Listener {
-    
+
     private final Plugin plugin;
 
     private final DataManager dataManager;
@@ -55,12 +55,12 @@ public class Ocean implements Listener {
                     if (!Ocean.this.hasEffect(effectHolder, "1") || (!Ocean.this.hasEffect(effectHolder, "2"))) continue;
 
                     for (Player p : effectHolder.getWorld().getPlayers()) {
-                        if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5.0 && p.getLocation().getBlock().isLiquid()) {
+                        if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5 && p.getLocation().getBlock().isLiquid()) {
                             int currentAir = p.getRemainingAir();
                             int newAir = Math.max(currentAir - 5, -20);
                             p.setRemainingAir(newAir);
                             if (newAir <= 0) {
-                                p.damage(1.0);
+                                p.damage(1);
                             }
                         }
                     }
@@ -179,7 +179,7 @@ public class Ocean implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "ocean")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            final double radius = 5.0;
+            final double radius = 5;
             final World world = caster.getWorld();
             String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
             boolean isAugmented =
@@ -229,7 +229,7 @@ public class Ocean implements Listener {
                                 int newOxygen = Math.max(p.getRemainingAir() - 20, -20);
                                 p.setRemainingAir(newOxygen);
                                 if (newOxygen <= 0) {
-                                    p.damage(2.0);
+                                    p.damage(2);
                                 }
                             }
                         }

@@ -27,7 +27,7 @@ public class Particles {
         String stripped = ChatColor.stripColor(effectName);
         Integer abilityId = EffectMaps.getEffectNumber(stripped);
         if (abilityId == null) return;
-        
+
         final double regularRadius = 0;
         final double augmentedRadius = 0.3;
 
@@ -68,7 +68,7 @@ public class Particles {
 
     /**
      * Spawns a cloud of effect particles around the player.
-     * 
+     *
      * @param player The player to spawn entity effect particles on.
      * @param color The color the particles should be.
      */
@@ -88,7 +88,7 @@ public class Particles {
 
     /**
      * Spawns a ring of effect particles around a player.
-     * 
+     *
      * @param player The player to spawn the particles on.
      * @param color The color the particles should be.
      * @param radius The offset radius of the effects.

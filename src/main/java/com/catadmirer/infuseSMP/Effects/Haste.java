@@ -25,7 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Haste implements Listener {
-    
+
     public Haste(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {

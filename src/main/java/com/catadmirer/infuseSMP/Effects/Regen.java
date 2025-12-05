@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Regen implements Listener {
-    
+
     private final Infuse plugin;
 
     public Regen(Infuse plugin) {
@@ -50,7 +50,7 @@ public class Regen implements Listener {
     public void onEntityDamageByEntityHeal(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (this.hasRegenEquipped(player, "1") || this.hasRegenEquipped(player, "2")) {
-                if (event.getFinalDamage() <= 0.0) {
+                if (event.getFinalDamage() <= 0) {
                     player.setSaturation(Math.min(player.getSaturation() + 6, 20));
                 }
             }
@@ -89,7 +89,7 @@ public class Regen implements Listener {
         if (event.getDamager() instanceof Player damager) {
             if (CooldownManager.isEffectActive(damager.getUniqueId(), "regen")) {
                 double damage = event.getFinalDamage();
-                damager.setHealth(Math.min(damager.getHealth() + damage / 2.0, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+                damager.setHealth(Math.min(damager.getHealth() + damage / 2, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
             }
         }
     }

@@ -39,7 +39,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Fire implements Listener, PacketListener {
-    
+
     private final Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
@@ -276,10 +276,10 @@ public class Fire implements Listener, PacketListener {
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5.0;
+        double explosionRadius = 5;
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0, 2.0, 0.0));
+                target.setVelocity(new Vector(0, 2, 0));
             }
         }
 
@@ -303,7 +303,7 @@ public class Fire implements Listener, PacketListener {
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0, 0, 0, 0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;

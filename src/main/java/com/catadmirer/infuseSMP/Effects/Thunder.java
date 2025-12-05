@@ -35,7 +35,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
-    
+
     private final Set<UUID> activeSparks = new HashSet<>();
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
 
@@ -90,8 +90,8 @@ public class Thunder implements Listener {
                     if (this.hasEffect(attacker)) {
                         if (event.getEntity() instanceof LivingEntity target) {
                             target.getWorld().strikeLightningEffect(target.getLocation());
-                            target.damage(4.0, attacker);
-                            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
+                            target.damage(4, attacker);
+                            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
                         }
                     }
                 }
@@ -151,7 +151,7 @@ public class Thunder implements Listener {
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
-            final double radius = 10.0;
+            final double radius = 10;
             final World world = caster.getWorld();
 
             new BukkitRunnable() {
@@ -174,8 +174,8 @@ public class Thunder implements Listener {
                         }
 
                         target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4.0, caster);
-                        world.spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
+                        target.damage(4, caster);
+                        world.spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
                     }
 
                     this.ticksElapsed += 20;
@@ -204,14 +204,14 @@ public class Thunder implements Listener {
                     }
 
                     this.entityLightningCooldowns.put(targetUUID, currentTime);
-                    List<Entity> nearbyEntities = target.getNearbyEntities(3.0, 3.0, 3.0);
+                    List<Entity> nearbyEntities = target.getNearbyEntities(3, 3, 3);
                     Optional<Entity> nextChainTarget = nearbyEntities.stream().filter((e) -> {
                         return e instanceof LivingEntity && !e.equals(attacker);
                     }).findFirst();
                     if (nextChainTarget.isPresent()) {
                         target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4.0, attacker);
-                        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
+                        target.damage(4, attacker);
+                        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
                         this.chainLightning(target, attacker);
                     }
 
@@ -244,10 +244,10 @@ public class Thunder implements Listener {
                         LivingEntity livingEntity = (LivingEntity)currentEntity;
                         if (!livingEntity.equals(attacker)) {
                             livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
-                            livingEntity.damage(4.0, attacker);
-                            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0.0, 1.0, 0.0), 10, 0.5, 0.5, 0.5, 0.0, new DustOptions(Color.YELLOW, 1.5F));
+                            livingEntity.damage(4, attacker);
+                            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
                             ++this.strikes;
-                            for (Entity entity : livingEntity.getNearbyEntities(3.0, 3.0, 3.0)) {
+                            for (Entity entity : livingEntity.getNearbyEntities(3, 3, 3)) {
                                 if (entity instanceof LivingEntity && !processedEntities.contains(entity)) {
                                     queue.add(entity);
                                 }

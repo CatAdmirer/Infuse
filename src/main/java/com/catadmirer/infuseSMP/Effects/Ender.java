@@ -39,7 +39,7 @@ import org.bukkit.util.Vector;
 
 public class Ender implements Listener {
     private final Infuse plugin;
-    
+
     private final HashMap<UUID, Integer> dragonBreathCooldowns = new HashMap<>();
 
     private final Set<UUID> cursedPlayers = new HashSet<>();
@@ -309,7 +309,7 @@ public class Ender implements Listener {
     public void onFireballDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Fireball fireball)) return;
         if (!"Cursing Projectile".equals(fireball.getCustomName())) return;
-        event.setDamage(0.0);
+        event.setDamage(0);
     }
 
 
@@ -341,7 +341,7 @@ public class Ender implements Listener {
     public void applyGlowingToUntrusted(Player player) {
         boolean isPrimary = hasEffect(player, "1");
         boolean isSecondary = hasEffect(player, "2");
-        double radius = 10.0;
+        double radius = 10;
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
         for (Entity entity : nearbyEntities) {

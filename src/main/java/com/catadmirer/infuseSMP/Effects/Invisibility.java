@@ -37,7 +37,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invisibility implements Listener, PacketListener {
-    
+
     private final Plugin plugin;
     private final DataManager dataManager;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
@@ -139,7 +139,7 @@ public class Invisibility implements Listener, PacketListener {
                 if (this.ticksElapsed >= this.maxTicks) {
                     this.cancel();
                 } else {
-                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0.0, 1.0, 0.0), 3, 0.5, 0.5, 0.5, 0.0);
+                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
                     this.ticksElapsed += 5;
                 }
             }
@@ -199,7 +199,7 @@ public class Invisibility implements Listener, PacketListener {
             long invisDefaultDuration = Infuse.getInstance().getConfig("invisibility.duration.default");;
             long invisAugmentedDuration = Infuse.getInstance().getConfig("invisibility.duration.augmented");;
             long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
-            final double radius = 10.0;
+            final double radius = 10;
             final long durationTicks = invisDuration * 20;
             final World world = caster.getWorld();
             final Set<Player> vanishedPlayers = new HashSet<>();
