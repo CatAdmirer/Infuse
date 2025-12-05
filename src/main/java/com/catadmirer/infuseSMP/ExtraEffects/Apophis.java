@@ -71,7 +71,7 @@ public class Apophis implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_apophis" : "apophis"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_apophis" : "apophis"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_apophis" : "apophis"));
             meta.setColor(Color.fromRGB(0x45033E));
 
@@ -139,8 +139,8 @@ public class Apophis implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("apophis");
-        String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+        String effectName = Infuse.getInstance().getEffectName("apophis");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -200,7 +200,7 @@ public class Apophis implements Listener {
                 maxHealthAttribute.setBaseValue(40);
             }
 
-            String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
 
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&

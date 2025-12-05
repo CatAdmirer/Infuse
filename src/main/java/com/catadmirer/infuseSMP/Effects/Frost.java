@@ -78,7 +78,7 @@ public class Frost implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_frost" : "frost"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_frost" : "frost"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_frost" : "frost"));
             meta.setColor(Color.AQUA);
 
@@ -195,8 +195,8 @@ public class Frost implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("frost");
-        String effectName2 = Infuse.getInstance().getEffect("aug_frost");
+        String effectName = Infuse.getInstance().getEffectName("frost");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_frost");
         return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
@@ -204,7 +204,7 @@ public class Frost implements Listener {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
-            String effectName = Infuse.getInstance().getEffect("aug_frost");
+            String effectName = Infuse.getInstance().getEffectName("aug_frost");
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             boolean isAugmentedFrost =

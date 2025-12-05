@@ -107,7 +107,7 @@ public class Speed implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_speed" : "speed"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_speed" : "speed"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_speed" : "speed"));
             meta.setColor(Color.AQUA);
 
@@ -148,8 +148,8 @@ public class Speed implements Listener {
     }
 
     private boolean hasSpeed(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffect("speed");
-        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String effectName = Infuse.getInstance().getEffectName("speed");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
@@ -175,8 +175,8 @@ public class Speed implements Listener {
     }
 
     private boolean hasEffect(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffect("speed");
-        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String effectName = Infuse.getInstance().getEffectName("speed");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
@@ -223,7 +223,7 @@ public class Speed implements Listener {
             }, 1L, 1L);
             long defaultDuration = Infuse.getInstance().getConfig("speed.duration.default");;
             CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-            String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
 
             boolean isAugmented =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&

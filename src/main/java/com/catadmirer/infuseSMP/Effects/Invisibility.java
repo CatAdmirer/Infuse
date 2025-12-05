@@ -71,7 +71,7 @@ public class Invisibility implements Listener, PacketListener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_invis" : "invis"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_invis" : "invis"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_invis" : "invis"));
             meta.setColor(Color.fromRGB(0xCC33FF));
 
@@ -196,8 +196,8 @@ public class Invisibility implements Listener, PacketListener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName2 = Infuse.getInstance().getEffect("aug_invis");
-        String effectName = Infuse.getInstance().getEffect("invis");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_invis");
+        String effectName = Infuse.getInstance().getEffectName("invis");
         return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
@@ -205,7 +205,7 @@ public class Invisibility implements Listener, PacketListener {
         UUID playerUUID = caster.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = Infuse.getInstance().getEffect("aug_invis");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_invis");
             boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&

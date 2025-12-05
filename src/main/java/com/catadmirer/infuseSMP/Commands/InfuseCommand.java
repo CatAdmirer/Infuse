@@ -69,7 +69,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
-                String name = Infuse.getInstance().getEffect(effectKey);
+                String name = Infuse.getInstance().getEffectName(effectKey);
                 String effectName = MessageUtil.stripAllColors(name);
                 ChatColor color = EffectMaps.getColorEffect(effectKey);
                 target.sendMessage(color + "You received the " + effectName);
@@ -93,7 +93,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
                     return true;
                 }
-                String effect = Infuse.getInstance().getEffect(effectky);
+                String effect = Infuse.getInstance().getEffectName(effectky);
                 Infuse.getInstance().getEffectManager().setEffect(namearg.getUniqueId(), args[3], effect);
                 break;
             case "cleareffect":

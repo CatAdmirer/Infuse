@@ -37,7 +37,7 @@ public class EquipEffect implements Listener, CommandExecutor {
             List<String> effects = Infuse.getInstance().getConfig("join_effects");
             if (effects.isEmpty()) return;
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
-            String effectName = Infuse.getInstance().getEffect(chosenKey);
+            String effectName = Infuse.getInstance().getEffectName(chosenKey);
             if (effectName == null) return;
             equipEffect(player, effectName, "2");
         }

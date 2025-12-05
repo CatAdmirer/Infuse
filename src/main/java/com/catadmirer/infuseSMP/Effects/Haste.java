@@ -53,7 +53,7 @@ public class Haste implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_haste" : "haste"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_haste" : "haste"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_haste" : "haste"));
             meta.setColor(Color.fromRGB(0xFFCC33));
 
@@ -113,8 +113,8 @@ public class Haste implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("aug_haste");
-        String effectName2 = Infuse.getInstance().getEffect("haste");
+        String effectName = Infuse.getInstance().getEffectName("aug_haste");
+        String effectName2 = Infuse.getInstance().getEffectName("haste");
         return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
@@ -123,7 +123,7 @@ public class Haste implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName = Infuse.getInstance().getEffect("aug_haste");
+            String effectName = Infuse.getInstance().getEffectName("aug_haste");
             boolean isAugmentedHaste =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||

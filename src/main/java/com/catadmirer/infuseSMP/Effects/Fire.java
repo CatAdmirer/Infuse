@@ -73,7 +73,7 @@ public class Fire implements Listener, PacketListener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_fire" : "fire"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_fire" : "fire"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_fire" : "fire"));
             meta.setColor(Color.ORANGE);
 
@@ -149,8 +149,8 @@ public class Fire implements Listener, PacketListener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("fire");
-        String effectName2 = Infuse.getInstance().getEffect("aug_fire");
+        String effectName = Infuse.getInstance().getEffectName("fire");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -229,7 +229,7 @@ public class Fire implements Listener, PacketListener {
             }
 
             this.spawnSparkEffect(player);
-            String effectName2 = Infuse.getInstance().getEffect("aug_fire");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);

@@ -63,7 +63,7 @@ public class Thunder implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_thunder" : "thunder"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_thunder" : "thunder"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_thunder" : "thunder"));
             meta.setColor(Color.YELLOW);
 
@@ -91,8 +91,8 @@ public class Thunder implements Listener {
     private boolean hasEffect(Player player) {
         String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
         String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-        String effectName = plugin.getEffect("thunder");
-        String effectName2 = plugin.getEffect("aug_thunder");
+        String effectName = plugin.getEffectName("thunder");
+        String effectName2 = plugin.getEffectName("aug_thunder");
         return effect1 != null && (effect1.equals(effectName) || effect2 != null && (effect2.equals(effectName2)));
     }
 
@@ -136,8 +136,8 @@ public class Thunder implements Listener {
 
     private boolean hasThunderEquipped(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = plugin.getEffect("thunder");
-        String effectName2 = plugin.getEffect("aug_thunder");
+        String effectName = plugin.getEffectName("thunder");
+        String effectName2 = plugin.getEffectName("aug_thunder");
         return currentEffect != null && (currentEffect.equals(effectName) || (currentEffect.equals(effectName2)));
     }
 
@@ -147,7 +147,7 @@ public class Thunder implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !this.activeSparks.contains(playerUUID)) {
             this.activeSparks.add(playerUUID);
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffect("aug_thunder");
+            String effectName2 = plugin.getEffectName("aug_thunder");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
                             .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||

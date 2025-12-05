@@ -103,7 +103,7 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
             active.add(playerUUID);
-            String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
@@ -207,7 +207,7 @@ public class Thief implements Listener, PacketListener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_thief" : "thief"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_thief" : "thief"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_thief" : "thief"));
             meta.setColor(Color.RED);
 
@@ -234,8 +234,8 @@ public class Thief implements Listener, PacketListener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        String effectName = Infuse.getInstance().getEffect("thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
+        String effectName = Infuse.getInstance().getEffectName("thief");
         return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
@@ -368,7 +368,7 @@ public class Thief implements Listener, PacketListener {
             maxHealthAttribute.setBaseValue(40);
         }
 
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
 
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
@@ -432,7 +432,7 @@ public class Thief implements Listener, PacketListener {
 
     public void activateEnder(Player player) {
         UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
                         .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
@@ -491,7 +491,7 @@ public class Thief implements Listener, PacketListener {
         final UUID playerUUID = caster.getUniqueId();
         this.activeSparks.add(playerUUID);
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
                         .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
@@ -544,7 +544,7 @@ public class Thief implements Listener, PacketListener {
 
     public void activateRegen(final Player player) {
         final UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
@@ -570,7 +570,7 @@ public class Thief implements Listener, PacketListener {
 
     public void activateFrost(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
-        String effectName = Infuse.getInstance().getEffect("aug_thief");
+        String effectName = Infuse.getInstance().getEffectName("aug_thief");
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
         boolean isAugmentedFrost =
@@ -626,7 +626,7 @@ public class Thief implements Listener, PacketListener {
     public void activateStrength(Player player) {
         UUID playerUUID = player.getUniqueId();
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
@@ -677,7 +677,7 @@ public class Thief implements Listener, PacketListener {
         long defaultDuration = Infuse.getInstance().getConfig("speed.duration.default");;
 
         CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
@@ -717,7 +717,7 @@ public class Thief implements Listener, PacketListener {
             maxHealthAttribute.setBaseValue(40);
         }
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmentedHeart =
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                         ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
@@ -748,7 +748,7 @@ public class Thief implements Listener, PacketListener {
 
     public void activateEmerald(Player player) {
         UUID playerUUID = player.getUniqueId();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
         boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
@@ -778,7 +778,7 @@ public class Thief implements Listener, PacketListener {
         }
 
         this.spawnSparkEffect(player);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         new BukkitRunnable() {
             public void run() {
                 player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
@@ -848,7 +848,7 @@ public class Thief implements Listener, PacketListener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
-            String effectName = Infuse.getInstance().getEffect("aug_thief");
+            String effectName = Infuse.getInstance().getEffectName("aug_thief");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
@@ -929,7 +929,7 @@ public class Thief implements Listener, PacketListener {
     public void activateHaste(Player player) {
         UUID playerUUID = player.getUniqueId();
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName = Infuse.getInstance().getEffect("aug_thief");
+        String effectName = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmentedHaste =
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                         ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
@@ -952,7 +952,7 @@ public class Thief implements Listener, PacketListener {
 
         final double radius = 5;
         final World world = caster.getWorld();
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmented =
                 (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                         ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
@@ -1012,7 +1012,7 @@ public class Thief implements Listener, PacketListener {
     public void activateInvis(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
         boolean isAugmentedInvis = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                 || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&

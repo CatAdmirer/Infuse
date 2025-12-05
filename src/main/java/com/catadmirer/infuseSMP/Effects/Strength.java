@@ -53,8 +53,8 @@ public class Strength implements Listener {
     }
 
     private boolean hasStrengthEquipped(Player player, String tier) {
-        String effectName = plugin.getEffect("strength");
-        String effectName2 = plugin.getEffect("aug_strength");
+        String effectName = plugin.getEffectName("strength");
+        String effectName2 = plugin.getEffectName("aug_strength");
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
@@ -64,7 +64,7 @@ public class Strength implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffect("aug_strength");
+            String effectName2 = plugin.getEffectName("aug_strength");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
@@ -138,7 +138,7 @@ public class Strength implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_strength" : "strength"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_strength" : "strength"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_strength" : "strength"));
             meta.setColor(Color.fromRGB(0x8B0000));
 

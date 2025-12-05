@@ -116,7 +116,7 @@ public class Ocean implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_ocean" : "ocean"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_ocean" : "ocean"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_ocean" : "ocean"));
             meta.setColor(Color.BLUE);
 
@@ -185,8 +185,8 @@ public class Ocean implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("ocean");
-        String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
+        String effectName = Infuse.getInstance().getEffectName("ocean");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_ocean");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals((effectName2)));
     }
 
@@ -198,7 +198,7 @@ public class Ocean implements Listener {
 
             final double radius = 5;
             final World world = caster.getWorld();
-            String effectName2 = Infuse.getInstance().getEffect("aug_ocean");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_ocean");
             boolean isAugmented =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||

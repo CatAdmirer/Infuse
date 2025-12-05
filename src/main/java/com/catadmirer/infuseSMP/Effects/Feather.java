@@ -71,7 +71,7 @@ public class Feather implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_feather" : "feather"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_feather" : "feather"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_feather" : "feather"));
             meta.setColor(Color.WHITE);
 
@@ -276,7 +276,7 @@ public class Feather implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-            String effectName = Infuse.getInstance().getEffect("aug_feather");
+            String effectName = Infuse.getInstance().getEffectName("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();

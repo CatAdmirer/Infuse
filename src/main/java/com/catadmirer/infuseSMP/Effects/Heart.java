@@ -67,7 +67,7 @@ public class Heart implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_heart" : "heart"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_heart" : "heart"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_heart" : "heart"));
             meta.setColor(Color.RED);
 
@@ -180,8 +180,8 @@ public class Heart implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("heart");
-        String effectName2 = Infuse.getInstance().getEffect("aug_heart");
+        String effectName = Infuse.getInstance().getEffectName("heart");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -196,7 +196,7 @@ public class Heart implements Listener {
                 maxHealthAttribute.setBaseValue(40);
             }
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            String effectName2 = Infuse.getInstance().getEffect("aug_heart");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
             boolean isAugmentedHeart =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||

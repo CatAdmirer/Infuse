@@ -65,7 +65,7 @@ public class Emerald implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffect(augmented ? "aug_emerald" : "emerald"));
+            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_emerald" : "emerald"));
             meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_emerald" : "emerald"));
             meta.setColor(Color.LIME);
 
@@ -92,8 +92,8 @@ public class Emerald implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("emerald");
-        String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
+        String effectName = Infuse.getInstance().getEffectName("emerald");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -188,7 +188,7 @@ public class Emerald implements Listener {
     public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-            String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
             boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
