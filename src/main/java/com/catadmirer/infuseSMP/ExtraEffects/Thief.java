@@ -45,11 +45,11 @@ public class Thief implements Listener, PacketListener {
     private Map<UUID, BossBar> shapeshiftedBossBars = new HashMap<>();
     private Map<UUID, Integer> shapeshiftTimeLeft = new HashMap<>();
 
-    private final DataManager trustManager;
+    private final DataManager dataManager;
 
-    public Thief(DataManager trustManager, Infuse plugin) {
+    public Thief(DataManager dataManager, Infuse plugin) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         new BukkitRunnable() {
             public void run() {
@@ -1059,7 +1059,7 @@ public class Thief implements Listener, PacketListener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return dataManager.isTrusted(player, caster);
     }
 
     private void hideHealthForPlayer(final Player player, final int durationSeconds) {

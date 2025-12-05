@@ -39,13 +39,13 @@ public class Thunder implements Listener {
     private final Set<UUID> activeSparks = new HashSet<>();
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
 
-    private DataManager trustManager;
+    private DataManager dataManager;
 
     private final Infuse plugin;
 
-    public Thunder(Infuse plugin, DataManager trustManager) {
+    public Thunder(Infuse plugin, DataManager dataManager) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -186,7 +186,7 @@ public class Thunder implements Listener {
 
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return dataManager.isTrusted(player, caster);
     }
 
     @EventHandler

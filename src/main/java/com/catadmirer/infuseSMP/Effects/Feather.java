@@ -44,12 +44,12 @@ public class Feather implements Listener {
 
     private final Set<UUID> spark = new HashSet<>();
 
-    private final DataManager trustManager;
+    private final DataManager dataManager;
 
 
-    public Feather(Plugin plugin, DataManager trustManager) {
+    public Feather(Plugin plugin, DataManager dataManager) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -93,7 +93,7 @@ public class Feather implements Listener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(caster, player);
+        return dataManager.isTrusted(caster, player);
     }
 
     @EventHandler

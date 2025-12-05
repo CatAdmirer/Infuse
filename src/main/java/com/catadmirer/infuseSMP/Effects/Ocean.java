@@ -34,11 +34,11 @@ public class Ocean implements Listener {
     
     private final Plugin plugin;
 
-    private final DataManager trustManager;
+    private final DataManager dataManager;
 
-    public Ocean(Plugin plugin, DataManager trustManager) {
+    public Ocean(Plugin plugin, DataManager dataManager) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -102,7 +102,7 @@ public class Ocean implements Listener {
     }
 
     private boolean isTrusted(Player player, Player caster) {
-        return trustManager.isTrusted(caster, player);
+        return dataManager.isTrusted(caster, player);
     }
 
 

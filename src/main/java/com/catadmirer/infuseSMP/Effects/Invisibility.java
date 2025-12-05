@@ -42,12 +42,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Invisibility implements Listener, PacketListener {
     
     private final Plugin plugin;
-    private final DataManager trustManager;
+    private final DataManager dataManager;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
-    public Invisibility(Plugin plugin, DataManager trustManager) {
+    public Invisibility(Plugin plugin, DataManager dataManager) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -268,6 +268,6 @@ public class Invisibility implements Listener, PacketListener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return dataManager.isTrusted(player, caster);
     }
 }

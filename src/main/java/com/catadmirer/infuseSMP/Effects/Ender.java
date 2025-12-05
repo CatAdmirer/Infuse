@@ -42,12 +42,12 @@ public class Ender implements Listener {
 
     private final Set<UUID> processingDamage = new HashSet<>();
 
-    private DataManager trustManager;
+    private DataManager dataManager;
 
     private final Set<UUID> curseChain = new HashSet<>();
 
-    public Ender(DataManager trustManager, Infuse plugin) {
-        this.trustManager = trustManager;
+    public Ender(DataManager dataManager, Infuse plugin) {
+        this.dataManager = dataManager;
         this.plugin = plugin;
         new BukkitRunnable() {
             @Override
@@ -163,7 +163,7 @@ public class Ender implements Listener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return dataManager.isTrusted(player, caster);
     }
 
 
@@ -343,7 +343,7 @@ public class Ender implements Listener {
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
-            if (!trustManager.isTrusted(nearby, player)) {
+            if (!dataManager.isTrusted(nearby, player)) {
                 if (isPrimary || isSecondary) {
                     if (!nearby.hasPotionEffect(PotionEffectType.GLOWING)) {
                         nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));

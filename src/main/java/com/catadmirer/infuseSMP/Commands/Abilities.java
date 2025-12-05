@@ -33,23 +33,23 @@ public class Abilities implements CommandExecutor {
     private final Apophis apophis;
     private final Thief thiefAbility;
 
-    public Abilities(DataManager trustManager, Infuse plugin) {
+    public Abilities(DataManager dataManager, Infuse plugin) {
         this.plugin = plugin;
         this.emeraldAbility = new Emerald(plugin);
-        this.featherAbility = new Feather(plugin, trustManager);
+        this.featherAbility = new Feather(plugin, dataManager);
         this.fireAbility = new Fire(plugin);
-        this.frostAbility = new Frost(trustManager, plugin);
+        this.frostAbility = new Frost(dataManager, plugin);
         this.hasteAbility = new Haste(plugin);
         this.heartAbility = new Heart(plugin);
-        this.invisibilityAbility = new Invisibility(plugin, trustManager);
-        this.oceanAbility = new Ocean(plugin, trustManager);
+        this.invisibilityAbility = new Invisibility(plugin, dataManager);
+        this.oceanAbility = new Ocean(plugin, dataManager);
         this.regenAbility = new Regen(plugin);
         this.speedAbility = new Speed(plugin);
         this.strengthAbility = new Strength(plugin);
-        this.thunderAbility = new Thunder(plugin, trustManager);
-        this.enderAbility = new Ender(trustManager, plugin);
+        this.thunderAbility = new Thunder(plugin, dataManager);
+        this.enderAbility = new Ender(dataManager, plugin);
         this.apophis = new Apophis(plugin);
-        this.thiefAbility = new Thief(trustManager, plugin);
+        this.thiefAbility = new Thief(dataManager, plugin);
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

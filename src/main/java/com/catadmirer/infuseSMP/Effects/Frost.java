@@ -36,13 +36,13 @@ public class Frost implements Listener {
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
 
-    private DataManager trustManager;
+    private DataManager dataManager;
 
     private final Infuse plugin;
 
-    public Frost(DataManager trustManager, Infuse plugin) {
+    public Frost(DataManager dataManager, Infuse plugin) {
         this.plugin = plugin;
-        this.trustManager = trustManager;
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -249,7 +249,7 @@ public class Frost implements Listener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return dataManager.isTrusted(player, caster);
     }
 
     @EventHandler
