@@ -35,13 +35,11 @@ import org.bukkit.util.Vector;
 
 public class Speed implements Listener {
 
-    private final Plugin plugin;
     private final Map<UUID, Integer> speedLevels = new HashMap<>();
     private final Map<UUID, Long> lastHitTime = new HashMap<>();
     private final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
     public Speed(Plugin plugin) {
-        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -168,7 +166,7 @@ public class Speed implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -181,7 +179,7 @@ public class Speed implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
@@ -194,7 +192,7 @@ public class Speed implements Listener {
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
             final int[] ticksPassed = new int[]{0};
             final Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runAtFixedRate(plugin, anchor, (task) -> {
+            Bukkit.getRegionScheduler().runAtFixedRate(Infuse.getInstance(), anchor, (task) -> {
                 if (!player.isOnline()) {
                     task.cancel();
                     return;

@@ -203,7 +203,7 @@ public class Infuse extends JavaPlugin implements Listener {
             this.dataManager = new DataManager(getDataFolder());
             this.abilitiesHandler = new Abilities(dataManager, this);
             PacketEvents.getAPI().getEventManager().registerListener(
-                    new Invisibility(this, dataManager), PacketListenerPriority.HIGHEST);
+                    new Invisibility(this), PacketListenerPriority.HIGHEST);
             PacketEvents.getAPI().getEventManager().registerListener(
                     new Thief(dataManager, this), PacketListenerPriority.HIGHEST);
             PacketEvents.getAPI().getEventManager().registerListener(
@@ -459,7 +459,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new GUI(), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new Invisibility(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
@@ -471,7 +471,7 @@ public class Infuse extends JavaPlugin implements Listener {
         }
         Bukkit.getPluginManager().registerEvents(new Regen(this), this);
         Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
-        Bukkit.getPluginManager().registerEvents(new Thunder(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Thunder(this), this);
         Bukkit.getPluginManager().registerEvents(new Haste(this), this);
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);

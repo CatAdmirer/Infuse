@@ -30,13 +30,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ocean implements Listener {
-
-    private final Plugin plugin;
-
     private final DataManager dataManager;
 
     public Ocean(Plugin plugin, DataManager dataManager) {
-        this.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
@@ -177,7 +173,7 @@ public class Ocean implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -190,7 +186,7 @@ public class Ocean implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals((effectName2)));
     }
 
-    public void activateSpark(final Player caster) {
+    public static void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "ocean")) {
@@ -254,7 +250,7 @@ public class Ocean implements Listener {
 
                     this.ticksElapsed += 10L;
                 }
-            }.runTaskTimer(this.plugin, 0L, 10L);
+            }.runTaskTimer(Infuse.getInstance(), 0L, 10L);
         }
     }
 }

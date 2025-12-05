@@ -24,8 +24,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class Strength implements Listener {
-
-
     private final Infuse plugin;
 
     public Strength(Infuse plugin) {
@@ -46,7 +44,7 @@ public class Strength implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -59,12 +57,12 @@ public class Strength implements Listener {
         return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "strength")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffectName("aug_strength");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_strength");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&

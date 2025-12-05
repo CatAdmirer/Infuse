@@ -39,11 +39,9 @@ import org.bukkit.util.Vector;
 
 public class Fire implements Listener, PacketListener {
 
-    private final Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     public Fire(Plugin plugin) {
-        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -210,13 +208,13 @@ public class Fire implements Listener, PacketListener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
@@ -228,13 +226,13 @@ public class Fire implements Listener, PacketListener {
                 }
             }
 
-            this.spawnSparkEffect(player);
+            spawnSparkEffect(player);
             String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
-            }.runTaskLater(this.plugin, 20L);
+            }.runTaskLater(Infuse.getInstance(), 20L);
             boolean isAugmentedFire =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                             MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(MessageUtil.stripAllColors(effectName2))) ||
@@ -254,13 +252,13 @@ public class Fire implements Listener, PacketListener {
         }
     }
 
-    private void spawnSparkEffect(final Player caster) {
+    private static void spawnSparkEffect(final Player caster) {
         (new BukkitRunnable() {
             int tick = 0;
 
             public void run() {
                 if (this.tick >= 100) {
-                    Fire.this.startDarkRedDustEffect(caster.getLocation(), caster);
+                    startDarkRedDustEffect(caster.getLocation(), caster);
                     this.cancel();
                 } else {
                     Location center = caster.getLocation();
@@ -286,10 +284,10 @@ public class Fire implements Listener, PacketListener {
                     ++this.tick;
                 }
             }
-        }).runTaskTimer(this.plugin, 0L, 1L);
+        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
     }
 
-    private void startDarkRedDustEffect(final Location startLoc, Player caster) {
+    private static void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
         double explosionRadius = 5;
         for (Player target : world.getPlayers()) {
@@ -325,6 +323,6 @@ public class Fire implements Listener, PacketListener {
                     }
                 }
             }
-        }).runTaskTimer(this.plugin, 0L, 1L);
+        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
     }
 }

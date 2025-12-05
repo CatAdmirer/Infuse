@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.util.EffectUtil;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,16 +37,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
 
-    private final Set<UUID> activeSparks = new HashSet<>();
+    private final static Set<UUID> activeSparks = new HashSet<>();
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
-
-    private DataManager dataManager;
 
     private final Infuse plugin;
 
-    public Thunder(Infuse plugin, DataManager dataManager) {
+    public Thunder(Infuse plugin) {
         this.plugin = plugin;
-        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -128,7 +124,7 @@ public class Thunder implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "thunder")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -141,13 +137,13 @@ public class Thunder implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || (currentEffect.equals(effectName2)));
     }
 
-    public void activateSpark(final Player caster) {
+    public static void activateSpark(final Player caster) {
         final UUID playerUUID = caster.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !this.activeSparks.contains(playerUUID)) {
-            this.activeSparks.add(playerUUID);
+        if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !activeSparks.contains(playerUUID)) {
+            activeSparks.add(playerUUID);
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            String effectName2 = plugin.getEffectName("aug_thunder");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_thunder");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))
                             .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
@@ -174,7 +170,7 @@ public class Thunder implements Listener {
 
                 public void run() {
                     if (this.ticksElapsed >= effectDuration) {
-                        Thunder.this.activeSparks.remove(playerUUID);
+                        activeSparks.remove(playerUUID);
                         this.cancel();
                         return;
                     }
@@ -185,7 +181,7 @@ public class Thunder implements Listener {
                         if (target.equals(caster)) continue;
 
                         if (target instanceof Player p) {
-                            if (Thunder.this.isTeammate(p, caster)) continue;
+                            if (isTeammate(p, caster)) continue;
                         }
 
                         target.getWorld().strikeLightningEffect(target.getLocation());
@@ -195,13 +191,13 @@ public class Thunder implements Listener {
 
                     this.ticksElapsed += 20;
                 }
-            }.runTaskTimer(plugin, 0L, 20L);
+            }.runTaskTimer(Infuse.getInstance(), 0L, 20L);
         }
     }
 
 
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(player, caster);
+    private static boolean isTeammate(Player player, Player caster) {
+        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler

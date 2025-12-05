@@ -45,16 +45,14 @@ import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
 
-    private final Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
-    private final Set<UUID> spark = new HashSet<>();
+    private static final Set<UUID> spark = new HashSet<>();
 
     private final DataManager dataManager;
 
 
     public Feather(Plugin plugin, DataManager dataManager) {
-        this.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -190,7 +188,7 @@ public class Feather implements Listener {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                         Location anchor = player.getLocation();
-                        Bukkit.getRegionScheduler().runDelayed(this.plugin, anchor, (task) -> {
+                        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
                             player.setCooldown(Material.WIND_CHARGE, 5);
                         }, 1L);
                     }
@@ -265,14 +263,14 @@ public class Feather implements Listener {
             if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
                 if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
 
             }
         }
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
@@ -297,7 +295,7 @@ public class Feather implements Listener {
             CooldownManager.setDuration(playerUUID, "feather", featherDuration);
             CooldownManager.setCooldown(playerUUID, "feather", featherCooldown);
             Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
+            Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
                 if (player.isOnline()) {
                     CooldownManager.setDuration(playerUUID, "feathermace", 5L);
                 }

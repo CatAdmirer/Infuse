@@ -92,14 +92,14 @@ public class Thief implements Listener, PacketListener {
             if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
                 if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
 
             }
         }
     }
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
             active.add(playerUUID);
@@ -246,7 +246,7 @@ public class Thief implements Listener, PacketListener {
         return key;
     }
 
-    private final Set<UUID> active = new HashSet<>();
+    private final static Set<UUID> active = new HashSet<>();
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {

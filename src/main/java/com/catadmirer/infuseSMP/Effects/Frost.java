@@ -37,18 +37,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Frost implements Listener {
-    private final Set<UUID> frozenAttackers = new HashSet<>();
+    private final static Set<UUID> frozenAttackers = new HashSet<>();
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
-
-    private DataManager dataManager;
 
     private final Infuse plugin;
 
     public Frost(DataManager dataManager, Infuse plugin) {
         this.plugin = plugin;
-        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -187,7 +184,7 @@ public class Frost implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -200,7 +197,7 @@ public class Frost implements Listener {
         return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
-    public void activateSpark(final Player caster) {
+    public static void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
@@ -229,7 +226,7 @@ public class Frost implements Listener {
             final Set<Player> affectedPlayers = new HashSet<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (!player.equals(caster) && !this.isTeammate(player, caster)
+                if (!player.equals(caster) && !isTeammate(player, caster)
                         && player.getWorld().equals(world)
                         && player.getLocation().distance(center) <= radius) {
                     affectedPlayers.add(player);
@@ -240,7 +237,7 @@ public class Frost implements Listener {
                 }
             }
 
-            this.frozenAttackers.add(caster.getUniqueId());
+            frozenAttackers.add(caster.getUniqueId());
 
             new BukkitRunnable() {
                 public void run() {
@@ -250,9 +247,9 @@ public class Frost implements Listener {
                             jumpAttribute.setBaseValue(0.42);
                         }
                     }
-                    Frost.this.frozenAttackers.remove(caster.getUniqueId());
+                    frozenAttackers.remove(caster.getUniqueId());
                 }
-            }.runTaskLater(plugin, frostDuration * 20L);
+            }.runTaskLater(Infuse.getInstance(), frostDuration * 20L);
         }
     }
 
@@ -267,8 +264,8 @@ public class Frost implements Listener {
 
     }
 
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(player, caster);
+    private static boolean isTeammate(Player player, Player caster) {
+        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler
@@ -276,7 +273,7 @@ public class Frost implements Listener {
         if (event.getDamager() instanceof Player attacker) {
             if (attacker.hasPotionEffect(PotionEffectType.UNLUCK)) {
                 PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
-                if (effect != null && effect.getAmplifier() >= 0 && this.frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
+                if (effect != null && effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
                     target.setFreezeTicks(200);
                 }
             }

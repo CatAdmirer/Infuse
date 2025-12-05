@@ -185,7 +185,7 @@ public class Emerald implements Listener {
         }
     }
 
-    public void activateSpark(Player player) {
+    public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
             String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");

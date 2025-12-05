@@ -16,39 +16,9 @@ import org.bukkit.entity.Player;
 
 public class Abilities implements CommandExecutor {
     private final Infuse plugin;
-    private final Emerald emeraldAbility;
-    private final Feather featherAbility;
-    private final Fire fireAbility;
-    private final Frost frostAbility;
-    private final Haste hasteAbility;
-    private final Heart heartAbility;
-    private final Invisibility invisibilityAbility;
-    private final Ocean oceanAbility;
-    private final Regen regenAbility;
-    private final Speed speedAbility;
-    private final Strength strengthAbility;
-    private final Thunder thunderAbility;
-    private final Ender enderAbility;
-    private final Apophis apophis;
-    private final Thief thiefAbility;
 
     public Abilities(DataManager dataManager, Infuse plugin) {
         this.plugin = plugin;
-        this.emeraldAbility = new Emerald(plugin);
-        this.featherAbility = new Feather(plugin, dataManager);
-        this.fireAbility = new Fire(plugin);
-        this.frostAbility = new Frost(dataManager, plugin);
-        this.hasteAbility = new Haste(plugin);
-        this.heartAbility = new Heart(plugin);
-        this.invisibilityAbility = new Invisibility(plugin, dataManager);
-        this.oceanAbility = new Ocean(plugin, dataManager);
-        this.regenAbility = new Regen(plugin);
-        this.speedAbility = new Speed(plugin);
-        this.strengthAbility = new Strength(plugin);
-        this.thunderAbility = new Thunder(plugin, dataManager);
-        this.enderAbility = new Ender(dataManager, plugin);
-        this.apophis = new Apophis(plugin);
-        this.thiefAbility = new Thief(dataManager, plugin);
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -85,74 +55,25 @@ public class Abilities implements CommandExecutor {
                     return true;
                 }
                 switch (abilityId) {
-                    case 0:
-                    case 1:
-                        this.emeraldAbility.activateSpark(player);
-                        break;
-                    case 2:
-                    case 3:
-                        this.featherAbility.activateSpark(player);
-                        break;
-                    case 4:
-                    case 5:
-                        this.fireAbility.activateSpark(player);
-                        break;
-                    case 6:
-                    case 7:
-                        this.frostAbility.activateSpark(player);
-                        break;
-                    case 8:
-                    case 9:
-                        this.hasteAbility.activateSpark(player);
-                        break;
-                    case 10:
-                    case 11:
-                        this.heartAbility.activateSpark(player);
-                        break;
-                    case 12:
-                    case 13:
-                        this.invisibilityAbility.activateSpark(player);
-                        break;
-                    case 14:
-                    case 15:
-                        this.oceanAbility.activateSpark(player);
-                        break;
-                    case 16:
-                    case 17:
-                        this.regenAbility.activateSpark(player);
-                        break;
-                    case 18:
-                    case 19:
-                        this.speedAbility.activateSpark(player);
-                        break;
-                    case 20:
-                    case 21:
-                        this.strengthAbility.activateSpark(player);
-                        break;
-                    case 22:
-                    case 23:
-                        this.thunderAbility.activateSpark(player);
-                        break;
-                    case 24:
-                        this.enderAbility.activateSpark(player);
-                        break;
-                    case 25:
-                        this.apophis.activateSpark(player);
-                        break;
-                    case 26:
-                        this.enderAbility.activateSpark(player);
-                        break;
-                    case 27:
-                        this.apophis.activateSpark(player);
-                        break;
-                    case 28:
-                        this.thiefAbility.activateSpark(player);
-                        break;
-                    case 29:
-                        this.thiefAbility.activateSpark(player);
-                        break;
-                    default:
-                        player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
+                    case 0, 1 -> Emerald.activateSpark(player);
+                    case 2, 3 -> Feather.activateSpark(player);
+                    case 4, 5 -> Fire.activateSpark(player);
+                    case 6, 7 -> Frost.activateSpark(player);
+                    case 8, 9 -> Haste.activateSpark(player);
+                    case 10, 11 -> Heart.activateSpark(player);
+                    case 12, 13 -> Invisibility.activateSpark(player);
+                    case 14, 15 -> Ocean.activateSpark(player);
+                    case 16, 17 -> Regen.activateSpark(player);
+                    case 18, 19 -> Speed.activateSpark(player);
+                    case 20, 21 -> Strength.activateSpark(player);
+                    case 22, 23 -> Thunder.activateSpark(player);
+                    case 24 -> Ender.activateSpark(player);
+                    case 25 -> Apophis.activateSpark(player);
+                    case 26 -> Ender.activateSpark(player);
+                    case 27 -> Apophis.activateSpark(player);
+                    case 28 -> Thief.activateSpark(player);
+                    case 29 -> Thief.activateSpark(player);
+                    default -> player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
                 }
 
                 return true;

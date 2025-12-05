@@ -64,7 +64,7 @@ public class Regen implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -87,10 +87,10 @@ public class Regen implements Listener {
         }
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-            String effectName2 = plugin.getEffectName("aug_regen");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_regen");
             boolean isAugmented = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&

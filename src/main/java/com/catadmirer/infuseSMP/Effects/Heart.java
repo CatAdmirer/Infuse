@@ -32,12 +32,9 @@ public class Heart implements Listener {
 
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
-    private final Infuse plugin;
-
     public Heart(Infuse plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, Infuse.getInstance());
         this.startHealthCheckTask();
-        this.plugin = plugin;
     }
 
     private void startHealthCheckTask() {
@@ -172,7 +169,7 @@ public class Heart implements Listener {
                 UUID playerUUID = player.getUniqueId();
                 if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
             }
         }
@@ -185,7 +182,7 @@ public class Heart implements Listener {
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
-    public void activateSpark(final Player player) {
+    public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
@@ -220,7 +217,7 @@ public class Heart implements Listener {
                     }
                     player.sendMessage(ChatColor.RED + "Your Health Boost has ended.");
                 }
-            }.runTaskLater(plugin, duration * 20L);
+            }.runTaskLater(Infuse.getInstance(), duration * 20L);
         }
     }
 
