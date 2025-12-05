@@ -253,7 +253,7 @@ public class Ender implements Listener {
             meta.setColor(Color.fromRGB(0x871277));
 
             if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 26 : 24);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 25 : 24);
 
             effect.setItemMeta(meta);
         }
@@ -266,7 +266,7 @@ public class Ender implements Listener {
     }
 
     public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 26;
+        return EffectUtil.getIdFromItem(item) == 25;
     }
 
     public static boolean isEffect(ItemStack item) {

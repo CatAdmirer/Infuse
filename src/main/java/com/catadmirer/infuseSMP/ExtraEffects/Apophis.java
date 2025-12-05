@@ -74,7 +74,7 @@ public class Apophis implements Listener {
             meta.setColor(Color.fromRGB(0x45033E));
 
             if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 27 : 25);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 27 : 26);
 
             effect.setItemMeta(meta);
         }
@@ -83,7 +83,7 @@ public class Apophis implements Listener {
     }
 
     public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 25;
+        return EffectUtil.getIdFromItem(item) == 26;
     }
 
     public static boolean isAugmented(ItemStack item) {

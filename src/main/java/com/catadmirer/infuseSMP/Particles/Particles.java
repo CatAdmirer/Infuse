@@ -48,14 +48,14 @@ public class Particles {
             case 15 -> spawnEffect(player, Color.fromRGB(0x005AFC), augmentedRadius);
             case 16 -> spawnEffect(player, Color.fromRGB(0xFF03EF), regularRadius);
             case 17 -> spawnEffect(player, Color.fromRGB(0xFF03EF), augmentedRadius);
-            case 18 -> spawnEffect(player, Color.fromRGB(0xD1A44B), augmentedRadius);
-            case 19 -> spawnEffect(player, Color.fromRGB(0xD1A44B), regularRadius);
+            case 18 -> spawnEffect(player, Color.fromRGB(0xD1A44B), regularRadius);
+            case 19 -> spawnEffect(player, Color.fromRGB(0xD1A44B), augmentedRadius);
             case 20 -> spawnEffect(player, Color.fromRGB(0x8B0000), regularRadius);
             case 21 -> spawnEffect(player, Color.fromRGB(0x8B0000), augmentedRadius);
             case 22 -> spawnEffect(player, Color.fromRGB(0xFCED00), regularRadius);
             case 23 -> spawnEffect(player, Color.fromRGB(0xFCED00), augmentedRadius);
-            case 24, 26 -> spawnDragon(player);
-            case 25 -> spawnEffect(player, Color.fromRGB(0x45033E), regularRadius);
+            case 24, 25 -> spawnDragon(player);
+            case 26 -> spawnEffect(player, Color.fromRGB(0x45033E), regularRadius);
             case 27 -> spawnEffect(player, Color.fromRGB(0x45033E), augmentedRadius);
             case 28 -> spawnEffect(player, Color.RED, regularRadius);
             case 29 -> spawnEffect(player, Color.RED, augmentedRadius);

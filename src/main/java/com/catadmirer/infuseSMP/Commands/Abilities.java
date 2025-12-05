@@ -67,12 +67,9 @@ public class Abilities implements CommandExecutor {
                     case 18, 19 -> Speed.activateSpark(player);
                     case 20, 21 -> Strength.activateSpark(player);
                     case 22, 23 -> Thunder.activateSpark(player);
-                    case 24 -> Ender.activateSpark(player);
-                    case 25 -> Apophis.activateSpark(player);
-                    case 26 -> Ender.activateSpark(player);
-                    case 27 -> Apophis.activateSpark(player);
-                    case 28 -> Thief.activateSpark(player);
-                    case 29 -> Thief.activateSpark(player);
+                    case 24, 25 -> Ender.activateSpark(player);
+                    case 26, 27 -> Apophis.activateSpark(player);
+                    case 28, 29 -> Thief.activateSpark(player);
                     default -> player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
                 }
 

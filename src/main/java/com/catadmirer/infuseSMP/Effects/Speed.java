@@ -110,7 +110,7 @@ public class Speed implements Listener {
             meta.setColor(Color.AQUA);
 
             if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 18 : 19);
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 19 : 18);
 
             effect.setItemMeta(meta);
         }
@@ -119,11 +119,11 @@ public class Speed implements Listener {
     }
 
     public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 19;
+        return EffectUtil.getIdFromItem(item) == 18;
     }
 
     public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 18;
+        return EffectUtil.getIdFromItem(item) == 19;
     }
 
     public static boolean isEffect(ItemStack item) {
