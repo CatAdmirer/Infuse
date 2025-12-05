@@ -170,11 +170,11 @@ public class Speed implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            Particles.spawnEffectCloud(player, Color.fromRGB(209, 164, 75));
+            Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
             double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
-            final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(230, 220, 170), 1.5F);
+            final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
             final int[] ticksPassed = new int[]{0};
             final Location anchor = player.getLocation();

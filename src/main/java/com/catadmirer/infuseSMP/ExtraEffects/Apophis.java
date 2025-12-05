@@ -111,7 +111,7 @@ public class Apophis implements Listener {
             String effectName = Infuse.getInstance().getEffect("apophis");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("apophis");
-            meta.setColor(Color.fromRGB(69, 3, 62));
+            meta.setColor(Color.fromRGB(0x45033E));
             meta.setLore(lore);
             meta.setCustomModelData(25);
             effect.setItemMeta(meta);

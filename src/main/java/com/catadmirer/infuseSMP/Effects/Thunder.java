@@ -55,7 +55,7 @@ public class Thunder implements Listener {
         if (meta != null) {
             String effectName = Infuse.getInstance().getEffect("thunder");
             meta.setDisplayName(effectName);
-            meta.setColor(Color.fromRGB(255, 255, 0));
+            meta.setColor(Color.YELLOW);
             List<String> lore = Infuse.getInstance().getEffectLore("thunder");
             meta.setLore(lore);
             meta.setCustomModelData(13);

@@ -113,7 +113,7 @@ public class Ocean implements Listener {
             String effectName = Infuse.getInstance().getEffect("ocean");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("ocean");
-            meta.setColor(Color.fromRGB(0, 0, 255));
+            meta.setColor(Color.BLUE);
             meta.setLore(lore);
             meta.setCustomModelData(8);
             effect.setItemMeta(meta);

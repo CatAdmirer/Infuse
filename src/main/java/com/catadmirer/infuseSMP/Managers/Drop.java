@@ -63,16 +63,16 @@ public class Drop implements Listener {
                 color = Color.GREEN;
                 break;
             case 2, 3:
-                color = Color.fromRGB(190, 163, 202);
+                color = Color.fromRGB(0xBEA3CA);
                 break;
             case 4, 5:
-                color = Color.fromRGB(252, 120, 3);
+                color = Color.fromRGB(0xFC7803);
                 break;
             case 6, 7:
-                color = Color.fromRGB(0, 255, 255);
+                color = Color.AQUA;
                 break;
             case 8, 9:
-                color = Color.fromRGB(185, 108, 0);
+                color = Color.fromRGB(0xB96C00);
                 break;
             case 10, 11:
                 color = Color.fromRGB(0xFC0046);
@@ -84,22 +84,22 @@ public class Drop implements Listener {
                 color = Color.fromRGB(0xFF03EF);
                 break;
             case 18, 19:
-                color = Color.fromRGB(209, 164, 75);
+                color = Color.fromRGB(0xD1A44B);
                 break;
             case 20, 21:
-                color = Color.fromRGB(139, 0, 0);
+                color = Color.fromRGB(0x8B0000);
                 break;
             case 22, 23:
-                color = Color.fromRGB(252, 237, 0);
+                color = Color.fromRGB(0xFCED00);
                 break;
             case 24, 26:
                 color = Color.PURPLE;
                 break;
             case 25, 27:
-                color = Color.fromRGB(69, 3, 62);
+                color = Color.fromRGB(0x45033E);
                 break;
             case 28, 29:
-                color = Color.fromRGB(255, 0, 0);
+                color = Color.RED;
                 break;
             default:
                 break;
@@ -144,16 +144,16 @@ public class Drop implements Listener {
                 color = Color.GREEN;
                 break;
             case 2, 3:
-                color = Color.fromRGB(190, 163, 202);
+                color = Color.fromRGB(0xBEA3CA);
                 break;
             case 4, 5:
-                color = Color.fromRGB(252, 120, 3);
+                color = Color.fromRGB(0xFC7803);
                 break;
             case 6, 7:
-                color = Color.fromRGB(0, 255, 255);
+                color = Color.AQUA;
                 break;
             case 8, 9:
-                color = Color.fromRGB(185, 108, 0);
+                color = Color.fromRGB(0xB96C00);
                 break;
             case 10, 11:
                 color = Color.fromRGB(0xFC0046);
@@ -165,22 +165,22 @@ public class Drop implements Listener {
                 color = Color.fromRGB(0xFF03EF);
                 break;
             case 18, 19:
-                color = Color.fromRGB(209, 164, 75);
+                color = Color.fromRGB(0xD1A44B);
                 break;
             case 20, 21:
-                color = Color.fromRGB(139, 0, 0);
+                color = Color.fromRGB(0x8B0000);
                 break;
             case 22, 23:
-                color = Color.fromRGB(252, 237, 0);
+                color = Color.fromRGB(0xFCED00);
                 break;
             case 24, 26:
                 color = Color.PURPLE;
                 break;
             case 25, 27:
-                color = Color.fromRGB(69, 3, 62);
+                color = Color.fromRGB(0x45033E);
                 break;
             case 28, 29:
-                color = Color.fromRGB(255, 0, 0);
+                color = Color.RED;
                 break;
             default:
                 break;

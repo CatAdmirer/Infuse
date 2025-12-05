@@ -68,7 +68,7 @@ public class Fire implements Listener, PacketListener {
                 lore.set(i, applyHexColors(lore.get(i)));
             }
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setColor(Color.fromRGB(255, 165, 0));
+            meta.setColor(Color.ORANGE);
             meta.setLore(lore);
             meta.setCustomModelData(3);
             effect.setItemMeta(meta);
