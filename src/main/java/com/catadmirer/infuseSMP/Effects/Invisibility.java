@@ -195,12 +195,12 @@ public class Invisibility implements Listener, PacketListener {
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long invisDefaultCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.default");;
-            long invisAugmentedCooldown = Infuse.getInstance().getCanfig("invisibility.cooldown.augmented");;
+            long invisDefaultCooldown = Infuse.getInstance().getConfig("invisibility.cooldown.default");;
+            long invisAugmentedCooldown = Infuse.getInstance().getConfig("invisibility.cooldown.augmented");;
             long invisCooldown = isAugmentedInvis ? invisAugmentedCooldown : invisDefaultCooldown;
 
-            long invisDefaultDuration = Infuse.getInstance().getCanfig("invisibility.duration.default");;
-            long invisAugmentedDuration = Infuse.getInstance().getCanfig("invisibility.duration.augmented");;
+            long invisDefaultDuration = Infuse.getInstance().getConfig("invisibility.duration.default");;
+            long invisAugmentedDuration = Infuse.getInstance().getConfig("invisibility.duration.augmented");;
             long invisDuration = isAugmentedInvis ? invisAugmentedDuration : invisDefaultDuration;
             final double radius = 10.0;
             final long durationTicks = invisDuration * 20;

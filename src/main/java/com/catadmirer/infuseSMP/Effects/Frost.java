@@ -193,12 +193,12 @@ public class Frost implements Listener {
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))));
-            long frostDefaultCooldown = Infuse.getInstance().getCanfig("frost.cooldown.default");
-            long frostAugmentedCooldown = Infuse.getInstance().getCanfig("frost.cooldown.augmented");
+            long frostDefaultCooldown = Infuse.getInstance().getConfig("frost.cooldown.default");
+            long frostAugmentedCooldown = Infuse.getInstance().getConfig("frost.cooldown.augmented");
             long frostCooldown = isAugmentedFrost ? frostAugmentedCooldown : frostDefaultCooldown;
 
-            long frostDefaultDuration = Infuse.getInstance().getCanfig("frost.duration.default");
-            long frostAugmentedDuration = Infuse.getInstance().getCanfig("frost.duration.augmented");
+            long frostDefaultDuration = Infuse.getInstance().getConfig("frost.duration.default");
+            long frostAugmentedDuration = Infuse.getInstance().getConfig("frost.duration.augmented");
             long frostDuration = isAugmentedFrost ? frostAugmentedDuration : frostDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "frost", frostDuration);

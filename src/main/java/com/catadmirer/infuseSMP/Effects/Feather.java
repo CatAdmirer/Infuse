@@ -264,11 +264,11 @@ public class Feather implements Listener {
                             stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(stripAllColors(effectName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName)));
-            long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
-            long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
+            long featherDefaultCooldown = Infuse.getInstance().getConfig("feather.cooldown.default");
+            long featherAugmentedCooldown = Infuse.getInstance().getConfig("feather.cooldown.augmented");
             long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
-            long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
-            long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
+            long featherDefaultDuration = Infuse.getInstance().getConfig("feather.duration.default");
+            long featherAugmentedDuration = Infuse.getInstance().getConfig("feather.duration.augmented");
             long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
             CooldownManager.setDuration(playerUUID, "feather", featherDuration);
             CooldownManager.setCooldown(playerUUID, "feather", featherCooldown);

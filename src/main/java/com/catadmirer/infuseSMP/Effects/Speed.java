@@ -180,7 +180,7 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(209, 164, 75));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            double playerVelocityMultiplier = Infuse.getInstance().getCanfig("speed.playerVelocityMultiplier");
+            double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(230, 220, 170), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
@@ -213,7 +213,7 @@ public class Speed implements Listener {
 
                 ticksPassed[0]++;
             }, 1L, 1L);
-            long defaultDuration = Infuse.getInstance().getCanfig("speed.duration.default");;
+            long defaultDuration = Infuse.getInstance().getConfig("speed.duration.default");;
             CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
             String effectName2 = Infuse.getInstance().getEffect("aug_speed");
 
@@ -223,8 +223,8 @@ public class Speed implements Listener {
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(stripAllColors(effectName2)));
 
-            long defaultCooldown = Infuse.getInstance().getCanfig("speed.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("speed.cooldown.augmented");;
+            long defaultCooldown = Infuse.getInstance().getConfig("speed.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getConfig("speed.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

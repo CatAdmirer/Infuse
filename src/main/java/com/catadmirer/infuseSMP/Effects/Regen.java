@@ -104,11 +104,11 @@ public class Regen implements Listener {
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getCanfig("regen.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("regen.cooldown.augmented");;
+            long defaultCooldown = Infuse.getInstance().getConfig("regen.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getConfig("regen.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-            long defaultDuration = Infuse.getInstance().getCanfig("regen.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("regen.duration.augmented");;
+            long defaultDuration = Infuse.getInstance().getConfig("regen.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getConfig("regen.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
             CooldownManager.setCooldown(playerUUID, "regen", cooldown);

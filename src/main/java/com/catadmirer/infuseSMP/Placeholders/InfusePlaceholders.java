@@ -19,10 +19,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String removeAug(String key) {
-        if (key.startsWith("aug_")) {
-            return key.substring(4);
-        }
-        return key;
+        return key.replaceFirst("aug_", "");
     }
 
     @Override
@@ -37,12 +34,12 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "1.5.2";
+        return plugin.getPluginMeta().getVersion();
     }
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        boolean emptyEffectIcon = plugin.getCanfig("empty_effect_icon");
+        boolean useEmptyIcon = plugin.getConfig("empty_effect_icon");
         UUID uuid = player.getUniqueId();
 
         if (params.equalsIgnoreCase("first_effect")) {
@@ -58,28 +55,11 @@ public class InfusePlaceholders extends PlaceholderExpansion {
                     }
                 }
             }
-            if (emptyEffectIcon) {
-                return "\uE058";
-            } else {
-                return "";
-            }
-        }
 
-        if (params.equalsIgnoreCase("first_time")) {
-            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (primaryEffect != null) {
-                String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
-                String key = removeAug(stripped);
-                if (key != null) {
-                    if (CooldownManager.isEffectActive(uuid, key)) {
-                        long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
-                    } else if (CooldownManager.isOnCooldown(uuid, key)) {
-                        long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                        return formatTime(timeLeft, ChatColor.WHITE);
-                    }
-                }
+            if (useEmptyIcon) {
+                return "\uE058";
             }
+
             return "";
         }
 
@@ -96,10 +76,30 @@ public class InfusePlaceholders extends PlaceholderExpansion {
                     }
                 }
             }
-            if (emptyEffectIcon) {
+
+            if (useEmptyIcon) {
                 return "\uE058";
-            } else {
+            }
+
+            return "";
+        }
+
+        if (params.equalsIgnoreCase("first_time")) {
+            String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
+            if (primaryEffect == null)
                 return "";
+
+            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
+            String key = removeAug(stripped);
+            if (key == null)
+                return "";
+
+            if (CooldownManager.isEffectActive(uuid, key)) {
+                long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
+                return formatTime(timeLeft, EffectMaps.getColorEffect(stripped));
+            } else if (CooldownManager.isOnCooldown(uuid, key)) {
+                long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
+                return formatTime(timeLeft, ChatColor.WHITE);
             }
         }
 
@@ -159,7 +159,8 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public static String stripAllColors(String input) {
-        if (input == null) return null;
+        if (input == null)
+            return null;
         return input.replaceAll("§#[A-Fa-f0-9]{6}", "")
                 .replaceAll("§[0-9a-fk-orK-OR]", "");
     }
@@ -172,4 +173,3 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return var10000 + String.valueOf(ChatColor.BOLD) + timeString + String.valueOf(ChatColor.RESET);
     }
 }
-

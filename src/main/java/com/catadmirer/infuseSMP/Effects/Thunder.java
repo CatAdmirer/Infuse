@@ -139,12 +139,12 @@ public class Thunder implements Listener {
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2"))
                                     .equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-            long defaultCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.default");
-            long augmentedCooldown = Infuse.getInstance().getCanfig("thunder.cooldown.augmented");
+            long defaultCooldown = Infuse.getInstance().getConfig("thunder.cooldown.default");
+            long augmentedCooldown = Infuse.getInstance().getConfig("thunder.cooldown.augmented");
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = Infuse.getInstance().getCanfig("thunder.duration.default");
-            long augmentedDuration = Infuse.getInstance().getCanfig("thunder.duration.augmented");
+            long defaultDuration = Infuse.getInstance().getConfig("thunder.duration.default");
+            long augmentedDuration = Infuse.getInstance().getConfig("thunder.duration.augmented");
             long duration = isAugmented ? augmentedDuration : defaultDuration;
             final long effectDuration = duration * 20;
 

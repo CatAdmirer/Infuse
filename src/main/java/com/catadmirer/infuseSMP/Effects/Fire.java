@@ -219,12 +219,12 @@ public class Fire implements Listener, PacketListener {
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(stripAllColors(effectName2)));
 
-            long sparkDefaultCooldown = Infuse.getInstance().getCanfig("fire.cooldown.default");
-            long sparkAugmentedCooldown = Infuse.getInstance().getCanfig("fire.cooldown.augmented");
+            long sparkDefaultCooldown = Infuse.getInstance().getConfig("fire.cooldown.default");
+            long sparkAugmentedCooldown = Infuse.getInstance().getConfig("fire.cooldown.augmented");
             long sparkCooldown = isAugmentedFire ? sparkAugmentedCooldown : sparkDefaultCooldown;
 
-            long sparkDefaultDuration = Infuse.getInstance().getCanfig("fire.duration.default");
-            long sparkAugmentedDuration = Infuse.getInstance().getCanfig("fire.duration.augmented");
+            long sparkDefaultDuration = Infuse.getInstance().getConfig("fire.duration.default");
+            long sparkAugmentedDuration = Infuse.getInstance().getConfig("fire.duration.augmented");
             long sparkDuration = isAugmentedFire ? sparkAugmentedDuration : sparkDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "fire", sparkDuration);

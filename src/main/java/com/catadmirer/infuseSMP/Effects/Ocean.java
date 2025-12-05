@@ -79,8 +79,8 @@ public class Ocean implements Listener {
                     if (!hasEffect(effectHolder, "1") || (!hasEffect(effectHolder, "2"))) continue;
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
-                    double radius = Infuse.getInstance().getCanfig("ocean_pulling.pull.radius");
-                    double strength = Infuse.getInstance().getCanfig("ocean_pulling.pull.strength");
+                    double radius = Infuse.getInstance().getConfig("ocean_pulling.pull.radius");
+                    double strength = Infuse.getInstance().getConfig("ocean_pulling.pull.strength");
 
                     for (Player p : world.getPlayers()) {
                         if (p.equals(effectHolder)) continue;
@@ -97,7 +97,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, Infuse.getInstance().getCanfig("ocean_pulling.pull.interval"));
+        }.runTaskTimer(plugin, 0L, Infuse.getInstance().getConfig("ocean_pulling.pull.interval"));
 
     }
 
@@ -127,15 +127,15 @@ public class Ocean implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (Infuse.getInstance().<Boolean>getCanfig("invis_deaths")) {
+        if (Infuse.getInstance().<Boolean>getConfig("invis_deaths")) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Infuse.getInstance().getCanfig("invis.kill_invis");
+                String msg = Infuse.getInstance().getConfig("invis.kill_invis");
                 msg = msg.replace("%victim%", victim.getName())
                         .replace("%killer%", ChatColor.GRAY + "" + TextDecoration.OBFUSCATED + ("Someone"));
                 event.deathMessage(Component.text(msg));
             } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 if (killer != null) {
-                    String msg = Infuse.getInstance().getCanfig("invis.death_invis");
+                    String msg = Infuse.getInstance().getConfig("invis.death_invis");
                     msg = msg.replace("%victim%", ChatColor.GRAY + "" + TextDecoration.OBFUSCATED + ("Someone"))
                             .replace("%killer%", killer.getName());
                     event.deathMessage(Component.text(msg));
@@ -189,12 +189,12 @@ public class Ocean implements Listener {
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("ocean.cooldown.augmented");;
+            long defaultCooldown = Infuse.getInstance().getConfig("ocean.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getConfig("ocean.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
-            long defaultDuration = Infuse.getInstance().getCanfig("ocean.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("ocean.duration.augmented");;
+            long defaultDuration = Infuse.getInstance().getConfig("ocean.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getConfig("ocean.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);

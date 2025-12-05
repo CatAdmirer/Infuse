@@ -174,12 +174,12 @@ public class Emerald implements Listener {
                     || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
 
-            long emeDefaultCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.default");
-            long emeAugmentedCooldown = Infuse.getInstance().getCanfig("emerald.cooldown.augmented");
+            long emeDefaultCooldown = Infuse.getInstance().getConfig("emerald.cooldown.default");
+            long emeAugmentedCooldown = Infuse.getInstance().getConfig("emerald.cooldown.augmented");
             long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
 
-            long emeDefaultDuration = Infuse.getInstance().getCanfig("emerald.duration.default");
-            long emeAugmentedDuration = Infuse.getInstance().getCanfig("emerald.duration.augmented");
+            long emeDefaultDuration = Infuse.getInstance().getConfig("emerald.duration.default");
+            long emeAugmentedDuration = Infuse.getInstance().getConfig("emerald.duration.augmented");
             long emeDuration = isAugmentedEme ? emeAugmentedDuration : emeDefaultDuration;
 
             CooldownManager.setDuration(playerUUID, "emerald", emeDuration);

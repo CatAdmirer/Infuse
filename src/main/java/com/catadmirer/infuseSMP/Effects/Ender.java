@@ -178,11 +178,11 @@ public class Ender implements Listener {
                         (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                 ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName)));
 
-        long featherDefaultCooldown = Infuse.getInstance().getCanfig("feather.cooldown.default");
-        long featherAugmentedCooldown = Infuse.getInstance().getCanfig("feather.cooldown.augmented");
+        long featherDefaultCooldown = Infuse.getInstance().getConfig("feather.cooldown.default");
+        long featherAugmentedCooldown = Infuse.getInstance().getConfig("feather.cooldown.augmented");
         long endCooldown = isAugEnder ? featherAugmentedCooldown : featherDefaultCooldown;
-        long featherDefaultDuration = Infuse.getInstance().getCanfig("feather.duration.default");
-        long featherAugmentedDuration = Infuse.getInstance().getCanfig("feather.duration.augmented");
+        long featherDefaultDuration = Infuse.getInstance().getConfig("feather.duration.default");
+        long featherAugmentedDuration = Infuse.getInstance().getConfig("feather.duration.augmented");
         long endDuration = isAugEnder ? featherAugmentedDuration : featherDefaultDuration;
 
         CooldownManager.setDuration(playerUUID, "ender", endDuration);

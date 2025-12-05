@@ -223,7 +223,7 @@ public class Infuse extends JavaPlugin implements Listener {
         }
     }
 
-    public <T> T getCanfig(String key) {
+    public <T> T getConfig(String key) {
         return (T) settings.get(key);
     }
 

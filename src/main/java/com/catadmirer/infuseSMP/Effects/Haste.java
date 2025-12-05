@@ -109,12 +109,12 @@ public class Haste implements Listener {
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
                             (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName)));
-            long hasteDefaultCooldown = Infuse.getInstance().getCanfig("haste.cooldown.default");
-            long hasteAugmentedCooldown = Infuse.getInstance().getCanfig("haste.cooldown.augmented");
+            long hasteDefaultCooldown = Infuse.getInstance().getConfig("haste.cooldown.default");
+            long hasteAugmentedCooldown = Infuse.getInstance().getConfig("haste.cooldown.augmented");
             long hasteCooldown = isAugmentedHaste ? hasteAugmentedCooldown : hasteDefaultCooldown;
 
-            long hasteDefaultDuration = Infuse.getInstance().getCanfig("haste.duration.default");
-            long hasteAugmentedDuration = Infuse.getInstance().getCanfig("haste.duration.augmented");
+            long hasteDefaultDuration = Infuse.getInstance().getConfig("haste.duration.default");
+            long hasteAugmentedDuration = Infuse.getInstance().getConfig("haste.duration.augmented");
             long hasteDuration = isAugmentedHaste ? hasteAugmentedDuration : hasteDefaultDuration;
             player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
             CooldownManager.setDuration(playerUUID, "haste", hasteDuration);

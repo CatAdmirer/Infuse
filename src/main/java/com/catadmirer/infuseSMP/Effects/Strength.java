@@ -68,12 +68,12 @@ public class Strength implements Listener {
                     ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2)))) ||
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
                             ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(ChatColor.stripColor(effectName2))));
-            long defaultDuration = Infuse.getInstance().getCanfig("strength.duration.default");;
-            long augmentedDuration = Infuse.getInstance().getCanfig("strength.duration.augmented");;
+            long defaultDuration = Infuse.getInstance().getConfig("strength.duration.default");;
+            long augmentedDuration = Infuse.getInstance().getConfig("strength.duration.augmented");;
             long duration = isAugmented ? augmentedDuration : defaultDuration;
 
-            long defaultCooldown = Infuse.getInstance().getCanfig("strength.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getCanfig("strength.cooldown.augmented");;
+            long defaultCooldown = Infuse.getInstance().getConfig("strength.cooldown.default");;
+            long augmentedCooldown = Infuse.getInstance().getConfig("strength.cooldown.augmented");;
             long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
 
             CooldownManager.setDuration(playerUUID, "strength", duration);
