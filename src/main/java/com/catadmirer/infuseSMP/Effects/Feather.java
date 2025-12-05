@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 
 import net.md_5.bungee.api.ChatColor;
@@ -256,7 +256,7 @@ public class Feather implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
             String effectName = Infuse.getInstance().getEffect("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            Particles.spawnEffect(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);

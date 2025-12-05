@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import com.catadmirer.infuseSMP.Particles.Particles;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListener;
@@ -821,7 +821,7 @@ public class Thief implements Listener, PacketListener {
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
             String effectName = Infuse.getInstance().getEffect("aug_thief");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            Particles.spawnEffect(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);

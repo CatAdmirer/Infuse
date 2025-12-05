@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Particles.AlsoParticles;
+import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 
 import net.md_5.bungee.api.ChatColor;
@@ -170,7 +170,7 @@ public class Speed implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(209, 164, 75));
+            Particles.spawnEffect(player, Color.fromRGB(209, 164, 75));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
             double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
