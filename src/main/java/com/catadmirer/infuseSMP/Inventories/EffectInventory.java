@@ -1,5 +1,9 @@
 package com.catadmirer.infuseSMP.Inventories;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Effects.Augmented;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -7,10 +11,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.Augmented;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 
 public class EffectInventory implements InventoryHolder {
     private final Inventory inventory;

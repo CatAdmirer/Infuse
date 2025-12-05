@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

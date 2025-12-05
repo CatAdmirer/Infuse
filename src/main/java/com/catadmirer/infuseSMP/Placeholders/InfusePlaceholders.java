@@ -4,11 +4,9 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

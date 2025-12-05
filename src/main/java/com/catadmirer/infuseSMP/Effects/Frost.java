@@ -1,5 +1,8 @@
 package com.catadmirer.infuseSMP.Effects;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,11 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;

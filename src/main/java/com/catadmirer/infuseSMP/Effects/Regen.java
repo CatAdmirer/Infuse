@@ -1,13 +1,11 @@
 package com.catadmirer.infuseSMP.Effects;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import org.bukkit.Bukkit;
+import java.util.List;
+import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;

@@ -7,7 +7,6 @@ import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.DataManager;
 import com.catadmirer.infuseSMP.Managers.EffectMaps;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;

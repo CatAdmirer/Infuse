@@ -1,15 +1,17 @@
 package com.catadmirer.infuseSMP.Effects;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-
 import net.md_5.bungee.api.ChatColor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

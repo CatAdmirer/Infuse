@@ -1,16 +1,5 @@
 package com.catadmirer.infuseSMP;
 
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-
 import com.catadmirer.infuseSMP.Commands.*;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
@@ -19,13 +8,26 @@ import com.catadmirer.infuseSMP.Managers.*;
 import com.catadmirer.infuseSMP.Particles.Particles;
 import com.catadmirer.infuseSMP.Placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-import com.catadmirer.infuseSMP.Commands.TrustCommand;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import org.bukkit.Bukkit;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
