@@ -821,7 +821,7 @@ public class Thief implements Listener, PacketListener {
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
             String effectName = Infuse.getInstance().getEffect("aug_thief");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            Particles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            Particles.spawnEffectCloud(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);

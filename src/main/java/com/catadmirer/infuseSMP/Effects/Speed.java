@@ -170,7 +170,7 @@ public class Speed implements Listener {
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            Particles.spawnEffect(player, Color.fromRGB(209, 164, 75));
+            Particles.spawnEffectCloud(player, Color.fromRGB(209, 164, 75));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
             double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));

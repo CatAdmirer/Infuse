@@ -81,9 +81,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
             String key = removeAug(stripped);
             if (key != null) {
                 if (CooldownManager.isEffectActive(uuid, key)) {
-                    return EffectMaps.getActiveEffect(stripped);
+                    return "" + EffectMaps.getActiveEffect(stripped);
                 } else {
-                    return EffectMaps.getCooldownEffect(stripped);
+                    return "" + EffectMaps.getCooldownEffect(stripped);
                 }
             }
         }

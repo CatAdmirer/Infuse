@@ -256,7 +256,7 @@ public class Feather implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
             String effectName = Infuse.getInstance().getEffect("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            Particles.spawnEffect(player, Color.fromRGB(190, 163, 202));
+            Particles.spawnEffectCloud(player, Color.fromRGB(190, 163, 202));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
             Vector launchVector = dashDirection.multiply(0).setY(1);
             player.setVelocity(launchVector);

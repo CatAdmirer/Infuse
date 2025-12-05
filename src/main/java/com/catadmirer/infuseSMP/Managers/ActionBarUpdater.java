@@ -31,9 +31,9 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (this.playersWithActiveEffects.contains(uuid)) continue;
             String firstTime = "";
             boolean emptyEffectIcon = Infuse.getInstance().getConfig("empty_effect_icon");
-            String firstEmoji = "";
+            Character firstEmoji = null;
             if (emptyEffectIcon) {
-                firstEmoji = "\uE058";
+                firstEmoji = '\uE058';
             }
             String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
             if (primaryEffect != null) {
@@ -55,9 +55,9 @@ public class ActionBarUpdater extends BukkitRunnable {
                 }
             }
             String secondTime = "";
-            String secondEmoji = "";
+            Character secondEmoji = null;
             if (emptyEffectIcon) {
-                secondEmoji = "\uE058";
+                secondEmoji = '\uE058';
             }
             String secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
             if (secondaryEffect != null) {
@@ -80,8 +80,8 @@ public class ActionBarUpdater extends BukkitRunnable {
             }
             StringBuilder actionBar = new StringBuilder();
             if (!firstTime.isEmpty()) actionBar.append(firstTime).append("  ");
-            if (!firstEmoji.isEmpty()) actionBar.append(firstEmoji).append(" ");
-            if (!secondEmoji.isEmpty()) actionBar.append(secondEmoji).append("  ");
+            if (firstEmoji != null) actionBar.append(firstEmoji).append(" ");
+            if (secondEmoji != null) actionBar.append(secondEmoji).append("  ");
             if (!secondTime.isEmpty()) actionBar.append(secondTime).append(" ");
 
             String finalMessage = actionBar.toString().trim();
