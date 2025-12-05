@@ -2,8 +2,13 @@ package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.util.MessageUtil;
-
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

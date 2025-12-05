@@ -1,13 +1,10 @@
 package com.catadmirer.infuseSMP.Managers;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
-
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.util.MessageUtil;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
