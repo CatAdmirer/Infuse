@@ -17,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -161,27 +160,6 @@ public class Emerald implements Listener {
                 }
             }
 
-        }
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        UUID playerUUID = player.getUniqueId();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
-            if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
-                    if (CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-                        return;
-                    }
-
-                    event.setCancelled(true);
-                    this.activateSpark(player);
-                }
-
-            }
         }
     }
 

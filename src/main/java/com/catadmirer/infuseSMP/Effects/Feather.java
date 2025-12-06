@@ -34,7 +34,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -247,27 +246,6 @@ public class Feather implements Listener {
         String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§fFeather Effect");
         String effectName2 = Infuse.getInstance().getMessages().getString("aug_feather.effect_name", "§fAugmented Feather Effect");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
-            UUID playerUUID = player.getUniqueId();
-            if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-
-            }
-        }
     }
 
     public static void activateSpark(final Player player) {

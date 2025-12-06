@@ -23,7 +23,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -140,27 +139,6 @@ public class Apophis implements Listener {
         String effectName = Infuse.getInstance().getEffectName("apophis");
         String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
-            UUID playerUUID = player.getUniqueId();
-            if (!CooldownManager.isOnCooldown(playerUUID, "apophis") || CooldownManager.isOnCooldown(playerUUID, "apophis")) {
-                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-
-            }
-        }
     }
 
     @EventHandler

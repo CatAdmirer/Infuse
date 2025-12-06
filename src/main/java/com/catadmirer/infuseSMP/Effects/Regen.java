@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -45,26 +44,6 @@ public class Regen implements Listener {
             if (this.hasRegenEquipped(player, "1") || this.hasRegenEquipped(player, "2")) {
                 if (event.getFinalDamage() <= 0) {
                     player.setSaturation(Math.min(player.getSaturation() + 6, 20));
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasRegenEquipped(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasRegenEquipped(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
                 }
             }
         }

@@ -28,7 +28,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -134,31 +133,6 @@ public class Ender implements Listener {
                 }
             }
         }.runTaskLater(plugin, 1L);
-    }
-
-
-
-
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
-            UUID playerUUID = player.getUniqueId();
-            if (!CooldownManager.isOnCooldown(playerUUID, "ender")) {
-                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-
-            }
-        }
     }
 
     private boolean isTeammate(Player player, Player caster) {
