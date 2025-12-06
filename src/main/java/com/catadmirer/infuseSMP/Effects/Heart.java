@@ -41,7 +41,7 @@ public class Heart implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
                     if (!Heart.this.hasEffect(player, "1") && !Heart.this.hasEffect(player, "2")) continue;
@@ -187,11 +187,11 @@ public class Heart implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             if (maxHealthAttribute != null) {
                 maxHealthAttribute.setBaseValue(40);
             }
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
             boolean isAugmentedHeart =
                     (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
@@ -226,7 +226,7 @@ public class Heart implements Listener {
         final Player player = event.getPlayer();
         (new BukkitRunnable() {
             public void run() {
-                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                 if (maxHealthAttribute != null) {
                     maxHealthAttribute.setBaseValue(20);
                 }

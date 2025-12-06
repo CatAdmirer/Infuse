@@ -57,7 +57,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (ChatColor.stripColor(currentEffect).equalsIgnoreCase("Apohpis Effect")
                 || ChatColor.stripColor(currentEffect).equalsIgnoreCase("Augmented Apohpis Effect")) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
             EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
             ItemStack glitchItem = mapping.createItem();
             player.getInventory().addItem(glitchItem);
@@ -77,7 +77,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
                 EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
                 if (mapping != null) {
                     ItemStack glitchItem = mapping.createItem();

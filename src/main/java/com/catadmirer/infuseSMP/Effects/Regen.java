@@ -82,7 +82,7 @@ public class Regen implements Listener {
         if (event.getDamager() instanceof Player damager) {
             if (CooldownManager.isEffectActive(damager.getUniqueId(), "regen")) {
                 double damage = event.getFinalDamage();
-                damager.setHealth(Math.min(damager.getHealth() + damage / 2, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+                damager.setHealth(Math.min(damager.getHealth() + damage / 2, damager.getAttribute(Attribute.MAX_HEALTH).getValue()));
             }
         }
     }

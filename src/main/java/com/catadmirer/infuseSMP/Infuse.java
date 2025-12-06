@@ -354,7 +354,7 @@ public class Infuse extends JavaPlugin implements Listener {
         final Player player = event.getPlayer();
         (new BukkitRunnable() {
             public void run() {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
                 player.setHealth(20);
             }
         }).runTaskLater(this, 10L);

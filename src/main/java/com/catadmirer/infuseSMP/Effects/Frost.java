@@ -230,7 +230,7 @@ public class Frost implements Listener {
                         && player.getWorld().equals(world)
                         && player.getLocation().distance(center) <= radius) {
                     affectedPlayers.add(player);
-                    AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
+                    AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
                     if (jumpAttribute != null) {
                         jumpAttribute.setBaseValue(0.1);
                     }
@@ -242,7 +242,7 @@ public class Frost implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     for (Player player : affectedPlayers) {
-                        AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
+                        AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
                         if (jumpAttribute != null) {
                             jumpAttribute.setBaseValue(0.42);
                         }
@@ -257,7 +257,7 @@ public class Frost implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
+        AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
         if (jumpAttribute != null && jumpAttribute.getBaseValue() == 0.1) {
             jumpAttribute.setBaseValue(0.42);
         }

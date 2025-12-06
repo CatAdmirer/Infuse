@@ -4,44 +4,28 @@ plugins {
 }
 
 group = 'com.catadmirer'
-version = '1.7.1'
-
-jar {
-    archiveFileName = 'InfuseSMP.jar'
-}
+version = '2.0.0'
 
 repositories {
-    mavenCentral()
     maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+        url = "https://repo.codemc.io/repository/maven-releases/"
     }
-    maven { 
-        url = uri("https://repo.codemc.io/repository/maven-releases/")
+    maven {
+        url = "https://repo.codemc.io/repository/maven-snapshots/"
     }
-    maven { 
-        url = uri("https://repo.codemc.io/repository/maven-snapshots/")
-    }
-    maven { 
-        url = "https://repo.dmulloy2.net/repository/public/"
-    }
-    maven { 
-        url = 'https://libraries.minecraft.net/'
+    maven {
+        url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
-    }
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT'
     compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
     compileOnly 'me.clip:placeholderapi:2.11.6'
-    implementation 'com.mojang:authlib:1.5.21'
 }
 
 tasks {
@@ -49,7 +33,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.10")
     }
 }
 
