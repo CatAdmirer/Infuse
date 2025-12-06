@@ -158,42 +158,42 @@ public class InfuseRecipeManager implements Listener {
         }
     }
 
-        private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-            if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
-                World world = brewingStandLocation.getWorld();
-                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
-                final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
-                crystal.setShowingBottom(false);
-                crystal.setInvulnerable(true);
-                crystal.setInvisible(true);
-                Location targetLoc = brewingStandLocation.clone().add(0, 600 - brewingStandLocation.getY(), 0);
-                final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
-                marker.setMarker(true);
-                marker.setInvisible(true);
-                marker.setInvulnerable(true);
-                marker.setSilent(true);
-                marker.setCustomNameVisible(false);
-                crystal.setBeamTarget(marker.getLocation().toBlockLocation());
-                int ritualDuration;
-                if (recipeKey.equalsIgnoreCase("end_first")) {
-                    ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
-                } else {
-                    ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
-                }
-                (new BukkitRunnable() {
-                    public void run() {
-                        if (!crystal.isDead()) {
-                            crystal.remove();
-                        }
-
-                        if (!marker.isDead()) {
-                            marker.remove();
-                        }
-
-                    }
-                }).runTaskLater(this.plugin, ritualDuration * 20L);
+    private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
+        if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
+            World world = brewingStandLocation.getWorld();
+            Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
+            final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
+            crystal.setShowingBottom(false);
+            crystal.setInvulnerable(true);
+            crystal.setInvisible(true);
+            Location targetLoc = brewingStandLocation.clone().add(0, 600, 0);
+            final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
+            marker.setMarker(true);
+            marker.setInvisible(true);
+            marker.setInvulnerable(true);
+            marker.setSilent(true);
+            marker.setCustomNameVisible(false);
+            crystal.setBeamTarget(marker.getLocation().toBlockLocation());
+            int ritualDuration;
+            if (recipeKey.equalsIgnoreCase("end_first")) {
+                ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
+            } else {
+                ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
             }
+            (new BukkitRunnable() {
+                public void run() {
+                    if (!crystal.isDead()) {
+                        crystal.remove();
+                    }
+
+                    if (!marker.isDead()) {
+                        marker.remove();
+                    }
+
+                }
+            }).runTaskLater(this.plugin, ritualDuration * 20L);
         }
+    }
 
     private boolean isRitualActive = false;
 
