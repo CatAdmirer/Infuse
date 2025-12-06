@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,8 +49,6 @@ public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
     private DataManager dataManager;
     private Abilities abilitiesHandler;
-
-    private Particles particles;
 
     private final Map<UUID, PlayerProfile> originalProfiles = new HashMap<>();
     private final Map<UUID, Integer> activeSkinModifiers = new HashMap<>();
@@ -390,10 +387,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Strength(this), this);
 
         // Initializing the particle manager
-        particles = new Particles();
-
-        // Displaying potion particles for the player
-        particles.startTask();
+        new Particles().startTask();
 
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(), this);
