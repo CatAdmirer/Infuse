@@ -5,8 +5,7 @@ import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Effects.*;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Managers.EffectMaps;
-import com.catadmirer.infuseSMP.util.MessageUtil;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -41,42 +40,32 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the equipped effect
-        String equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
 
         // Handling when there isn't an effect equipped in the targeted slot.
-        if (equippedEffect == null) {
+        if (effect == null) {
             String msg = plugin.getMessages().getString("slot_empty", "&cYou don't have any effect equipped in slot %slot%.").replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
         
-        // Converting the serialized effect to an effect id
-        String strippedEffect = MessageUtil.stripAllColors(equippedEffect);
-        strippedEffect = plugin.getEffectReversed(strippedEffect);
-        Integer effectId = EffectMaps.getEffectId(strippedEffect);
-
-        // Handling when the effect is invalid
-        if (effectId == null) {
-            player.sendMessage("§cNo valid ability found for the equipped effect.");
-            return true;
-        }
-
-        switch (effectId) {
-            case 0, 1 -> Emerald.activateSpark(player);
-            case 2, 3 -> Feather.activateSpark(player);
-            case 4, 5 -> Fire.activateSpark(player);
-            case 6, 7 -> Frost.activateSpark(player);
-            case 8, 9 -> Haste.activateSpark(player);
-            case 10, 11 -> Heart.activateSpark(player);
-            case 12, 13 -> Invisibility.activateSpark(player);
-            case 14, 15 -> Ocean.activateSpark(player);
-            case 16, 17 -> Regen.activateSpark(player);
-            case 18, 19 -> Speed.activateSpark(player);
-            case 20, 21 -> Strength.activateSpark(player);
-            case 22, 23 -> Thunder.activateSpark(player);
-            case 24, 25 -> Ender.activateSpark(player);
-            case 26, 27 -> Apophis.activateSpark(player);
-            case 28, 29 -> Thief.activateSpark(player);
+        effect.activateSpark(player);
+        switch (effect) {
+            case EMERALD,  AUG_EMERALD  -> Emerald.activateSpark(player);
+            case ENDER,    AUG_ENDER    -> Feather.activateSpark(player);
+            case FEATHER,  AUG_FEATHER  -> Fire.activateSpark(player);
+            case FIRE,     AUG_FIRE     -> Frost.activateSpark(player);
+            case FROST,    AUG_FROST    -> Haste.activateSpark(player);
+            case HASTE,    AUG_HASTE    -> Heart.activateSpark(player);
+            case HEART,    AUG_HEART    -> Invisibility.activateSpark(player);
+            case INVIS,    AUG_INVIS    -> Ocean.activateSpark(player);
+            case OCEAN,    AUG_OCEAN    -> Regen.activateSpark(player);
+            case REGEN,    AUG_REGEN    -> Speed.activateSpark(player);
+            case SPEED,    AUG_SPEED    -> Strength.activateSpark(player);
+            case STRENGTH, AUG_STRENGTH -> Thunder.activateSpark(player);
+            case THUNDER,  AUG_THUNDER  -> Ender.activateSpark(player);
+            case APOPHIS,  AUG_APOPHIS  -> Apophis.activateSpark(player);
+            case THIEF,    AUG_THIEF    -> Thief.activateSpark(player);
             default -> player.sendMessage("§cNo valid ability found for the equipped effect.");
         }
 

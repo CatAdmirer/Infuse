@@ -3,9 +3,8 @@ package com.catadmirer.infuseSMP.Effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.catadmirer.infuseSMP.Particles.Particles;
-import com.catadmirer.infuseSMP.util.EffectUtil;
-import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,8 +34,6 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -54,43 +51,6 @@ public class Feather implements Listener {
     public Feather(Plugin plugin, DataManager dataManager) {
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_feather" : "feather"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_feather" : "feather"));
-            meta.setColor(Color.WHITE);
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 3 : 2);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 2;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 3;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
     }
 
     @EventHandler
@@ -141,13 +101,8 @@ public class Feather implements Listener {
         if (event.getEntity() instanceof Player player) {
             if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
                 if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!this.hasEffect(player, "1") && !this.hasEffect(player, "2")) {
-                    return;
-                }
-
-                if (event.getCause() == DamageCause.FALL) {
-                    return;
-                }
+                if (!EffectMapping.FEATHER.hasEffect(player)) return;
+                if (event.getCause() == DamageCause.FALL) return;
 
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
@@ -171,7 +126,7 @@ public class Feather implements Listener {
     public void onPlayerFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.FEATHER.hasEffect(player)) {
                     event.setCancelled(true);
                 }
             }
@@ -181,7 +136,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.FEATHER.hasEffect(player)) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item != null && item.getType() == Material.WIND_CHARGE) {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
@@ -209,7 +164,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (this.hasEffect(attacker, "1") || this.hasEffect(attacker, "2")) {
+            if (EffectMapping.FEATHER.hasEffect(attacker)) {
                 double fallDistance = attacker.getFallDistance();
                 if (fallDistance >= 7) {
                     attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
@@ -241,45 +196,35 @@ public class Feather implements Listener {
         return result.toString();
     }
 
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§fFeather Effect");
-        String effectName2 = Infuse.getInstance().getMessages().getString("aug_feather.effect_name", "§fAugmented Feather Effect");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
     public static void activateSpark(final Player player) {
+        if (EffectMapping.FEATHER.hasEffect(player));
+
         UUID playerUUID = player.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-            String effectName = Infuse.getInstance().getEffectName("aug_feather");
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
-            Vector dashDirection = player.getEyeLocation().getDirection().normalize();
-            Vector launchVector = dashDirection.multiply(0).setY(1);
-            player.setVelocity(launchVector);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
-            boolean isAugmentedFeather =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName)));
-            long featherDefaultCooldown = Infuse.getInstance().getConfig("feather.cooldown.default");
-            long featherAugmentedCooldown = Infuse.getInstance().getConfig("feather.cooldown.augmented");
-            long featherCooldown = isAugmentedFeather ? featherAugmentedCooldown : featherDefaultCooldown;
-            long featherDefaultDuration = Infuse.getInstance().getConfig("feather.duration.default");
-            long featherAugmentedDuration = Infuse.getInstance().getConfig("feather.duration.augmented");
-            long featherDuration = isAugmentedFeather ? featherAugmentedDuration : featherDefaultDuration;
-            CooldownManager.setDuration(playerUUID, "feather", featherDuration);
-            CooldownManager.setCooldown(playerUUID, "feather", featherCooldown);
-            Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
-                if (player.isOnline()) {
-                    CooldownManager.setDuration(playerUUID, "feathermace", 5L);
-                }
-            }, 10L);
+        if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
 
-            spark.add(playerUUID);
-        }
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
+        Vector dashDirection = player.getEyeLocation().getDirection().normalize();
+        Vector launchVector = dashDirection.multiply(0).setY(1);
+        player.setVelocity(launchVector);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
+        
+        // Applying cooldowns and durations for the effect
+        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = Infuse.getInstance().getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = Infuse.getInstance().getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
+
+        CooldownManager.setDuration(playerUUID, "feather", duration);
+        CooldownManager.setCooldown(playerUUID, "feather", cooldown);
+
+        Location anchor = player.getLocation();
+        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+            if (player.isOnline()) {
+                CooldownManager.setDuration(playerUUID, "feathermace", 5L);
+            }
+        }, 10L);
+
+        spark.add(playerUUID);
     }
 }

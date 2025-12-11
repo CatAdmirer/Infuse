@@ -2,13 +2,18 @@ package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.MessageUtil;
+
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -63,14 +68,14 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 String effectKey = args[2].toLowerCase();
-                if (EffectMaps.getEffectItem(effectKey) == null) {
+                EffectMapping effect = EffectMapping.fromEffectKey(effectKey);
+                if (effect == null) {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
                     return true;
                 }
-                target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
-                String name = Infuse.getInstance().getEffectName(effectKey);
-                String effectName = MessageUtil.stripAllColors(name);
-                target.sendMessage(EffectMaps.getColorEffect(effectKey) + "You received the " + effectName);
+                target.getInventory().addItem(effect.createItem());
+
+                target.sendMessage(ChatColor.of(effect.getColor()) + "You received the " + MessageUtil.stripAllColors(effect.getName()));
                 break;
             case "seteffect":
                 if (!player.isOp()) {
@@ -86,12 +91,12 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage("§cPlayer not found or not online.");
                     return true;
                 }
-                String effectky = args[2].toLowerCase();
-                if (EffectMaps.getEffectItem(effectky) == null) {
+                effectKey = args[2].toLowerCase();
+                effect = EffectMapping.fromEffectKey(effectKey);
+                if (effect == null) {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
                     return true;
                 }
-                String effect = Infuse.getInstance().getEffectName(effectky);
                 Infuse.getInstance().getEffectManager().setEffect(namearg.getUniqueId(), args[3], effect);
                 break;
             case "cleareffect":
@@ -230,16 +235,12 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 3 && args[0].equalsIgnoreCase("giveEffect")) {
             if (player.isOp()) {
-                completions.addAll(EffectMaps.color.keySet().stream()
-                        .filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase()))
-                        .toList());
+                completions.addAll(Stream.of(EffectMapping.values()).map(e -> e.getKey()).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList());
             }
         }
         else if (args.length == 3 && args[0].equalsIgnoreCase("setEffect")) {
             if (player.isOp()) {
-                completions.addAll(EffectMaps.color.keySet().stream()
-                        .filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase()))
-                        .toList());
+                completions.addAll(Stream.of(EffectMapping.values()).map(e -> e.getKey()).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList());
             }
         }
         else if (args.length == 4 && args[0].equalsIgnoreCase("setEffect")) {

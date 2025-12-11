@@ -2,12 +2,9 @@ package com.catadmirer.infuseSMP.ExtraEffects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.EffectUtil;
-
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -24,21 +21,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Apophis implements Listener {
-
     public Apophis(Infuse plugin) {
         this.startHealthCheckTask();
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!Apophis.this.hasEffect(onlinePlayer, "1") && !Apophis.this.hasEffect(onlinePlayer, "2")) continue;
+                    if (!EffectMapping.APOPHIS.hasEffect(onlinePlayer)) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Apophis.this.applyPassiveEffects(onlinePlayer);
@@ -54,43 +48,6 @@ public class Apophis implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 2, false, false));
-    }
-
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_apophis" : "apophis"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_apophis" : "apophis"));
-            meta.setColor(Color.fromRGB(0x45033E));
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 27 : 26);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 26;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 27;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
     }
 
     private boolean isSword(ItemStack item) {
@@ -124,7 +81,7 @@ public class Apophis implements Listener {
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                    if (!Apophis.this.hasEffect(player, "1") && !Apophis.this.hasEffect(player, "2")) continue;
+                    if (!EffectMapping.APOPHIS.hasEffect(player)) continue;
 
                     if (currentMaxHealth == 20) {
                         maxHealthAttribute.setBaseValue(30);
@@ -132,13 +89,6 @@ public class Apophis implements Listener {
                 }
             }
         }).runTaskTimer(Infuse.getInstance(), 0, 20);
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("apophis");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     @EventHandler
@@ -176,24 +126,15 @@ public class Apophis implements Listener {
                 maxHealthAttribute.setBaseValue(40);
             }
 
-            String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
-
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
-            boolean isAugmentedAph = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
 
-            long aphDefaultCooldown = Infuse.getInstance().getConfig("apophis.cooldown.default");;
-            long aphAugmentedCooldown = Infuse.getInstance().getConfig("apophis.cooldown.augmented");;
-            long aphCooldown = isAugmentedAph ? aphAugmentedCooldown : aphDefaultCooldown;
+            CooldownManager.setDuration(playerUUID, "apophis", duration);
+            CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
 
-            long aphDefaultDuration = Infuse.getInstance().getConfig("apophis.duration.default");;
-            long aphAugmentedDuration = Infuse.getInstance().getConfig("apophis.duration.augmented");;
-            long aphDuration = isAugmentedAph ? aphAugmentedDuration : aphDefaultDuration;
-
-            CooldownManager.setDuration(playerUUID, "apophis", aphDuration);
-            CooldownManager.setCooldown(playerUUID, "apophis", aphCooldown);
             (new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {

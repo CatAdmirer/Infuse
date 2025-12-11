@@ -1,8 +1,6 @@
 package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.ExtraEffects.*;
 import com.catadmirer.infuseSMP.Inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.Inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
@@ -65,22 +63,22 @@ public class Recipes implements CommandExecutor, Listener {
 
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
-            case "emerald" -> Emerald.createAugmented();
-            case "feather" -> Feather.createAugmented();
-            case "fire" -> Fire.createAugmented();
-            case "end_first" -> Ender.createAugmented();
-            case "end_second" -> Ender.createAugmented();
-            case "frost" -> Frost.createAugmented();
-            case "haste" -> Haste.createAugmented();
-            case "heart" -> Heart.createAugmented();
-            case "invis" -> Invisibility.createAugmented();
-            case "ocean" -> Ocean.createAugmented();
-            case "regen" -> Regen.createAugmented();
-            case "speed" -> Speed.createAugmented();
-            case "strength" -> Strength.createAugmented();
-            case "thunder" -> Thunder.createAugmented();
-            case "apophis" -> Apophis.createAugmented();
-            case "thief" -> Thief.createAugmented();
+            case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
+            case "end_first" -> EffectMapping.AUG_ENDER.createItem();
+            case "end_second" -> EffectMapping.AUG_ENDER.createItem();
+            case "feather" -> EffectMapping.AUG_FEATHER.createItem();
+            case "fire" -> EffectMapping.AUG_FIRE.createItem();
+            case "frost" -> EffectMapping.AUG_FROST.createItem();
+            case "haste" -> EffectMapping.AUG_HASTE.createItem();
+            case "heart" -> EffectMapping.AUG_HEART.createItem();
+            case "invis" -> EffectMapping.AUG_INVIS.createItem();
+            case "ocean" -> EffectMapping.AUG_OCEAN.createItem();
+            case "regen" -> EffectMapping.AUG_REGEN.createItem();
+            case "speed" -> EffectMapping.AUG_SPEED.createItem();
+            case "strength" -> EffectMapping.AUG_STRENGTH.createItem();
+            case "thunder" -> EffectMapping.AUG_THUNDER.createItem();
+            case "apophis" -> EffectMapping.AUG_APOPHIS.createItem();
+            case "thief" -> EffectMapping.AUG_THIEF.createItem();
             default -> null;
         };
     }
@@ -186,7 +184,7 @@ public class Recipes implements CommandExecutor, Listener {
             case FROST, AUG_FROST -> "frost";
             case HASTE, AUG_HASTE -> "haste";
             case HEART, AUG_HEART -> "heart";
-            case INVISIBILITY, AUG_INVISIBILITY -> "invis";
+            case INVIS, AUG_INVIS -> "invis";
             case OCEAN, AUG_OCEAN -> "ocean";
             case REGEN, AUG_REGEN -> "regen";
             case SPEED, AUG_SPEED -> "speed";

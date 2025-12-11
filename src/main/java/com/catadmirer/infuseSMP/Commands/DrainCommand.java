@@ -45,21 +45,20 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        final String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
-        if (currentEffect == null) {
-            String msg = plugin.getMessages().getString("effect_none_equipped",
-                    "&cYou don't have an Effect equipped in slot %slot%.");
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        if (effect == null) {
+            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an Effect equipped in slot %slot%.");
             msg = msg.replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
-        if (ChatColor.stripColor(currentEffect).equalsIgnoreCase("Apohpis Effect")
-                || ChatColor.stripColor(currentEffect).equalsIgnoreCase("Augmented Apohpis Effect")) {
+        String effectName = effect.getName();
+
+        if (ChatColor.stripColor(effectName).equalsIgnoreCase("Apohpis Effect") || ChatColor.stripColor(effectName).equalsIgnoreCase("Augmented Apohpis Effect")) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
             player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-            EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
-            ItemStack glitchItem = mapping.createItem();
+            ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);
             apophisCommand.unsetApophis(Bukkit.getConsoleSender(), player.getName());
             return true;
@@ -71,19 +70,16 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-        String currentEffectColored = applyHexColors(currentEffect);
+        String currentEffectColored = applyHexColors(effectName);
         player.sendMessage("§aYou have drained your: " + currentEffectColored);
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-                EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
-                if (mapping != null) {
-                    ItemStack glitchItem = mapping.createItem();
-                    if (glitchItem != null) {
-                        player.getInventory().addItem(glitchItem);
-                    }
+                ItemStack glitchItem = effect.createItem();
+                if (glitchItem != null) {
+                    player.getInventory().addItem(glitchItem);
                 }
             }
         }.runTaskLater(this.plugin, 10L);

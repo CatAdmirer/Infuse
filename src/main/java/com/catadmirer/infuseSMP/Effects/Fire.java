@@ -2,8 +2,7 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.EffectUtil;
-import com.catadmirer.infuseSMP.util.MessageUtil;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.github.retrooper.packetevents.event.PacketListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -27,9 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -45,9 +40,9 @@ public class Fire implements Listener, PacketListener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Fire.this.hasEffect(player, "1") || Fire.this.hasEffect(player, "2")) {
-                        Fire.this.applyFireResistance(player);
-                        Fire.this.handleSwim(player);
+                    if (EffectMapping.FIRE.hasEffect(player)) {
+                        applyFireResistance(player);
+                        handleSwim(player);
                     }
                 });
             }
@@ -56,43 +51,6 @@ public class Fire implements Listener, PacketListener {
 
     private void applyFireResistance(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
-    }
-
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_fire" : "fire"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_fire" : "fire"));
-            meta.setColor(Color.ORANGE);
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 5 : 4);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 4;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 5;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
     }
 
     public static String applyHexColors(String input) {
@@ -124,7 +82,7 @@ public class Fire implements Listener, PacketListener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inLava = player.isInLava();
         if (!event.isGliding()) {
-            if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
+            if (inLava && EffectMapping.FIRE.hasEffect(player)) {
                 event.setCancelled(true);
             }
         }
@@ -135,7 +93,7 @@ public class Fire implements Listener, PacketListener {
         Player player = event.getPlayer();
         boolean inLava = player.isInLava();
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
+        if (inLava && EffectMapping.FIRE.hasEffect(player)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -143,18 +101,10 @@ public class Fire implements Listener, PacketListener {
         }
     }
 
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("fire");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (EffectMapping.FIRE.hasEffect(player)) {
                 if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
                     projectile.setFireTicks(100);
                 }
@@ -166,7 +116,7 @@ public class Fire implements Listener, PacketListener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.FIRE.hasEffect(player)) {
                     Material blockType = player.getLocation().getBlock().getType();
                     if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
                         event.setCancelled(true);
@@ -180,7 +130,7 @@ public class Fire implements Listener, PacketListener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (EffectMapping.FIRE.hasEffect(player)) {
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 if (count >= 20) {
@@ -206,28 +156,19 @@ public class Fire implements Listener, PacketListener {
             }
 
             spawnSparkEffect(player);
-            String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
             }.runTaskLater(Infuse.getInstance(), 20L);
-            boolean isAugmentedFire =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(MessageUtil.stripAllColors(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(MessageUtil.stripAllColors(effectName2)));
+            
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
 
-            long sparkDefaultCooldown = Infuse.getInstance().getConfig("fire.cooldown.default");
-            long sparkAugmentedCooldown = Infuse.getInstance().getConfig("fire.cooldown.augmented");
-            long sparkCooldown = isAugmentedFire ? sparkAugmentedCooldown : sparkDefaultCooldown;
-
-            long sparkDefaultDuration = Infuse.getInstance().getConfig("fire.duration.default");
-            long sparkAugmentedDuration = Infuse.getInstance().getConfig("fire.duration.augmented");
-            long sparkDuration = isAugmentedFire ? sparkAugmentedDuration : sparkDefaultDuration;
-
-            CooldownManager.setDuration(playerUUID, "fire", sparkDuration);
-            CooldownManager.setCooldown(playerUUID, "fire", sparkCooldown);
+            CooldownManager.setDuration(playerUUID, "fire", duration);
+            CooldownManager.setCooldown(playerUUID, "fire", cooldown);
         }
     }
 

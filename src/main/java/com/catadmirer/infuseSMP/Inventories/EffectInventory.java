@@ -1,8 +1,7 @@
 package com.catadmirer.infuseSMP.Inventories;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.ExtraEffects.*;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -28,25 +27,25 @@ public class EffectInventory implements InventoryHolder {
         setItems(inventory, lightBlueSlots, createPane(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
         inventory.setItem(49, createPane(Material.BLUE_STAINED_GLASS_PANE));
 
-        inventory.setItem(12, Frost.createAugmented());
-        inventory.setItem(14, Speed.createAugmented());
-        inventory.setItem(20, Feather.createAugmented());
-        inventory.setItem(21, Ocean.createAugmented());
-        inventory.setItem(22, Invisibility.createAugmented());
-        inventory.setItem(23, Ender.createAugmented());
-        inventory.setItem(24, Emerald.createAugmented());
-        inventory.setItem(29, Heart.createAugmented());
-        inventory.setItem(30, Regen.createAugmented());
-        inventory.setItem(31, Strength.createAugmented());
-        inventory.setItem(32, Fire.createAugmented());
-        inventory.setItem(33, Haste.createAugmented());
-        inventory.setItem(40, Thunder.createAugmented());
+        inventory.setItem(12, EffectMapping.FROST.createItem());
+        inventory.setItem(14, EffectMapping.SPEED.createItem());
+        inventory.setItem(20, EffectMapping.FEATHER.createItem());
+        inventory.setItem(21, EffectMapping.OCEAN.createItem());
+        inventory.setItem(22, EffectMapping.INVIS.createItem());
+        inventory.setItem(23, EffectMapping.ENDER.createItem());
+        inventory.setItem(24, EffectMapping.EMERALD.createItem());
+        inventory.setItem(29, EffectMapping.HEART.createItem());
+        inventory.setItem(30, EffectMapping.REGEN.createItem());
+        inventory.setItem(31, EffectMapping.STRENGTH.createItem());
+        inventory.setItem(32, EffectMapping.FIRE.createItem());
+        inventory.setItem(33, EffectMapping.HASTE.createItem());
+        inventory.setItem(40, EffectMapping.THUNDER.createItem());
 
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Thief")) {
-            inventory.setItem(39, Thief.createAugmented());
+            inventory.setItem(39, EffectMapping.THIEF.createItem());
         }
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Apophis")) {
-            inventory.setItem(41, Apophis.createAugmented());
+            inventory.setItem(41, EffectMapping.APOPHIS.createItem());
         }
     }
 

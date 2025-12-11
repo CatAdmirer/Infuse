@@ -1,8 +1,7 @@
 package com.catadmirer.infuseSMP.Particles;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.EffectMaps;
-import net.md_5.bungee.api.ChatColor;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -21,45 +20,20 @@ public class Particles {
     }
 
     private void applyParticlesForEffect(Player player, String type) {
-        String effectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (effectName == null) return;
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        if (effect == null) return;
 
-        String stripped = ChatColor.stripColor(effectName);
-        Integer abilityId = EffectMaps.getEffectId(stripped);
-        if (abilityId == null) return;
+        // Handling special particles for ender effect
+        // TODO: Decide whether or not to keep this
+        if (effect == EffectMapping.ENDER || effect == EffectMapping.AUG_ENDER) {
+            spawnDragon(player);
+            return;
+        }
 
         final double regularRadius = 0;
         final double augmentedRadius = 0.3;
 
-        switch (abilityId) {
-            case 0 -> spawnEffect(player, Color.GREEN, regularRadius);
-            case 1 -> spawnEffect(player, Color.GREEN, augmentedRadius);
-            case 2 -> spawnEffect(player, Color.fromRGB(0xBEA3CA), regularRadius);
-            case 3 -> spawnEffect(player, Color.fromRGB(0xBEA3CA), augmentedRadius);
-            case 4 -> spawnEffect(player, Color.fromRGB(0xFC7803), regularRadius);
-            case 5 -> spawnEffect(player, Color.fromRGB(0xFC7803), augmentedRadius);
-            case 6 -> spawnEffect(player, Color.AQUA, regularRadius);
-            case 7 -> spawnEffect(player, Color.AQUA, augmentedRadius);
-            case 8 -> spawnEffect(player, Color.fromRGB(0xB96C00), regularRadius);
-            case 9 -> spawnEffect(player, Color.fromRGB(0xB96C00), augmentedRadius);
-            case 10 -> spawnEffect(player, Color.fromRGB(0xFC0046), regularRadius);
-            case 11 -> spawnEffect(player, Color.fromRGB(0xFC0046), augmentedRadius);
-            case 14 -> spawnEffect(player, Color.fromRGB(0x005AFC), regularRadius);
-            case 15 -> spawnEffect(player, Color.fromRGB(0x005AFC), augmentedRadius);
-            case 16 -> spawnEffect(player, Color.fromRGB(0xFF03EF), regularRadius);
-            case 17 -> spawnEffect(player, Color.fromRGB(0xFF03EF), augmentedRadius);
-            case 18 -> spawnEffect(player, Color.fromRGB(0xD1A44B), regularRadius);
-            case 19 -> spawnEffect(player, Color.fromRGB(0xD1A44B), augmentedRadius);
-            case 20 -> spawnEffect(player, Color.fromRGB(0x8B0000), regularRadius);
-            case 21 -> spawnEffect(player, Color.fromRGB(0x8B0000), augmentedRadius);
-            case 22 -> spawnEffect(player, Color.fromRGB(0xFCED00), regularRadius);
-            case 23 -> spawnEffect(player, Color.fromRGB(0xFCED00), augmentedRadius);
-            case 24, 25 -> spawnDragon(player);
-            case 26 -> spawnEffect(player, Color.fromRGB(0x45033E), regularRadius);
-            case 27 -> spawnEffect(player, Color.fromRGB(0x45033E), augmentedRadius);
-            case 28 -> spawnEffect(player, Color.RED, regularRadius);
-            case 29 -> spawnEffect(player, Color.RED, augmentedRadius);
-        }
+        spawnEffect(player, Color.fromRGB(effect.getColor().getRGB()), effect.isAugmented() ? augmentedRadius : regularRadius);
     }
 
     public static void spawnDragon(Player player) {

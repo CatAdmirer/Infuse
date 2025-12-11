@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.Placeholders;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectMaps;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -11,7 +11,6 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class InfusePlaceholders extends PlaceholderExpansion {
-
     private Infuse plugin;
 
     public InfusePlaceholders(Infuse plugin) {
@@ -44,9 +43,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
         switch (params.toLowerCase()) {
             case "first_effect":
-                return getEffectKey(useEmptyIcon, uuid, "1");
+                return getEffectIcon(useEmptyIcon, uuid, "1");
             case "second_effect":
-                return getEffectKey(useEmptyIcon, uuid, "2");
+                return getEffectIcon(useEmptyIcon, uuid, "2");
             case "first_time":
                 return getTime(uuid, "1");
             case "second_time":
@@ -64,63 +63,61 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return null;
     }
 
-    private String formatTime(long totalSeconds, String color) {
+    private String formatTime(long totalSeconds, ChatColor color) {
         long minutes = totalSeconds / 60L;
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
         return color + "§l" + timeString + "§r";
     }
 
-    public String getEffectKey(boolean useEmptyIcon, UUID uuid, String slot) {
-        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+    public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
         if (effect != null) {
-            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(effect));
+            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(effect.getName()));
             String key = removeAug(stripped);
             if (key != null) {
                 if (CooldownManager.isEffectActive(uuid, key)) {
-                    return "" + EffectMaps.getActiveEffect(stripped);
+                    return "" + effect.getActiveIcon();
                 } else {
-                    return "" + EffectMaps.getCooldownEffect(stripped);
+                    return "" + effect.getIcon();
                 }
             }
         }
 
         if (useEmptyIcon) {
-            return "\uE058";
+            return "\uE901";
         }
 
         return "";
     }
 
     public String getTime(UUID uuid, String slot) {
-        String primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
-        if (primaryEffect == null) return "";
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect == null) return "";
 
-        String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(primaryEffect));
-        String key = removeAug(stripped);
-        if (key == null) return "";
+        String key = effect.getKey();
 
         if (CooldownManager.isEffectActive(uuid, key)) {
-            return formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, EffectMaps.getColorEffect(stripped));
+            return formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, ChatColor.of(effect.getColor()));
         }
 
         if (CooldownManager.isOnCooldown(uuid, key)) {
-            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, "§f");
+            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, ChatColor.WHITE);
         }
 
         return "";
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
-        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
-        if (effect != null) return MessageUtil.stripAllColors(effect);
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect != null) return MessageUtil.stripAllColors(effect.getName());
 
         return "";
     }
 
     public String getEffectName(UUID uuid, String slot) {
-        String effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
-        if (effect != null) return effect;
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        if (effect != null) return effect.getName();
 
         return "";
     }

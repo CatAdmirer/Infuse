@@ -62,7 +62,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final Map<String, List<String>> effectLore = new HashMap<>();
     private final Map<String, Object> settings = new HashMap<>();
 
-    public static NamespacedKey EFFECT_ID = NamespacedKey.fromString("infuse:effect_id");
+    public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
 
     private final File messagesFile = new File(getDataFolder(), "messages.yml");
 
@@ -384,7 +384,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private void registerEvents() {
         // Registering strength listener here for some reason?
-        Bukkit.getPluginManager().registerEvents(new Strength(this), this);
+        Bukkit.getPluginManager().registerEvents(new Strength(), this);
 
         // Initializing the particle manager
         new Particles().startTask();

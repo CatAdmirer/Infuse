@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class DataManager {
 
@@ -85,32 +86,37 @@ public class DataManager {
         saveConfig();
     }
 
-    public void setEffect(UUID playerUUID, String type, String value) {
-        config.set(playerUUID.toString() + "." + type, value);
+    public void setEffect(UUID playerUUID, String slot, @Nullable EffectMapping effect) {
+        config.set(playerUUID.toString() + "." + slot, effect);
         saveConfig();
     }
 
-    public String getEffect(UUID playerUUID, String type) {
-        return config.getString(playerUUID.toString() + "." + type, null);
+    @Nullable
+    public EffectMapping getEffect(UUID playerUUID, String slot) {
+        String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
+        return EffectMapping.fromEffectKey(effectKey);
     }
 
-    public void removeEffect(UUID playerUUID, String type) {
-        config.set(playerUUID.toString() + "." + type, null);
+    public void removeEffect(UUID playerUUID, String slot) {
+        config.set(playerUUID.toString() + "." + slot, null);
         saveConfig();
     }
 
     public void setControlDefault(UUID playerUUID, String defaultMode) {
-        config.set(playerUUID.toString() + ".Controls", defaultMode);
+        config.set(playerUUID.toString() + ".controls", defaultMode);
         saveConfig();
     }
 
     public String getControlDefault(UUID playerUUID) {
-        return config.getString(playerUUID.toString() + ".Controls", "Offhand");
+        return config.getString(playerUUID.toString() + ".controls", "offhand");
     }
 
     private void saveConfig() {
-        try { config.save(dataFile); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            config.save(dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void reloadConfig() {
@@ -118,5 +124,3 @@ public class DataManager {
         loadTrustData();
     }
 }
-
-

@@ -2,11 +2,10 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.EffectUtil;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
+
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -19,8 +18,6 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -34,11 +31,11 @@ public class Emerald implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!Emerald.this.hasEffect(onlinePlayer, "1") && !Emerald.this.hasEffect(onlinePlayer, "2")) continue;
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!EffectMapping.EMERALD.hasEffect(player)) continue;
 
-                    ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
-                    Emerald.this.applyPassiveEffects(onlinePlayer);
+                    ItemStack mainHand = player.getInventory().getItemInMainHand();
+                    Emerald.this.applyPassiveEffects(player);
                     if (Emerald.this.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
                         mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
                     }
@@ -50,50 +47,6 @@ public class Emerald implements Listener {
     private void applyPassiveEffects(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
-    }
-
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_emerald" : "emerald"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_emerald" : "emerald"));
-            meta.setColor(Color.LIME);
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 1 : 0);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 0;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 1;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("emerald");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     private boolean isSword(ItemStack item) {
@@ -108,7 +61,7 @@ public class Emerald implements Listener {
     @EventHandler
     public void onPlayerExpChange(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.EMERALD.hasEffect(player)) {
             double multiplier = 1.5;
             PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
             if (heroEffect != null && heroEffect.getAmplifier() >= 200) {
@@ -124,7 +77,7 @@ public class Emerald implements Listener {
     public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
         Player player = event.getEnchanter();
 
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.EMERALD.hasEffect(player)) {
             try {
                 event.getClass()
                         .getMethod("setEnchantmentBonus", int.class)
@@ -139,7 +92,7 @@ public class Emerald implements Listener {
             final Player player = event.getPlayer();
             ItemStack consumedItem = event.getItem();
             int originalCount = consumedItem.getAmount();
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (EffectMapping.EMERALD.hasEffect(player)) {
                 if (consumedItem.getType() == Material.POTION) {
                     return;
                 }
@@ -164,30 +117,21 @@ public class Emerald implements Listener {
     }
 
     public static void activateSpark(Player player) {
+        if (!EffectMapping.EMERALD.hasEffect(player)) return;
+
         UUID playerUUID = player.getUniqueId();
-        if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
-            String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-            boolean isAugmentedEme = (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)))
-                    || (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
+        if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
 
-            long emeDefaultCooldown = Infuse.getInstance().getConfig("emerald.cooldown.default");
-            long emeAugmentedCooldown = Infuse.getInstance().getConfig("emerald.cooldown.augmented");
-            long emeCooldown = isAugmentedEme ? emeAugmentedCooldown : emeDefaultCooldown;
+        // Applying effects for the emerald spark
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
-            long emeDefaultDuration = Infuse.getInstance().getConfig("emerald.duration.default");
-            long emeAugmentedDuration = Infuse.getInstance().getConfig("emerald.duration.augmented");
-            long emeDuration = isAugmentedEme ? emeAugmentedDuration : emeDefaultDuration;
+        // Applying cooldowns and durations for the effect
+        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = Infuse.getInstance().getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = Infuse.getInstance().getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 
-            CooldownManager.setDuration(playerUUID, "emerald", emeDuration);
-            CooldownManager.setCooldown(playerUUID, "emerald", emeCooldown);
-            (new BukkitRunnable() {
-                public void run() {
-                }
-            }).runTaskLater(Infuse.getInstance(), 600L);
-        }
+        CooldownManager.setDuration(playerUUID, "emerald", duration);
+        CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
     }
 }

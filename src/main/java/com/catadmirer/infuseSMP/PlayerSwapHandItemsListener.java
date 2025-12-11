@@ -36,19 +36,15 @@ public class PlayerSwapHandItemsListener {
         // TODO: Compare this with the stored data, not a permission.
         if (!player.hasPermission("ability.use")) {
             // Getting the effect equipped in each slot
-            String lEffectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-            String rEffectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-
-            // Converting the strings to EffectMappings
-            EffectMapping lEffect = EffectMapping.fromEffectName(lEffectName);
-            EffectMapping rEffect = EffectMapping.fromEffectName(rEffectName);
+            EffectMapping lEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+            EffectMapping rEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
 
             // Cancelling the event
             // The event will be un-cancelled if a spark is not activated.
             event.setCancelled(true);
 
             // Activating the left effect's spark if the player was sneaking and the effect wasn't on cooldown.
-            if (!player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, lEffectName)) {
+            if (!player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, lEffect.regular().getKey())) {
                 switch (lEffect) {
                     case AUG_APOPHIS, APOPHIS -> Apophis.activateSpark(player);
                     case AUG_EMERALD, EMERALD -> Emerald.activateSpark(player);
@@ -58,7 +54,7 @@ public class PlayerSwapHandItemsListener {
                     case AUG_FROST, FROST -> Frost.activateSpark(player);
                     case AUG_HASTE, HASTE -> Haste.activateSpark(player);
                     case AUG_HEART, HEART -> Heart.activateSpark(player);
-                    case AUG_INVISIBILITY, INVISIBILITY -> Invisibility.activateSpark(player);
+                    case AUG_INVIS, INVIS -> Invisibility.activateSpark(player);
                     case AUG_OCEAN, OCEAN -> Ocean.activateSpark(player);
                     case AUG_REGEN, REGEN -> Regen.activateSpark(player);
                     case AUG_SPEED, SPEED -> Speed.activateSpark(player);
@@ -70,7 +66,7 @@ public class PlayerSwapHandItemsListener {
             }
 
             // Activating the right effect's spark if the player was not sneaking and the effect wasn't on cooldown.
-            if (player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, rEffectName)) {
+            if (player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, rEffect.regular().getKey())) {
                 switch (rEffect) {
                     case AUG_APOPHIS, APOPHIS -> Apophis.activateSpark(player);
                     case AUG_EMERALD, EMERALD -> Emerald.activateSpark(player);
@@ -80,7 +76,7 @@ public class PlayerSwapHandItemsListener {
                     case AUG_FROST, FROST -> Frost.activateSpark(player);
                     case AUG_HASTE, HASTE -> Haste.activateSpark(player);
                     case AUG_HEART, HEART -> Heart.activateSpark(player);
-                    case AUG_INVISIBILITY, INVISIBILITY -> Invisibility.activateSpark(player);
+                    case AUG_INVIS, INVIS -> Invisibility.activateSpark(player);
                     case AUG_OCEAN, OCEAN -> Ocean.activateSpark(player);
                     case AUG_REGEN, REGEN -> Regen.activateSpark(player);
                     case AUG_SPEED, SPEED -> Speed.activateSpark(player);

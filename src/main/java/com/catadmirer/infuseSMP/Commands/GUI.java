@@ -1,10 +1,8 @@
 package com.catadmirer.infuseSMP.Commands;
 
-import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
-import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Inventories.EffectInventory;
 import com.catadmirer.infuseSMP.Inventories.EffectLevelInventory;
-import com.catadmirer.infuseSMP.Effects.*;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -37,37 +35,22 @@ public class GUI implements Listener, CommandExecutor {
 
         if (clickedInventory instanceof EffectInventory) {
             event.setCancelled(true);
-            if (Frost.isAugmented(clicked)) {
-                augmentedOrRegular(player, Frost.createAugmented(), Frost.createRegular(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Speed.isAugmented(clicked)) {
-                augmentedOrRegular(player, Speed.createAugmented(), Speed.createRegular(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-            } else if (Strength.isAugmented(clicked)) {
-                augmentedOrRegular(player, Strength.createAugmented(), Strength.createRegular(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Thunder.isAugmented(clicked)) {
-                augmentedOrRegular(player, Thunder.createAugmented(), Thunder.createRegular(), Material.YELLOW_STAINED_GLASS_PANE);
-            } else if (Thief.isAugmented(clicked)) {
-                augmentedOrRegular(player, Thief.createAugmented(), Thief.createRegular(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Heart.isAugmented(clicked)) {
-                augmentedOrRegular(player, Heart.createAugmented(), Heart.createRegular(), Material.RED_STAINED_GLASS_PANE);
-            } else if (Emerald.isAugmented(clicked)) {
-                augmentedOrRegular(player, Emerald.createAugmented(), Emerald.createRegular(), Material.LIME_STAINED_GLASS_PANE);
-            } else if (Ender.isAugmented(clicked)) {
-                augmentedOrRegular(player, Ender.createAugmented(), Ender.createRegular(), Material.PURPLE_STAINED_GLASS_PANE);
-            } else if (Apophis.isAugmented(clicked)) {
-                augmentedOrRegular(player, Apophis.createAugmented(), Apophis.createRegular(), Material.MAGENTA_STAINED_GLASS_PANE);
-            } else if (Feather.isAugmented(clicked)) {
-                augmentedOrRegular(player, Feather.createAugmented(), Feather.createRegular(), Material.WHITE_STAINED_GLASS_PANE);
-            } else if (Fire.isAugmented(clicked)) {
-                augmentedOrRegular(player, Fire.createAugmented(), Fire.createRegular(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Haste.isAugmented(clicked)) {
-                augmentedOrRegular(player, Haste.createAugmented(), Haste.createRegular(), Material.ORANGE_STAINED_GLASS_PANE);
-            } else if (Invisibility.isAugmented(clicked)) {
-                augmentedOrRegular(player, Invisibility.createAugmented(), Invisibility.createRegular(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-            } else if (Ocean.isAugmented(clicked)) {
-                augmentedOrRegular(player, Ocean.createAugmented(), Ocean.createRegular(), Material.BLUE_STAINED_GLASS_PANE);
-            } else if (Regen.isAugmented(clicked)) {
-                augmentedOrRegular(player, Regen.createAugmented(), Regen.createRegular(), Material.RED_STAINED_GLASS_PANE);
-            }
+            EffectMapping effect = EffectMapping.fromItem(clicked);
+            Material background;
+            background = switch (effect) {
+                case HEART, AUG_HEART, REGEN, AUG_REGEN, STRENGTH, AUG_STRENGTH, THIEF, AUG_THIEF -> Material.RED_STAINED_GLASS_PANE;
+                case FIRE, AUG_FIRE, HASTE, AUG_HASTE -> Material.ORANGE_STAINED_GLASS_PANE;
+                case THUNDER, AUG_THUNDER -> Material.YELLOW_STAINED_GLASS_PANE;
+                case EMERALD, AUG_EMERALD -> Material.LIME_STAINED_GLASS_PANE;
+                case OCEAN, AUG_OCEAN -> Material.BLUE_STAINED_GLASS_PANE;
+                case FROST, AUG_FROST, SPEED, AUG_SPEED -> Material.LIGHT_BLUE_STAINED_GLASS_PANE;
+                case ENDER, AUG_ENDER -> Material.PURPLE_STAINED_GLASS_PANE;
+                case APOPHIS, AUG_APOPHIS -> Material.MAGENTA_STAINED_GLASS_PANE;
+                case FEATHER, AUG_FEATHER -> Material.WHITE_STAINED_GLASS_PANE;
+                case INVIS, AUG_INVIS -> Material.LIGHT_GRAY_STAINED_GLASS_PANE;
+            };
+
+            augmentedOrRegular(player, effect.augmented().createItem(), effect.regular().createItem(), background);
         }
 
         if (clickedInventory instanceof EffectLevelInventory) {
@@ -78,16 +61,14 @@ public class GUI implements Listener, CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("infuses")) {
-            if (sender instanceof Player player) {
-                openSwordSelectionGUI(player);
-            } else {
-                sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
-            }
+        if (!command.getName().equalsIgnoreCase("infuses")) return false;
 
-            return true;
+        if (sender instanceof Player player) {
+            openSwordSelectionGUI(player);
+        } else {
+            sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
         }
 
-        return false;
+        return true;
     }
 }

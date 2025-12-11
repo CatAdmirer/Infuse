@@ -3,15 +3,13 @@ package com.catadmirer.infuseSMP.Effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
 import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.util.EffectUtil;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -30,8 +28,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -58,10 +54,7 @@ public class Ender implements Listener {
             public void run() {
                 dragonBreathCooldowns.replaceAll((uuid, time) -> time > 0 ? time - 1 : 0);
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    boolean isPrimary = hasEffect(player, "1");
-                    boolean isSecondary = hasEffect(player, "2");
-
-                    if (isPrimary || isSecondary) {
+                    if (EffectMapping.ENDER.hasEffect(player)) {
                         applyGlowingToUntrusted(player);
                     }
 
@@ -144,22 +137,15 @@ public class Ender implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
-        String effectName = Infuse.getInstance().getEffectName("aug_ender");
-        boolean isAugEnder =
-                (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                        ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(ChatColor.stripColor(effectName))) ||
-                        (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(ChatColor.stripColor(effectName)));
+        
+        // Applying cooldowns and durations for the effect
+        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = Infuse.getInstance().getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = Infuse.getInstance().getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
 
-        long featherDefaultCooldown = Infuse.getInstance().getConfig("feather.cooldown.default");
-        long featherAugmentedCooldown = Infuse.getInstance().getConfig("feather.cooldown.augmented");
-        long endCooldown = isAugEnder ? featherAugmentedCooldown : featherDefaultCooldown;
-        long featherDefaultDuration = Infuse.getInstance().getConfig("feather.duration.default");
-        long featherAugmentedDuration = Infuse.getInstance().getConfig("feather.duration.augmented");
-        long endDuration = isAugEnder ? featherAugmentedDuration : featherDefaultDuration;
+        CooldownManager.setDuration(playerUUID, "ender", duration);
+        CooldownManager.setCooldown(playerUUID, "ender", cooldown);
 
-        CooldownManager.setDuration(playerUUID, "ender", endDuration);
-        CooldownManager.setCooldown(playerUUID, "ender", endCooldown);
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         Location startLoc = player.getEyeLocation();
@@ -210,59 +196,13 @@ public class Ender implements Listener {
         }
     }
 
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_ender" : "ender"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_ender" : "ender"));
-            meta.setColor(Color.fromRGB(0x871277));
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 25 : 24);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 24;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 25;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("ender");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_ender");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
     @EventHandler
     public void onUseDragonBreath(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
         Player player = event.getPlayer();
         Action action = event.getAction();
         if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-        boolean isPrimary = hasEffect(player, "1");
-        boolean isSecondary = hasEffect(player, "2");
-        if (isPrimary || isSecondary) {
+        if (EffectMapping.ENDER.hasEffect(player)) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item.getType() != Material.DRAGON_BREATH) return;
 
@@ -329,8 +269,8 @@ public class Ender implements Listener {
     }
 
     public void applyGlowingToUntrusted(Player player) {
-        boolean isPrimary = hasEffect(player, "1");
-        boolean isSecondary = hasEffect(player, "2");
+        if (!EffectMapping.ENDER.hasEffect(player)) return;
+
         double radius = 10;
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
@@ -338,10 +278,8 @@ public class Ender implements Listener {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
             if (!dataManager.isTrusted(nearby, player)) {
-                if (isPrimary || isSecondary) {
-                    if (!nearby.hasPotionEffect(PotionEffectType.GLOWING)) {
-                        nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
-                    }
+                if (!nearby.hasPotionEffect(PotionEffectType.GLOWING)) {
+                    nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
                 }
             }
         }

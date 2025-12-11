@@ -2,13 +2,11 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.EffectUtil;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -21,14 +19,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
-
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
     public Heart(Infuse plugin) {
@@ -43,7 +38,7 @@ public class Heart implements Listener {
                     AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    if (!Heart.this.hasEffect(player, "1") && !Heart.this.hasEffect(player, "2")) continue;
+                    if (!EffectMapping.HEART.hasEffect(player)) continue;
 
                     if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
                 }
@@ -51,48 +46,11 @@ public class Heart implements Listener {
         }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
     }
 
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_heart" : "heart"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_heart" : "heart"));
-            meta.setColor(Color.RED);
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 11 : 10);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 10;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 11;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
-    }
-
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
             if (event.getEntity() instanceof LivingEntity target) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.HEART.hasEffect(player)) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
                     this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -142,7 +100,7 @@ public class Heart implements Listener {
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.HEART.hasEffect(player)) {
             ItemStack item = event.getItem();
             if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
@@ -151,13 +109,6 @@ public class Heart implements Listener {
             }
         }
 
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("heart");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public static void activateSpark(final Player player) {
@@ -171,19 +122,11 @@ public class Heart implements Listener {
                 maxHealthAttribute.setBaseValue(40);
             }
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
-            String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
-            boolean isAugmentedHeart =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).toLowerCase().equalsIgnoreCase(ChatColor.stripColor(effectName2)));
-            long defaultCooldown = Infuse.getInstance().getConfig("heart.cooldown.default");
-            long augmentedCooldown = Infuse.getInstance().getConfig("heart.cooldown.augmented");
-            long cooldown = isAugmentedHeart ? augmentedCooldown : defaultCooldown;
-
-            long defaultDuration = Infuse.getInstance().getConfig("heart.duration.default");
-            long augmentedDuration = Infuse.getInstance().getConfig("heart.duration.augmented");
-            long duration = isAugmentedHeart ? augmentedDuration : defaultDuration;
+            
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);

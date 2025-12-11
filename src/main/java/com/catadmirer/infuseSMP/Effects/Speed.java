@@ -2,9 +2,8 @@ package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.catadmirer.infuseSMP.Particles.Particles;
-import com.catadmirer.infuseSMP.util.EffectUtil;
-import com.catadmirer.infuseSMP.util.MessageUtil;
 import net.md_5.bungee.api.ChatColor;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -23,9 +21,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -43,7 +38,7 @@ public class Speed implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!Speed.this.hasSpeed(p, "1") && !Speed.this.hasSpeed(p, "2")) continue;
+                    if (!EffectMapping.SPEED.hasEffect(p)) continue;
 
                     UUID uuid = p.getUniqueId();
                     long lastHit = Speed.this.lastHitTime.getOrDefault(uuid, 0L);
@@ -61,7 +56,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (this.hasSpeed(player, "1") || this.hasSpeed(player, "2")) {
+            if (EffectMapping.SPEED.hasEffect(player)) {
                 long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
                 double adjustedPullTimeMs = pullTimeMs * 1.8;
@@ -75,7 +70,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (this.hasSpeed(player, "1") || this.hasSpeed(player, "2")) {
+            if (EffectMapping.SPEED.hasEffect(player)) {
                 UUID uuid = player.getUniqueId();
                 long currentTime = System.currentTimeMillis();
                 long lastHit = this.lastHitTime.getOrDefault(uuid, 0L);
@@ -92,43 +87,6 @@ public class Speed implements Listener {
         }
     }
 
-    public static ItemStack createRegular() {
-        return createEffect(false);
-    }
-
-    public static ItemStack createAugmented() {
-        return createEffect(true);
-    }
-
-    public static ItemStack createEffect(boolean augmented) {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName(augmented ? "aug_speed" : "speed"));
-            meta.setLore(Infuse.getInstance().getEffectLore(augmented ? "aug_speed" : "speed"));
-            meta.setColor(Color.AQUA);
-
-            if (augmented) meta.setCustomModelData(999);
-            meta.getPersistentDataContainer().set(Infuse.EFFECT_ID, PersistentDataType.INTEGER, augmented ? 19 : 18);
-
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isRegular(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 18;
-    }
-
-    public static boolean isAugmented(ItemStack item) {
-        return EffectUtil.getIdFromItem(item) == 19;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return isRegular(item) || isAugmented(item);
-    }
-
     public static String applyHexColors(String input) {
         String regex = "(#(?:[0-9a-fA-F]{6}))";
         Pattern pattern = Pattern.compile(regex);
@@ -142,20 +100,6 @@ public class Speed implements Listener {
         matcher.appendTail(result);
 
         return result.toString();
-    }
-
-    private boolean hasSpeed(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffectName("speed");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffectName("speed");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
     public static void activateSpark(final Player player) {
@@ -198,20 +142,13 @@ public class Speed implements Listener {
 
                 ticksPassed[0]++;
             }, 1L, 1L);
-            long defaultDuration = Infuse.getInstance().getConfig("speed.duration.default");;
-            CooldownManager.setDuration(playerUUID, "speed", defaultDuration);
-            String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
 
-            boolean isAugmented =
-                    (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1") != null &&
-                            MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName2))) ||
-                            (Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2") != null &&
-                                    MessageUtil.stripAllColors(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")).equalsIgnoreCase(MessageUtil.stripAllColors(effectName2)));
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
 
-            long defaultCooldown = Infuse.getInstance().getConfig("speed.cooldown.default");;
-            long augmentedCooldown = Infuse.getInstance().getConfig("speed.cooldown.augmented");;
-            long cooldown = isAugmented ? augmentedCooldown : defaultCooldown;
-
+            CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);
         }
     }
