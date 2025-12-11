@@ -3,18 +3,13 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-
 import java.io.File;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +18,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class EquipEffect implements Listener, CommandExecutor {
+public class EquipEffect implements Listener {
     private ApophisManager apophisCommand;
 
     public EquipEffect(ApophisManager apophisCommand) {
@@ -42,24 +37,29 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
     }
 
-    public void drainSecondaryEffect(Player player, ItemStack item, EffectMapping effect) {
-        if (!this.equipEffect(player, effect, "1") && !this.equipEffect(player, effect, "2")) {
+    /**
+     * Forces an effect to be equipped.
+     * Attempts to equip the effect normally, but will drain the secondary effect if the player has two effects equipped already.
+     * 
+     * @param player The player to equip an effect for.
+     * @param effect The effect to equip.
+     */
+    public void forceEquipEffect(Player player, EffectMapping effect) {
+        if (!equipEffect(player, effect, "1") && !equipEffect(player, effect, "2")) {
             player.performCommand("rdrain");
-            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugins()[0], () -> this.equipEffect(player, effect, "2"), 1L);
+            equipEffect(player, effect, "2");
         }
-
     }
 
-    private boolean equipEffect(Player player, EffectMapping effect, String type) {
-        EffectMapping currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+    private boolean equipEffect(Player player, EffectMapping effect, String slot) {
+        EffectMapping currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) return false;
 
-        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), type, effect);
+        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), slot, effect);
 
         String effectName = effect.getName();
         effectName = applyHexColors(effectName);
         player.sendMessage("§aYou have equipped " + effectName);
-        this.consumeMainHandItem(player);
         return true;
     }
 
@@ -81,16 +81,16 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-        if (mainHandItem != null && mainHandItem.getType() != Material.AIR) {
-            EffectMapping effect = EffectMapping.fromItem(mainHandItem);
+        ItemStack effectItem = event.getItem();
+        if (effectItem != null && effectItem.getType() != Material.AIR) {
+            EffectMapping effect = EffectMapping.fromItem(effectItem);
             if (effect != null) {
                 if (player.getInventory().firstEmpty() == -1) {
                     event.setCancelled(true);
                     player.sendMessage("§cYour inventory is full! Make space before unequipping.");
                 } else {
-                    this.drainSecondaryEffect(player, mainHandItem, effect);
-                    this.consumeMainHandItem(player);
+                    this.forceEquipEffect(player, effect);
+                    effectItem.subtract(1);
                     String effectName = effect.getKey();
                     if (effectName.equalsIgnoreCase("§5Apohpis Effect") ||
                             effectName.equalsIgnoreCase("§5Augmented Apohpis Effect")) {
@@ -102,44 +102,29 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
     }
 
-    private void consumeMainHandItem(Player player) {
-        Bukkit.getScheduler().runTaskLater(Infuse.getInstance(), () -> {
-            ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-            if (mainHandItem != null && mainHandItem.getType() != Material.AIR) {
-                if (mainHandItem.getAmount() > 1) {
-                    mainHandItem.setAmount(mainHandItem.getAmount() - 1);
-                } else {
-                    player.getInventory().setItemInMainHand((ItemStack)null);
-                }
-
-            }
-        }, 1L);
-    }
-
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
         EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
         String dropMode = Infuse.getInstance().getConfig().getString("effect_drops", "random");
-        Random rand = new Random();
         switch (dropMode.toLowerCase()) {
             case "1":
-                if (effect1 != null) this.dropEffectOnDeath(player, "1");
+                if (effect1 != null) event.getDrops().add(effect1.createItem());
                 break;
             case "2":
-                if (effect2 != null) this.dropEffectOnDeath(player, "2");
+                if (effect2 != null) event.getDrops().add(effect2.createItem());;
                 break;
             case "none":
                 break;
             case "random":
                 if (effect1 != null && effect2 != null) {
-                    String selectedEffect = rand.nextBoolean() ? "1" : "2";
-                    this.dropEffectOnDeath(player, selectedEffect);
+                    EffectMapping selected = new Random().nextBoolean() ? effect1 : effect2;
+                    event.getDrops().add(selected.createItem());
                 } else if (effect1 != null) {
-                    this.dropEffectOnDeath(player, "1");
+                    event.getDrops().add(effect1.createItem());
                 } else if (effect2 != null) {
-                    this.dropEffectOnDeath(player, "2");
+                    event.getDrops().add(effect2.createItem());
                 }
                 break;
             default:
@@ -157,7 +142,7 @@ public class EquipEffect implements Listener, CommandExecutor {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void apophisDisguiseOnJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "AphopisPlayers/" + player.getUniqueId() + ".yml");
         if (disguiseFile.exists()) {
@@ -165,31 +150,5 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
     }
 
-    private void dropEffectOnDeath(Player player, String type) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (effect == null) return;
-        Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), type);
-
-        ItemStack item = effect.createItem();
-        player.getWorld().dropItemNaturally(player.getLocation(), item);
-    }
-
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
-            return true;
-        } else {
-            EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-            EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-            if (effect1 == null && effect2 == null) {
-                player.sendMessage("§cYou do not have any effects equipped to swap.");
-                return true;
-            } else {
-                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
-                Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
-                player.sendMessage("§aYour Effects have been swapped.");
-                return true;
-            }
-        }
-    }
+    
 }

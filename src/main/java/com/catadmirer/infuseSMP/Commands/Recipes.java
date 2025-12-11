@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -62,6 +62,7 @@ public class Recipes implements CommandExecutor, Listener {
         return potionItem;
     }
 
+    @Nullable
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
             case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
@@ -174,12 +175,13 @@ public class Recipes implements CommandExecutor, Listener {
         player.openInventory(recipeGui);
     }
 
-    private String getPotionKeyFromItem(ItemStack item) {
+    @Nullable
+    private String getPotionKeyFromItem(@Nullable ItemStack item) {
         return switch (EffectMapping.fromItem(item)) {
             case APOPHIS, AUG_APOPHIS -> "apophis";
             case EMERALD, AUG_EMERALD -> "emerald";
-            case ENDER -> "end_second";
             case AUG_ENDER -> "end_first";
+            case ENDER -> "end_second";
             case FEATHER, AUG_FEATHER -> "feather";
             case FIRE, AUG_FIRE -> "fire";
             case FROST, AUG_FROST -> "frost";

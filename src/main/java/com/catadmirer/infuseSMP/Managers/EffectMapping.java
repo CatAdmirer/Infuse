@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum EffectMapping {
@@ -193,6 +194,7 @@ public enum EffectMapping {
      * 
      * @return An {@link ItemStack} instance for a player to use to get an effect.
      */
+    @NotNull
     public ItemStack createItem() {
         ItemStack effectItem = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effectItem.getItemMeta();

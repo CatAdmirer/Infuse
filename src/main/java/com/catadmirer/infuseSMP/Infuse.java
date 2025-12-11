@@ -95,7 +95,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.dataManager = new DataManager(getDataFolder());
 
         // Getting the abilities handler
-        this.abilitiesHandler = new Abilities(dataManager, this);
+        this.abilitiesHandler = new Abilities(this);
 
         // Initializing PacketEvents and its listeners
         PacketEvents.getAPI().init();
@@ -306,7 +306,7 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("trust").setExecutor(new TrustCommand(this, dataManager));
         getCommand("untrust").setExecutor(new TrustCommand(this, dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
-        getCommand("swap").setExecutor(new EquipEffect(apophisCommand));
+        getCommand("swap").setExecutor(new SwapEffects());
         getCommand("infuse").setExecutor(new InfuseCommand());
         getCommand("infuse").setTabCompleter(new InfuseCommand());
         getCommand("ldrain").setExecutor(new DrainCommand(this, apophisCommand));

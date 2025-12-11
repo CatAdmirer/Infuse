@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
@@ -15,11 +14,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
-
     private ApophisManager apophisCommand;
 
     public DrainCommand(Infuse plugin, ApophisManager apophisCommand) {
@@ -34,61 +31,59 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
+        // Getting the slot to drain based on the command used.  Accepts /ldrain or /rdrain
         String slot;
-        if (label.contains("rdrain")) {
-            slot = "2";
-        } else if (label.contains("ldrain")) {
-            slot = "1";
-        } else {
-            String msg = plugin.getMessages().getString("withdraw_invalid",
-                    "&cInvalid usage. Use /rdrain or /ldrain");
+        if (label.contains("ldrain")) slot = "1";
+        else if (label.contains("rdrain")) slot = "2";
+        else {
+            String msg = plugin.getMessages().getString("withdraw_invalid", "&cInvalid usage. Use /rdrain or /ldrain");
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
+        // Getting the mapping from the slot
         EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+
+        // Handling an invalid or empty mapping
         if (effect == null) {
-            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an Effect equipped in slot %slot%.");
+            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an effect equipped in slot %slot%.");
             msg = msg.replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
-        String effectName = effect.getName();
+        // Making sure the player has inventory space for the drained item.
+        if (player.getInventory().firstEmpty() == -1) {
+            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
+            return true;
+        }
+    
+        // Resetting the player's health
+        // TODO: Make this work better.  It will conflict with other health-managing plugins.
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
 
-        if (ChatColor.stripColor(effectName).equalsIgnoreCase("Apohpis Effect") || ChatColor.stripColor(effectName).equalsIgnoreCase("Augmented Apohpis Effect")) {
+        // Handling special apophis effects
+        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
             Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-            player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
             ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);
             apophisCommand.unsetApophis(Bukkit.getConsoleSender(), player.getName());
             return true;
         }
 
-        if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
-            return true;
-        }
-
+        // Removing the effect from the player
         Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-        String currentEffectColored = applyHexColors(effectName);
+        String currentEffectColored = applyHexColors(effect.getName());
         player.sendMessage("§aYou have drained your: " + currentEffectColored);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-                ItemStack glitchItem = effect.createItem();
-                if (glitchItem != null) {
-                    player.getInventory().addItem(glitchItem);
-                }
-            }
-        }.runTaskLater(this.plugin, 10L);
+        // Giving the player the effect item.
+        ItemStack item = effect.createItem();
+        player.getInventory().addItem(item);
 
         return true;
     }
 
-
+    // TODO: Remove this in favor of components
     public static String applyHexColors(String input) {
         String regex = "(#(?:[0-9a-fA-F]{6}))";
         Pattern pattern = Pattern.compile(regex);

@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.inventories.EffectInventory;
 import com.catadmirer.infuseSMP.inventories.EffectLevelInventory;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -20,10 +19,6 @@ import org.bukkit.inventory.ItemStack;
 public class GUI implements Listener, CommandExecutor {
     public static void openSwordSelectionGUI(Player player) {
         player.openInventory(new EffectInventory().getInventory());
-    }
-
-    private void augmentedOrRegular(Player player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
-        player.openInventory(new EffectLevelInventory(augmented, regular, backgroundColor).getInventory());
     }
 
     @EventHandler
@@ -51,7 +46,7 @@ public class GUI implements Listener, CommandExecutor {
                 case INVIS, AUG_INVIS -> Material.LIGHT_GRAY_STAINED_GLASS_PANE;
             };
 
-            augmentedOrRegular(player, effect.augmented().createItem(), effect.regular().createItem(), background);
+            player.openInventory(new EffectLevelInventory(effect.regular().createItem(), effect.augmented().createItem(), background).getInventory());
         }
 
         if (clickedInventory instanceof EffectLevelInventory) {
