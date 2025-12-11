@@ -1,10 +1,10 @@
-package com.catadmirer.infuseSMP.ExtraEffects;
+package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
-import com.catadmirer.infuseSMP.Particles.Particles;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.particles.Particles;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListener;

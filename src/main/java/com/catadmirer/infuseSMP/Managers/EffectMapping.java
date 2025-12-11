@@ -1,8 +1,9 @@
-package com.catadmirer.infuseSMP.Managers;
+package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.ExtraEffects.*;
+import com.catadmirer.infuseSMP.effects.*;
+import com.catadmirer.infuseSMP.extraeffects.*;
+
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;

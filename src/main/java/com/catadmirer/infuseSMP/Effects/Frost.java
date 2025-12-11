@@ -1,9 +1,10 @@
-package com.catadmirer.infuseSMP.Effects;
+package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;

@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.Placeholders;
+package com.catadmirer.infuseSMP.placeholders;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

@@ -1,7 +1,7 @@
-package com.catadmirer.infuseSMP.Inventories;
+package com.catadmirer.infuseSMP.inventories;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;

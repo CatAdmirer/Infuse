@@ -1,7 +1,8 @@
-package com.catadmirer.infuseSMP.Particles;
+package com.catadmirer.infuseSMP.particles;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

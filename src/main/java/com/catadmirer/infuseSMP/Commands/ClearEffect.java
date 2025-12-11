@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.Commands;
+package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import org.bukkit.Bukkit;

@@ -1,8 +1,9 @@
-package com.catadmirer.infuseSMP.Commands;
+package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.ApophisManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.ApophisManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.io.File;
 import java.util.List;
 import java.util.Random;

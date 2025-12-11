@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.Managers;
+package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.destroystokyo.paper.profile.PlayerProfile;

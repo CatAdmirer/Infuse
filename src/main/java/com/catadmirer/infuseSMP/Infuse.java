@@ -1,12 +1,12 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.Commands.*;
-import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
-import com.catadmirer.infuseSMP.ExtraEffects.Thief;
-import com.catadmirer.infuseSMP.Managers.*;
-import com.catadmirer.infuseSMP.Particles.Particles;
-import com.catadmirer.infuseSMP.Placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.commands.*;
+import com.catadmirer.infuseSMP.effects.*;
+import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.extraeffects.Thief;
+import com.catadmirer.infuseSMP.managers.*;
+import com.catadmirer.infuseSMP.particles.Particles;
+import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;

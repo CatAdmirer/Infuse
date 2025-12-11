@@ -1,8 +1,9 @@
-package com.catadmirer.infuseSMP.Commands;
+package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.ApophisManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.ApophisManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;

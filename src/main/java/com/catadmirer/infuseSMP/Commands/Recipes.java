@@ -1,9 +1,10 @@
-package com.catadmirer.infuseSMP.Commands;
+package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Inventories.RecipeGUI;
-import com.catadmirer.infuseSMP.Inventories.RecipeListGUI;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.inventories.RecipeGUI;
+import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;

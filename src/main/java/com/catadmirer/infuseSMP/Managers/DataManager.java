@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.Managers;
+package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;

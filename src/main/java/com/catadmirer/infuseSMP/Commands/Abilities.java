@@ -1,11 +1,12 @@
-package com.catadmirer.infuseSMP.Commands;
+package com.catadmirer.infuseSMP.commands;
 
-import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
-import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Effects.*;
-import com.catadmirer.infuseSMP.Managers.DataManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.*;
+import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.extraeffects.Thief;
+import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;

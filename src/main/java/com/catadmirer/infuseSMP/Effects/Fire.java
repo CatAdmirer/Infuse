@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.Effects;
+package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Managers.CooldownManager;
-import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.github.retrooper.packetevents.event.PacketListener;
 import java.util.HashMap;
 import java.util.Map;

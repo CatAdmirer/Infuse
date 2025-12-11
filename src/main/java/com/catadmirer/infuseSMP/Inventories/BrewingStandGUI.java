@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.Inventories;
+package com.catadmirer.infuseSMP.inventories;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

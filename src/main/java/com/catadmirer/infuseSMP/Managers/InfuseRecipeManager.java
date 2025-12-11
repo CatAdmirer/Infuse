@@ -1,7 +1,8 @@
-package com.catadmirer.infuseSMP.Managers;
+package com.catadmirer.infuseSMP.managers;
 
-import com.catadmirer.infuseSMP.Inventories.BrewingStandGUI;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.inventories.BrewingStandGUI;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
