@@ -235,11 +235,6 @@ public class Emerald implements Listener {
 
             CooldownManager.setDuration(playerUUID, "emerald", duration);
             CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
-
-            (new BukkitRunnable() {
-                public void run() {
-                }
-            }).runTaskLater(Infuse.getInstance(), 600L);
         }
     }
 
