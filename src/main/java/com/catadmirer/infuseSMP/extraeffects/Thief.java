@@ -318,7 +318,7 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-        final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
         for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
             if (entity instanceof LivingEntity && entity != player) {
                 entity.setFireTicks(100);
@@ -335,7 +335,7 @@ public class Thief implements Listener {
             maxHealthAttribute.setBaseValue(40.0);
         }
 
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         
         String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
@@ -533,7 +533,7 @@ public class Thief implements Listener {
                     && player.getWorld().equals(world)
                     && player.getLocation().distance(center) <= radius) {
                 affectedPlayers.add(player);
-                AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
+                AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
                 if (jumpAttribute != null) {
                     jumpAttribute.setBaseValue(0.1);
                 }
@@ -544,7 +544,7 @@ public class Thief implements Listener {
         new BukkitRunnable() {
             public void run() {
                 for (Player player : affectedPlayers) {
-                    AttributeInstance jumpAttribute = player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH);
+                    AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
                     if (jumpAttribute != null) {
                         jumpAttribute.setBaseValue(0.42);
                     }
@@ -628,11 +628,11 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-        final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (maxHealthAttribute != null) {
             maxHealthAttribute.setBaseValue(40.0);
         }
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         
         String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||

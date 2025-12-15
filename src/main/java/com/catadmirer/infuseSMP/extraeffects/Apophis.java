@@ -65,7 +65,7 @@ public class Apophis implements Listener {
         final Player player = event.getPlayer();
         (new BukkitRunnable() {
             public void run() {
-                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                 if (maxHealthAttribute != null) {
                     maxHealthAttribute.setBaseValue(20.0);
                 }
@@ -78,7 +78,7 @@ public class Apophis implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
@@ -159,7 +159,7 @@ public class Apophis implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             for (Entity entity : player.getNearbyEntities(5.0, 5.0, 5.0)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
@@ -186,7 +186,7 @@ public class Apophis implements Listener {
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
 
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             (new BukkitRunnable() {
                 public void run() {

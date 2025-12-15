@@ -19,6 +19,9 @@ import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 
@@ -41,9 +44,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
@@ -427,7 +427,7 @@ public class Infuse extends JavaPlugin implements Listener {
         final Player player = event.getPlayer();
         (new BukkitRunnable() {
             public void run() {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
                 player.setHealth(20);
             }
         }).runTaskLater(this, 10L);
@@ -534,12 +534,12 @@ public class Infuse extends JavaPlugin implements Listener {
                     return;
                 }
 
-                JSONParser parser = new JSONParser();
-                JSONArray versions = (JSONArray) parser.parse(new InputStreamReader(connection.getInputStream()));
-                if (versions.isEmpty()) return;
+                Gson gson = new Gson();
+                JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
+                if (versions.size() == 0) return;
 
-                JSONObject latest = (JSONObject) versions.get(0);
-                String latestVersion = (String) latest.get("version_number");
+                JsonObject latest = versions.get(0).getAsJsonObject();
+                String latestVersion = latest.get("version_number").getAsString();
 
                 if (!latestVersion.equalsIgnoreCase(currentVersion)) {
                     String updateMessage = "A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp";
@@ -572,13 +572,13 @@ public class Infuse extends JavaPlugin implements Listener {
                 player.sendMessage("Could not check for updates: HTTP " + connection.getResponseCode());
                 return;
             }
+            
+            Gson gson = new Gson();
+            JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
+            if (versions.size() == 0) return;
 
-            JSONParser parser = new JSONParser();
-            JSONArray versions = (JSONArray) parser.parse(new InputStreamReader(connection.getInputStream()));
-            if (versions.isEmpty()) return;
-
-            JSONObject latest = (JSONObject) versions.get(0);
-            String latestVersion = (String) latest.get("version_number");
+            JsonObject latest = versions.get(0).getAsJsonObject();
+            String latestVersion = latest.get("version_number").getAsString();
 
             if (!latestVersion.equalsIgnoreCase(currentVersion)) {
                 String updateMessage = ChatColor.LIGHT_PURPLE + "[Infuse] " + ChatColor.GREEN + "A new version (" + latestVersion + ") is available! "

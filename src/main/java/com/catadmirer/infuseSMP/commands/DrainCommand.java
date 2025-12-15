@@ -75,7 +75,7 @@ public class DrainCommand implements CommandExecutor, Listener {
             if (task.isCancelled()) return;
 
             // Resetting the player's max health
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
 
             // Getting the drained effect.
             EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
