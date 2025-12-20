@@ -81,8 +81,8 @@ public class Regen implements Listener {
 
     private boolean hasRegenEquipped(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("regen");
-        String effectName2 = plugin.getEffect("aug_regen");
+        String effectName = Infuse.getInstance().getEffectName("regen");
+        String effectName2 = plugin.getEffectName("aug_regen");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -99,7 +99,7 @@ public class Regen implements Listener {
     public static void activateSpark(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_regen").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_regen").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -118,7 +118,7 @@ public class Regen implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("regen");
+            String effectName = Infuse.getInstance().getEffectName("regen");
             meta.setDisplayName(effectName);
             meta.setColor(Color.RED);
             List<String> lore = Infuse.getInstance().getEffectLore("regen");

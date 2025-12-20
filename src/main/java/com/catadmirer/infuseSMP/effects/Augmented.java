@@ -32,7 +32,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_emerald");
+            String effectName = Infuse.getInstance().getEffectName("aug_emerald");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_emerald");
             meta.setColor(Color.LIME);
@@ -48,7 +48,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_thief");
+            String effectName = Infuse.getInstance().getEffectName("aug_thief");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thief");
             meta.setColor(Color.RED);
@@ -64,7 +64,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_feather");
+            String effectName = Infuse.getInstance().getEffectName("aug_feather");
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_feather"));
@@ -85,7 +85,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_fire");
+            String effectName = Infuse.getInstance().getEffectName("aug_fire");
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("aug_fire"));
@@ -107,7 +107,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_ender");
+            String effectName = Infuse.getInstance().getEffectName("aug_ender");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ender");
             meta.setColor(Color.fromRGB(0x871277));
@@ -123,7 +123,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName2 = Infuse.getInstance().getEffect("aug_apophis");
+            String effectName2 = Infuse.getInstance().getEffectName("aug_apophis");
             meta.setDisplayName(effectName2);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_apophis");
             meta.setColor(Color.fromRGB(0x45033E));
@@ -139,7 +139,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_frost");
+            String effectName = Infuse.getInstance().getEffectName("aug_frost");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_frost");
             meta.setColor(Color.AQUA);
@@ -155,7 +155,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_haste");
+            String effectName = Infuse.getInstance().getEffectName("aug_haste");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_haste");
             meta.setColor(Color.fromRGB(0xFFCC33));
@@ -171,7 +171,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_heart");
+            String effectName = Infuse.getInstance().getEffectName("aug_heart");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_heart");
             meta.setColor(Color.RED);
@@ -187,7 +187,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_invis");
+            String effectName = Infuse.getInstance().getEffectName("aug_invis");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_invis");
             meta.setColor(Color.fromRGB(0xCC33FF));
@@ -203,7 +203,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_ocean");
+            String effectName = Infuse.getInstance().getEffectName("aug_ocean");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_ocean");
             meta.setColor(Color.BLUE);
@@ -219,7 +219,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_regen");
+            String effectName = Infuse.getInstance().getEffectName("aug_regen");
             meta.setDisplayName(effectName);
             meta.setColor(Color.RED);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_regen");
@@ -236,7 +236,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_speed");
+            String effectName = Infuse.getInstance().getEffectName("aug_speed");
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             meta.setColor(Color.AQUA);
@@ -257,7 +257,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_strength");
+            String effectName = Infuse.getInstance().getEffectName("aug_strength");
             meta.setDisplayName(effectName);
             meta.setColor(Color.fromRGB(0x8B0000));
             List<String> lore = Infuse.getInstance().getEffectLore("aug_strength");
@@ -273,7 +273,7 @@ public class Augmented {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("aug_thunder");
+            String effectName = Infuse.getInstance().getEffectName("aug_thunder");
             meta.setDisplayName(effectName);
             meta.setColor(Color.YELLOW);
             List<String> lore = Infuse.getInstance().getEffectLore("aug_thunder");
@@ -286,80 +286,80 @@ public class Augmented {
     }
 
     public static boolean isStrength(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_strength");
+        String effectName = Infuse.getInstance().getEffectName("aug_strength");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isHeart(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_heart");
+        String effectName = Infuse.getInstance().getEffectName("aug_heart");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isRegen(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_regen");
+        String effectName = Infuse.getInstance().getEffectName("aug_regen");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isInvis(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_invis");
+        String effectName = Infuse.getInstance().getEffectName("aug_invis");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isEmerald(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_emerald");
+        String effectName = Infuse.getInstance().getEffectName("aug_emerald");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isEnder(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_ender");
+        String effectName = Infuse.getInstance().getEffectName("aug_ender");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isSpeed(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_speed");
+        String effectName = Infuse.getInstance().getEffectName("aug_speed");
         effectName = applyHexColors(effectName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isHaste(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_haste");
+        String effectName = Infuse.getInstance().getEffectName("aug_haste");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFeather(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_feather");
+        String effectName = Infuse.getInstance().getEffectName("aug_feather");
         effectName = applyHexColors(effectName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isOcean(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_ocean");
+        String effectName = Infuse.getInstance().getEffectName("aug_ocean");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFrost(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_frost");
+        String effectName = Infuse.getInstance().getEffectName("aug_frost");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isFire(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_fire");
+        String effectName = Infuse.getInstance().getEffectName("aug_fire");
         effectName = applyHexColors(effectName);
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isThunder(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_thunder");
+        String effectName = Infuse.getInstance().getEffectName("aug_thunder");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isApophis(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_apophis");
+        String effectName = Infuse.getInstance().getEffectName("aug_apophis");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     public static boolean isThief(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("aug_thief");
+        String effectName = Infuse.getInstance().getEffectName("aug_thief");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 }

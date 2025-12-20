@@ -61,7 +61,7 @@ public class Heart implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("heart");
+            String effectName = Infuse.getInstance().getEffectName("heart");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("heart");
             meta.setColor(Color.RED);
@@ -74,7 +74,7 @@ public class Heart implements Listener {
     }
 
     public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("heart");
+        String effectName = Infuse.getInstance().getEffectName("heart");
         if (item != null && item.getType() == Material.POTION) {
             ItemMeta meta = item.getItemMeta();
             return meta != null && meta.getDisplayName().equals(effectName) && meta.getCustomModelData() == 6;
@@ -171,8 +171,8 @@ public class Heart implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("heart");
-        String effectName2 = Infuse.getInstance().getEffect("aug_heart");
+        String effectName = Infuse.getInstance().getEffectName("heart");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -188,7 +188,7 @@ public class Heart implements Listener {
             }
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_heart").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_heart").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

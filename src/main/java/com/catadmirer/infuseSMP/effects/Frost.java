@@ -64,7 +64,7 @@ public class Frost implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("frost");
+            String effectName = Infuse.getInstance().getEffectName("frost");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("frost");
             meta.setColor(Color.AQUA);
@@ -176,8 +176,8 @@ public class Frost implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("frost");
-        String effectName2 = Infuse.getInstance().getEffect("aug_frost");
+        String effectName = Infuse.getInstance().getEffectName("frost");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_frost");
         return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
     }
 
@@ -188,7 +188,7 @@ public class Frost implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_frost").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_frost").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

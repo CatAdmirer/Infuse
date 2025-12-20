@@ -63,7 +63,7 @@ public class Invisibility implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("invis");
+            String effectName = Infuse.getInstance().getEffectName("invis");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("invis");
             meta.setColor(Color.fromRGB(0xCC33FF));
@@ -179,8 +179,8 @@ public class Invisibility implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName2 = Infuse.getInstance().getEffect("aug_invis");
-        String effectName = Infuse.getInstance().getEffect("invis");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_invis");
+        String effectName = Infuse.getInstance().getEffectName("invis");
         return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
@@ -189,7 +189,7 @@ public class Invisibility implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_invis").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_invis").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

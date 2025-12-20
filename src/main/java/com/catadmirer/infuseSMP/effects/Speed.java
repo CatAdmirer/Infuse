@@ -107,7 +107,7 @@ public class Speed implements Listener {
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
 
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("speed");
+            String effectName = Infuse.getInstance().getEffectName("speed");
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             meta.setColor(Color.AQUA);
@@ -140,8 +140,8 @@ public class Speed implements Listener {
     }
 
     private boolean hasSpeed(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffect("speed");
-        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String effectName = Infuse.getInstance().getEffectName("speed");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
@@ -167,8 +167,8 @@ public class Speed implements Listener {
     }
 
     private boolean hasEffect(Player player, String tier) {
-        String effectName = Infuse.getInstance().getEffect("speed");
-        String effectName2 = Infuse.getInstance().getEffect("aug_speed");
+        String effectName = Infuse.getInstance().getEffectName("speed");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_speed");
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
@@ -214,7 +214,7 @@ public class Speed implements Listener {
                 ticksPassed[0]++;
             }, 1L, 1L);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_speed").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_speed").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

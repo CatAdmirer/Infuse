@@ -72,7 +72,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
-                String name = Infuse.getInstance().getEffect(effectKey);
+                String name = Infuse.getInstance().getEffectName(effectKey);
                 String effectName = Infuse.getInstance().stripAllColors(name);
                 ChatColor color = EffectMaps.getColorEffect(effectKey);
                 target.sendMessage(color + "You received the " + effectName);
@@ -103,7 +103,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
                 
                 // Getting the string to put in storage.
-                String effect = Infuse.getInstance().getEffect(effectKey);
+                String effect = Infuse.getInstance().getEffectName(effectKey);
 
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];

@@ -90,7 +90,7 @@ public class Thief implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "thief")) {
             active.add(playerUUID);
 
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -182,7 +182,7 @@ public class Thief implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("thief");
+            String effectName = Infuse.getInstance().getEffectName("thief");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("thief");
             meta.setColor(Color.RED);
@@ -195,14 +195,14 @@ public class Thief implements Listener {
     }
 
     public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("thief");
+        String effectName = Infuse.getInstance().getEffectName("thief");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName2 = Infuse.getInstance().getEffect("aug_thief");
-        String effectName = Infuse.getInstance().getEffect("thief");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_thief");
+        String effectName = Infuse.getInstance().getEffectName("thief");
         return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
@@ -337,7 +337,7 @@ public class Thief implements Listener {
 
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -394,7 +394,7 @@ public class Thief implements Listener {
     public void activateEnder(Player player) {
         UUID playerUUID = player.getUniqueId();
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -446,7 +446,7 @@ public class Thief implements Listener {
         this.activeSparks.add(playerUUID);
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -493,7 +493,7 @@ public class Thief implements Listener {
     public void activateRegen(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -511,7 +511,7 @@ public class Thief implements Listener {
     public void activateFrost(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -558,7 +558,7 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -596,7 +596,7 @@ public class Thief implements Listener {
             }
         }.runTaskLater(this.plugin, 10L);
 
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -634,7 +634,7 @@ public class Thief implements Listener {
         }
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -658,7 +658,7 @@ public class Thief implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -687,7 +687,7 @@ public class Thief implements Listener {
             }
         }.runTaskLater(this.plugin, 20L);
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -744,7 +744,7 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "aug_thief")) {
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                     augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -822,7 +822,7 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -842,7 +842,7 @@ public class Thief implements Listener {
         final double radius = 5.0;
         final World world = caster.getWorld();
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -897,7 +897,7 @@ public class Thief implements Listener {
         UUID playerUUID = caster.getUniqueId();
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_thief").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_thief").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

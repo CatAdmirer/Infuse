@@ -217,7 +217,7 @@ public class Infuse extends JavaPlugin implements Listener {
         return (T) settings.get(key);
     }
 
-    public String getEffect(String key) {
+    public String getEffectName(String key) {
         return effects.getOrDefault(key, "§cUnknown Effect");
     }
 

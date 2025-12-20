@@ -252,7 +252,7 @@ public class Feather implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-            String effectName = Infuse.getInstance().getEffect("aug_feather");
+            String effectName = Infuse.getInstance().getEffectName("aug_feather");
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             AlsoParticles.spawnEffect(player, Color.fromRGB(0xBEA3CA));
             Vector dashDirection = player.getEyeLocation().getDirection().normalize();
@@ -260,7 +260,7 @@ public class Feather implements Listener {
             player.setVelocity(launchVector);
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_feather").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_feather").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

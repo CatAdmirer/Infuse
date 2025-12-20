@@ -69,7 +69,7 @@ public class Emerald implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("emerald");
+            String effectName = Infuse.getInstance().getEffectName("emerald");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("emerald");
             meta.setColor(Color.LIME);
@@ -87,8 +87,8 @@ public class Emerald implements Listener {
 
     public static boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("emerald");
-        String effectName2 = Infuse.getInstance().getEffect("aug_emerald");
+        String effectName = Infuse.getInstance().getEffectName("emerald");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_emerald");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -226,7 +226,7 @@ public class Emerald implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_emerald").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_emerald").toLowerCase());
             boolean isAugmented = augmentedName.equalsIgnoreCase(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))) ||
                                   augmentedName.equalsIgnoreCase(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")));
 

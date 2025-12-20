@@ -58,7 +58,7 @@ public class Fire implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("fire");
+            String effectName = Infuse.getInstance().getEffectName("fire");
             effectName = applyHexColors(effectName);
             meta.setDisplayName(effectName);
             List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("fire"));
@@ -126,8 +126,8 @@ public class Fire implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("fire");
-        String effectName2 = Infuse.getInstance().getEffect("aug_fire");
+        String effectName = Infuse.getInstance().getEffectName("fire");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -213,7 +213,7 @@ public class Fire implements Listener {
                 }
             }.runTaskLater(plugin, 20L);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_fire").toLowerCase());
+            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_fire").toLowerCase());
             boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                   augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 

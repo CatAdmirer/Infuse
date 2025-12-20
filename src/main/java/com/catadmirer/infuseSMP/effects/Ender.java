@@ -77,7 +77,7 @@ public class Ender implements Listener {
     }
 
     public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffect("ender");
+        String effectName = Infuse.getInstance().getEffectName("ender");
         return item != null && item.getType() == Material.POTION && item.getItemMeta().getDisplayName().equals(effectName);
     }
 
@@ -172,7 +172,7 @@ public class Ender implements Listener {
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
-        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_ender").toLowerCase());
+        String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_ender").toLowerCase());
         boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
                                 augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
 
@@ -234,8 +234,8 @@ public class Ender implements Listener {
 
     private boolean hasEffect(Player player, String tier) {
         String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffect("ender");
-        String effectName2 = Infuse.getInstance().getEffect("aug_ender");
+        String effectName = Infuse.getInstance().getEffectName("ender");
+        String effectName2 = Infuse.getInstance().getEffectName("aug_ender");
         return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
     }
 
@@ -243,7 +243,7 @@ public class Ender implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffect("ender");
+            String effectName = Infuse.getInstance().getEffectName("ender");
             meta.setDisplayName(effectName);
             List<String> lore = Infuse.getInstance().getEffectLore("ender");
             meta.setColor(Color.fromRGB(0x871277));
