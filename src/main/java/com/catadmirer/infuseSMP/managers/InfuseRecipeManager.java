@@ -18,7 +18,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -281,7 +280,7 @@ public class InfuseRecipeManager implements Listener {
 
 
         new BukkitRunnable() {
-            double progress = 1.0;
+            double progress = 1;
             final double progressDecrement = 1.0 / (ritualDuration * 20);
 
             public void run() {
@@ -298,7 +297,7 @@ public class InfuseRecipeManager implements Listener {
                     activeBossBar.setProgress(progress);
                 }
             }
-        }.runTaskTimer(this.plugin, 0L, 1L);
+        }.runTaskTimer(this.plugin, 0, 1);
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
@@ -611,7 +610,7 @@ public class InfuseRecipeManager implements Listener {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);
-                
+
                 player.openInventory(new StationSelectionMenu().getInventory());
             } else {
                 player.openWorkbench(null, true);

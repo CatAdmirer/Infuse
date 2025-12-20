@@ -32,6 +32,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -47,7 +48,7 @@ public class Emerald implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!Emerald.this.hasEffect(onlinePlayer, "1") && !Emerald.this.hasEffect(onlinePlayer, "2")) continue;
+                    if (!hasEffect(onlinePlayer)) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Emerald.this.applyPassiveEffects(onlinePlayer);
@@ -103,7 +104,7 @@ public class Emerald implements Listener {
     @EventHandler
     public void onPlayerExpChange(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (hasEffect(player)) {
             double multiplier = 1.5;
             PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
             if (heroEffect != null && heroEffect.getAmplifier() >= 200) {
@@ -175,7 +176,7 @@ public class Emerald implements Listener {
             final Player player = event.getPlayer();
             ItemStack consumedItem = event.getItem();
             int originalCount = consumedItem.getAmount();
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (hasEffect(player)) {
                 if (consumedItem.getType() == Material.POTION) {
                     return;
                 }
@@ -204,8 +205,8 @@ public class Emerald implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
+            boolean isPrimary = hasEffect(player, "1");
+            boolean isSecondary = hasEffect(player, "2");
             if (!CooldownManager.isOnCooldown(playerUUID, "emerald")) {
                 if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
                     if (CooldownManager.isOnCooldown(playerUUID, "emerald")) {
@@ -213,9 +214,8 @@ public class Emerald implements Listener {
                     }
 
                     event.setCancelled(true);
-                    this.activateSpark(player);
+                    activateSpark(player);
                 }
-
             }
         }
     }
@@ -227,8 +227,8 @@ public class Emerald implements Listener {
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
             String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffect("aug_emerald").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+            boolean isAugmented = augmentedName.equalsIgnoreCase(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1"))) ||
+                                  augmentedName.equalsIgnoreCase(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2")));
 
             long cooldown = Infuse.getInstance().getConfig(isAugmented ? "emerald.cooldown.augmented" : "emerald.cooldown.default");
             long duration = Infuse.getInstance().getConfig(isAugmented ? "emerald.duration.augmented" : "emerald.duration.default");
