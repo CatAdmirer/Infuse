@@ -1,11 +1,14 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.*;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import net.md_5.bungee.api.ChatColor;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -243,11 +246,9 @@ public class Ender implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("ender");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("ender");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("ender"));
+            meta.setLore(Infuse.getInstance().getEffectLore("ender"));
             meta.setColor(Color.fromRGB(0x871277));
-            meta.setLore(lore);
             meta.setCustomModelData(25);
             effect.setItemMeta(meta);
         }

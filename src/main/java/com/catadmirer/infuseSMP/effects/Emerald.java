@@ -32,7 +32,6 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -69,11 +68,9 @@ public class Emerald implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("emerald");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("emerald");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("emerald"));
+            meta.setLore(Infuse.getInstance().getEffectLore("emerald"));
             meta.setColor(Color.LIME);
-            meta.setLore(lore);
             meta.setCustomModelData(1);
             effect.setItemMeta(meta);
         }

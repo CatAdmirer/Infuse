@@ -1,13 +1,16 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.particles.AlsoParticles;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -16,7 +19,10 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -188,16 +194,10 @@ public class Feather implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§#BEA3CAFeather Effect");
-            effectName = applyHexColors(effectName);
-            meta.setDisplayName(effectName);
-            List<String> lore = new ArrayList<>(Infuse.getInstance().getMessages().getStringList("feather.effect_lore"));
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, applyHexColors(lore.get(i)));
-            }
+            meta.setDisplayName(applyHexColors(Infuse.getInstance().getEffectName("feather")));
+            meta.setLore(Infuse.getInstance().getEffectLore("feather").stream().map(Feather::applyHexColors).toList());
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setColor(Color.WHITE);
-            meta.setLore(lore);
             meta.setCustomModelData(2);
             effect.setItemMeta(meta);
         }

@@ -1,12 +1,13 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.particles.AlsoParticles;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -107,16 +108,10 @@ public class Speed implements Listener {
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
 
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("speed");
-            effectName = applyHexColors(effectName);
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(applyHexColors(Infuse.getInstance().getEffectName("speed")));
+            meta.setLore(Infuse.getInstance().getEffectLore("speed").stream().map(Speed::applyHexColors).toList());
             meta.setColor(Color.AQUA);
-            List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("speed"));
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, applyHexColors(lore.get(i)));
-            }
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setLore(lore);
             meta.setCustomModelData(10);
             effect.setItemMeta(meta);
         }

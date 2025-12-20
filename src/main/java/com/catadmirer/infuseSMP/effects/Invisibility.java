@@ -3,18 +3,15 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,11 +60,9 @@ public class Invisibility implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("invis");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("invis");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("invis"));
+            meta.setLore(Infuse.getInstance().getEffectLore("invis"));
             meta.setColor(Color.fromRGB(0xCC33FF));
-            meta.setLore(lore);
             meta.setCustomModelData(7);
             effect.setItemMeta(meta);
         }

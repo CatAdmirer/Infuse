@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.List;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -124,11 +123,9 @@ public class Strength implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("strength");
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(Infuse.getInstance().getEffectName("strength"));
+            meta.setLore(Infuse.getInstance().getEffectLore("strength"));
             meta.setColor(Color.fromRGB(0x8B0000));
-            List<String> lore = Infuse.getInstance().getEffectLore("strength");
-            meta.setLore(lore);
             meta.setCustomModelData(11);
             effect.setItemMeta(meta);
         }

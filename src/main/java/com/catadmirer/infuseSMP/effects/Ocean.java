@@ -1,16 +1,13 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +28,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ocean implements Listener {
-    
     private static Plugin plugin;
 
     private final DataManager trustManager;
@@ -110,11 +106,9 @@ public class Ocean implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("ocean");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("ocean");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("ocean"));
+            meta.setLore(Infuse.getInstance().getEffectLore("ocean"));
             meta.setColor(Color.BLUE);
-            meta.setLore(lore);
             meta.setCustomModelData(8);
             effect.setItemMeta(meta);
         }

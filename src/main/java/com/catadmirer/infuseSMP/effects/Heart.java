@@ -1,15 +1,12 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import org.bukkit.Bukkit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -61,11 +58,9 @@ public class Heart implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("heart");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("heart");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("heart"));
+            meta.setLore(Infuse.getInstance().getEffectLore("heart"));
             meta.setColor(Color.RED);
-            meta.setLore(lore);
             meta.setCustomModelData(6);
             effect.setItemMeta(meta);
         }

@@ -1,11 +1,12 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -58,16 +59,10 @@ public class Fire implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("fire");
-            effectName = applyHexColors(effectName);
-            meta.setDisplayName(effectName);
-            List<String> lore = new ArrayList<>(Infuse.getInstance().getEffectLore("fire"));
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, applyHexColors(lore.get(i)));
-            }
+            meta.setDisplayName(applyHexColors(Infuse.getInstance().getEffectName("fire")));
+            meta.setLore(Infuse.getInstance().getEffectLore("fire").stream().map(Fire::applyHexColors).toList());
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             meta.setColor(Color.fromRGB(0xFFA500));
-            meta.setLore(lore);
             meta.setCustomModelData(3);
             effect.setItemMeta(meta);
         }

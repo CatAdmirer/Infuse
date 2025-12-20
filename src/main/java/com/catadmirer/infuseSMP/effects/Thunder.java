@@ -53,11 +53,9 @@ public class Thunder implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("thunder");
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(Infuse.getInstance().getEffectName("thunder"));
+            meta.setLore(Infuse.getInstance().getEffectLore("thunder"));
             meta.setColor(Color.YELLOW);
-            List<String> lore = Infuse.getInstance().getEffectLore("thunder");
-            meta.setLore(lore);
             meta.setCustomModelData(13);
             effect.setItemMeta(meta);
         }

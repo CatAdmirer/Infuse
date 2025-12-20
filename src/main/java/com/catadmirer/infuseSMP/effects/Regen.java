@@ -1,13 +1,10 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import org.bukkit.Bukkit;
+import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -118,11 +115,9 @@ public class Regen implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("regen");
-            meta.setDisplayName(effectName);
+            meta.setDisplayName(Infuse.getInstance().getEffectName("regen"));
+            meta.setLore(Infuse.getInstance().getEffectLore("regen"));
             meta.setColor(Color.RED);
-            List<String> lore = Infuse.getInstance().getEffectLore("regen");
-            meta.setLore(lore);
             meta.setCustomModelData(9);
             effect.setItemMeta(meta);
         }

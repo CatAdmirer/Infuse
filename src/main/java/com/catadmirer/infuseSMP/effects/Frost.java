@@ -1,16 +1,14 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -64,11 +62,9 @@ public class Frost implements Listener {
         ItemStack effect = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta)effect.getItemMeta();
         if (meta != null) {
-            String effectName = Infuse.getInstance().getEffectName("frost");
-            meta.setDisplayName(effectName);
-            List<String> lore = Infuse.getInstance().getEffectLore("frost");
+            meta.setDisplayName(Infuse.getInstance().getEffectName("frost"));
+            meta.setLore(Infuse.getInstance().getEffectLore("frost"));
             meta.setColor(Color.AQUA);
-            meta.setLore(lore);
             meta.setCustomModelData(4);
             effect.setItemMeta(meta);
         }
