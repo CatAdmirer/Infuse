@@ -13,7 +13,6 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -24,18 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import java.util.stream.Stream;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -58,16 +53,12 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private ApophisManager apophisCommand;
 
-    private FileConfiguration messages;
-
     private final Map<String, String> effectNames = new HashMap<>();
     private final Map<String, String> nameToKey = new HashMap<>();
     private final Map<String, List<String>> effectLore = new HashMap<>();
     private final Map<String, Object> settings = new HashMap<>();
 
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
-
-    private final File messagesFile = new File(getDataFolder(), "messages.yml");
 
     public static Infuse getInstance() {
         return instance;
@@ -98,7 +89,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.dataManager = new DataManager(getDataFolder());
 
         // Getting the abilities handler
-        this.abilitiesHandler = new Abilities(this);
+        this.abilitiesHandler = new Abilities();
 
         // Initializing PacketEvents and its listeners
         PacketEvents.getAPI().init();
@@ -140,13 +131,6 @@ public class Infuse extends JavaPlugin implements Listener {
         return effectLore.getOrDefault(key, Collections.singletonList("§cUnknown Effect"));
     }
 
-    public void loadMessages() {
-        if (!messagesFile.exists()) {
-            saveResource("messages.yml", false);
-        }
-
-        messages = YamlConfiguration.loadConfiguration(messagesFile);
-    }
 
     /**
      * Reloading the config and returning the amount of time it takes to reload the config.
@@ -162,7 +146,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Loading the configs
         FileConfiguration config = getConfig();
-        loadMessages();
+        Messages.load(this);
 
         // Clearing the existing maps
         settings.clear();
@@ -211,43 +195,39 @@ public class Infuse extends JavaPlugin implements Listener {
         settings.put("extra_effects.Apophis", config.getBoolean("extra_effects.Apophis", false));
         settings.put("extra_effects.Thief", config.getBoolean("extra_effects.Thief", false));
 
-        // Getting invis kill messages
-        settings.put("invis.kill_invis", messages.getString("invis.kill_invis"));
-        settings.put("invis.death_invis", messages.getString("invis.death_invis"));
-
         // Getting regular effect names
-        effectNames.put("emerald",  messages.getString("emerald.effect_name", "§aEmerald Effect"));
-        effectNames.put("ender",    messages.getString("ender.effect_name", "§5Ender Effect"));
-        effectNames.put("feather",  messages.getString("feather.effect_name", "§#BEA3CAFeather Effect"));
-        effectNames.put("fire",     messages.getString("fire.effect_name", "§#E85720Fire Effect"));
-        effectNames.put("frost",    messages.getString("frost.effect_name", "§bFrost Effect"));
-        effectNames.put("haste",    messages.getString("haste.effect_name", "§6Haste Effect"));
-        effectNames.put("heart",    messages.getString("heart.effect_name", "§cHeart Effect"));
-        effectNames.put("invis",    messages.getString("invisibility.effect_name", "§5Invisibility Effect"));
-        effectNames.put("ocean",    messages.getString("ocean.effect_name", "§9Ocean Effect"));
-        effectNames.put("regen",    messages.getString("regen.effect_name", "§cRegeneration Effect"));
-        effectNames.put("speed",    messages.getString("speed.effect_name", "§#E8BD74Speed Effect"));
-        effectNames.put("strength", messages.getString("strength.effect_name", "§4Strength Effect"));
-        effectNames.put("thunder",  messages.getString("thunder.effect_name", "§eThunder Effect"));
-        effectNames.put("apophis",  messages.getString("apophis.effect_name", "§5Apophis Effect"));
-        effectNames.put("thief",    messages.getString("thief.effect_name", "§4Thief Effect"));
+        effectNames.put("emerald",  Messages.EMERALD_NAME.getMessage());
+        effectNames.put("ender",    Messages.ENDER_NAME.getMessage());
+        effectNames.put("feather",  Messages.FEATHER_NAME.getMessage());
+        effectNames.put("fire",     Messages.FIRE_NAME.getMessage());
+        effectNames.put("frost",    Messages.FROST_NAME.getMessage());
+        effectNames.put("haste",    Messages.HASTE_NAME.getMessage());
+        effectNames.put("heart",    Messages.HEART_NAME.getMessage());
+        effectNames.put("invis",    Messages.INVIS_NAME.getMessage());
+        effectNames.put("ocean",    Messages.OCEAN_NAME.getMessage());
+        effectNames.put("regen",    Messages.REGEN_NAME.getMessage());
+        effectNames.put("speed",    Messages.SPEED_NAME.getMessage());
+        effectNames.put("strength", Messages.STRENGTH_NAME.getMessage());
+        effectNames.put("thunder",  Messages.THUNDER_NAME.getMessage());
+        effectNames.put("apophis",  Messages.APOPHIS_NAME.getMessage());
+        effectNames.put("thief",    Messages.THIEF_NAME.getMessage());
         
         // Getting augmented effect names
-        effectNames.put("aug_emerald",  messages.getString("aug_emerald.effect_name", "§aAugmented Emerald Effect"));
-        effectNames.put("aug_ender",    messages.getString("aug_ender.effect_name", "§5Augmented Ender Effect"));
-        effectNames.put("aug_fire",     messages.getString("aug_fire.effect_name", "§#E85720Augmented Fire Effect"));
-        effectNames.put("aug_feather",  messages.getString("aug_feather.effect_name", "§#BEA3CAAugmented Feather Effect"));
-        effectNames.put("aug_frost",    messages.getString("aug_frost.effect_name", "§bAugmented Frost Effect"));
-        effectNames.put("aug_haste",    messages.getString("aug_haste.effect_name", "§6Augmented Haste Effect"));
-        effectNames.put("aug_heart",    messages.getString("aug_heart.effect_name", "§cAugmented Heart Effect"));
-        effectNames.put("aug_invis",    messages.getString("aug_invisibility.effect_name", "§5Augmented Invisibility Effect"));
-        effectNames.put("aug_ocean",    messages.getString("aug_ocean.effect_name", "§9Augmented Ocean Effect"));
-        effectNames.put("aug_regen",    messages.getString("aug_regen.effect_name", "§cAugmented Regeneration Effect"));
-        effectNames.put("aug_speed",    messages.getString("aug_speed.effect_name", "§#E8BD74Augmented Speed Effect"));
-        effectNames.put("aug_strength", messages.getString("aug_strength.effect_name", "§4Augmented Strength Effect"));
-        effectNames.put("aug_thunder",  messages.getString("aug_thunder.effect_name", "§eAugmented Thunder Effect"));
-        effectNames.put("aug_apophis",  messages.getString("aug_apophis.effect_name", "§5Augmented Apophis Effect"));
-        effectNames.put("aug_thief",    messages.getString("aug_thief.effect_name", "§4Augmented Thief Effect"));
+        effectNames.put("aug_emerald",  Messages.AUG_EMERALD_NAME.getMessage());
+        effectNames.put("aug_ender",    Messages.AUG_ENDER_NAME.getMessage());
+        effectNames.put("aug_feather",  Messages.AUG_FEATHER_NAME.getMessage());
+        effectNames.put("aug_fire",     Messages.AUG_FIRE_NAME.getMessage());
+        effectNames.put("aug_frost",    Messages.AUG_FROST_NAME.getMessage());
+        effectNames.put("aug_haste",    Messages.AUG_HASTE_NAME.getMessage());
+        effectNames.put("aug_heart",    Messages.AUG_HEART_NAME.getMessage());
+        effectNames.put("aug_invis",    Messages.AUG_INVIS_NAME.getMessage());
+        effectNames.put("aug_ocean",    Messages.AUG_OCEAN_NAME.getMessage());
+        effectNames.put("aug_regen",    Messages.AUG_REGEN_NAME.getMessage());
+        effectNames.put("aug_speed",    Messages.AUG_SPEED_NAME.getMessage());
+        effectNames.put("aug_strength", Messages.AUG_STRENGTH_NAME.getMessage());
+        effectNames.put("aug_thunder",  Messages.AUG_THUNDER_NAME.getMessage());
+        effectNames.put("aug_apophis",  Messages.AUG_APOPHIS_NAME.getMessage());
+        effectNames.put("aug_thief",    Messages.AUG_THIEF_NAME.getMessage());
 
         // Creating the name to key map by inverting the key to name map
         effectNames.forEach((key, name) -> {
@@ -255,38 +235,38 @@ public class Infuse extends JavaPlugin implements Listener {
         });
 
         // Getting regular effect lore
-        effectLore.put("emerald",  messages.getStringList("emerald.effect_lore"));
-        effectLore.put("ender",    messages.getStringList("ender.effect_lore"));
-        effectLore.put("feather",  messages.getStringList("feather.effect_lore"));
-        effectLore.put("fire",     messages.getStringList("fire.effect_lore"));
-        effectLore.put("frost",    messages.getStringList("frost.effect_lore"));
-        effectLore.put("haste",    messages.getStringList("haste.effect_lore"));
-        effectLore.put("heart",    messages.getStringList("heart.effect_lore"));
-        effectLore.put("invis",    messages.getStringList("invisibility.effect_lore"));
-        effectLore.put("ocean",    messages.getStringList("ocean.effect_lore"));
-        effectLore.put("regen",    messages.getStringList("regen.effect_lore"));
-        effectLore.put("speed",    messages.getStringList("speed.effect_lore"));
-        effectLore.put("strength", messages.getStringList("strength.effect_lore"));
-        effectLore.put("thunder",  messages.getStringList("thunder.effect_lore"));
-        effectLore.put("apophis",  messages.getStringList("apophis.effect_lore"));
-        effectLore.put("thief",    messages.getStringList("thief.effect_lore"));
+        effectLore.put("emerald",  Messages.EMERALD_LORE.getStringList());
+        effectLore.put("ender",    Messages.ENDER_LORE.getStringList());
+        effectLore.put("feather",  Messages.FEATHER_LORE.getStringList());
+        effectLore.put("fire",     Messages.FIRE_LORE.getStringList());
+        effectLore.put("frost",    Messages.FROST_LORE.getStringList());
+        effectLore.put("haste",    Messages.HASTE_LORE.getStringList());
+        effectLore.put("heart",    Messages.HEART_LORE.getStringList());
+        effectLore.put("invis",    Messages.INVIS_LORE.getStringList());
+        effectLore.put("ocean",    Messages.OCEAN_LORE.getStringList());
+        effectLore.put("regen",    Messages.REGEN_LORE.getStringList());
+        effectLore.put("speed",    Messages.SPEED_LORE.getStringList());
+        effectLore.put("strength", Messages.STRENGTH_LORE.getStringList());
+        effectLore.put("thunder",  Messages.THUNDER_LORE.getStringList());
+        effectLore.put("apophis",  Messages.APOPHIS_LORE.getStringList());
+        effectLore.put("thief",    Messages.THIEF_LORE.getStringList());
         
         // Getting augmented effect lore
-        effectLore.put("aug_emerald",  messages.getStringList("aug_emerald.effect_lore"));
-        effectLore.put("aug_ender",    messages.getStringList("aug_ender.effect_lore"));
-        effectLore.put("aug_fire",     messages.getStringList("aug_fire.effect_lore"));
-        effectLore.put("aug_feather",  messages.getStringList("aug_feather.effect_lore"));
-        effectLore.put("aug_frost",    messages.getStringList("aug_frost.effect_lore"));
-        effectLore.put("aug_haste",    messages.getStringList("aug_haste.effect_lore"));
-        effectLore.put("aug_heart",    messages.getStringList("aug_heart.effect_lore"));
-        effectLore.put("aug_invis",    messages.getStringList("aug_invisibility.effect_lore"));
-        effectLore.put("aug_ocean",    messages.getStringList("aug_ocean.effect_lore"));
-        effectLore.put("aug_regen",    messages.getStringList("aug_regen.effect_lore"));
-        effectLore.put("aug_speed",    messages.getStringList("aug_speed.effect_lore"));
-        effectLore.put("aug_strength", messages.getStringList("aug_strength.effect_lore"));
-        effectLore.put("aug_thunder",  messages.getStringList("aug_thunder.effect_lore"));
-        effectLore.put("aug_apophis",  messages.getStringList("aug_apophis.effect_lore"));
-        effectLore.put("aug_thief",    messages.getStringList("aug_thief.effect_lore"));
+        effectLore.put("aug_emerald",  Messages.AUG_EMERALD_LORE.getStringList());
+        effectLore.put("aug_ender",    Messages.AUG_ENDER_LORE.getStringList());
+        effectLore.put("aug_feather",  Messages.AUG_FEATHER_LORE.getStringList());
+        effectLore.put("aug_fire",     Messages.AUG_FIRE_LORE.getStringList());
+        effectLore.put("aug_frost",    Messages.AUG_FROST_LORE.getStringList());
+        effectLore.put("aug_haste",    Messages.AUG_HASTE_LORE.getStringList());
+        effectLore.put("aug_heart",    Messages.AUG_HEART_LORE.getStringList());
+        effectLore.put("aug_invis",    Messages.AUG_INVIS_LORE.getStringList());
+        effectLore.put("aug_ocean",    Messages.AUG_OCEAN_LORE.getStringList());
+        effectLore.put("aug_regen",    Messages.AUG_REGEN_LORE.getStringList());
+        effectLore.put("aug_speed",    Messages.AUG_SPEED_LORE.getStringList());
+        effectLore.put("aug_strength", Messages.AUG_STRENGTH_LORE.getStringList());
+        effectLore.put("aug_thunder",  Messages.AUG_THUNDER_LORE.getStringList());
+        effectLore.put("aug_apophis",  Messages.AUG_APOPHIS_LORE.getStringList());
+        effectLore.put("aug_thief",    Messages.AUG_THIEF_LORE.getStringList());
         
         return (System.nanoTime() - start) / 1000000;
     }
@@ -304,14 +284,14 @@ public class Infuse extends JavaPlugin implements Listener {
 
     /** Registers the commands for the plugin. */
     private void registerCommands() {
-        getCommand("trust").setExecutor(new TrustCommand(this, dataManager));
-        getCommand("untrust").setExecutor(new TrustCommand(this, dataManager));
+        getCommand("trust").setExecutor(new TrustCommand(dataManager));
+        getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
         getCommand("swap").setExecutor(new SwapEffects());
         getCommand("infuse").setExecutor(new InfuseCommand());
         getCommand("infuse").setTabCompleter(new InfuseCommand());
-        getCommand("ldrain").setExecutor(new DrainCommand(this, apophisCommand));
-        getCommand("rdrain").setExecutor(new DrainCommand(this, apophisCommand));
+        getCommand("ldrain").setExecutor(new DrainCommand(apophisCommand));
+        getCommand("rdrain").setExecutor(new DrainCommand(apophisCommand));
         getCommand("rspark").setExecutor(abilitiesHandler);
         getCommand("lspark").setExecutor(abilitiesHandler);
         getCommand("controls").setExecutor((sender, command, label, args) -> {
@@ -491,8 +471,7 @@ public class Infuse extends JavaPlugin implements Listener {
                 String latestVersion = latest.get("version_number").getAsString();
 
                 if (!latestVersion.equalsIgnoreCase(currentVersion)) {
-                    String updateMessage = "A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp";
-                    getLogger().info(ChatColor.stripColor(updateMessage));
+                    getLogger().info("A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp");
                 }
 
             } catch (Exception e) {
@@ -547,9 +526,5 @@ public class Infuse extends JavaPlugin implements Listener {
 
     public DataManager getEffectManager() {
         return dataManager;
-    }
-
-    public FileConfiguration getMessages() {
-        return messages;
     }
 }

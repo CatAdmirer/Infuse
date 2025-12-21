@@ -1,27 +1,21 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Abilities implements CommandExecutor {
-    private final Infuse plugin;
-
-    public Abilities(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+            sender.sendMessage("§cOnly players can use this command.");
             return true;
         }
 
@@ -34,7 +28,7 @@ public class Abilities implements CommandExecutor {
         } else if (label.contains("lspark")) {
             slot = "1";
         } else {
-            sender.sendMessage(ChatColor.RED + "Invalid command.");
+            sender.sendMessage("§cInvalid command.");
             return true;
         }
 
@@ -43,8 +37,9 @@ public class Abilities implements CommandExecutor {
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
-            String msg = plugin.getMessages().getString("slot_empty", "&cYou don't have any effect equipped in slot %slot%.").replace("%slot%", slot);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+            String msg = Messages.getMessage(Messages.SLOT_EMPTY);
+            msg = msg.replace("%slot%", slot);
+            player.sendMessage(Messages.toComponent(msg));
             return true;
         }
         

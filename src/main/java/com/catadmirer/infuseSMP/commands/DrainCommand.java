@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.regex.Matcher;
@@ -16,11 +17,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 public class DrainCommand implements CommandExecutor, Listener {
-    private final Infuse plugin;
     private ApophisManager apophisManager;
 
-    public DrainCommand(Infuse plugin, ApophisManager apophisManager) {
-        this.plugin = plugin;
+    public DrainCommand(ApophisManager apophisManager) {
         this.apophisManager = apophisManager;
     }
 
@@ -36,8 +35,8 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (label.contains("ldrain")) slot = "1";
         else if (label.contains("rdrain")) slot = "2";
         else {
-            String msg = plugin.getMessages().getString("withdraw_invalid", "&cInvalid usage. Use /rdrain or /ldrain");
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+            String msg = Messages.getMessage(Messages.WITHDRAW_INVALID);
+            player.sendMessage(Messages.toComponent(msg));
             return true;
         }
 
@@ -46,7 +45,7 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Handling an invalid or empty mapping
         if (effect == null) {
-            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an effect equipped in slot %slot%.");
+            String msg = Messages.EFFECT_NONE_EQUIPPED.getMessage();
             msg = msg.replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;

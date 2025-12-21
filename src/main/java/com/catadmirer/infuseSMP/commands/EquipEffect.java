@@ -79,7 +79,7 @@ public class EquipEffect implements Listener, CommandExecutor {
         
         // Equipping the effect to the slot.
         Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), slot, effect);
-        player.sendMessage(ChatColor.GREEN + "You have equipped " + effect.getName());
+        player.sendMessage("§aYou have equipped " + effect.getName());
         this.consumeMainHandItem(player);
         return true;
     }
@@ -128,18 +128,16 @@ public class EquipEffect implements Listener, CommandExecutor {
         // Skipping if the plauer's inventory is full.
         if (player.getInventory().firstEmpty() == -1) {
             event.setCancelled(true);
-            player.sendMessage(String.valueOf(ChatColor.RED) + "Your inventory is full! Make space before unequipping.");
+            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
             return;
         }
          
         // Equipping the effect
         this.safeEquip(player, effect);
         this.consumeMainHandItem(player);
-        String effectName = effect.getName();
 
         // Performing special logic for the apophis effect.
-        if (effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
-                effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Augmented Apohpis Effect")) {
+        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
             apophisManager.disguiseAsApophis(player);
         }
     }
@@ -249,7 +247,7 @@ public class EquipEffect implements Listener, CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(String.valueOf(ChatColor.RED) + "Only players can use this command.");
+            sender.sendMessage("§cOnly players can use this command.");
             return true;
         }
 
@@ -259,14 +257,14 @@ public class EquipEffect implements Listener, CommandExecutor {
 
         // Erroring out if the player doesn't have any effects equipped
         if (effect1 == null && effect2 == null) {
-            player.sendMessage(String.valueOf(ChatColor.RED) + "You do not have any effects equipped to swap.");
+            player.sendMessage("§cYou do not have any effects equipped to swap.");
             return true;
         }
 
         // Swapping the effects
         Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
         Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
-        player.sendMessage(String.valueOf(ChatColor.GREEN) + "Your Effects have been swapped.");
+        player.sendMessage("§aYour Effects have been swapped.");
         return true;
     }
 }

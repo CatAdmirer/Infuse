@@ -1,10 +1,10 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Location;
@@ -99,15 +99,16 @@ public class Ocean implements Listener {
 
         if (Infuse.getInstance().<Boolean>getConfig("invis_deaths")) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Infuse.getInstance().getConfig("invis.kill_invis");
-                msg = msg.replace("%victim%", victim.getName())
-                        .replace("%killer%", "§7§kSomeone");
-                event.deathMessage(Component.text(msg));
+                String msg = Messages.INVIS_KILL.getMessage();
+                msg = msg.replace("%victim%", victim.getName());
+                msg = msg.replace("%killer%", "§7§kSomeone");
+                event.deathMessage(Messages.toComponent(msg));
             } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 if (killer != null) {
-                    String msg = Infuse.getInstance().getConfig("invis.death_invis");
-                    msg = msg.replace("%victim%", "§7§kSomeone").replace("%killer%", killer.getName());
-                    event.deathMessage(Component.text(msg));
+                    String msg = Messages.INVIS_DEATH.getMessage();
+                    msg = msg.replace("%victim%", "§7§kSomeone");
+                    msg = msg.replace("%killer%", killer.getName());
+                    event.deathMessage(Messages.toComponent(msg));
                 }
             }
         }

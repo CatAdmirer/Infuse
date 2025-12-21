@@ -1,21 +1,17 @@
 package com.catadmirer.infuseSMP.commands;
 
-import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.DataManager;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class TrustCommand implements CommandExecutor {
-    private final Infuse plugin;
     private final DataManager dataManager;
 
-    public TrustCommand(Infuse plugin, DataManager dataManager) {
-        this.plugin = plugin;
+    public TrustCommand(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 
@@ -23,57 +19,49 @@ public class TrustCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Limiting this command to only players.
         if (!(sender instanceof Player caster)) {
-            sender.sendMessage(getMessage("trust_consoleusage", "&cOnly players can use this command."));
+            sender.sendMessage(Messages.TRUST_CONSOLEUSAGE.toComponent());
             return true;
         }
 
         // Validating the number of args
         if (args.length != 1) {
-            caster.sendMessage(getMessage("trust_incorrectusage", "&cUsage: /%label% <player>").replace("%label%", label));
+            String msg = Messages.TRUST_INCORRECTUSAGE.getMessage();
+            msg = msg.replace("%label%", label);
+            caster.sendMessage(Messages.toComponent(msg));
             return true;
         }
 
         // Getting the target to trust/untrust
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {
-            caster.sendMessage(getMessage("trust_noplayer", "&cPlayer not found."));
+            caster.sendMessage(Messages.TRUST_NOPLAYER.getMessage());
             return true;
         }
 
         // Preventing the caster from trusting/untrusting themself.
         if (caster.getUniqueId().equals(target.getUniqueId())) {
-            caster.sendMessage(getMessage("trust_self", "&cYou always trust yourself. Surely..."));
+            caster.sendMessage(Messages.TRUST_SELF.getMessage());
             return true;
         }
 
         // Making the caster trust the target.
         if (label.equalsIgnoreCase("trust")) {
             dataManager.addTrust(caster, target);
-            caster.sendMessage(getMessage("trust_added", "&aYou now trust %target%.").replace("%target%", target.getName()));
+            String msg = Messages.TRUST_ADDED.getMessage();
+            msg = msg.replace("%target%", target.getName());
+            caster.sendMessage(Messages.toComponent(msg));
             return true;
         }
 
         // Making the caster untrust the target.
         if (label.equalsIgnoreCase("untrust")) {
             dataManager.removeTrust(caster, target);
-            caster.sendMessage(getMessage("trust_removed", "&eYou no longer trust %target%.").replace("%target%", target.getName()));
+            String msg = Messages.TRUST_REMOVED.getMessage();
+            msg = msg.replace("%target%", target.getName());
+            caster.sendMessage(Messages.toComponent(msg));
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Util function to get a message from the config.
-     * 
-     * @param path The config path to check for a message.
-     * @param defaultMessage The default message to return.
-     * 
-     * @return
-     */
-    private String getMessage(String path, String defaultMessage) {
-        FileConfiguration messages = plugin.getMessages();
-        String message = messages.getString(path, defaultMessage);
-        return ChatColor.translateAlternateColorCodes('&', message);
     }
 }

@@ -134,7 +134,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 // Removing the effects from the player
                 Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "1");
                 Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "2");
-                player.sendMessage(ChatColor.GREEN + "Cleared " + target.getName() + "'s effects");
+                player.sendMessage("§aCleared " + target.getName() + "'s effects");
                 break;
             case "cooldown":
                 if (!player.isOp()) {

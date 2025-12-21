@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -208,10 +209,7 @@ public class InfuseRecipeManager implements Listener {
         }
         final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
         if (brewingStandLocation == null) {
-            String invalidMessage = ChatColor.translateAlternateColorCodes('&',
-                    plugin.getMessages().getString("effect_nobrewing", "&cYou need to craft this in a brewing stand!")
-            );
-            player.sendMessage(invalidMessage);
+            player.sendMessage(Messages.EFFECT_NOBREWING.toComponent());
             return;
         }
 
@@ -240,8 +238,8 @@ public class InfuseRecipeManager implements Listener {
             dimensionMessage = "§7" + worldName;
         }
 
-        String messageTemplate = plugin.getMessages().getString("effect_broadcast");
-        String discordTemplate = plugin.getMessages().getString("discord_broadcast");
+        String messageTemplate = Messages.EFFECT_BROADCAST.getMessage();
+        String discordTemplate = Messages.DISCORD_BROADCAST.getMessage();
 
         String x = String.valueOf(brewingStandLocation.getBlockX());
         String y = String.valueOf(brewingStandLocation.getBlockY());
@@ -263,7 +261,7 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%z%", z)
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
 
-        Bukkit.broadcastMessage(formattedMessage);
+        Bukkit.broadcast(Messages.toComponent(formattedMessage));
         if (Infuse.getInstance().<Boolean>getConfig("enable_discord_broadcasts")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
@@ -289,7 +287,7 @@ public class InfuseRecipeManager implements Listener {
             public void run() {
                 if (progress <= 0) {
                     activeBossBar.removeAll();
-                    String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
+                    String finishedTemplate = Messages.EFFECT_FINISHED.getMessage();
                     String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
                     Bukkit.broadcastMessage("§f" + finishedMessage);
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
