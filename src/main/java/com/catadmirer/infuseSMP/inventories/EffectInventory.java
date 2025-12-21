@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.inventories;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InventoryUtils;
-import com.catadmirer.infuseSMP.effects.Augmented;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -23,30 +23,25 @@ public class EffectInventory implements InventoryHolder {
         InventoryUtils.setItems(inventory, purpleSlots, InventoryUtils.createNoName(Material.PURPLE_STAINED_GLASS_PANE));
         InventoryUtils.setItems(inventory, lightBlueSlots, InventoryUtils.createNoName(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
 
-        // Putting a single blue glass pane in the inventory.
-        inventory.setItem(49, InventoryUtils.createNoName(Material.BLUE_STAINED_GLASS_PANE));
+        inventory.setItem(12, EffectMapping.FROST.createItem());
+        inventory.setItem(14, EffectMapping.SPEED.createItem());
+        inventory.setItem(20, EffectMapping.FEATHER.createItem());
+        inventory.setItem(21, EffectMapping.OCEAN.createItem());
+        inventory.setItem(22, EffectMapping.INVIS.createItem());
+        inventory.setItem(23, EffectMapping.ENDER.createItem());
+        inventory.setItem(24, EffectMapping.EMERALD.createItem());
+        inventory.setItem(29, EffectMapping.HEART.createItem());
+        inventory.setItem(30, EffectMapping.REGEN.createItem());
+        inventory.setItem(31, EffectMapping.STRENGTH.createItem());
+        inventory.setItem(32, EffectMapping.FIRE.createItem());
+        inventory.setItem(33, EffectMapping.HASTE.createItem());
+        inventory.setItem(40, EffectMapping.THUNDER.createItem());
 
-        // Filling the inventory with effects.
-        inventory.setItem(12, Augmented.createFrost());
-        inventory.setItem(14, Augmented.createSpeed());
-        inventory.setItem(20, Augmented.createFeather());
-        inventory.setItem(21, Augmented.createOcean());
-        inventory.setItem(22, Augmented.createInvis());
-        inventory.setItem(23, Augmented.createEnder());
-        inventory.setItem(24, Augmented.createEmerald());
-        inventory.setItem(29, Augmented.createHeart());
-        inventory.setItem(30, Augmented.createRegen());
-        inventory.setItem(31, Augmented.createStrength());
-        inventory.setItem(32, Augmented.createFire());
-        inventory.setItem(33, Augmented.createHaste());
-        inventory.setItem(40, Augmented.createThunder());
-
-        // Adding the extra effects if they are enabled.
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Thief")) {
-            inventory.setItem(39, Augmented.createThief());
+            inventory.setItem(39, EffectMapping.THIEF.createItem());
         }
         if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Apophis")) {
-            inventory.setItem(41, Augmented.createApophis());
+            inventory.setItem(41, EffectMapping.APOPHIS.createItem());
         }
     }
 

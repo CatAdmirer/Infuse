@@ -5,9 +5,8 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -15,42 +14,26 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Haste implements Listener {
-    
+
     public Haste(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (Haste.this.hasEffect(player, "1") || (Haste.this.hasEffect(player, "2"))) {
+                    if (EffectMapping.HASTE.hasEffect(player)) {
                         Haste.this.enchantItemIfApplicable(player);
                     }
                 }
 
             }
         }).runTaskTimer(plugin, 0L, 20L);
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName("haste"));
-            meta.setLore(Infuse.getInstance().getEffectLore("haste"));
-            meta.setColor(Color.fromRGB(0xFFCC33));
-            meta.setCustomModelData(5);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     private void enchantItemIfApplicable(Player player) {
@@ -66,45 +49,16 @@ public class Haste implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-            }
-        }
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("aug_haste");
-        String effectName2 = Infuse.getInstance().getEffectName("haste");
-        return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
-    }
-
     public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_haste").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
-
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "haste.cooldown.augmented" : "haste.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "haste.duration.augmented" : "haste.duration.default");
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "haste", duration);
             CooldownManager.setCooldown(playerUUID, "haste", cooldown);
@@ -118,7 +72,7 @@ public class Haste implements Listener {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
-            if (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasEffect(player, "1") || (offHand.getType() == Material.SHIELD && player.isBlocking() && this.hasEffect(player, "2"))) {
+            if (offHand.getType() == Material.SHIELD && player.isBlocking() && EffectMapping.HASTE.hasEffect(player)) {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
@@ -134,9 +88,5 @@ public class Haste implements Listener {
 
     private void stunShield(Player player) {
         player.setCooldown(Material.SHIELD, 50);
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 5;
     }
 }

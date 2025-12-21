@@ -1,17 +1,17 @@
 package com.catadmirer.infuseSMP.managers;
 
+import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
-import com.catadmirer.infuseSMP.Infuse;
 import org.bukkit.Bukkit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -38,7 +38,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.CrafterCraftEvent;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
@@ -152,42 +155,42 @@ public class InfuseRecipeManager implements Listener {
         }
     }
 
-        private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-            if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
-                World world = brewingStandLocation.getWorld();
-                Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000.0, brewingStandLocation.getZ());
-                final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
-                crystal.setShowingBottom(false);
-                crystal.setInvulnerable(true);
-                crystal.setInvisible(true);
-                Location targetLoc = brewingStandLocation.clone().add(0.0, 600.0 - brewingStandLocation.getY(), 0.0);
-                final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
-                marker.setMarker(true);
-                marker.setInvisible(true);
-                marker.setInvulnerable(true);
-                marker.setSilent(true);
-                marker.setCustomNameVisible(false);
-                crystal.setBeamTarget(marker.getLocation().toBlockLocation());
-                int ritualDuration;
-                if (recipeKey.equalsIgnoreCase("end_first")) {
-                    ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
-                } else {
-                    ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
-                }
-                (new BukkitRunnable() {
-                    public void run() {
-                        if (!crystal.isDead()) {
-                            crystal.remove();
-                        }
-
-                        if (!marker.isDead()) {
-                            marker.remove();
-                        }
-
-                    }
-                }).runTaskLater(this.plugin, ritualDuration * 20L);
+    private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
+        if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
+            World world = brewingStandLocation.getWorld();
+            Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
+            final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
+            crystal.setShowingBottom(false);
+            crystal.setInvulnerable(true);
+            crystal.setInvisible(true);
+            Location targetLoc = brewingStandLocation.clone().add(0, 600, 0);
+            final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
+            marker.setMarker(true);
+            marker.setInvisible(true);
+            marker.setInvulnerable(true);
+            marker.setSilent(true);
+            marker.setCustomNameVisible(false);
+            crystal.setBeamTarget(marker.getLocation().toBlockLocation());
+            int ritualDuration;
+            if (recipeKey.equalsIgnoreCase("end_first")) {
+                ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
+            } else {
+                ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
             }
+            (new BukkitRunnable() {
+                public void run() {
+                    if (!crystal.isDead()) {
+                        crystal.remove();
+                    }
+
+                    if (!marker.isDead()) {
+                        marker.remove();
+                    }
+
+                }
+            }).runTaskLater(this.plugin, ritualDuration * 20L);
         }
+    }
 
     private boolean isRitualActive = false;
 
@@ -200,7 +203,7 @@ public class InfuseRecipeManager implements Listener {
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
         if (isRitualActive) {
-            player.sendMessage(ChatColor.RED + "A ritual is already in progress!");
+            player.sendMessage("§cA ritual is already in progress!");
             return;
         }
         final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
@@ -228,13 +231,13 @@ public class InfuseRecipeManager implements Listener {
         String worldName = brewingStandLocation.getWorld().getName();
         String dimensionMessage;
         if (worldName.equalsIgnoreCase("world")) {
-            dimensionMessage = ChatColor.GREEN + "Overworld";
+            dimensionMessage = "§aOverworld";
         } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            dimensionMessage = ChatColor.DARK_PURPLE + "End";
+            dimensionMessage = "§5End";
         } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            dimensionMessage = ChatColor.DARK_RED + "Nether";
+            dimensionMessage = "§4Nether";
         } else {
-            dimensionMessage = ChatColor.GRAY + worldName;
+            dimensionMessage = "§7" + worldName;
         }
 
         String messageTemplate = plugin.getMessages().getString("effect_broadcast");
@@ -281,14 +284,14 @@ public class InfuseRecipeManager implements Listener {
 
         new BukkitRunnable() {
             double progress = 1;
-            final double progressDecrement = 1.0 / (ritualDuration * 20);
+            final double progressDecrement = 1 / (ritualDuration * 20);
 
             public void run() {
-                if (progress <= 0.0) {
+                if (progress <= 0) {
                     activeBossBar.removeAll();
                     String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
                     String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
-                    Bukkit.broadcastMessage(ChatColor.WHITE + finishedMessage);
+                    Bukkit.broadcastMessage("§f" + finishedMessage);
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
                     this.cancel();
@@ -449,7 +452,7 @@ public class InfuseRecipeManager implements Listener {
 
         if (isAugmented) {
             if (isRitualActive) {
-                player.sendMessage(ChatColor.RED + "A ritual is already in progress!");
+                player.sendMessage("§cA ritual is already in progress!");
                 event.setCancelled(true);
                 return;
             }
@@ -640,32 +643,32 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Emerald() {
-        ItemStack firstTime = Augmented.createEmerald();
-        ItemStack standard = Emerald.createEffect();
+        ItemStack firstTime = EffectMapping.EMERALD.createItem();
+        ItemStack standard = EffectMapping.AUG_EMERALD.createItem();
         this.firstTimeRewards.put("emerald", firstTime);
         this.standardResults.put("emerald", standard);
         registerRecipeFromConfig("emerald", standard);
     }
 
     private void Feather() {
-        ItemStack firstTime = Augmented.createFeather();
-        ItemStack standard = Feather.createEffect();
+        ItemStack firstTime = EffectMapping.FEATHER.createItem();
+        ItemStack standard = EffectMapping.AUG_FEATHER.createItem();
         this.firstTimeRewards.put("feather", firstTime);
         this.standardResults.put("feather", standard);
         registerRecipeFromConfig("feather", standard);
     }
 
     private void Fire() {
-        ItemStack firstTime = Augmented.createFire();
-        ItemStack standard = Fire.createEffect();
+        ItemStack firstTime = EffectMapping.FIRE.createItem();
+        ItemStack standard = EffectMapping.AUG_FIRE.createItem();
         this.firstTimeRewards.put("fire", firstTime);
         this.standardResults.put("fire", standard);
         registerRecipeFromConfig("fire", standard);
     }
 
     private void Ender() {
-        ItemStack firstTime = Augmented.createEnder();
-        ItemStack standard = Ender.createEffect();
+        ItemStack firstTime = EffectMapping.ENDER.createItem();
+        ItemStack standard = EffectMapping.AUG_ENDER.createItem();
         this.firstTimeRewards.put("end_first", firstTime);
         this.standardResults.put("end_second", standard);
 
@@ -674,88 +677,88 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Frost() {
-        ItemStack firstTime = Augmented.createFrost();
-        ItemStack standard = Frost.createEffect();
+        ItemStack firstTime = EffectMapping.FROST.createItem();
+        ItemStack standard = EffectMapping.AUG_FROST.createItem();
         this.firstTimeRewards.put("frost", firstTime);
         this.standardResults.put("frost", standard);
         registerRecipeFromConfig("frost", standard);
     }
 
     private void Haste() {
-        ItemStack firstTime = Augmented.createHaste();
-        ItemStack standard = Haste.createEffect();
+        ItemStack firstTime = EffectMapping.HASTE.createItem();
+        ItemStack standard = EffectMapping.AUG_HASTE.createItem();
         this.firstTimeRewards.put("haste", firstTime);
         this.standardResults.put("haste", standard);
         registerRecipeFromConfig("haste", standard);
     }
 
     private void Heart() {
-        ItemStack firstTime = Augmented.createHeart();
-        ItemStack standard = Heart.createEffect();
+        ItemStack firstTime = EffectMapping.HEART.createItem();
+        ItemStack standard = EffectMapping.AUG_HEART.createItem();
         this.firstTimeRewards.put("heart", firstTime);
         this.standardResults.put("heart", standard);
         registerRecipeFromConfig("heart", standard);
     }
 
     private void Invis() {
-        ItemStack firstTime = Augmented.createInvis();
-        ItemStack standard = Invisibility.createEffect();
+        ItemStack firstTime = EffectMapping.INVIS.createItem();
+        ItemStack standard = EffectMapping.AUG_INVIS.createItem();
         this.firstTimeRewards.put("invis", firstTime);
         this.standardResults.put("invis", standard);
         registerRecipeFromConfig("invis", standard);
     }
 
     private void Ocean() {
-        ItemStack firstTime = Augmented.createOcean();
-        ItemStack standard = Ocean.createEffect();
+        ItemStack firstTime = EffectMapping.OCEAN.createItem();
+        ItemStack standard = EffectMapping.AUG_OCEAN.createItem();
         this.firstTimeRewards.put("ocean", firstTime);
         this.standardResults.put("ocean", standard);
         registerRecipeFromConfig("ocean", standard);
     }
 
     private void Regen() {
-        ItemStack firstTime = Augmented.createRegen();
-        ItemStack standard = Regen.createEffect();
+        ItemStack firstTime = EffectMapping.REGEN.createItem();
+        ItemStack standard = EffectMapping.AUG_REGEN.createItem();
         this.firstTimeRewards.put("regen", firstTime);
         this.standardResults.put("regen", standard);
         registerRecipeFromConfig("regen", standard);
     }
 
     private void Speed() {
-        ItemStack firstTime = Augmented.createSpeed();
-        ItemStack standard = Speed.createEffect();
+        ItemStack firstTime = EffectMapping.SPEED.createItem();
+        ItemStack standard = EffectMapping.AUG_SPEED.createItem();
         this.firstTimeRewards.put("speed", firstTime);
         this.standardResults.put("speed", standard);
         registerRecipeFromConfig("speed", standard);
     }
 
     private void Strength() {
-        ItemStack firstTime = Augmented.createStrength();
-        ItemStack standard = Strength.createEffect();
+        ItemStack firstTime = EffectMapping.STRENGTH.createItem();
+        ItemStack standard = EffectMapping.AUG_STRENGTH.createItem();
         this.firstTimeRewards.put("strength", firstTime);
         this.standardResults.put("strength", standard);
         registerRecipeFromConfig("strength", standard);
     }
 
     private void Thunder() {
-        ItemStack firstTime = Augmented.createThunder();
-        ItemStack standard = Thunder.createEffect();
+        ItemStack firstTime = EffectMapping.THUNDER.createItem();
+        ItemStack standard = EffectMapping.AUG_THUNDER.createItem();
         this.firstTimeRewards.put("thunder", firstTime);
         this.standardResults.put("thunder", standard);
         registerRecipeFromConfig("thunder", standard);
     }
 
     private void Apophis() {
-        ItemStack firstTime = Augmented.createApophis();
-        ItemStack standard = Apophis.createEffect();
+        ItemStack firstTime = EffectMapping.APOPHIS.createItem();
+        ItemStack standard = EffectMapping.AUG_APOPHIS.createItem();
         this.firstTimeRewards.put("apophis", firstTime);
         this.standardResults.put("apophis", standard);
         registerRecipeFromConfig("apophis", standard);
     }
 
     private void Thief() {
-        ItemStack firstTime = Augmented.createThief();
-        ItemStack standard = Thief.createEffect();
+        ItemStack firstTime = EffectMapping.THIEF.createItem();
+        ItemStack standard = EffectMapping.AUG_THIEF.createItem();
         this.firstTimeRewards.put("thief", firstTime);
         this.standardResults.put("thief", standard);
         registerRecipeFromConfig("thief", standard);

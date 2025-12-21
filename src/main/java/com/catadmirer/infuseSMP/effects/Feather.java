@@ -3,7 +3,8 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.particles.AlsoParticles;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.particles.Particles;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,28 +33,22 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
-    
-    private static Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     private static final Set<UUID> spark = new HashSet<>();
 
-    private final DataManager trustManager;
+    private final DataManager dataManager;
 
 
-    public Feather(Plugin plugin, DataManager trustManager) {
-        Feather.plugin = plugin;
-        this.trustManager = trustManager;
+    public Feather(Plugin plugin, DataManager dataManager) {
+        this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -97,7 +92,7 @@ public class Feather implements Listener {
     }
 
     private boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(caster, player);
+        return dataManager.isTrusted(caster, player);
     }
 
     @EventHandler
@@ -105,13 +100,8 @@ public class Feather implements Listener {
         if (event.getEntity() instanceof Player player) {
             if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
                 if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!this.hasEffect(player, "1") && !this.hasEffect(player, "2")) {
-                    return;
-                }
-
-                if (event.getCause() == DamageCause.FALL) {
-                    return;
-                }
+                if (!EffectMapping.FEATHER.hasEffect(player)) return;
+                if (event.getCause() == DamageCause.FALL) return;
 
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
@@ -135,7 +125,7 @@ public class Feather implements Listener {
     public void onPlayerFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.FEATHER.hasEffect(player)) {
                     event.setCancelled(true);
                 }
             }
@@ -145,13 +135,13 @@ public class Feather implements Listener {
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.FEATHER.hasEffect(player)) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item != null && item.getType() == Material.WIND_CHARGE) {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                         Location anchor = player.getLocation();
-                        Bukkit.getRegionScheduler().runDelayed(this.plugin, anchor, (task) -> {
+                        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
                             player.setCooldown(Material.WIND_CHARGE, 5);
                         }, 1L);
                     }
@@ -173,7 +163,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (this.hasEffect(attacker, "1") || this.hasEffect(attacker, "2")) {
+            if (EffectMapping.FEATHER.hasEffect(attacker)) {
                 double fallDistance = attacker.getFallDistance();
                 if (fallDistance >= 7) {
                     attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
@@ -188,21 +178,6 @@ public class Feather implements Listener {
 
             }
         }
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(applyHexColors(Infuse.getInstance().getEffectName("feather")));
-            meta.setLore(Infuse.getInstance().getEffectLore("feather").stream().map(Feather::applyHexColors).toList());
-            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setColor(Color.WHITE);
-            meta.setCustomModelData(2);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     public static String applyHexColors(String input) {
@@ -220,75 +195,35 @@ public class Feather implements Listener {
         return result.toString();
     }
 
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getMessages().getString("feather.effect_name", "§fFeather Effect");
-        String effectName2 = Infuse.getInstance().getMessages().getString("aug_feather.effect_name", "§fAugmented Feather Effect");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = this.hasEffect(player, "1");
-            boolean isSecondary = this.hasEffect(player, "2");
-            UUID playerUUID = player.getUniqueId();
-            if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-                if (player.isSneaking() && isPrimary || !player.isSneaking() && isSecondary) {
-                    event.setCancelled(true);
-                    this.activateSpark(player);
-                }
-
-            }
-        }
-    }
-
     public static void activateSpark(final Player player) {
+        if (EffectMapping.FEATHER.hasEffect(player));
+
         UUID playerUUID = player.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "feather")) {
-            String effectName = Infuse.getInstance().getEffectName("aug_feather");
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            AlsoParticles.spawnEffect(player, Color.fromRGB(0xBEA3CA));
-            Vector dashDirection = player.getEyeLocation().getDirection().normalize();
-            Vector launchVector = dashDirection.multiply(0).setY(1);
-            player.setVelocity(launchVector);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
-            
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_feather").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+        if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
 
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "feather.cooldown.augmented" : "feather.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "feather.duration.augmented" : "feather.duration.default");
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
+        Vector dashDirection = player.getEyeLocation().getDirection().normalize();
+        Vector launchVector = dashDirection.multiply(0).setY(1);
+        player.setVelocity(launchVector);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
+        
+        // Applying cooldowns and durations for the effect
+        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = Infuse.getInstance().getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = Infuse.getInstance().getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
 
-            CooldownManager.setDuration(playerUUID, "feather", duration);
-            CooldownManager.setCooldown(playerUUID, "feather", cooldown);
+        CooldownManager.setDuration(playerUUID, "feather", duration);
+        CooldownManager.setCooldown(playerUUID, "feather", cooldown);
 
-            player.getScheduler().runDelayed(plugin, t -> {
+        Location anchor = player.getLocation();
+        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+            if (player.isOnline()) {
                 CooldownManager.setDuration(playerUUID, "feathermace", 5L);
-            }, null, 10L);
+            }
+        }, 10L);
 
-            spark.add(playerUUID);
-        }
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 2;
-    }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
+        spark.add(playerUUID);
     }
 }

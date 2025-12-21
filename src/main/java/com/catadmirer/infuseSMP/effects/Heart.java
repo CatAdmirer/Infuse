@@ -5,9 +5,8 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -19,24 +18,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
-    
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
-
-    private static Infuse plugin;
 
     public Heart(Infuse plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, Infuse.getInstance());
         this.startHealthCheckTask();
-        Heart.plugin = plugin;
     }
 
     private void startHealthCheckTask() {
@@ -46,7 +38,7 @@ public class Heart implements Listener {
                     AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                     if (maxHealthAttribute == null) continue;
                     double currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    if (!Heart.this.hasEffect(player, "1") && !Heart.this.hasEffect(player, "2")) continue;
+                    if (!EffectMapping.HEART.hasEffect(player)) continue;
 
                     if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
                 }
@@ -54,35 +46,11 @@ public class Heart implements Listener {
         }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
     }
 
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName("heart"));
-            meta.setLore(Infuse.getInstance().getEffectLore("heart"));
-            meta.setColor(Color.RED);
-            meta.setCustomModelData(6);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        String effectName = Infuse.getInstance().getEffectName("heart");
-        if (item != null && item.getType() == Material.POTION) {
-            ItemMeta meta = item.getItemMeta();
-            return meta != null && meta.getDisplayName().equals(effectName) && meta.getCustomModelData() == 6;
-        } else {
-            return false;
-        }
-    }
-
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
             if (event.getEntity() instanceof LivingEntity target) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.HEART.hasEffect(player)) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
                     this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -125,15 +93,14 @@ public class Heart implements Listener {
 
     private void updateHealthDisplay(LivingEntity entity) {
         double health = entity.getHealth();
-        String var10000 = String.valueOf(ChatColor.RED);
-        String healthText = var10000 + String.valueOf(ChatColor.BOLD) + "❤ " + String.format("%.1f", health);
+        String healthText = "§c§l❤ " + String.format("%.1f", health);
         entity.setCustomName(healthText);
     }
 
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+        if (EffectMapping.HEART.hasEffect(player)) {
             ItemStack item = event.getItem();
             if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
@@ -144,33 +111,6 @@ public class Heart implements Listener {
 
     }
 
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-            }
-        }
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("heart");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_heart");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
     public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
 
@@ -179,16 +119,14 @@ public class Heart implements Listener {
 
             final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(40.0);
+                maxHealthAttribute.setBaseValue(40);
             }
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_heart").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
-
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "heart.cooldown.augmented" : "heart.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "heart.duration.augmented" : "heart.duration.default");
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);
@@ -196,11 +134,11 @@ public class Heart implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20.0);
+                        maxHealthAttribute.setBaseValue(20);
                     }
-                    player.sendMessage(ChatColor.RED + "Your Health Boost has ended.");
+                    player.sendMessage("§cYour Health Boost has ended.");
                 }
-            }.runTaskLater(plugin, duration * 20L);
+            }.runTaskLater(Infuse.getInstance(), duration * 20L);
         }
     }
 
@@ -212,7 +150,7 @@ public class Heart implements Listener {
             public void run() {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                 if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20.0);
+                    maxHealthAttribute.setBaseValue(20);
                 }
 
             }

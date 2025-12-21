@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.regex.Matcher;
@@ -18,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
-
     private ApophisManager apophisManager;
 
     public DrainCommand(Infuse plugin, ApophisManager apophisManager) {
@@ -33,69 +31,59 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        // Determining the slot the player is draining the effect from.
+        // Getting the slot to drain based on the command used.  Accepts /ldrain or /rdrain
         String slot;
-        if (label.contains("rdrain")) {
-            slot = "2";
-        } else if (label.contains("ldrain")) {
-            slot = "1";
-        } else {
+        if (label.contains("ldrain")) slot = "1";
+        else if (label.contains("rdrain")) slot = "2";
+        else {
             String msg = plugin.getMessages().getString("withdraw_invalid", "&cInvalid usage. Use /rdrain or /ldrain");
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
-        // Getting the effect from the player
-        final String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
-        if (currentEffect == null) {
-            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an Effect equipped in slot %slot%.");
+        // Getting the mapping from the slot
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+
+        // Handling an invalid or empty mapping
+        if (effect == null) {
+            String msg = plugin.getMessages().getString("effect_none_equipped", "&cYou don't have an effect equipped in slot %slot%.");
             msg = msg.replace("%slot%", slot);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
             return true;
         }
 
-        // Cancelling the drain if the player's inventory is full
+        // Making sure the player has inventory space for the drained item.
         if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage(ChatColor.RED + "Your inventory is full! Make space before unequipping.");
+            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
+            return true;
+        }
+    
+        // Resetting the player's health
+        // TODO: Make this work better.  It will conflict with other health-managing plugins.
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
+
+        // Handling special apophis effects
+        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
+            Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
+            ItemStack glitchItem = effect.createItem();
+            player.getInventory().addItem(glitchItem);
+            apophisManager.unsetApophis(Bukkit.getConsoleSender(), player.getName());
             return true;
         }
 
-        // Doing special stuff for the apophis effect.
-        if (ChatColor.stripColor(currentEffect).equalsIgnoreCase("Apohpis Effect") || ChatColor.stripColor(currentEffect).equalsIgnoreCase("Augmented Apohpis Effect")) {
-        }
-
-        // Removing the effect
+        // Removing the effect from the player
         Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-        String currentEffectColored = applyHexColors(currentEffect);
-        player.sendMessage(ChatColor.GREEN + "You have drained your: " + currentEffectColored);
+        String currentEffectColored = applyHexColors(effect.getName());
+        player.sendMessage("§aYou have drained your: " + currentEffectColored);
 
-        // TODO: Why even do this?  Is there an issue without the scheduler?
-        player.getScheduler().runDelayed(plugin, task -> {
-            // Skipping if the task was cancelled.
-            if (task.isCancelled()) return;
-
-            // Resetting the player's max health
-            player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-
-            // Getting the drained effect.
-            EffectMapping mapping = EffectMapping.fromEffectName(currentEffect);
-            if (mapping != null) {
-                ItemStack effectItem = mapping.createItem();
-
-                // Doing special stuff for the apophis effect
-                if (Apophis.isEffect(effectItem)) {
-                    apophisManager.unsetApophis(Bukkit.getConsoleSender(), player.getName());
-                }
-
-                // Adding the item to the player's inventory
-                player.getInventory().addItem(effectItem);
-            }
-        }, null, 10);
+        // Giving the player the effect item.
+        ItemStack item = effect.createItem();
+        player.getInventory().addItem(item);
 
         return true;
     }
 
-
+    // TODO: Remove this in favor of components
     public static String applyHexColors(String input) {
         String regex = "(#(?:[0-9a-fA-F]{6}))";
         Pattern pattern = Pattern.compile(regex);

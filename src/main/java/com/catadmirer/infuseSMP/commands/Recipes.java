@@ -1,13 +1,12 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.Augmented;
-import com.catadmirer.infuseSMP.effects.Ender;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +63,13 @@ public class Recipes implements CommandExecutor, Listener {
         if (potionItem == null) return null;
 
         // Getting the craft limits from the config
-        List<Integer> limits = loadCraftLimitsFromConfig(potionName);
+        Map<String,Integer> limits = loadCraftLimitsFromConfig().get(potionName);
 
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
             List<String> lore = new ArrayList<>();
-            lore.add("§7Augmented Limit: §b" + limits.get(0));
-            lore.add("§7Regular Limit: §b" + limits.get(1));
+            lore.add("§7Augmented Limit: §b" + limits.get("augmented_limit"));
+            lore.add("§7Regular Limit: §b" + limits.get("regular_limit"));
             meta.setLore(lore);
             potionItem.setItemMeta(meta);
         }
@@ -85,24 +84,25 @@ public class Recipes implements CommandExecutor, Listener {
      * 
      * @return An effect as a potion.
      */
+    @Nullable
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
-            case "emerald" -> Augmented.createEmerald();
-            case "feather" -> Augmented.createFeather();
-            case "fire" -> Augmented.createFire();
-            case "end_first" -> Augmented.createEnder();
-            case "end_second" -> Ender.createEffect();
-            case "frost" -> Augmented.createFrost();
-            case "haste" -> Augmented.createHaste();
-            case "heart" -> Augmented.createHeart();
-            case "invis" -> Augmented.createInvis();
-            case "ocean" -> Augmented.createOcean();
-            case "regen" -> Augmented.createRegen();
-            case "speed" -> Augmented.createSpeed();
-            case "strength" -> Augmented.createStrength();
-            case "thunder" -> Augmented.createThunder();
-            case "apophis" -> Augmented.createApophis();
-            case "thief" -> Augmented.createThief();
+            case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
+            case "end_first" -> EffectMapping.AUG_ENDER.createItem();
+            case "end_second" -> EffectMapping.AUG_ENDER.createItem();
+            case "feather" -> EffectMapping.AUG_FEATHER.createItem();
+            case "fire" -> EffectMapping.AUG_FIRE.createItem();
+            case "frost" -> EffectMapping.AUG_FROST.createItem();
+            case "haste" -> EffectMapping.AUG_HASTE.createItem();
+            case "heart" -> EffectMapping.AUG_HEART.createItem();
+            case "invis" -> EffectMapping.AUG_INVIS.createItem();
+            case "ocean" -> EffectMapping.AUG_OCEAN.createItem();
+            case "regen" -> EffectMapping.AUG_REGEN.createItem();
+            case "speed" -> EffectMapping.AUG_SPEED.createItem();
+            case "strength" -> EffectMapping.AUG_STRENGTH.createItem();
+            case "thunder" -> EffectMapping.AUG_THUNDER.createItem();
+            case "apophis" -> EffectMapping.AUG_APOPHIS.createItem();
+            case "thief" -> EffectMapping.AUG_THIEF.createItem();
             default -> null;
         };
     }
@@ -119,15 +119,20 @@ public class Recipes implements CommandExecutor, Listener {
         player.openInventory(gui);
     }
 
-    /**
-     * Loads the craft limits from the config.
-     * 
-     * @return A map of the craft limits for each effect.
-     */
-    private static List<Integer> loadCraftLimitsFromConfig(String recipeKey) {
-        return List.of(
-            Infuse.getInstance().getConfig("craft_limits." + recipeKey + ".augmented_limit"),
-            Infuse.getInstance().getConfig("craft_limits." + recipeKey + ".regular_limit"));
+    private static Map<String, Map<String, Integer>> loadCraftLimitsFromConfig() {
+        Map<String, Map<String, Integer>> result = new HashMap<>();
+
+        for (String itemName : Arrays.asList(
+                "emerald","feather","fire","end_first","end_second","frost",
+                "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
+        )) {
+            Map<String, Integer> limits = new HashMap<>();
+            limits.put("augmented_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".augmented_limit"));
+            limits.put("regular_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".regular_limit"));
+            result.put(itemName, limits);
+        }
+
+        return result;
     }
 
     /**
@@ -237,18 +242,18 @@ public class Recipes implements CommandExecutor, Listener {
      * to 100% identify an effect. This is an identifier for the recipes.
      */
     @Nullable
-    private String getPotionKeyFromItem(ItemStack item) {
+    private String getPotionKeyFromItem(@Nullable ItemStack item) {
         return switch (EffectMapping.fromItem(item)) {
             case APOPHIS, AUG_APOPHIS -> "apophis";
             case EMERALD, AUG_EMERALD -> "emerald";
-            case ENDER -> "end_second";
             case AUG_ENDER -> "end_first";
+            case ENDER -> "end_second";
             case FEATHER, AUG_FEATHER -> "feather";
             case FIRE, AUG_FIRE -> "fire";
             case FROST, AUG_FROST -> "frost";
             case HASTE, AUG_HASTE -> "haste";
             case HEART, AUG_HEART -> "heart";
-            case INVISIBILITY, AUG_INVISIBILITY -> "invis";
+            case INVIS, AUG_INVIS -> "invis";
             case OCEAN, AUG_OCEAN -> "ocean";
             case REGEN, AUG_REGEN -> "regen";
             case SPEED, AUG_SPEED -> "speed";

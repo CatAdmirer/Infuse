@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -9,22 +10,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,18 +32,16 @@ import org.bukkit.util.Vector;
 
 public class Fire implements Listener {
     
-    private static Plugin plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     public Fire(Plugin plugin) {
-        Fire.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Fire.this.hasEffect(player, "1") || Fire.this.hasEffect(player, "2")) {
-                        Fire.this.applyFireResistance(player);
-                        Fire.this.handleSwim(player);
+                    if (EffectMapping.FIRE.hasEffect(player)) {
+                        applyFireResistance(player);
+                        handleSwim(player);
                     }
                 });
             }
@@ -53,21 +50,6 @@ public class Fire implements Listener {
 
     private void applyFireResistance(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(applyHexColors(Infuse.getInstance().getEffectName("fire")));
-            meta.setLore(Infuse.getInstance().getEffectLore("fire").stream().map(Fire::applyHexColors).toList());
-            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-            meta.setColor(Color.fromRGB(0xFFA500));
-            meta.setCustomModelData(3);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     public static String applyHexColors(String input) {
@@ -99,7 +81,7 @@ public class Fire implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inLava = player.isInLava();
         if (!event.isGliding()) {
-            if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
+            if (inLava && EffectMapping.FIRE.hasEffect(player)) {
                 event.setCancelled(true);
             }
         }
@@ -110,7 +92,7 @@ public class Fire implements Listener {
         Player player = event.getPlayer();
         boolean inLava = player.isInLava();
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inLava && Fire.this.hasEffect(player, "1") || inLava && Fire.this.hasEffect(player, "2")) {
+        if (inLava && EffectMapping.FIRE.hasEffect(player)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -118,18 +100,10 @@ public class Fire implements Listener {
         }
     }
 
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("fire");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_fire");
-        return currentEffect != null && (currentEffect.equals(effectName) || currentEffect.equals(effectName2));
-    }
-
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (EffectMapping.FIRE.hasEffect(player)) {
                 if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
                     projectile.setFireTicks(100);
                 }
@@ -141,7 +115,7 @@ public class Fire implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+                if (EffectMapping.FIRE.hasEffect(player)) {
                     Material blockType = player.getLocation().getBlock().getType();
                     if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
                         event.setCancelled(true);
@@ -155,7 +129,7 @@ public class Fire implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (this.hasEffect(player, "1") || this.hasEffect(player, "2")) {
+            if (EffectMapping.FIRE.hasEffect(player)) {
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 if (count >= 20) {
@@ -164,26 +138,6 @@ public class Fire implements Listener {
                 }
 
                 this.hitCounter.put(uuid, count);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
             }
         }
     }
@@ -201,35 +155,21 @@ public class Fire implements Listener {
             }
 
             spawnSparkEffect(player);
-            
             new BukkitRunnable() {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
-            }.runTaskLater(plugin, 20L);
+            }.runTaskLater(Infuse.getInstance(), 20L);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_fire").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
-
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "fire.cooldown.augmented" : "fire.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "fire.duration.augmented" : "fire.duration.default");
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "fire", duration);
             CooldownManager.setCooldown(playerUUID, "fire", cooldown);
         }
     }
-
-    public String stripAllColors(String input) {
-        if (input == null) return null;
-        Pattern pattern = Pattern.compile(
-                "(§#[0-9a-fA-F]{6})" +
-                        "|(§x(§[0-9a-fA-F]){6})" +
-                        "|(§[0-9a-fk-orA-FK-OR])"
-        );
-        return pattern.matcher(input).replaceAll("");
-    }
-
 
     private static void spawnSparkEffect(final Player caster) {
         (new BukkitRunnable() {
@@ -263,15 +203,15 @@ public class Fire implements Listener {
                     ++this.tick;
                 }
             }
-        }).runTaskTimer(plugin, 0L, 1L);
+        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
     }
 
     private static void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5.0;
+        double explosionRadius = 5;
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
-                target.setVelocity(new Vector(0.0, 2.0, 0.0));
+                target.setVelocity(new Vector(0, 2, 0));
             }
         }
 
@@ -295,21 +235,13 @@ public class Fire implements Listener {
                             double offsetX = circleRadius * Math.cos(rad);
                             double offsetZ = circleRadius * Math.sin(rad);
                             Location particleLoc = startLoc.clone().add(offsetX, particleHeightOffset, offsetZ);
-                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0.0, 0.0, 0.0, 0.0, Material.REDSTONE_BLOCK.createBlockData());
+                            world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0, 0, 0, 0, Material.REDSTONE_BLOCK.createBlockData());
                         }
 
                         ++this.tick;
                     }
                 }
             }
-        }).runTaskTimer(plugin, 0, 1);
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
-            return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 3;
-        } else {
-            return false;
-        }
+        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
     }
 }

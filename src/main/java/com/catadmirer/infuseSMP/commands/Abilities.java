@@ -39,7 +39,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        String equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
+        EffectMapping equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
@@ -48,32 +48,22 @@ public class Abilities implements CommandExecutor {
             return true;
         }
         
-        // Removing colors from the effect name.
-        String strippedEffect = stripAllColors(equippedEffect);
-        strippedEffect = plugin.getEffectReversed(strippedEffect);
-
-        EffectMapping mapping = EffectMapping.fromEffectKey(strippedEffect);
-        if (mapping == null) {
-            player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
-            return true;
-        }
-
-        switch (mapping.getEffectId()) {
-            case 0, 1 -> Emerald.activateSpark(player);
-            case 2, 3 -> Feather.activateSpark(player);
-            case 4, 5 -> Fire.activateSpark(player);
-            case 6, 7 -> Frost.activateSpark(player);
-            case 8, 9 -> Haste.activateSpark(player);
-            case 10, 11 -> Heart.activateSpark(player);
-            case 12, 13 -> Invisibility.activateSpark(player);
-            case 14, 15 -> Ocean.activateSpark(player);
-            case 16, 17 -> Regen.activateSpark(player);
-            case 18, 19 -> Speed.activateSpark(player);
-            case 20, 21 -> Strength.activateSpark(player);
-            case 22, 23 -> Thunder.activateSpark(player);
-            case 24, 26 -> Ender.activateSpark(player);
-            case 25, 27 -> Apophis.activateSpark(player);
-            case 28, 29 -> Thief.activateSpark(player);
+        switch (equippedEffect) {
+            case EMERALD, AUG_EMERALD -> Emerald.activateSpark(player);
+            case FEATHER, AUG_FEATHER -> Feather.activateSpark(player);
+            case FIRE, AUG_FIRE -> Fire.activateSpark(player);
+            case FROST, AUG_FROST -> Frost.activateSpark(player);
+            case HASTE, AUG_HASTE -> Haste.activateSpark(player);
+            case HEART, AUG_HEART -> Heart.activateSpark(player);
+            case INVIS, AUG_INVIS -> Invisibility.activateSpark(player);
+            case OCEAN, AUG_OCEAN -> Ocean.activateSpark(player);
+            case REGEN, AUG_REGEN -> Regen.activateSpark(player);
+            case SPEED, AUG_SPEED -> Speed.activateSpark(player);
+            case STRENGTH, AUG_STRENGTH -> Strength.activateSpark(player);
+            case THUNDER, AUG_THUNDER -> Thunder.activateSpark(player);
+            case ENDER, AUG_ENDER -> Ender.activateSpark(player);
+            case APOPHIS, AUG_APOPHIS -> Apophis.activateSpark(player);
+            case THIEF, AUG_THIEF -> Thief.activateSpark(player);
         }
 
         return true;

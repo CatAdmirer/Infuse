@@ -185,8 +185,8 @@ regen:
     augmented: 30
 
 speed:
-  dashMultiplier: 20.0
-  playerVelocityMultiplier: 2.0
+  dashMultiplier: 20
+  playerVelocityMultiplier: 2
   cooldown:
     default: 21
     augmented: 11
@@ -221,7 +221,7 @@ thief:
 ocean_pulling:
   pull:
     interval: 20 # In ticks (20 ticks = 1 second)
-    radius: 5.0
+    radius: 5
     strength: 0.3
 
 

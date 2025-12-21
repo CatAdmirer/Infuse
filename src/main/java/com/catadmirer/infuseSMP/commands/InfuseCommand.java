@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.managers.EffectMaps;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,7 +43,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                Infuse.getInstance().reloadDaConfig(player);
+                Infuse.getInstance().reloadConfig();
                 break;
             case "recipes":
                 Recipes.openGUI(player);
@@ -74,10 +73,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 target.getInventory().addItem(mapping.createItem());
-                String name = mapping.getEffectName();
-                String effectName = Infuse.getInstance().stripAllColors(name);
-                ChatColor color = EffectMaps.getColorEffect(effectKey);
-                target.sendMessage(color + "You received the " + effectName);
+                ChatColor color = ChatColor.of(mapping.getColor());
+                target.sendMessage(color + "You received the " + mapping.getName());
                 break;
             case "seteffect":
                 if (!player.isOp()) {
@@ -105,9 +102,6 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 
-                // Getting the string to put in storage.
-                String effect = mapping.getEffectName();
-
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];
                 if (!slot.equals("1") && !slot.equals("2")) {
@@ -116,7 +110,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                Infuse.getInstance().getEffectManager().setEffect(target.getUniqueId(), args[3], effect);
+                Infuse.getInstance().getEffectManager().setEffect(target.getUniqueId(), args[3], mapping);
                 player.sendMessage("§aSuccessfully set the effect in slot " + slot + " of player " + target.getName() + " to " + effectKey + ".");
                 break;
             case "cleareffect":
@@ -230,7 +224,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 case "giveEffect":
                 case "setEffect":
                     if (!player.isOp()) return Arrays.asList();
-                    return EffectMaps.color.keySet().stream().filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
+                    return Stream.of(EffectMapping.values()).map(EffectMapping::getKey).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
         

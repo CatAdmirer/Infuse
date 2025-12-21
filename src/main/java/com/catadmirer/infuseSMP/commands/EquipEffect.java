@@ -35,12 +35,13 @@ public class EquipEffect implements Listener, CommandExecutor {
 
         // Giving the player their starting effects if they haven't been given already
         if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getConfig("join_effects_enabled")) {
+            
             List<String> effects = Infuse.getInstance().getConfig("join_effects");
             if (effects.isEmpty()) return;
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
-            String effectName = Infuse.getInstance().getEffectName(chosenKey);
-            if (effectName == null) return;
-            equipEffect(player, effectName, "2");
+            EffectMapping effect = EffectMapping.fromEffectKey(chosenKey);
+            if (effect == null) return;
+            equipEffect(player, effect, "2");
         }
     }
 
@@ -51,11 +52,11 @@ public class EquipEffect implements Listener, CommandExecutor {
      * @param player The player who will get the effect
      * @param effectName The effect to give the player
      */
-    public void safeEquip(Player player, String effectName) {
-        if (!this.equipEffect(player, effectName, "1") && !this.equipEffect(player, effectName, "2")) {
+    public void safeEquip(Player player, EffectMapping effect) {
+        if (!this.equipEffect(player, effect, "1") && !this.equipEffect(player, effect, "2")) {
             player.performCommand("rdrain");
             Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugins()[0], () -> {
-                this.equipEffect(player, effectName, "2");
+                this.equipEffect(player, effect, "2");
             }, 1L);
         }
     }
@@ -69,16 +70,16 @@ public class EquipEffect implements Listener, CommandExecutor {
      * 
      * @return Returns false if the slot is already taken.
      */
-    private boolean equipEffect(Player player, String effectName, String slot) {
+    private boolean equipEffect(Player player, EffectMapping effect, String slot) {
         // Checking for an effect in the slot.
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) {
             return false;
         }
         
         // Equipping the effect to the slot.
-        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), slot, effectName);
-        player.sendMessage(ChatColor.GREEN + "You have equipped " + effectName);
+        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), slot, effect);
+        player.sendMessage(ChatColor.GREEN + "You have equipped " + effect.getName());
         this.consumeMainHandItem(player);
         return true;
     }
@@ -132,9 +133,9 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
          
         // Equipping the effect
-        this.safeEquip(player, effect.getEffectName());
+        this.safeEquip(player, effect);
         this.consumeMainHandItem(player);
-        String effectName = effect.getEffectName();
+        String effectName = effect.getName();
 
         // Performing special logic for the apophis effect.
         if (effectName.equalsIgnoreCase(ChatColor.DARK_PURPLE + "Apohpis Effect") ||
@@ -169,8 +170,8 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+        EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+        EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
         String dropMode = Infuse.getInstance().getConfig().getString("effect_drops", "random");
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
@@ -236,15 +237,11 @@ public class EquipEffect implements Listener, CommandExecutor {
      */
     private void dropEffectOnDeath(Player player, String slot) {
         // Getting the equipped effect from the data file.
-        String effectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
-        if (effectName == null) return;
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        if (effect == null) return;
 
         // Removing the effect from the player.
         Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
-
-        // Getting the EffectMapping reference
-        EffectMapping effect = EffectMapping.fromEffectName(effectName);
-        if (effect == null) return;
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
@@ -257,8 +254,8 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
 
         // Getting the equipped effects
-        String effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        String effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+        EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
+        EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
 
         // Erroring out if the player doesn't have any effects equipped
         if (effect1 == null && effect2 == null) {

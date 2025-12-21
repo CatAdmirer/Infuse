@@ -2,9 +2,9 @@ package com.catadmirer.infuseSMP.particles;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -12,110 +12,62 @@ public class Particles {
     public void startTask() {
         Bukkit.getGlobalRegionScheduler().runAtFixedRate(Infuse.getInstance(), (task) -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                this.applyParticlesForEffect(player, "1");
-                this.applyParticlesForEffect(player, "2");
+                applyParticlesForEffect(player, "1");
+                applyParticlesForEffect(player, "2");
             }
 
-        }, 1, 19);
+        }, 1, 20);
     }
 
     private void applyParticlesForEffect(Player player, String type) {
-        String effectName = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
-        if (effectName == null) return;
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        if (effect == null) return;
 
-        String stripped = ChatColor.stripColor(effectName);
-        EffectMapping mapping = EffectMapping.fromEffectKey(Infuse.getInstance().getEffectReversed(stripped));
-        if (mapping == null) return;
-        switch (mapping.getEffectId()) {
-            case 0:
-                AlsoParticles.spawnEffect2(player, Color.GREEN);
-                break;
-            case 1:
-                AlsoParticles.spawnAugmented(player, Color.GREEN);
-                break;
-            case 2:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xBEA3CA));
-                break;
-            case 3:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xBEA3CA));
-                break;
-            case 4:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFC7803));
-                break;
-            case 5:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFC7803));
-                break;
-            case 6:
-                AlsoParticles.spawnEffect2(player, Color.AQUA);
-                break;
-            case 7:
-                AlsoParticles.spawnAugmented(player, Color.AQUA);
-                break;
-            case 8:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xB96C00));
-                break;
-            case 9:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xB96C00));
-                break;
-            case 10:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFC0046));
-                break;
-            case 11:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFC0046));
-                break;
-            case 14:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x005AFC));
-                break;
-            case 15:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x005AFC));
-                break;
-            case 16:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFF03EF));
-                break;
-            case 17:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFF03EF));
-                break;
-            case 18:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xD1A44B));
-                break;
-            case 19:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xD1A44B));
-                break;
-            case 20:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x8B0000));
-                break;
-            case 21:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x8B0000));
-                break;
-            case 22:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0xFCED00));
-                break;
-            case 23:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0xFCED00));
-                break;
-            case 24, 26:
-                spawnDragon(player);
-                break;
-            case 25:
-                AlsoParticles.spawnEffect2(player, Color.fromRGB(0x45033E));
-                break;
-            case 27:
-                AlsoParticles.spawnAugmented(player, Color.fromRGB(0x45033E));
-                break;
-            case 28:
-                AlsoParticles.spawnEffect2(player, Color.RED);
-                break;
-            case 29:
-                AlsoParticles.spawnAugmented(player, Color.RED);
-                break;
-            default:
-                break;
+        // Handling special particles for ender effect
+        // TODO: Decide whether or not to keep this
+        if (effect == EffectMapping.ENDER || effect == EffectMapping.AUG_ENDER) {
+            spawnDragon(player);
+            return;
         }
-    }
 
+        final double regularRadius = 0;
+        final double augmentedRadius = 0.3;
+
+        spawnEffect(player, Color.fromRGB(effect.getColor().getRGB()), effect.isAugmented() ? augmentedRadius : regularRadius);
+    }
 
     public static void spawnDragon(Player player) {
-        player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0.0, 1.0, 0.0), 32, 0.3, 0.5, 0.3, 0.0);
+        player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5, 0.3, 0);
+    }
+
+    /**
+     * Spawns a cloud of effect particles around the player.
+     *
+     * @param player The player to spawn entity effect particles on.
+     * @param color The color the particles should be.
+     */
+    public static void spawnEffectCloud(Player player, Color color) {
+        Location base = player.getLocation().clone();
+        int count = 30;
+        double spread = 0.5;
+
+        for(int i = 0; i < count; ++i) {
+            double x = (Math.random() - 0.5) * spread * 2;
+            double y = Math.random() * 1.2;
+            double z = (Math.random() - 0.5) * spread * 2;
+            player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, base.clone().add(x, y, z), 1, 0, 0, 0, 0, color);
+        }
+
+    }
+
+    /**
+     * Spawns a ring of effect particles around a player.
+     *
+     * @param player The player to spawn the particles on.
+     * @param color The color the particles should be.
+     * @param radius The offset radius of the effects.
+     */
+    public static void spawnEffect(Player player, Color color, double radius) {
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, color);
     }
 }
-

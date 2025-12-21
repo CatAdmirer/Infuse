@@ -1,15 +1,19 @@
 package com.catadmirer.infuseSMP.effects;
-
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -20,34 +24,29 @@ import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Frost implements Listener {
-    private static final Set<UUID> frozenAttackers = new HashSet<>();
-    
+    private final static Set<UUID> frozenAttackers = new HashSet<>();
+
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
 
-    private static DataManager trustManager;
+    private final Infuse plugin;
 
-    private static Infuse plugin;
-
-    public Frost(DataManager trustManager, Infuse plugin) {
-        Frost.plugin = plugin;
-        Frost.trustManager = trustManager;
+    public Frost(DataManager dataManager, Infuse plugin) {
+        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (Frost.this.hasEffect(player, "2") && !(player.getVelocity().lengthSquared() < 0.01) || (Frost.this.hasEffect(player, "1") && !(player.getVelocity().lengthSquared() < 0.01))) {
+                    if (EffectMapping.FROST.hasEffect(player) && !(player.getVelocity().lengthSquared() < 0.01)) {
                         Frost.this.handleSwim(player);
-                        Material blockType = player.getLocation().subtract(0.0, 1.0, 0.0).getBlock().getType();
+                        Material blockType = player.getLocation().subtract(0, 1, 0).getBlock().getType();
                         if (Frost.ICE_BLOCKS.contains(blockType)) {
                             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30, 2, false, false));
                         }
@@ -56,20 +55,6 @@ public class Frost implements Listener {
                 });
             }
         }).runTaskTimer(plugin, 0L, 10L);
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName("frost"));
-            meta.setLore(Infuse.getInstance().getEffectLore("frost"));
-            meta.setColor(Color.AQUA);
-            meta.setCustomModelData(4);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
     }
 
     public void handleSwim(Player player) {
@@ -84,7 +69,7 @@ public class Frost implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         if (!event.isGliding()) {
-            if (inFrost && this.hasEffect(player, "1") || inFrost && hasEffect(player, "2")) {
+            if (inFrost && EffectMapping.FROST.hasEffect(player)) {
                 event.setCancelled(true);
             }
         }
@@ -95,19 +80,11 @@ public class Frost implements Listener {
         Player player = event.getPlayer();
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inFrost && hasEffect(player, "1") || inFrost && hasEffect(player, "2")) {
+        if (inFrost && EffectMapping.FROST.hasEffect(player)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
             player.setVelocity(newVelocity);
-        }
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        if (item != null && item.getType() == Material.POTION && item.getItemMeta() != null) {
-            return item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 4;
-        } else {
-            return false;
         }
     }
 
@@ -127,7 +104,7 @@ public class Frost implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (this.hasEffect(attacker, "1") || (this.hasEffect(attacker, "2"))) {
+                if (EffectMapping.FROST.hasEffect(attacker)) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -153,30 +130,6 @@ public class Frost implements Listener {
             }
         }
     }
-    
-    @EventHandler
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-            }
-        }
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName = Infuse.getInstance().getEffectName("frost");
-        String effectName2 = Infuse.getInstance().getEffectName("aug_frost");
-        return currentEffect != null && currentEffect.equals(effectName) || currentEffect != null && currentEffect.equals(effectName2);
-    }
-
     public static void activateSpark(final Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
@@ -184,18 +137,16 @@ public class Frost implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_frost").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
-
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "frost.cooldown.augmented" : "frost.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "frost.duration.augmented" : "frost.duration.default");
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "frost", duration);
             CooldownManager.setCooldown(playerUUID, "frost", cooldown);
 
             Location center = caster.getLocation();
-            double radius = 5.0;
+            double radius = 5;
             World world = caster.getWorld();
             final Set<Player> affectedPlayers = new HashSet<>();
 
@@ -223,7 +174,7 @@ public class Frost implements Listener {
                     }
                     frozenAttackers.remove(caster.getUniqueId());
                 }
-            }.runTaskLater(plugin, duration * 20L);
+            }.runTaskLater(Infuse.getInstance(), duration * 20L);
         }
     }
 
@@ -239,7 +190,7 @@ public class Frost implements Listener {
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler

@@ -1,228 +1,317 @@
 package com.catadmirer.infuseSMP.managers;
 
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.*;
+import com.catadmirer.infuseSMP.extraeffects.*;
+
+import java.awt.Color;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.boss.BarColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum EffectMapping {
     // Defining regular effects
-    APOPHIS("apophis", 25, Apophis::isEffect, Apophis::createEffect),
-    EMERALD("emerald", 0, Emerald::isEffect, Emerald::createEffect),
-    ENDER("ender", 24, Ender::isEffect, Ender::createEffect),
-    FEATHER("feather", 2, Feather::isEffect, Feather::createEffect),
-    FIRE("fire", 4, Fire::isEffect, Fire::createEffect),
-    FROST("frost", 6, Frost::isEffect, Frost::createEffect),
-    HASTE("haste", 8, Haste::isEffect, Haste::createEffect),
-    HEART("heart", 10, Heart::isEffect, Heart::createEffect),
-    INVISIBILITY("invis", 12, Invisibility::isEffect, Invisibility::createEffect),
-    OCEAN("ocean", 14, Ocean::isEffect, Ocean::createEffect),
-    REGEN("regen", 16, Regen::isEffect, Regen::createEffect),
-    SPEED("speed", 19, Speed::isEffect, Speed::createEffect),
-    STRENGTH("strength", 20, Strength::isEffect, Strength::createEffect),
-    THIEF("thief", 28, Thief::isEffect, Thief::createEffect),
-    THUNDER("thunder", 22, Thunder::isEffect, Thunder::createEffect),
+    EMERALD  ("emerald",   1, Color.GREEN,         BarColor.GREEN , Emerald::activateSpark),
+    ENDER    ("ender",     2, new Color(0x800080), BarColor.PURPLE, Ender::activateSpark),
+    FEATHER  ("feather",   3, new Color(0xBEA3CA), BarColor.WHITE , Feather::activateSpark),
+    FIRE     ("fire",      4, new Color(0xEE5522), BarColor.RED   , Fire::activateSpark),
+    FROST    ("frost",     5, new Color(0x55FFFF), BarColor.BLUE  , Frost::activateSpark),
+    HASTE    ("haste",     6, new Color(0xFFCC33), BarColor.YELLOW, Haste::activateSpark),
+    HEART    ("heart",     7, Color.RED,           BarColor.RED   , Heart::activateSpark),
+    INVIS    ("invis",     8, new Color(0xAA00AA), BarColor.PURPLE, Invisibility::activateSpark),
+    OCEAN    ("ocean",     9, new Color(0x0066FF), BarColor.BLUE  , Ocean::activateSpark),
+    REGEN    ("regen",    10, new Color(0xFF5555), BarColor.PINK  , Regen::activateSpark),
+    SPEED    ("speed",    11, new Color(0xEEBB77), BarColor.YELLOW, Speed::activateSpark),
+    STRENGTH ("strength", 12, new Color(0x800000), BarColor.RED   , Strength::activateSpark),
+    THUNDER  ("thunder",  13, Color.YELLOW,        BarColor.YELLOW, Thunder::activateSpark),
+    APOPHIS  ("apophis",  14, new Color(0x440044), BarColor.PURPLE, Apophis::activateSpark),
+    THIEF    ("thief",    15, new Color(0xAA0000), BarColor.RED   , Thief::activateSpark),
 
     // Defining augmented effects
-    AUG_APOPHIS(APOPHIS, 27, Augmented::isApophis, Augmented::createApophis),
-    AUG_EMERALD(EMERALD, 1, Augmented::isEmerald, Augmented::createEmerald),
-    AUG_ENDER(ENDER, 26, Augmented::isEnder, Augmented::createEnder),
-    AUG_FEATHER(FEATHER, 3, Augmented::isFeather, Augmented::createFeather),
-    AUG_FIRE(FIRE, 5, Augmented::isFire, Augmented::createFire),
-    AUG_FROST(FROST, 7, Augmented::isFrost, Augmented::createFrost),
-    AUG_HASTE(HASTE, 9, Augmented::isHaste, Augmented::createHaste),
-    AUG_HEART(HEART, 11, Augmented::isHeart, Augmented::createHeart),
-    AUG_INVISIBILITY(INVISIBILITY, 13, Augmented::isInvis, Augmented::createInvis),
-    AUG_OCEAN(OCEAN, 15, Augmented::isOcean, Augmented::createOcean),
-    AUG_REGEN(REGEN, 17, Augmented::isRegen, Augmented::createRegen),
-    AUG_SPEED(SPEED, 18, Augmented::isSpeed, Augmented::createSpeed),
-    AUG_STRENGTH(STRENGTH, 21, Augmented::isStrength, Augmented::createStrength),
-    AUG_THIEF(THIEF, 29, Augmented::isThief, Augmented::createThief),
-    AUG_THUNDER(THUNDER, 23, Augmented::isThunder, Augmented::createThunder);
+    AUG_EMERALD(EMERALD),
+    AUG_ENDER(ENDER),
+    AUG_FEATHER(FEATHER),
+    AUG_FIRE(FIRE),
+    AUG_FROST(FROST),
+    AUG_HASTE(HASTE),
+    AUG_HEART(HEART),
+    AUG_INVIS(INVIS),
+    AUG_OCEAN(OCEAN),
+    AUG_REGEN(REGEN),
+    AUG_SPEED(SPEED),
+    AUG_STRENGTH(STRENGTH),
+    AUG_THUNDER(THUNDER),
+    AUG_APOPHIS(APOPHIS),
+    AUG_THIEF(THIEF);
 
-    private final String effectKey;
-    private final int effectId;
-    private final Function<ItemStack,Boolean> matchesItem;
-    private final Supplier<ItemStack> createItem;
+    private final String key;
+    private final int id;
+    private final Color color;
+    private final BarColor ritualColor;
+    private final Consumer<Player> sparkFunction;
 
     private EffectMapping regular;
     private EffectMapping augmented;
 
     /**
-     * EffectMapping constructor for regular effects
+     * Constructor for regular effects.
      * 
-     * @param effectKey The base string key for this effect.
-     * @param effectId The numerical ID for this effect.
-     * @param matchesItem A function used to check if the provided {@link ItemStack} matches the new EffectMapping.
-     * @param createItem A function used to create an {@link ItemStack} from this EffectMapping.
+     * @param key The base key for the effect.
+     * @param id The id for the effect.
+     * @param potionColor The color for the potion and related chat messages.
+     * @param ritualColor The bossbar color to use during rituals.
      */
-    private EffectMapping(String effectKey, int effectId, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
-        this.effectKey = effectKey;
-        this.effectId = effectId;
-        this.matchesItem = matchesItem;
-        this.createItem = createItem;
+    private EffectMapping(String key, int id, Color potionColor, BarColor ritualColor, Consumer<Player> sparkFunction) {
+        this.key = key;
+        this.id = id;
+        this.color = potionColor;
+        this.ritualColor = ritualColor;
+        this.sparkFunction = sparkFunction;
 
         regular = this;
     }
 
     /**
-     * EffectMapping constructor for augmented effects
+     * Constructor for augmented effects.
+     * Attributes from the base mapping will be copied to this one.
      * 
-     * @param regular The regular effect to use as a base for this effect.
-     * @param effectId The numerical ID for this effect.
-     * @param matchesItem A function used to check if the provided {@link ItemStack} matches the new EffectMapping.
-     * @param createItem A function used to create an {@link ItemStack} from this EffectMapping.
+     * @param base The base effect mapping for this augmented effect.
      */
-    private EffectMapping(EffectMapping regular, int effectId, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
-        this.effectKey = "aug_" + regular.effectKey;
-        this.effectId = effectId;
-        this.matchesItem = matchesItem;
-        this.createItem = createItem;
+    private EffectMapping(EffectMapping base) {
+        this.key = "aug_" + base.key;
+        this.id = base.id;
+        this.color = base.color;
+        this.ritualColor = base.ritualColor;
+        this.sparkFunction = base.sparkFunction;
 
-        this.regular = regular;
+        regular = base;
         augmented = this;
-        regular.augmented = this;
+        base.augmented = this;
     }
 
     /**
-     * Gets the string key of the effect.
+     * Getting the key for the effect.
      * 
-     * @return The string key of the effect.
+     * @return The key for the effect.
      */
-    public String getEffectKey() {
-        return effectKey;
+    public String getKey() {
+        return key;
     }
 
     /**
-     * Gets the numerical id of the effect.
+     * Getting the id for the effect.
      * 
-     * @return The string key of the effect.
+     * @return The id for the effect.
      */
-    public int getEffectId() {
-        return effectId;
+    public int getId() {
+        return id;
     }
 
     /**
-     * Gets the name of the effect.
+     * Getting the color for the effect.
      * 
-     * @return The name of the effect with colors.
+     * @return The color for the effect.
      */
-    public String getEffectName() {
-        return Infuse.getInstance().getEffectName(effectKey);
+    public Color getColor() {
+        return color;
     }
 
     /**
-     * Gets the lore of the effect.
+     * Getting the boss bar color for rituals.
      * 
-     * @return The lore of the effect with colors.
+     * @return The boss bar color for rituals.
      */
-    public List<String> getEffectLore() {
-        return Infuse.getInstance().getEffectLore(effectKey);
+    public BarColor getRitualColor() {
+        return ritualColor;
     }
 
     /**
-     * Checks if the provided item is an instance of this effect.
+     * Getting the name of the effect from the config.
      * 
-     * @param item The {@link ItemStack} to check.
-     * 
-     * @return Whether or not the item is an instance of this effect.
+     * @return The name of the effect as defined in the config.
      */
-    public boolean matchesItem(ItemStack item) {
-        return matchesItem.apply(item);
+    public String getName() {
+        return Infuse.getInstance().getEffectName(key);
     }
 
     /**
-     * Creates a potion item for an effect.
+     * Getting the lore of the effect from the config.
      * 
-     * @return An {@link ItemStack} potion item representing the effect.
+     * @return The lore of the effect as defined in the config.
      */
-    public ItemStack createItem() {
-        return createItem.get();
+    public List<String> getLore() {
+        return Infuse.getInstance().getEffectLore(key);
+    }
+
+    public char getIcon() {
+        return (char) Integer.parseInt("E" + (isAugmented() ? 2 : 0) + String.format("%02d", getId()), 16);
+    }
+
+    public char getActiveIcon() {
+        return (char) Integer.parseInt("E" + (isAugmented() ? 3 : 1) + String.format("%02d", getId()), 16);
     }
 
     /**
-     * Gets the regular form of this effect.
-     * If the mapping is already the regular form, it returns itself.
+     * Getting the effect in its regular form.
+     * If the enum is already the regular form, it returns itself.
      * 
-     * @return The regular form of this effect.
+     * @return The regular version of the effect.
      */
-    public EffectMapping getRegular() {
+    public EffectMapping regular() {
         return regular;
     }
 
     /**
-     * Gets the augmented form of this effect.
-     * If the mapping is already the augmented form, it returns itself.
+     * Getting the effect in its augmented form.
+     * If the enum is already the augmented form, it returns itself.
      * 
-     * @return The augmented form of this effect.
+     * @return The augmented version of the effect.
      */
-    public EffectMapping getAugmented() {
+    public EffectMapping augmented() {
         return augmented;
     }
 
     /**
-     * Gets an EffectMapping from an ItemStack
-     * If the plugin cannot find a valid EffectMapping for the item, it returns null.
+     * Gets whether or not this effect is augmented.
      * 
-     * @param item The {@link ItemStack} to inspect.
-     * 
-     * @return An effect mapping based on the item stack provided
+     * @return Whether or not this effect is augmented.
      */
-    public static EffectMapping fromItem(ItemStack item) {
+    public boolean isAugmented() {
+        return this == augmented;
+    }
+
+    /**
+     * Creates the effect as a potion item.
+     * 
+     * @return An {@link ItemStack} instance for a player to use to get an effect.
+     */
+    @NotNull
+    public ItemStack createItem() {
+        ItemStack effectItem = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) effectItem.getItemMeta();
+
+        if (meta != null) {
+            // Setting the usual data
+            meta.setDisplayName(getName());
+            meta.setLore(getLore());
+            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB()));
+            meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
+
+            // Applying the custom model if the key has the "aug_" prefix
+            if (key.startsWith("aug_")) {
+                CustomModelDataComponent customModelData = meta.getCustomModelDataComponent();
+                customModelData.setFloats(List.of(999f));
+                meta.setCustomModelDataComponent(customModelData);
+            }
+
+            effectItem.setItemMeta(meta);
+        }
+
+        return effectItem;
+    }
+
+    /**
+     * Activates the spark for the player.
+     * 
+     * @param player The player to activate the spark ability for.
+     */
+    public void activateSpark(Player player) {
+        sparkFunction.accept(player);
+    }
+
+    /**
+     * Checks if a player has this effect in any slot.
+     * 
+     * @param player The player to check for the effect.
+     * 
+     * @return Whether or not the player has this effect equipped in any slot.
+     */
+    public boolean hasEffect(OfflinePlayer player) {
+        return hasEffect(player, "1") || hasEffect(player, "2");
+    }
+
+    /**
+     * Checks if a player has this effect in a specific slot.
+     * 
+     * @param player The player to check for the effect.
+     * @param slot The slot to check for the effect in.
+     * 
+     * @return Whether or not the player has this effect equipped in the provided slot.
+     */
+    public boolean hasEffect(OfflinePlayer player, String slot) {
+        return this == Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+    }
+
+    /**
+     * Checks if an {@link ItemStack} was created by this effect.
+     * 
+     * @param item The item to check.
+     * 
+     * @return Whether or not the item was created by this effect.
+     */
+    public boolean isEffect(@Nullable ItemStack item) {
+        if (item == null) return false;
+        if (item.getType() != Material.POTION) return false;
+        if (!item.hasItemMeta()) return false;
+
+        return key.equals(item.getItemMeta().getPersistentDataContainer().get(Infuse.EFFECT_KEY, PersistentDataType.STRING));
+    }
+
+    /**
+     * Gets an {@link EffectMapping} from an {@link ItemStack}.
+     * 
+     * @param item The item to get the effect from.
+     * 
+     * @return The effect mapping the item corresponds to.  Returns null if the item is null or has an invalid effect key.
+     */
+    @Nullable
+    public static EffectMapping fromItem(@Nullable ItemStack item) {
+        if (item == null) return null;
+        if (item.getType() != Material.POTION) return null;
+        if (!item.hasItemMeta()) return null;
+
+        String key = item.getItemMeta().getPersistentDataContainer().get(Infuse.EFFECT_KEY, PersistentDataType.STRING);
+        if (key == null) return null;
+
+        return fromEffectKey(key);
+    }
+
+    /**
+     * Gets an {@link EffectMapping} from the name of an effect.
+     * 
+     * @param name The name of the effect.
+     * 
+     * @return The effect mapping the item corresponds to.  Returns null if the name is not shared with any effect.
+     */
+    @Nullable
+    public static EffectMapping fromEffectName(@Nullable String name) {
         for (EffectMapping mapping : values()) {
-            if (mapping.matchesItem(item)) return mapping;
+            if (Infuse.getInstance().getEffectName(mapping.getKey()).equals(name)) return mapping;
         }
 
         return null;
     }
 
     /**
-     * Gets an EffectMapping from the name of an effect
-     * If the plugin cannot find a valid EffectMapping for the name, it returns null.
+     * Gets an {@link EffectMapping} from the effect's key.
      * 
-     * @param name The name to check.
+     * @param key The key of the effect.
      * 
-     * @return An effect mapping based on the name provided
+     * @return The effect mapping the item corresponds to.  Returns null if the key is invalid.
      */
-    public static EffectMapping fromEffectName(String name) {
+    @Nullable
+    public static EffectMapping fromEffectKey(@Nullable String key) {
         for (EffectMapping mapping : values()) {
-            if (mapping.getEffectName().equals(name)) return mapping;
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets an EffectMapping from the key of an effect
-     * If the plugin cannot find a valid EffectMapping for the key, it returns null.
-     * 
-     * @param key The key to check.
-     * 
-     * @return An effect mapping based on the key provided
-     */
-    public static EffectMapping fromEffectKey(String key) {
-        for (EffectMapping mapping : values()) {
-            if (mapping.effectKey.equals(key)) return mapping;
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets an EffectMapping from the id of an effect
-     * If the plugin cannot find a valid EffectMapping for the id, it returns null.
-     * 
-     * @param id The id to check.
-     * 
-     * @return An effect mapping based on the id provided.
-     */
-    public static EffectMapping fromEffectId(int id) {
-        for (EffectMapping mapping : values()) {
-            if (mapping.effectId == id) return mapping;
+            if (mapping.getKey().equals(key)) return mapping;
         }
 
         return null;

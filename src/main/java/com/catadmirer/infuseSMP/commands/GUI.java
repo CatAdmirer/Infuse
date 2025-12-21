@@ -50,7 +50,7 @@ public class GUI implements Listener, CommandExecutor {
                 case AUG_FROST -> augmentedOrRegular(player, EffectMapping.AUG_FROST.createItem(), EffectMapping.FROST.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
                 case AUG_HASTE -> augmentedOrRegular(player, EffectMapping.AUG_HASTE.createItem(), EffectMapping.HASTE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
                 case AUG_HEART -> augmentedOrRegular(player, EffectMapping.AUG_HEART.createItem(), EffectMapping.HEART.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_INVISIBILITY -> augmentedOrRegular(player, EffectMapping.AUG_INVISIBILITY.createItem(), EffectMapping.INVISIBILITY.createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+                case AUG_INVIS -> augmentedOrRegular(player, EffectMapping.AUG_INVIS.createItem(), EffectMapping.INVIS.createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
                 case AUG_OCEAN -> augmentedOrRegular(player, EffectMapping.AUG_OCEAN.createItem(), EffectMapping.OCEAN.createItem(), Material.BLUE_STAINED_GLASS_PANE);
                 case AUG_REGEN -> augmentedOrRegular(player, EffectMapping.AUG_REGEN.createItem(), EffectMapping.REGEN.createItem(), Material.RED_STAINED_GLASS_PANE);
                 case AUG_SPEED -> augmentedOrRegular(player, EffectMapping.AUG_SPEED.createItem(), EffectMapping.SPEED.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);

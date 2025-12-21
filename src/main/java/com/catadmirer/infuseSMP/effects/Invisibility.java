@@ -2,19 +2,18 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
 import com.github.retrooper.packetevents.PacketEvents;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.github.retrooper.packetevents.event.*;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -26,52 +25,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Invisibility implements Listener {
-    
-    private static Plugin plugin;
-    private static DataManager trustManager;
+public class Invisibility implements Listener, PacketListener {
+
+    private final Plugin plugin;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
-    public Invisibility(Plugin plugin, DataManager trustManager) {
-        Invisibility.plugin = plugin;
-        Invisibility.trustManager = trustManager;
+    public Invisibility(Plugin plugin) {
+        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (Invisibility.this.hasEffect(p, "1") || Invisibility.this.hasEffect(p, "2")) {
+                    if (EffectMapping.INVIS.hasEffect(p)) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
                 }
 
             }
         }).runTaskTimer(plugin, 0L, 20L);
-    }
-
-    public static ItemStack createEffect() {
-        ItemStack effect = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta)effect.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(Infuse.getInstance().getEffectName("invis"));
-            meta.setLore(Infuse.getInstance().getEffectLore("invis"));
-            meta.setColor(Color.fromRGB(0xCC33FF));
-            meta.setCustomModelData(7);
-            effect.setItemMeta(meta);
-        }
-
-        return effect;
-    }
-
-    public static boolean isEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == 7;
     }
 
     private static void hideHealthForPlayer(final Player player, final int durationSeconds) {
@@ -90,13 +66,13 @@ public class Invisibility implements Listener {
                 }
 
             }
-        }).runTaskTimer(plugin, 0L, 2L);
+        }).runTaskTimer(Infuse.getInstance(), 0L, 2L);
     }
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (this.hasEffect(shooter, "1") || this.hasEffect(shooter, "2")) {
+            if (EffectMapping.INVIS.hasEffect(shooter)) {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -112,7 +88,7 @@ public class Invisibility implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (this.hasEffect(attacker, "1") || this.hasEffect(attacker, "2")) {
+                if (EffectMapping.INVIS.hasEffect(attacker)) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -135,7 +111,7 @@ public class Invisibility implements Listener {
                 if (this.ticksElapsed >= this.maxTicks) {
                     this.cancel();
                 } else {
-                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0.0, 1.0, 0.0), 3, 0.5, 0.5, 0.5, 0.0);
+                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
                     this.ticksElapsed += 5;
                 }
             }
@@ -145,38 +121,11 @@ public class Invisibility implements Listener {
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player target) {
-            if (this.hasEffect(target, "1") || this.hasEffect(target, "1")) {
+            if (EffectMapping.INVIS.hasEffect(target)) {
                 event.setCancelled(true);
             }
         }
 
-    }
-
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        this.handleOffhand(event);
-    }
-
-    public void handleOffhand(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("ability.use")) {
-            boolean isPrimary = player.isSneaking() && this.hasEffect(player, "1");
-            boolean isSecondary = !player.isSneaking() && this.hasEffect(player, "2");
-            if (isPrimary || isSecondary) {
-                UUID playerUUID = player.getUniqueId();
-                if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
-                    event.setCancelled(true);
-                    activateSpark(player);
-                }
-            }
-        }
-    }
-
-    private boolean hasEffect(Player player, String tier) {
-        String currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), tier);
-        String effectName2 = Infuse.getInstance().getEffectName("aug_invis");
-        String effectName = Infuse.getInstance().getEffectName("invis");
-        return currentEffect != null && (currentEffect.equals(effectName2) || currentEffect.equals(effectName));
     }
 
     public static void activateSpark(final Player caster) {
@@ -184,17 +133,15 @@ public class Invisibility implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
-            String augmentedName = ChatColor.stripColor(Infuse.getInstance().getEffectName("aug_invis").toLowerCase());
-            boolean isAugmented = augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").toLowerCase())) ||
-                                  augmentedName.equals(ChatColor.stripColor(Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").toLowerCase()));
+            // Applying cooldowns and durations for the effect
+            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = Infuse.getInstance().getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = Infuse.getInstance().getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
 
-            long cooldown = Infuse.getInstance().getConfig(isAugmented ? "invisibility.cooldown.augmented" : "invisibility.cooldown.default");
-            long duration = Infuse.getInstance().getConfig(isAugmented ? "invisibility.duration.augmented" : "invisibility.duration.default");
+            CooldownManager.setDuration(playerUUID, "invis", duration);
+            CooldownManager.setCooldown(playerUUID, "invis", cooldown);
 
-            CooldownManager.setDuration(playerUUID, "invisibility", duration);
-            CooldownManager.setCooldown(playerUUID, "invisibility", cooldown);
-
-            final double radius = 10.0;
+            final double radius = 10;
             final long durationTicks = duration * 20;
             final World world = caster.getWorld();
             final Set<Player> vanishedPlayers = new HashSet<>();
@@ -208,7 +155,7 @@ public class Invisibility implements Listener {
             for (Player vanished : vanishedPlayers) {
                 for (Player other : Bukkit.getOnlinePlayers()) {
                     if (!other.equals(vanished) && !isTeammate(other, vanished)) {
-                        other.hidePlayer(plugin, vanished);
+                        other.hidePlayer(Infuse.getInstance(), vanished);
                     }
                 }
             }
@@ -221,7 +168,7 @@ public class Invisibility implements Listener {
                         this.cancel();
                         for (Player vanished : vanishedPlayers) {
                             for (Player other : Bukkit.getOnlinePlayers()) {
-                                other.showPlayer(plugin, vanished);
+                                other.showPlayer(Infuse.getInstance(), vanished);
                             }
                         }
 
@@ -252,11 +199,11 @@ public class Invisibility implements Listener {
                         this.ticksElapsed += 10L;
                     }
                 }
-            }).runTaskTimer(plugin, 0L, 10L);
+            }).runTaskTimer(Infuse.getInstance(), 0L, 10L);
         }
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return trustManager.isTrusted(player, caster);
+        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
     }
 }
