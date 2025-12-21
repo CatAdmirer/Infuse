@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.managers.EffectMaps;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
@@ -52,7 +52,13 @@ public class Abilities implements CommandExecutor {
         String strippedEffect = stripAllColors(equippedEffect);
         strippedEffect = plugin.getEffectReversed(strippedEffect);
 
-        switch (EffectMaps.getEffectNumber(strippedEffect)) {
+        EffectMapping mapping = EffectMapping.fromEffectKey(strippedEffect);
+        if (mapping == null) {
+            player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
+            return true;
+        }
+
+        switch (mapping.getEffectId()) {
             case 0, 1 -> Emerald.activateSpark(player);
             case 2, 3 -> Feather.activateSpark(player);
             case 4, 5 -> Fire.activateSpark(player);
@@ -68,7 +74,6 @@ public class Abilities implements CommandExecutor {
             case 24, 26 -> Ender.activateSpark(player);
             case 25, 27 -> Apophis.activateSpark(player);
             case 28, 29 -> Thief.activateSpark(player);
-            default -> player.sendMessage(ChatColor.RED + "No valid ability found for the equipped effect.");
         }
 
         return true;

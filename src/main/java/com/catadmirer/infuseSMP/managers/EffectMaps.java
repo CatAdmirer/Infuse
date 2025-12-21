@@ -1,94 +1,10 @@
 package com.catadmirer.infuseSMP.managers;
 
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.md_5.bungee.api.ChatColor;
 
 public class EffectMaps {
-
-    private static final Map<String, Integer> effectNumber = new HashMap<>();
-
-    static {
-        effectNumber.put("emerald", 0);
-        effectNumber.put("haste", 8);
-        effectNumber.put("heart", 10);
-        effectNumber.put("invis", 12);
-        effectNumber.put("aug_frost", 7);
-        effectNumber.put("aug_feather", 3);
-        effectNumber.put("thunder", 22);
-        effectNumber.put("speed", 19);
-        effectNumber.put("aug_regen", 17);
-        effectNumber.put("aug_ocean", 15);
-        effectNumber.put("aug_emerald", 1);
-        effectNumber.put("fire", 4);
-        effectNumber.put("aug_invis", 13);
-        effectNumber.put("frost", 6);
-        effectNumber.put("aug_thunder", 23);
-        effectNumber.put("aug_haste", 9);
-        effectNumber.put("aug_speed", 18);
-        effectNumber.put("aug_fire", 5);
-        effectNumber.put("ocean", 14);
-        effectNumber.put("aug_heart", 11);
-        effectNumber.put("aug_strength", 21);
-        effectNumber.put("feather", 2);
-        effectNumber.put("regen", 16);
-        effectNumber.put("strength", 20);
-        effectNumber.put("ender", 24);
-        effectNumber.put("apophis", 25);
-        effectNumber.put("aug_ender", 26);
-        effectNumber.put("aug_apophis", 27);
-        effectNumber.put("thief", 28);
-        effectNumber.put("aug_thief", 29);
-    }
-
-    public static Integer getEffectNumber(String key) {
-        return effectNumber.getOrDefault(key, effectNumber.getOrDefault(key, -1));
-    }
-
-    public static final Map<String, ItemStack> activeEffects = new HashMap<>();
-
-    static {
-        activeEffects.put("emerald", Emerald.createEffect());
-        activeEffects.put("haste", Haste.createEffect());
-        activeEffects.put("heart", Heart.createEffect());
-        activeEffects.put("invis", Invisibility.createEffect());
-        activeEffects.put("frost", Frost.createEffect());
-        activeEffects.put("feather", Feather.createEffect());
-        activeEffects.put("thunder", Thunder.createEffect());
-        activeEffects.put("speed", Speed.createEffect());
-        activeEffects.put("regen", Regen.createEffect());
-        activeEffects.put("ocean", Ocean.createEffect());
-        activeEffects.put("fire", Fire.createEffect());
-        activeEffects.put("strength", Strength.createEffect());
-        activeEffects.put("ender", Ender.createEffect());
-        activeEffects.put("apophis", Apophis.createEffect());
-        activeEffects.put("thief", Thief.createEffect());
-        activeEffects.put("aug_strength", Augmented.createStrength());
-        activeEffects.put("aug_thunder", Augmented.createThunder());
-        activeEffects.put("aug_speed", Augmented.createSpeed());
-        activeEffects.put("aug_regen", Augmented.createRegen());
-        activeEffects.put("aug_ocean", Augmented.createOcean());
-        activeEffects.put("aug_emerald", Augmented.createEmerald());
-        activeEffects.put("aug_fire", Fire.createEffect());
-        activeEffects.put("aug_invis", Augmented.createInvis());
-        activeEffects.put("aug_frost", Augmented.createFrost());
-        activeEffects.put("aug_haste", Augmented.createHaste());
-        activeEffects.put("aug_heart", Augmented.createHeart());
-        activeEffects.put("aug_feather", Augmented.createFeather());
-        activeEffects.put("aug_ender", Augmented.createEnder());
-        activeEffects.put("aug_apophis", Augmented.createApophis());
-        activeEffects.put("aug_thief", Augmented.createThief());
-    }
-
-    public static ItemStack getEffectItem(String key) {
-        return activeEffects.get(key);
-    }
-
     public static final Map<String, String> cooldownEffect = new HashMap<>();
 
     static {
@@ -167,7 +83,7 @@ public class EffectMaps {
         return activeEffect.getOrDefault(key, activeEffect.getOrDefault(key, ""));
     }
 
-    public static final Map<String, net.md_5.bungee.api.ChatColor> color = new HashMap<>();
+    public static final Map<String,ChatColor> color = new HashMap<>();
 
     static {
         color.put("emerald", ChatColor.GREEN);
@@ -202,7 +118,7 @@ public class EffectMaps {
         color.put("aug_thief", ChatColor.DARK_RED);
     }
 
-    public static net.md_5.bungee.api.ChatColor getColorEffect(String key) {
+    public static ChatColor getColorEffect(String key) {
         return color.getOrDefault(key, color.getOrDefault(key, ChatColor.GRAY));
     }
 }

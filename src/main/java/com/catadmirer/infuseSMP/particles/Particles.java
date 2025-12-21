@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.particles;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.EffectMaps;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -24,9 +24,9 @@ public class Particles {
         if (effectName == null) return;
 
         String stripped = ChatColor.stripColor(effectName);
-        Integer abilityId = EffectMaps.getEffectNumber(stripped);
-        if (abilityId == null) return;
-        switch (abilityId) {
+        EffectMapping mapping = EffectMapping.fromEffectKey(Infuse.getInstance().getEffectReversed(stripped));
+        if (mapping == null) return;
+        switch (mapping.getEffectId()) {
             case 0:
                 AlsoParticles.spawnEffect2(player, Color.GREEN);
                 break;

@@ -69,8 +69,9 @@ public class Drop implements Listener {
         String meowmeow = stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
-        Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
-        switch (abilityId) {
+        EffectMapping mapping = EffectMapping.fromEffectKey(itemNameChanged);
+        if (mapping == null) return;
+        switch (mapping.getEffectId()) {
             case 0, 1:
                 color = Color.GREEN;
                 break;
@@ -114,7 +115,7 @@ public class Drop implements Listener {
                 color = Color.RED;
                 break;
             default:
-                break;
+                return;
         }
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
@@ -150,8 +151,9 @@ public class Drop implements Listener {
         String meowmeow = stripAllColors(itemthingy);
         meowmeow = ChatColor.stripColor(meowmeow);
         String itemNameChanged = plugin.getEffectReversed(meowmeow);
-        Integer abilityId = EffectMaps.getEffectNumber(itemNameChanged);
-        switch (abilityId) {
+        EffectMapping mapping = EffectMapping.fromEffectKey(itemNameChanged);
+        if (mapping == null) return;
+        switch (mapping.getEffectId()) {
             case 0, 1:
                 color = Color.GREEN;
                 break;
@@ -195,7 +197,7 @@ public class Drop implements Listener {
                 color = Color.RED;
                 break;
             default:
-                break;
+                return;
         }
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;

@@ -11,40 +11,41 @@ import org.bukkit.inventory.ItemStack;
 
 public enum EffectMapping {
     // Defining regular effects
-    APOPHIS("apophis", Apophis::isEffect, Apophis::createEffect),
-    EMERALD("emerald", Emerald::isEffect, Emerald::createEffect),
-    ENDER("ender", Ender::isEffect, Ender::createEffect),
-    FEATHER("feather", Feather::isEffect, Feather::createEffect),
-    FIRE("fire", Fire::isEffect, Fire::createEffect),
-    FROST("frost", Frost::isEffect, Frost::createEffect),
-    HASTE("haste", Haste::isEffect, Haste::createEffect),
-    HEART("heart", Heart::isEffect, Heart::createEffect),
-    INVISIBILITY("invis", Invisibility::isEffect, Invisibility::createEffect),
-    OCEAN("ocean", Ocean::isEffect, Ocean::createEffect),
-    REGEN("regen", Regen::isEffect, Regen::createEffect),
-    SPEED("speed", Speed::isEffect, Speed::createEffect),
-    STRENGTH("strength", Strength::isEffect, Strength::createEffect),
-    THIEF("thief", Thief::isEffect, Thief::createEffect),
-    THUNDER("thunder", Thunder::isEffect, Thunder::createEffect),
+    APOPHIS("apophis", 25, Apophis::isEffect, Apophis::createEffect),
+    EMERALD("emerald", 0, Emerald::isEffect, Emerald::createEffect),
+    ENDER("ender", 24, Ender::isEffect, Ender::createEffect),
+    FEATHER("feather", 2, Feather::isEffect, Feather::createEffect),
+    FIRE("fire", 4, Fire::isEffect, Fire::createEffect),
+    FROST("frost", 6, Frost::isEffect, Frost::createEffect),
+    HASTE("haste", 8, Haste::isEffect, Haste::createEffect),
+    HEART("heart", 10, Heart::isEffect, Heart::createEffect),
+    INVISIBILITY("invis", 12, Invisibility::isEffect, Invisibility::createEffect),
+    OCEAN("ocean", 14, Ocean::isEffect, Ocean::createEffect),
+    REGEN("regen", 16, Regen::isEffect, Regen::createEffect),
+    SPEED("speed", 19, Speed::isEffect, Speed::createEffect),
+    STRENGTH("strength", 20, Strength::isEffect, Strength::createEffect),
+    THIEF("thief", 28, Thief::isEffect, Thief::createEffect),
+    THUNDER("thunder", 22, Thunder::isEffect, Thunder::createEffect),
 
     // Defining augmented effects
-    AUG_APOPHIS(APOPHIS, Augmented::isApophis, Augmented::createApophis),
-    AUG_EMERALD(EMERALD, Augmented::isEmerald, Augmented::createEmerald),
-    AUG_ENDER(ENDER, Augmented::isEnder, Augmented::createEnder),
-    AUG_FEATHER(FEATHER, Augmented::isFeather, Augmented::createFeather),
-    AUG_FIRE(FIRE, Augmented::isFire, Augmented::createFire),
-    AUG_FROST(FROST, Augmented::isFrost, Augmented::createFrost),
-    AUG_HASTE(HASTE, Augmented::isHaste, Augmented::createHaste),
-    AUG_HEART(HEART, Augmented::isHeart, Augmented::createHeart),
-    AUG_INVISIBILITY(INVISIBILITY, Augmented::isInvis, Augmented::createInvis),
-    AUG_OCEAN(OCEAN, Augmented::isOcean, Augmented::createOcean),
-    AUG_REGEN(REGEN, Augmented::isRegen, Augmented::createRegen),
-    AUG_SPEED(SPEED, Augmented::isSpeed, Augmented::createSpeed),
-    AUG_STRENGTH(STRENGTH, Augmented::isStrength, Augmented::createStrength),
-    AUG_THIEF(THIEF, Augmented::isThief, Augmented::createThief),
-    AUG_THUNDER(THUNDER, Augmented::isThunder, Augmented::createThunder);
+    AUG_APOPHIS(APOPHIS, 27, Augmented::isApophis, Augmented::createApophis),
+    AUG_EMERALD(EMERALD, 1, Augmented::isEmerald, Augmented::createEmerald),
+    AUG_ENDER(ENDER, 26, Augmented::isEnder, Augmented::createEnder),
+    AUG_FEATHER(FEATHER, 3, Augmented::isFeather, Augmented::createFeather),
+    AUG_FIRE(FIRE, 5, Augmented::isFire, Augmented::createFire),
+    AUG_FROST(FROST, 7, Augmented::isFrost, Augmented::createFrost),
+    AUG_HASTE(HASTE, 9, Augmented::isHaste, Augmented::createHaste),
+    AUG_HEART(HEART, 11, Augmented::isHeart, Augmented::createHeart),
+    AUG_INVISIBILITY(INVISIBILITY, 13, Augmented::isInvis, Augmented::createInvis),
+    AUG_OCEAN(OCEAN, 15, Augmented::isOcean, Augmented::createOcean),
+    AUG_REGEN(REGEN, 17, Augmented::isRegen, Augmented::createRegen),
+    AUG_SPEED(SPEED, 18, Augmented::isSpeed, Augmented::createSpeed),
+    AUG_STRENGTH(STRENGTH, 21, Augmented::isStrength, Augmented::createStrength),
+    AUG_THIEF(THIEF, 29, Augmented::isThief, Augmented::createThief),
+    AUG_THUNDER(THUNDER, 23, Augmented::isThunder, Augmented::createThunder);
 
     private final String effectKey;
+    private final int effectId;
     private final Function<ItemStack,Boolean> matchesItem;
     private final Supplier<ItemStack> createItem;
 
@@ -54,20 +55,31 @@ public enum EffectMapping {
     /**
      * EffectMapping constructor for regular effects
      * 
-     * @param effectKey The base string key for the effect
+     * @param effectKey The base string key for this effect.
+     * @param effectId The numerical ID for this effect.
      * @param matchesItem A function used to check if the provided {@link ItemStack} matches the new EffectMapping.
      * @param createItem A function used to create an {@link ItemStack} from this EffectMapping.
      */
-    private EffectMapping(String effectKey, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
+    private EffectMapping(String effectKey, int effectId, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
         this.effectKey = effectKey;
+        this.effectId = effectId;
         this.matchesItem = matchesItem;
         this.createItem = createItem;
 
         regular = this;
     }
 
-    private EffectMapping(EffectMapping regular, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
+    /**
+     * EffectMapping constructor for augmented effects
+     * 
+     * @param regular The regular effect to use as a base for this effect.
+     * @param effectId The numerical ID for this effect.
+     * @param matchesItem A function used to check if the provided {@link ItemStack} matches the new EffectMapping.
+     * @param createItem A function used to create an {@link ItemStack} from this EffectMapping.
+     */
+    private EffectMapping(EffectMapping regular, int effectId, Function<ItemStack,Boolean> matchesItem, Supplier<ItemStack> createItem) {
         this.effectKey = "aug_" + regular.effectKey;
+        this.effectId = effectId;
         this.matchesItem = matchesItem;
         this.createItem = createItem;
 
@@ -83,6 +95,15 @@ public enum EffectMapping {
      */
     public String getEffectKey() {
         return effectKey;
+    }
+
+    /**
+     * Gets the numerical id of the effect.
+     * 
+     * @return The string key of the effect.
+     */
+    public int getEffectId() {
+        return effectId;
     }
 
     /**
@@ -186,6 +207,22 @@ public enum EffectMapping {
     public static EffectMapping fromEffectKey(String key) {
         for (EffectMapping mapping : values()) {
             if (mapping.effectKey.equals(key)) return mapping;
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets an EffectMapping from the id of an effect
+     * If the plugin cannot find a valid EffectMapping for the id, it returns null.
+     * 
+     * @param id The id to check.
+     * 
+     * @return An effect mapping based on the id provided.
+     */
+    public static EffectMapping fromEffectId(int id) {
+        for (EffectMapping mapping : values()) {
+            if (mapping.effectId == id) return mapping;
         }
 
         return null;

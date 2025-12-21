@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.managers.EffectMaps;
 import java.util.Arrays;
 import java.util.List;
@@ -66,13 +67,14 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 String effectKey = args[2].toLowerCase();
-                if (EffectMaps.getEffectItem(effectKey) == null) {
+                EffectMapping mapping = EffectMapping.fromEffectKey(effectKey);
+                if (mapping == null) {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference");
                     return true;
                 }
 
-                target.getInventory().addItem(EffectMaps.getEffectItem(effectKey));
-                String name = Infuse.getInstance().getEffectName(effectKey);
+                target.getInventory().addItem(mapping.createItem());
+                String name = mapping.getEffectName();
                 String effectName = Infuse.getInstance().stripAllColors(name);
                 ChatColor color = EffectMaps.getColorEffect(effectKey);
                 target.sendMessage(color + "You received the " + effectName);
@@ -97,13 +99,14 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 
                 // Getting the effect key and verifying its integrity.
                 effectKey = args[2].toLowerCase();
-                if (EffectMaps.getEffectItem(effectKey) == null) {
+                mapping = EffectMapping.fromEffectKey(effectKey);
+                if (mapping == null) {
                     player.sendMessage("§cInvalid Argument! Please use the tab completions as a reference.");
                     return true;
                 }
                 
                 // Getting the string to put in storage.
-                String effect = Infuse.getInstance().getEffectName(effectKey);
+                String effect = mapping.getEffectName();
 
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];
