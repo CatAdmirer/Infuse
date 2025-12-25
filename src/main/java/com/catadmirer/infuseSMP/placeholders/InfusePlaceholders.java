@@ -73,8 +73,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
         EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
         if (effect != null) {
-            String stripped = Infuse.getInstance().getEffectReversed(ChatColor.stripColor(effect.getName()));
-            String key = removeAug(stripped);
+            String key = effect.regular().getKey();
             if (key != null) {
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     return "" + effect.getActiveIcon();

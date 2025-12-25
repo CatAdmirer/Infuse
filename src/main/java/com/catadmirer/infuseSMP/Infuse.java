@@ -7,7 +7,6 @@ import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
-import com.catadmirer.infuseSMP.util.MessageUtil;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
@@ -17,7 +16,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +51,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private ApophisManager apophisCommand;
 
-    private final Map<String, String> effectNames = new HashMap<>();
-    private final Map<String, String> nameToKey = new HashMap<>();
-    private final Map<String, List<String>> effectLore = new HashMap<>();
     private final Map<String, Object> settings = new HashMap<>();
 
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
@@ -123,15 +118,6 @@ public class Infuse extends JavaPlugin implements Listener {
         return (T) settings.get(key);
     }
 
-    public String getEffectName(String key) {
-        return effectNames.getOrDefault(key, "§cUnknown Effect");
-    }
-
-    public List<String> getEffectLore(String key) {
-        return effectLore.getOrDefault(key, Collections.singletonList("§cUnknown Effect"));
-    }
-
-
     /**
      * Reloading the config and returning the amount of time it takes to reload the config.
      * 
@@ -150,8 +136,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Clearing the existing maps
         settings.clear();
-        effectNames.clear();
-        effectLore.clear();
 
         // Getting various configs
         settings.put("allow_infinite_effects", config.getBoolean("allow_infinite_effects", false));
@@ -195,91 +179,7 @@ public class Infuse extends JavaPlugin implements Listener {
         settings.put("extra_effects.Apophis", config.getBoolean("extra_effects.Apophis", false));
         settings.put("extra_effects.Thief", config.getBoolean("extra_effects.Thief", false));
 
-        // Getting regular effect names
-        effectNames.put("emerald",  Messages.EMERALD_NAME.getMessage());
-        effectNames.put("ender",    Messages.ENDER_NAME.getMessage());
-        effectNames.put("feather",  Messages.FEATHER_NAME.getMessage());
-        effectNames.put("fire",     Messages.FIRE_NAME.getMessage());
-        effectNames.put("frost",    Messages.FROST_NAME.getMessage());
-        effectNames.put("haste",    Messages.HASTE_NAME.getMessage());
-        effectNames.put("heart",    Messages.HEART_NAME.getMessage());
-        effectNames.put("invis",    Messages.INVIS_NAME.getMessage());
-        effectNames.put("ocean",    Messages.OCEAN_NAME.getMessage());
-        effectNames.put("regen",    Messages.REGEN_NAME.getMessage());
-        effectNames.put("speed",    Messages.SPEED_NAME.getMessage());
-        effectNames.put("strength", Messages.STRENGTH_NAME.getMessage());
-        effectNames.put("thunder",  Messages.THUNDER_NAME.getMessage());
-        effectNames.put("apophis",  Messages.APOPHIS_NAME.getMessage());
-        effectNames.put("thief",    Messages.THIEF_NAME.getMessage());
-        
-        // Getting augmented effect names
-        effectNames.put("aug_emerald",  Messages.AUG_EMERALD_NAME.getMessage());
-        effectNames.put("aug_ender",    Messages.AUG_ENDER_NAME.getMessage());
-        effectNames.put("aug_feather",  Messages.AUG_FEATHER_NAME.getMessage());
-        effectNames.put("aug_fire",     Messages.AUG_FIRE_NAME.getMessage());
-        effectNames.put("aug_frost",    Messages.AUG_FROST_NAME.getMessage());
-        effectNames.put("aug_haste",    Messages.AUG_HASTE_NAME.getMessage());
-        effectNames.put("aug_heart",    Messages.AUG_HEART_NAME.getMessage());
-        effectNames.put("aug_invis",    Messages.AUG_INVIS_NAME.getMessage());
-        effectNames.put("aug_ocean",    Messages.AUG_OCEAN_NAME.getMessage());
-        effectNames.put("aug_regen",    Messages.AUG_REGEN_NAME.getMessage());
-        effectNames.put("aug_speed",    Messages.AUG_SPEED_NAME.getMessage());
-        effectNames.put("aug_strength", Messages.AUG_STRENGTH_NAME.getMessage());
-        effectNames.put("aug_thunder",  Messages.AUG_THUNDER_NAME.getMessage());
-        effectNames.put("aug_apophis",  Messages.AUG_APOPHIS_NAME.getMessage());
-        effectNames.put("aug_thief",    Messages.AUG_THIEF_NAME.getMessage());
-
-        // Creating the name to key map by inverting the key to name map
-        effectNames.forEach((key, name) -> {
-            nameToKey.put(MessageUtil.stripAllColors(name), key);
-        });
-
-        // Getting regular effect lore
-        effectLore.put("emerald",  Messages.EMERALD_LORE.getStringList());
-        effectLore.put("ender",    Messages.ENDER_LORE.getStringList());
-        effectLore.put("feather",  Messages.FEATHER_LORE.getStringList());
-        effectLore.put("fire",     Messages.FIRE_LORE.getStringList());
-        effectLore.put("frost",    Messages.FROST_LORE.getStringList());
-        effectLore.put("haste",    Messages.HASTE_LORE.getStringList());
-        effectLore.put("heart",    Messages.HEART_LORE.getStringList());
-        effectLore.put("invis",    Messages.INVIS_LORE.getStringList());
-        effectLore.put("ocean",    Messages.OCEAN_LORE.getStringList());
-        effectLore.put("regen",    Messages.REGEN_LORE.getStringList());
-        effectLore.put("speed",    Messages.SPEED_LORE.getStringList());
-        effectLore.put("strength", Messages.STRENGTH_LORE.getStringList());
-        effectLore.put("thunder",  Messages.THUNDER_LORE.getStringList());
-        effectLore.put("apophis",  Messages.APOPHIS_LORE.getStringList());
-        effectLore.put("thief",    Messages.THIEF_LORE.getStringList());
-        
-        // Getting augmented effect lore
-        effectLore.put("aug_emerald",  Messages.AUG_EMERALD_LORE.getStringList());
-        effectLore.put("aug_ender",    Messages.AUG_ENDER_LORE.getStringList());
-        effectLore.put("aug_feather",  Messages.AUG_FEATHER_LORE.getStringList());
-        effectLore.put("aug_fire",     Messages.AUG_FIRE_LORE.getStringList());
-        effectLore.put("aug_frost",    Messages.AUG_FROST_LORE.getStringList());
-        effectLore.put("aug_haste",    Messages.AUG_HASTE_LORE.getStringList());
-        effectLore.put("aug_heart",    Messages.AUG_HEART_LORE.getStringList());
-        effectLore.put("aug_invis",    Messages.AUG_INVIS_LORE.getStringList());
-        effectLore.put("aug_ocean",    Messages.AUG_OCEAN_LORE.getStringList());
-        effectLore.put("aug_regen",    Messages.AUG_REGEN_LORE.getStringList());
-        effectLore.put("aug_speed",    Messages.AUG_SPEED_LORE.getStringList());
-        effectLore.put("aug_strength", Messages.AUG_STRENGTH_LORE.getStringList());
-        effectLore.put("aug_thunder",  Messages.AUG_THUNDER_LORE.getStringList());
-        effectLore.put("aug_apophis",  Messages.AUG_APOPHIS_LORE.getStringList());
-        effectLore.put("aug_thief",    Messages.AUG_THIEF_LORE.getStringList());
-        
         return (System.nanoTime() - start) / 1000000;
-    }
-
-    /**
-     * Getting an effect key from the name of an item.
-     * 
-     * @param displayName The name of the item.
-     * 
-     * @return The key of the effect.
-     */
-    public String getEffectReversed(String displayName) {
-        return nameToKey.get(MessageUtil.stripAllColors(displayName));
     }
 
     /** Registers the commands for the plugin. */

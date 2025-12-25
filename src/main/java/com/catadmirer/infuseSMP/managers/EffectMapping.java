@@ -139,6 +139,7 @@ public enum EffectMapping {
      * 
      * @return The name of the effect as defined in the config.
      */
+    @NotNull
     public String getName() {
         return switch (this) {
             case EMERALD -> Messages.EMERALD_NAME.getMessage();
@@ -357,7 +358,8 @@ public enum EffectMapping {
     @Nullable
     public static EffectMapping fromEffectName(@Nullable String name) {
         for (EffectMapping mapping : values()) {
-            if (Infuse.getInstance().getEffectName(mapping.getKey()).equals(name)) return mapping;
+            
+            if (mapping.getName().equals(name)) return mapping;
         }
 
         return null;
