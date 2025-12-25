@@ -207,7 +207,7 @@ public enum EffectMapping {
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
 
             // Applying the custom model if the key has the "aug_" prefix
-            if (key.startsWith("aug_")) {
+            if (this == augmented) {
                 CustomModelDataComponent customModelData = meta.getCustomModelDataComponent();
                 customModelData.setFloats(List.of(999f));
                 meta.setCustomModelDataComponent(customModelData);
