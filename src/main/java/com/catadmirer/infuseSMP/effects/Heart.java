@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -77,7 +80,7 @@ public class Heart implements Listener {
                 } else {
                     this.cancel();
                     entity.setCustomNameVisible(false);
-                    entity.setCustomName(null);
+                    entity.customName(null);
                 }
             }
         };
@@ -86,15 +89,13 @@ public class Heart implements Listener {
             public void run() {
                 updateTask.cancel();
                 entity.setCustomNameVisible(false);
-                entity.setCustomName(null);
+                entity.customName(null);
             }
         }).runTaskLater(Infuse.getInstance(), 200L);
     }
 
     private void updateHealthDisplay(LivingEntity entity) {
-        double health = entity.getHealth();
-        String healthText = "§c§l❤ " + String.format("%.1f", health);
-        entity.setCustomName(healthText);
+        entity.customName(Component.text(String.format("%.1f", entity.getHealth()), NamedTextColor.RED, TextDecoration.BOLD));
     }
 
     @EventHandler
