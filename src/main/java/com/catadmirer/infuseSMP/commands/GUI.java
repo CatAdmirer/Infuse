@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
-import com.catadmirer.infuseSMP.inventories.EffectInventory;
-import com.catadmirer.infuseSMP.inventories.EffectLevelInventory;
+import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,12 +18,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class GUI implements Listener, CommandExecutor {
-    public static void openSwordSelectionGUI(Player player) {
-        player.openInventory(new EffectInventory().getInventory());
-    }
-
     private void augmentedOrRegular(HumanEntity player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
-        player.openInventory(new EffectLevelInventory(augmented, regular, backgroundColor).getInventory());
+        player.openInventory(new AugOrRegChooser(augmented, regular, backgroundColor).getInventory());
     }
 
     @EventHandler
@@ -36,7 +32,7 @@ public class GUI implements Listener, CommandExecutor {
         if (clicked == null || clicked.getType() == Material.AIR) return;
 
         // Only running if the inventory is an EffectInventory
-        if (clickedInventory.getHolder() instanceof EffectInventory) {
+        if (clickedInventory.getHolder() instanceof EffectChooser) {
             // Cancelling the click event to prevent the player from getting the item.
             event.setCancelled(true);
 
@@ -61,7 +57,7 @@ public class GUI implements Listener, CommandExecutor {
             }
         }
 
-        if (clickedInventory instanceof EffectLevelInventory) {
+        if (clickedInventory instanceof AugOrRegChooser) {
             if (clicked.getType() != Material.POTION) {
                 event.setCancelled(true);
             }
@@ -72,7 +68,7 @@ public class GUI implements Listener, CommandExecutor {
         if (command.getName().equalsIgnoreCase("infuses")) {
             // Opening the gui for players only.
             if (sender instanceof Player player) {
-                openSwordSelectionGUI(player);
+                player.openInventory(new EffectChooser().getInventory());
             } else {
                 sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
             }

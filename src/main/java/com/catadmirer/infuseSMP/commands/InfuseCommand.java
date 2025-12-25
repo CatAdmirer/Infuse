@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                GUI.openSwordSelectionGUI(player);
+                player.openInventory(new EffectChooser().getInventory());
                 break;
 
             case "reload":

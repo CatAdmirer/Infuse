@@ -9,10 +9,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class EffectInventory implements InventoryHolder {
+public class EffectChooser implements InventoryHolder {
     private final Inventory inventory;
 
-    public EffectInventory() {
+    public EffectChooser() {
         inventory = Bukkit.createInventory(this, 54, "§lInfuses");
 
         // Filling the inventory with decorative glass panes

@@ -8,10 +8,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class EffectLevelInventory implements InventoryHolder {
+public class AugOrRegChooser implements InventoryHolder {
     private final Inventory inventory;
 
-    public EffectLevelInventory(ItemStack regularEffect, ItemStack augmentedEffect, Material backgroundItem) {
+    public AugOrRegChooser(ItemStack regularEffect, ItemStack augmentedEffect, Material backgroundItem) {
         inventory = Bukkit.createInventory(null, 27, "§eChoose");
         
         // Filling the inventory with a filler item.
