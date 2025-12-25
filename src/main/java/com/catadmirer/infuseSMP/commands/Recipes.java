@@ -89,7 +89,7 @@ public class Recipes implements CommandExecutor, Listener {
         return switch (potionName) {
             case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
             case "end_first" -> EffectMapping.AUG_ENDER.createItem();
-            case "end_second" -> EffectMapping.AUG_ENDER.createItem();
+            case "end_second" -> EffectMapping.ENDER.createItem();
             case "feather" -> EffectMapping.AUG_FEATHER.createItem();
             case "fire" -> EffectMapping.AUG_FIRE.createItem();
             case "frost" -> EffectMapping.AUG_FROST.createItem();
