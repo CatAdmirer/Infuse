@@ -48,6 +48,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -218,7 +219,7 @@ public class InfuseRecipeManager implements Listener {
         Component itemName = craftedItem.getItemMeta().displayName();
         TextColor itemColor = itemName.color();
         String formattedItemName = legacySection.serialize(Component.text("\uD83E\uDDEA ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" \uD83E\uDDEA")));
-
+        
         BarColor barColor = this.getColorFromItemName(recipeKey);
         this.activeBossBar = Bukkit.createBossBar(formattedItemName, barColor, BarStyle.SOLID);
 
@@ -614,7 +615,7 @@ public class InfuseRecipeManager implements Listener {
 
                 player.openInventory(new StationSelectionMenu().getInventory());
             } else {
-                player.openWorkbench(null, true);
+                MenuType.CRAFTING.create(player).open();
             }
         }
     }
@@ -629,7 +630,7 @@ public class InfuseRecipeManager implements Listener {
             String name = clicked.getItemMeta().getDisplayName();
             if (name.contains("Crafting")) {
                 player.closeInventory();
-                player.openWorkbench(null, true);
+                MenuType.CRAFTING.create(player).open();
             } else if (name.contains("Brewing")) {
                 player.closeInventory();
                 BrewingStand stand = brewingStandCache.get(player.getUniqueId());
