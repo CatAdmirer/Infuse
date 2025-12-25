@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import net.kyori.adventure.text.Component;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,8 @@ public class Ender implements Listener {
     private DataManager dataManager;
 
     private final Set<UUID> curseChain = new HashSet<>();
+
+    public static final Component fireballName = Component.text("Cursing Projectile");
 
     public Ender(DataManager dataManager, Infuse plugin) {
         this.dataManager = dataManager;
@@ -229,7 +232,7 @@ public class Ender implements Listener {
         Fireball fireball = player.launchProjectile(Fireball.class);
         fireball.setIsIncendiary(false);
         fireball.setYield(4);
-        fireball.setCustomName("Cursing Projectile");
+        fireball.customName(fireballName);
         dragonBreathCooldowns.put(uuid, 30);
 
         player.sendMessage("§aYou shot a cursing fireball! Cooldown started.");
@@ -238,7 +241,7 @@ public class Ender implements Listener {
     @EventHandler
     public void onFireballDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Fireball fireball)) return;
-        if (!"Cursing Projectile".equals(fireball.getCustomName())) return;
+        if (!fireballName.equals(fireball.customName())) return;
         event.setDamage(0);
     }
 
@@ -246,13 +249,13 @@ public class Ender implements Listener {
     @EventHandler
     public void onFireballHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof Fireball fireball)) return;
-        if (!"Cursing Projectile".equals(fireball.getCustomName())) return;
+        if (!fireballName.equals(fireball.customName())) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
         target.sendMessage("§cYou have been cursed!");
-        removeCurseLater(target.getUniqueId(), 20 * 60);
+        removeCurseLater(target.getUniqueId(), 1200);
     }
 
     public void removeCurseLater(UUID playerUUID, long delayTicks) {
