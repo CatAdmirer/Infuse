@@ -1,9 +1,9 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,21 +20,21 @@ import org.jetbrains.annotations.Nullable;
 
 public enum EffectMapping {
     // Defining regular effects
-    EMERALD  ("emerald",   1, Color.GREEN,         BarColor.GREEN , Emerald::activateSpark),
+    EMERALD  ("emerald",   1, Color.GREEN,         BarColor.GREEN,  Emerald::activateSpark),
     ENDER    ("ender",     2, new Color(0x800080), BarColor.PURPLE, Ender::activateSpark),
-    FEATHER  ("feather",   3, new Color(0xBEA3CA), BarColor.WHITE , Feather::activateSpark),
-    FIRE     ("fire",      4, new Color(0xEE5522), BarColor.RED   , Fire::activateSpark),
-    FROST    ("frost",     5, new Color(0x55FFFF), BarColor.BLUE  , Frost::activateSpark),
+    FEATHER  ("feather",   3, new Color(0xBEA3CA), BarColor.WHITE,  Feather::activateSpark),
+    FIRE     ("fire",      4, new Color(0xEE5522), BarColor.RED,    Fire::activateSpark),
+    FROST    ("frost",     5, new Color(0x55FFFF), BarColor.BLUE,   Frost::activateSpark),
     HASTE    ("haste",     6, new Color(0xFFCC33), BarColor.YELLOW, Haste::activateSpark),
-    HEART    ("heart",     7, Color.RED,           BarColor.RED   , Heart::activateSpark),
+    HEART    ("heart",     7, Color.RED,           BarColor.RED,    Heart::activateSpark),
     INVIS    ("invis",     8, new Color(0xAA00AA), BarColor.PURPLE, Invisibility::activateSpark),
-    OCEAN    ("ocean",     9, new Color(0x0066FF), BarColor.BLUE  , Ocean::activateSpark),
-    REGEN    ("regen",    10, new Color(0xFF5555), BarColor.PINK  , Regen::activateSpark),
+    OCEAN    ("ocean",     9, new Color(0x0066FF), BarColor.BLUE,   Ocean::activateSpark),
+    REGEN    ("regen",    10, new Color(0xFF5555), BarColor.PINK,   Regen::activateSpark),
     SPEED    ("speed",    11, new Color(0xEEBB77), BarColor.YELLOW, Speed::activateSpark),
-    STRENGTH ("strength", 12, new Color(0x800000), BarColor.RED   , Strength::activateSpark),
+    STRENGTH ("strength", 12, new Color(0x800000), BarColor.RED,    Strength::activateSpark),
     THUNDER  ("thunder",  13, Color.YELLOW,        BarColor.YELLOW, Thunder::activateSpark),
     APOPHIS  ("apophis",  14, new Color(0x440044), BarColor.PURPLE, Apophis::activateSpark),
-    THIEF    ("thief",    15, new Color(0xAA0000), BarColor.RED   , Thief::activateSpark),
+    THIEF    ("thief",    15, new Color(0xAA0000), BarColor.RED,    Thief::activateSpark),
 
     // Defining augmented effects
     AUG_EMERALD(EMERALD),
@@ -140,7 +140,38 @@ public enum EffectMapping {
      * @return The name of the effect as defined in the config.
      */
     public String getName() {
-        return Infuse.getInstance().getEffectName(key);
+        return switch (this) {
+            case EMERALD -> Messages.EMERALD_NAME.getMessage();
+            case ENDER -> Messages.ENDER_NAME.getMessage();
+            case FEATHER -> Messages.FEATHER_NAME.getMessage();
+            case FIRE -> Messages.FIRE_NAME.getMessage();
+            case FROST -> Messages.FROST_NAME.getMessage();
+            case HASTE -> Messages.HASTE_NAME.getMessage();
+            case HEART -> Messages.HEART_NAME.getMessage();
+            case INVIS -> Messages.INVIS_NAME.getMessage();
+            case OCEAN -> Messages.OCEAN_NAME.getMessage();
+            case REGEN -> Messages.REGEN_NAME.getMessage();
+            case SPEED -> Messages.SPEED_NAME.getMessage();
+            case STRENGTH -> Messages.STRENGTH_NAME.getMessage();
+            case THUNDER -> Messages.THUNDER_NAME.getMessage();
+            case APOPHIS -> Messages.APOPHIS_NAME.getMessage();
+            case THIEF -> Messages.THIEF_NAME.getMessage();
+            case AUG_EMERALD -> Messages.AUG_EMERALD_NAME.getMessage();
+            case AUG_ENDER -> Messages.AUG_ENDER_NAME.getMessage();
+            case AUG_FEATHER -> Messages.AUG_FEATHER_NAME.getMessage();
+            case AUG_FIRE -> Messages.AUG_FIRE_NAME.getMessage();
+            case AUG_FROST -> Messages.AUG_FROST_NAME.getMessage();
+            case AUG_HASTE -> Messages.AUG_HASTE_NAME.getMessage();
+            case AUG_HEART -> Messages.AUG_HEART_NAME.getMessage();
+            case AUG_INVIS -> Messages.AUG_INVIS_NAME.getMessage();
+            case AUG_OCEAN -> Messages.AUG_OCEAN_NAME.getMessage();
+            case AUG_REGEN -> Messages.AUG_REGEN_NAME.getMessage();
+            case AUG_SPEED -> Messages.AUG_SPEED_NAME.getMessage();
+            case AUG_STRENGTH -> Messages.AUG_STRENGTH_NAME.getMessage();
+            case AUG_THUNDER -> Messages.AUG_THUNDER_NAME.getMessage();
+            case AUG_APOPHIS -> Messages.AUG_APOPHIS_NAME.getMessage();
+            case AUG_THIEF -> Messages.AUG_THIEF_NAME.getMessage();
+        };
     }
 
     /**
@@ -149,7 +180,38 @@ public enum EffectMapping {
      * @return The lore of the effect as defined in the config.
      */
     public List<String> getLore() {
-        return Infuse.getInstance().getEffectLore(key);
+        return switch (this) {
+            case EMERALD -> Messages.EMERALD_LORE.getStringList();
+            case ENDER -> Messages.ENDER_LORE.getStringList();
+            case FEATHER -> Messages.FEATHER_LORE.getStringList();
+            case FIRE -> Messages.FIRE_LORE.getStringList();
+            case FROST -> Messages.FROST_LORE.getStringList();
+            case HASTE -> Messages.HASTE_LORE.getStringList();
+            case HEART -> Messages.HEART_LORE.getStringList();
+            case INVIS -> Messages.INVIS_LORE.getStringList();
+            case OCEAN -> Messages.OCEAN_LORE.getStringList();
+            case REGEN -> Messages.REGEN_LORE.getStringList();
+            case SPEED -> Messages.SPEED_LORE.getStringList();
+            case STRENGTH -> Messages.STRENGTH_LORE.getStringList();
+            case THUNDER -> Messages.THUNDER_LORE.getStringList();
+            case APOPHIS -> Messages.APOPHIS_LORE.getStringList();
+            case THIEF -> Messages.THIEF_LORE.getStringList();
+            case AUG_EMERALD -> Messages.AUG_EMERALD_LORE.getStringList();
+            case AUG_ENDER -> Messages.AUG_ENDER_LORE.getStringList();
+            case AUG_FEATHER -> Messages.AUG_FEATHER_LORE.getStringList();
+            case AUG_FIRE -> Messages.AUG_FIRE_LORE.getStringList();
+            case AUG_FROST -> Messages.AUG_FROST_LORE.getStringList();
+            case AUG_HASTE -> Messages.AUG_HASTE_LORE.getStringList();
+            case AUG_HEART -> Messages.AUG_HEART_LORE.getStringList();
+            case AUG_INVIS -> Messages.AUG_INVIS_LORE.getStringList();
+            case AUG_OCEAN -> Messages.AUG_OCEAN_LORE.getStringList();
+            case AUG_REGEN -> Messages.AUG_REGEN_LORE.getStringList();
+            case AUG_SPEED -> Messages.AUG_SPEED_LORE.getStringList();
+            case AUG_STRENGTH -> Messages.AUG_STRENGTH_LORE.getStringList();
+            case AUG_THUNDER -> Messages.AUG_THUNDER_LORE.getStringList();
+            case AUG_APOPHIS -> Messages.AUG_APOPHIS_LORE.getStringList();
+            case AUG_THIEF -> Messages.AUG_THIEF_LORE.getStringList();
+        };
     }
 
     public char getIcon() {
