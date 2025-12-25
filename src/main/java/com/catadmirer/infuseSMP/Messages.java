@@ -8,7 +8,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -16,7 +15,7 @@ import org.bukkit.plugin.Plugin;
  * TODO:
  * Figure out a better way to get messages.
  * maybe individual functions so that placeholders can be applied correctly
- * Also some things need to be Lists, so make a better implementation for that
+ * Also some things need to be Lists, so make a better implementation for that.  Currently it converts lists to a string separated with "\n" then puts it 
  */
 
 public enum Messages {
@@ -41,75 +40,92 @@ public enum Messages {
     INVIS_KILL("invis.kill_invis", "%victim% was slain by %killer%"),
     INVIS_DEATH("invis.death_invis", "%victim% was slain by %killer%"),
 
-    STRENGTH_NAME("strength.effect_name", "§4Strength Effect"),
-    STRENGTH_LORE("strength.effect_lore", "§4§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§4\ud83d\udee1 §8Double Damage to all mobs", "§4\ud83d\udee1 §8Disable shields for 10 seconds", "§4\ud83d\udee1 §8Ranged weapons pierce shields", "§4\ud83d\udee1 §8+1 Damage when under 6 hearts", "§4\ud83d\udee1 §8+2 Damage when under 4 hearts", "§4\ud83d\udee1 §8+3 Damage when under 2 hearts", "§7", "§4§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§4\ud83d\udee1 §8All attacks are critical for 15 seconds", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_STRENGTH_NAME("aug_strength.effect_name", "§4Augmented Strength Effect"),
-    AUG_STRENGTH_LORE("aug_strength.effect_lore", "§4§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§4\ud83d\udee1 §8Double Damage to all mobs", "§4\ud83d\udee1 §8Disable shields for 10 seconds", "§4\ud83d\udee1 §8Ranged weapons pierce shields", "§4\ud83d\udee1 §8+1 Damage when under 6 hearts", "§4\ud83d\udee1 §8+2 Damage when under 4 hearts", "§4\ud83d\udee1 §8+3 Damage when under 2 hearts", "§7", "§4§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§4\ud83d\udee1 §8All attacks are critical for 15 seconds", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    THUNDER_NAME("thunder.effect_name", "§eThunder Effect"),
-    THUNDER_LORE("thunder.effect_lore", "§eᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§e⚡ §7Chain lightning", "§e⚡ §7Tridents Strikes Lightning ", "§7", "§eꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§e⚡ §7Strike enemies with lightning and make a thunderstorm", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 20s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_THUNDER_NAME("aug_thunder.effect_name", "§eAugmented Thunder Effect"),
-    AUG_THUNDER_LORE("aug_thunder.effect_lore", "§eᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§e⚡ §7Chain lightning", "§e⚡ §7Tridents Strikes Lightning ", "§7", "§eꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§e⚡ §7Strike enemies with lightning and make a thunderstorm", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 20s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    SPEED_NAME("speed.effect_name", "§#E8BD74Speed Effect"),
-    SPEED_LORE("speed.effect_lore", "§#E8BD74§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ §8Speed 1", "§#E8BD74⋘ §8Increase speed level by 1 after each hit", "§#E8BD74⋘ §8Speed resets after 1 second of no activity", "§#E8BD74⋘ §8Ranged weapons charge 1.5x faster", "§#E8BD74⋘ §8Enemy invincibility frames are halved", "§7", "§#E8BD74§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ §8Speed Dash", "§7", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 20s"),
-    AUG_SPEED_NAME("aug_speed.effect_name", "§#E8BD74Augmented Speed Effect"),
-    AUG_SPEED_LORE("aug_speed.effect_lore", "§#E8BD74§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ §8Speed 1", "§#E8BD74⋘ §8Increase speed level by 1 after each hit", "§#E8BD74⋘ §8Speed resets after 1 second of no activity", "§#E8BD74⋘ §8Ranged weapons charge 1.5x faster", "§#E8BD74⋘ §8Enemy invincibility frames are halved", "§7", "§#E8BD74§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ §8Speed Dash", "§7", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 10s"),
-    REGEN_NAME("regen.effect_name", "§cRegeneration Effect"),
-    REGEN_LORE("regen.effect_lore", "§6ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§6\ud83d\ude91 §7Every hit grants Regeneration 2 for 1 second", "§6\ud83d\ude91 §7Healing gives 3 extra saturation bars", "§7", "§6ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§6\ud83d\ude91 §7Apply lifesteal effect that heals you based on your damage dealt", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_REGEN_NAME("aug_regen.effect_name", "§cAugmented Regeneration Effect"),
-    AUG_REGEN_LORE("aug_regen.effect_lore", "§6ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§6\ud83d\ude91 §7Every hit grants Regeneration 2 for 1 second", "§6\ud83d\ude91 §7Healing gives 3 extra saturation bars", "§7", "§6ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§6\ud83d\ude91 §7Apply lifesteal effect that heals you based on your damage dealt", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    OCEAN_NAME("ocean.effect_name", "§9Ocean Effect"),
-    OCEAN_LORE("ocean.effect_lore", "§9§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§9🫧 §7Swim faster", "§9🫧 §7Breathe underwater", "§9🫧 §7Make everyone around you start drowning when in water", "§9🫧 §7Tridents pull players", "§7", "§6§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§9🫧 §7Creates a Whirlhole", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 15s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_OCEAN_NAME("aug_ocean.effect_name", "§9Augmented Ocean Effect"),
-    AUG_OCEAN_LORE("aug_ocean.effect_lore", "§9§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§9🫧 §7Swim faster", "§9🫧 §7Breathe underwater", "§9🫧 §7Make everyone around you start drowning when in water", "§9🫧 §7Tridents pull players", "§7", "§6§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§9🫧 §7Creates a Whirlhole", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 15s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    INVIS_NAME("invisibility.effect_name", "§5Invisibility Effect"),
-    INVIS_LORE("invisibility.effect_lore", "§5ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5\ud83d\udc41 §7Permanent Invisibility", "§5\ud83d\udc41 §7Full bow shot blinds the target for 5s and gives blindness for 2s", "§5\ud83d\udc41 §7Mobs cannot target you", "§7", "§5ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5\ud83d\udc41 §7Creates a 5×5 hollow circle of black dust particles", "§5\ud83d\udc41 §7Inside: allies become fully invisible; enemies get blindness", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 90s"),
-    AUG_INVIS_NAME("aug_invisibility.effect_name", "§5Augmented Invisibility Effect"),
-    AUG_INVIS_LORE("aug_invisibility.effect_lore", "§5ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5\ud83d\udc41 §7Permanent Invisibility", "§5\ud83d\udc41 §7Full bow shot blinds the target for 5s and gives blindness for 2s", "§5\ud83d\udc41 §7Mobs cannot target you", "§7", "§5ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5\ud83d\udc41 §7Creates a 5×5 hollow circle of black dust particles", "§5\ud83d\udc41 §7Inside: allies become fully invisible; enemies get blindness", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
-    HEART_NAME("heart.effect_name", "§cHeart Effect"),
-    HEART_LORE("heart.effect_lore", "§cᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§c❤ §7+5 Hearts", "§c❤ §7All food gives absorption", "§c❤ §7Egaps gives +10 absorption hearts", "§c❤ §7See player's health every 10 hits", "§7", "§cꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§c❤ §7Heal players to 20 hearts instantly", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 60s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 120s"),
-    AUG_HEART_NAME("aug_heart.effect_name", "§cAugmented Heart Effect"),
-    AUG_HEART_LORE("aug_heart.effect_lore", "§cᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§c❤ §7+5 Hearts", "§c❤ §7All food gives absorption", "§c❤ §7Egaps gives +10 absorption hearts", "§c❤ §7See player's health every 10 hits", "§7", "§cꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§c❤ §7Heal players to 20 hearts instantly", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 60s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    HASTE_NAME("haste.effect_name", "§6Haste Effect"),
-    HASTE_LORE("haste.effect_lore", "§6ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§6⛏ §7Fortune 5 + Efficiency 10 + Unbreaking 5 on pickaxes", "§6⛏ §7Halved shield cooldown when stunned", "§7", "§6ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§6⛏ §7Attack faster", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 15s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_HASTE_NAME("aug_haste.effect_name", "§6Augmented Haste Effect"),
-    AUG_HASTE_LORE("aug_haste.effect_lore", "§6ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§6⛏ §7Fortune 5 + Efficiency 10 + Unbreaking 5 on pickaxes", "§6⛏ §7Halved shield cooldown when stunned", "§7", "§6ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§6⛏ §7Attack faster", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 15s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    FROST_NAME("frost.effect_name", "§bFrost Effect"),
-    FROST_LORE("frost.effect_lore", "§bᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§b❄ §7Speed 3 on ice and snow", "§b❄ §7Freeze player every 10 hits", "§b❄ §7Frozen enemies can't use windcharges", "§7", "§bꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§b❄ §7Reduce enemies jump strength and freeze them every hit", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 90s"),
-    AUG_FROST_NAME("aug_frost.effect_name", "§bAugmented Frost Effect"),
-    AUG_FROST_LORE("aug_frost.effect_lore", "§bᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§b❄ §7Speed 3 on ice and snow", "§b❄ §7Freeze player every 10 hits", "§b❄ §7Frozen enemies can't use windcharges", "§7", "§bꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§b❄ §7Reduce enemies jump strength and freeze them every hit", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
-    FIRE_NAME("fire.effect_name", "§#E85720Fire Effect"),
-    FIRE_LORE("fire.effect_lore", "§#E85720§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E85720\ud83d\udd25 §8Fire Resistance", "§#E85720\ud83d\udd25 §8Full charged bow shots set arrows on fire", "§#E85720\ud83d\udd25 §8In lava, no fall damage", "§#E85720\ud83d\udd25 §8Every 10 hits sets target on fire for 5s", "§7", "§#E85720§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§#E85720\ud83d\udd25 §8Set surrounding enemies on fire (5 block radius)", "§7", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_FIRE_NAME("aug_fire.effect_name", "§#E85720Augmented Fire Effect"),
-    AUG_FIRE_LORE("aug_fire.effect_lore", "§#E85720§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E85720\ud83d\udd25 §8Fire Resistance", "§#E85720\ud83d\udd25 §8Full charged bow shots set arrows on fire", "§#E85720\ud83d\udd25 §8In lava, no fall damage", "§#E85720\ud83d\udd25 §8Every 10 hits sets target on fire for 5s", "§7", "§#E85720§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§#E85720\ud83d\udd25 §8Set surrounding enemies on fire (5 block radius)", "§7", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    // Effect messages
+    EMERALD_NAME("emerald.effect_name", "<green>Emerald Effect"),
+    EMERALD_LORE("emerald.effect_lore", "<green><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Looting 5", "<green>$ <gray>Luck 10", "<green>$ <gray>1.5x EXP", "<green>$ <gray>Consumables have a 15% chance of not being consumed", "<green>$ <gray>Enchanting table always on level 30", "<gray>", "<green><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Hero of the village 255", "<green>$ <gray>Consumables have a 25% chance of not being consumed", "<green>$ <gray>3x EXP", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_EMERALD_NAME("aug_emerald.effect_name", "<green>Augmented Emerald Effect"),
+    AUG_EMERALD_LORE("aug_emerald.effect_lore", "<green><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Looting 5", "<green>$ <gray>Luck 10", "<green>$ <gray>1.5x EXP", "<green>$ <gray>Consumables have a 15% chance of not being consumed", "<green>$ <gray>Enchanting table always on level 30", "<gray>", "<green><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Hero of the village 255", "<green>$ <gray>Consumables have a 25% chance of not being consumed", "<green>$ <gray>3x EXP", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    ENDER_NAME("ender.effect_name", "<dark_purple>Ender Effect"),
+    ENDER_LORE("ender.effect_lore", "<dark_purple><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>⭐ <gray>All nearby untrusted players have glowing", "<dark_purple>⭐ <gray>Use dragon's breath to shoot powerful fireballs that curse players", "<dark_purple>⭐ <gray>Curse untrusted players on hit which shares damage with all", "<dark_purple>⭐ <gray>cursed players", "<gray>", "<dark_purple><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>⭐ <gray>Teleport to the cursor position within a 15 block radius", "<dark_purple>⭐ <gray>Instantly kills any mob and curses players", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 10s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
+    AUG_ENDER_NAME("aug_ender.effect_name", "<dark_purple>Augmented Ender Effect"),
+    AUG_ENDER_LORE("aug_ender.effect_lore", "<dark_purple><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>⭐ <gray>All nearby untrusted players have glowing", "<dark_purple>⭐ <gray>Use dragon's breath to shoot powerful fireballs that curse players", "<dark_purple>⭐ <gray>Curse untrusted players on hit which shares damage with all", "<dark_purple>⭐ <gray>cursed players", "<gray>", "<dark_purple><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>⭐ <gray>Teleport to the cursor position within a 15 block radius", "<dark_purple>⭐ <gray>Instantly kills any mob and curses players", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 20s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+
     FEATHER_NAME("feather.effect_name", "§#BEA3CAFeather Effect"),
-    FEATHER_LORE("feather.effect_lore", "§#BEA3CA§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 §8No fall damage", "§#BEA3CA\ud83e\udeb6 §8Attacking from 7+ block fall does a mace hit", "§#BEA3CA\ud83e\udeb6 §8Auto windcharge counter after being attacked 10 times", "§#BEA3CA\ud83e\udeb6 §8Windcharges have 0.5x cooldown", "§#BEA3CA\ud83e\udeb6 §8Windcharges have 2x velocity", "§7", "§#BEA3CA§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 §8Launches the player upward", "§#BEA3CA\ud83e\udeb6 §8Slams the player back down", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 2s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    FEATHER_LORE("feather.effect_lore", "§#BEA3CA<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 <dark_gray>No fall damage", "§#BEA3CA\ud83e\udeb6 <dark_gray>Attacking from 7+ block fall does a mace hit", "§#BEA3CA\ud83e\udeb6 <dark_gray>Auto windcharge counter after being attacked 10 times", "§#BEA3CA\ud83e\udeb6 <dark_gray>Windcharges have 0.5x cooldown", "§#BEA3CA\ud83e\udeb6 <dark_gray>Windcharges have 2x velocity", "<gray>", "§#BEA3CA<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 <dark_gray>Launches the player upward", "§#BEA3CA\ud83e\udeb6 <dark_gray>Slams the player back down", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 2s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
     AUG_FEATHER_NAME("aug_feather.effect_name", "§#BEA3CAAugmented Feather Effect"),
-    AUG_FEATHER_LORE("aug_feather.effect_lore", "§#BEA3CA§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 §8No fall damage", "§#BEA3CA\ud83e\udeb6 §8Attacking from 7+ block fall does a mace hit", "§#BEA3CA\ud83e\udeb6 §8Auto windcharge counter after being attacked 10 times", "§#BEA3CA\ud83e\udeb6 §8Windcharges have 0.5x cooldown", "§#BEA3CA\ud83e\udeb6 §8Windcharges have 2x velocity", "§7", "§#BEA3CA§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 §8Launches the player upward", "§#BEA3CA\ud83e\udeb6 §8Slams the player back down", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 2s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    EMERALD_NAME("emerald.effect_name", "§aEmerald Effect"),
-    EMERALD_LORE("emerald.effect_lore", "§a§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§a$ §7Looting 5", "§a$ §7Luck 10", "§a$ §71.5x EXP", "§a$ §7Consumables have a 15% chance of not being consumed", "§a$ §7Enchanting table always on level 30", "§7", "§a§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§a$ §7Hero of the village 255", "§a$ §7Consumables have a 25% chance of not being consumed", "§a$ §73x EXP", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
-    AUG_EMERALD_NAME("aug_emerald.effect_name", "§aAugmented Emerald Effect"),
-    AUG_EMERALD_LORE("aug_emerald.effect_lore", "§a§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§a$ §7Looting 5", "§a$ §7Luck 10", "§a$ §71.5x EXP", "§a$ §7Consumables have a 15% chance of not being consumed", "§a$ §7Enchanting table always on level 30", "§7", "§a§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§a$ §7Hero of the village 255", "§a$ §7Consumables have a 25% chance of not being consumed", "§a$ §73x EXP", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    ENDER_NAME("ender.effect_name", "§5Ender Effect"),
-    ENDER_LORE("ender.effect_lore", "§5§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5⭐ §7All nearby untrusted players have glowing", "§5⭐ §7Use dragon's breath to shoot powerful fireballs that curse players", "§5⭐ §7Curse untrusted players on hit which shares damage with all", "§5⭐ §7cursed players", "§7", "§5§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5⭐ §7Teleport to the cursor position within a 15 block radius", "§5⭐ §7Instantly kills any mob and curses players", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 10s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
-    AUG_ENDER_NAME("aug_ender.effect_name", "§5Augmented Ender Effect"),
-    AUG_ENDER_LORE("aug_ender.effect_lore", "§5§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5⭐ §7All nearby untrusted players have glowing", "§5⭐ §7Use dragon's breath to shoot powerful fireballs that curse players", "§5⭐ §7Curse untrusted players on hit which shares damage with all", "§5⭐ §7cursed players", "§7", "§5§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5⭐ §7Teleport to the cursor position within a 15 block radius", "§5⭐ §7Instantly kills any mob and curses players", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 20s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
-    APOPHIS_NAME("apophis.effect_name", "§5Apophis Effect"),
-    APOPHIS_LORE("apophis.effect_lore", "§5§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5🍼 §7Combine Fire, Emerald and Heart's effects", "§5🍼 §7Have a custom skin and nametag", "§7", "§5§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5🍼 §7Activate Fire, Emerald and Heart's sparks", "§5🍼 §7Upon hitting a player blind their screen", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 20s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 2m"),
-    AUG_APOPHIS_NAME("aug_apophis.effect_name", "§5Augmented Apophis Effect"),
-    AUG_APOPHIS_LORE("aug_apophis.effect_lore", "§5§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§5🍼 §7Combine Fire, Emerald and Heart's effects", "§5🍼 §7Have a custom skin and nametag", "§7", "§5§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§5🍼 §7Activate Fire, Emerald and Heart's sparks", "§5🍼 §7Upon hitting a player blind their screen", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: 30s", "§3ᴄᴏᴏʟᴅᴏᴡɴ: 1m 30s"),
-    AUG_THIEF_NAME("aug_thief.effect_name", "§4Augmented Thief Effect"),
-    AUG_THIEF_LORE("aug_thief.effect_lore", "§4§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§4🥷 §7You're not shown on tablist", "§4🥷 §7Your footsteps don't make noise", "§4🥷 §7Kill a player to shapeshift into them", "§7", "§4§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§4🥷 §7Temporarily steal your opponents effect", "§7", "§3ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "§3ᴄᴏᴏʟᴅᴏᴡɴ: Unknown"),
-    THIEF_NAME("thief.effect_name", "§4Thief Effect"),
-    THIEF_LORE("thief.effect_lore", "§4§lᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§4🥷 §7You're not shown on tablist", "§4🥷 §7Your footsteps don't make noise", "§4🥷 §7Kill a player to shapeshift into them", "", "§4§lꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§4🥷 §7Temporarily steal your opponents effect", "", "§3ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "§3ᴄᴏᴏʟᴅᴏᴡɴ: Unknown")
+    AUG_FEATHER_LORE("aug_feather.effect_lore", "§#BEA3CA<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 <dark_gray>No fall damage", "§#BEA3CA\ud83e\udeb6 <dark_gray>Attacking from 7+ block fall does a mace hit", "§#BEA3CA\ud83e\udeb6 <dark_gray>Auto windcharge counter after being attacked 10 times", "§#BEA3CA\ud83e\udeb6 <dark_gray>Windcharges have 0.5x cooldown", "§#BEA3CA\ud83e\udeb6 <dark_gray>Windcharges have 2x velocity", "<gray>", "§#BEA3CA<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#BEA3CA\ud83e\udeb6 <dark_gray>Launches the player upward", "§#BEA3CA\ud83e\udeb6 <dark_gray>Slams the player back down", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 2s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    FIRE_NAME("fire.effect_name", "§#E85720Fire Effect"),
+    FIRE_LORE("fire.effect_lore", "§#E85720<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E85720\ud83d\udd25 <dark_gray>Fire Resistance", "§#E85720\ud83d\udd25 <dark_gray>Full charged bow shots set arrows on fire", "§#E85720\ud83d\udd25 <dark_gray>In lava, no fall damage", "§#E85720\ud83d\udd25 <dark_gray>Every 10 hits sets target on fire for 5s", "<gray>", "§#E85720<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§#E85720\ud83d\udd25 <dark_gray>Set surrounding enemies on fire (5 block radius)", "<gray>", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_FIRE_NAME("aug_fire.effect_name", "§#E85720Augmented Fire Effect"),
+    AUG_FIRE_LORE("aug_fire.effect_lore", "§#E85720<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E85720\ud83d\udd25 <dark_gray>Fire Resistance", "§#E85720\ud83d\udd25 <dark_gray>Full charged bow shots set arrows on fire", "§#E85720\ud83d\udd25 <dark_gray>In lava, no fall damage", "§#E85720\ud83d\udd25 <dark_gray>Every 10 hits sets target on fire for 5s", "<gray>", "§#E85720<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "§#E85720\ud83d\udd25 <dark_gray>Set surrounding enemies on fire (5 block radius)", "<gray>", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    FROST_NAME("frost.effect_name", "<aqua>Frost Effect"),
+    FROST_LORE("frost.effect_lore", "<aqua>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<aqua>❄ <gray>Speed 3 on ice and snow", "<aqua>❄ <gray>Freeze player every 10 hits", "<aqua>❄ <gray>Frozen enemies can't use windcharges", "<gray>", "<aqua>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<aqua>❄ <gray>Reduce enemies jump strength and freeze them every hit", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 90s"),
+    AUG_FROST_NAME("aug_frost.effect_name", "<aqua>Augmented Frost Effect"),
+    AUG_FROST_LORE("aug_frost.effect_lore", "<aqua>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<aqua>❄ <gray>Speed 3 on ice and snow", "<aqua>❄ <gray>Freeze player every 10 hits", "<aqua>❄ <gray>Frozen enemies can't use windcharges", "<gray>", "<aqua>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<aqua>❄ <gray>Reduce enemies jump strength and freeze them every hit", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
 
-    ;
+    HASTE_NAME("haste.effect_name", "<gold>Haste Effect"),
+    HASTE_LORE("haste.effect_lore", "<gold>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>⛏ <gray>Fortune 5 + Efficiency 10 + Unbreaking 5 on pickaxes", "<gold>⛏ <gray>Halved shield cooldown when stunned", "<gray>", "<gold>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>⛏ <gray>Attack faster", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 15s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_HASTE_NAME("aug_haste.effect_name", "<gold>Augmented Haste Effect"),
+    AUG_HASTE_LORE("aug_haste.effect_lore", "<gold>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>⛏ <gray>Fortune 5 + Efficiency 10 + Unbreaking 5 on pickaxes", "<gold>⛏ <gray>Halved shield cooldown when stunned", "<gray>", "<gold>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>⛏ <gray>Attack faster", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 15s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    HEART_NAME("heart.effect_name", "<red>Heart Effect"),
+    HEART_LORE("heart.effect_lore", "<red>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <gray>+5 Hearts", "<red>❤ <gray>All food gives absorption", "<red>❤ <gray>Egaps gives +10 absorption hearts", "<red>❤ <gray>See player's health every 10 hits", "<gray>", "<red>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <gray>Heal players to 20 hearts instantly", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 60s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 120s"),
+    AUG_HEART_NAME("aug_heart.effect_name", "<red>Augmented Heart Effect"),
+    AUG_HEART_LORE("aug_heart.effect_lore", "<red>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <gray>+5 Hearts", "<red>❤ <gray>All food gives absorption", "<red>❤ <gray>Egaps gives +10 absorption hearts", "<red>❤ <gray>See player's health every 10 hits", "<gray>", "<red>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <gray>Heal players to 20 hearts instantly", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 60s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
 
+    INVIS_NAME("invisibility.effect_name", "<dark_purple>Invisibility Effect"),
+    INVIS_LORE("invisibility.effect_lore", "<dark_purple>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>\ud83d\udc41 <gray>Permanent Invisibility", "<dark_purple>\ud83d\udc41 <gray>Full bow shot blinds the target for 5s and gives blindness for 2s", "<dark_purple>\ud83d\udc41 <gray>Mobs cannot target you", "<gray>", "<dark_purple>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>\ud83d\udc41 <gray>Creates a 5×5 hollow circle of black dust particles", "<dark_purple>\ud83d\udc41 <gray>Inside: allies become fully invisible; enemies get blindness", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 90s"),
+    AUG_INVIS_NAME("aug_invisibility.effect_name", "<dark_purple>Augmented Invisibility Effect"),
+    AUG_INVIS_LORE("aug_invisibility.effect_lore", "<dark_purple>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>\ud83d\udc41 <gray>Permanent Invisibility", "<dark_purple>\ud83d\udc41 <gray>Full bow shot blinds the target for 5s and gives blindness for 2s", "<dark_purple>\ud83d\udc41 <gray>Mobs cannot target you", "<gray>", "<dark_purple>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>\ud83d\udc41 <gray>Creates a 5×5 hollow circle of black dust particles", "<dark_purple>\ud83d\udc41 <gray>Inside: allies become fully invisible; enemies get blindness", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
+
+    OCEAN_NAME("ocean.effect_name", "<blue>Ocean Effect"),
+    OCEAN_LORE("ocean.effect_lore", "<blue><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<blue>🫧 <gray>Swim faster", "<blue>🫧 <gray>Breathe underwater", "<blue>🫧 <gray>Make everyone around you start drowning when in water", "<blue>🫧 <gray>Tridents pull players", "<gray>", "<gold><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "<blue>🫧 <gray>Creates a Whirlhole", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 15s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_OCEAN_NAME("aug_ocean.effect_name", "<blue>Augmented Ocean Effect"),
+    AUG_OCEAN_LORE("aug_ocean.effect_lore", "<blue><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<blue>🫧 <gray>Swim faster", "<blue>🫧 <gray>Breathe underwater", "<blue>🫧 <gray>Make everyone around you start drowning when in water", "<blue>🫧 <gray>Tridents pull players", "<gray>", "<gold><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "<blue>🫧 <gray>Creates a Whirlhole", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 15s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    REGEN_NAME("regen.effect_name", "<red>Regeneration Effect"),
+    REGEN_LORE("regen.effect_lore", "<gold>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>\ud83d\ude91 <gray>Every hit grants Regeneration 2 for 1 second", "<gold>\ud83d\ude91 <gray>Healing gives 3 extra saturation bars", "<gray>", "<gold>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "<gold>\ud83d\ude91 <gray>Apply lifesteal effect that heals you based on your damage dealt", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_REGEN_NAME("aug_regen.effect_name", "<red>Augmented Regeneration Effect"),
+    AUG_REGEN_LORE("aug_regen.effect_lore", "<gold>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<gold>\ud83d\ude91 <gray>Every hit grants Regeneration 2 for 1 second", "<gold>\ud83d\ude91 <gray>Healing gives 3 extra saturation bars", "<gray>", "<gold>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛ:", "<gold>\ud83d\ude91 <gray>Apply lifesteal effect that heals you based on your damage dealt", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+
+    SPEED_NAME("speed.effect_name", "§#E8BD74Speed Effect"),
+    SPEED_LORE("speed.effect_lore", "§#E8BD74<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ <dark_gray>Speed 1", "§#E8BD74⋘ <dark_gray>Increase speed level by 1 after each hit", "§#E8BD74⋘ <dark_gray>Speed resets after 1 second of no activity", "§#E8BD74⋘ <dark_gray>Ranged weapons charge 1.5x faster", "§#E8BD74⋘ <dark_gray>Enemy invincibility frames are halved", "<gray>", "§#E8BD74<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ <dark_gray>Speed Dash", "<gray>", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 20s"),
+    AUG_SPEED_NAME("aug_speed.effect_name", "§#E8BD74Augmented Speed Effect"),
+    AUG_SPEED_LORE("aug_speed.effect_lore", "§#E8BD74<b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ <dark_gray>Speed 1", "§#E8BD74⋘ <dark_gray>Increase speed level by 1 after each hit", "§#E8BD74⋘ <dark_gray>Speed resets after 1 second of no activity", "§#E8BD74⋘ <dark_gray>Ranged weapons charge 1.5x faster", "§#E8BD74⋘ <dark_gray>Enemy invincibility frames are halved", "<gray>", "§#E8BD74<b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "§#E8BD74⋘ <dark_gray>Speed Dash", "<gray>", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 10s"),
+
+    STRENGTH_NAME("strength.effect_name", "<dark_red>Strength Effect"),
+    STRENGTH_LORE("strength.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>\ud83d\udee1 <dark_gray>Double Damage to all mobs", "<dark_red>\ud83d\udee1 <dark_gray>Disable shields for 10 seconds", "<dark_red>\ud83d\udee1 <dark_gray>Ranged weapons pierce shields", "<dark_red>\ud83d\udee1 <dark_gray>+1 Damage when under 6 hearts", "<dark_red>\ud83d\udee1 <dark_gray>+2 Damage when under 4 hearts", "<dark_red>\ud83d\udee1 <dark_gray>+3 Damage when under 2 hearts", "<gray>", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>\ud83d\udee1 <dark_gray>All attacks are critical for 15 seconds", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_STRENGTH_NAME("aug_strength.effect_name", "<dark_red>Augmented Strength Effect"),
+    AUG_STRENGTH_LORE("aug_strength.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>\ud83d\udee1 <dark_gray>Double Damage to all mobs", "<dark_red>\ud83d\udee1 <dark_gray>Disable shields for 10 seconds", "<dark_red>\ud83d\udee1 <dark_gray>Ranged weapons pierce shields", "<dark_red>\ud83d\udee1 <dark_gray>+1 Damage when under 6 hearts", "<dark_red>\ud83d\udee1 <dark_gray>+2 Damage when under 4 hearts", "<dark_red>\ud83d\udee1 <dark_gray>+3 Damage when under 2 hearts", "<gray>", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>\ud83d\udee1 <dark_gray>All attacks are critical for 15 seconds", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    THUNDER_NAME("thunder.effect_name", "<yellow>Thunder Effect"),
+    THUNDER_LORE("thunder.effect_lore", "<yellow>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<yellow>⚡ <gray>Chain lightning", "<yellow>⚡ <gray>Tridents Strikes Lightning ", "<gray>", "<yellow>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<yellow>⚡ <gray>Strike enemies with lightning and make a thunderstorm", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 20s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
+    AUG_THUNDER_NAME("aug_thunder.effect_name", "<yellow>Augmented Thunder Effect"),
+    AUG_THUNDER_LORE("aug_thunder.effect_lore", "<yellow>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<yellow>⚡ <gray>Chain lightning", "<yellow>⚡ <gray>Tridents Strikes Lightning ", "<gray>", "<yellow>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<yellow>⚡ <gray>Strike enemies with lightning and make a thunderstorm", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 20s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 30s"),
+    
+    // Extra effect messages
+    APOPHIS_NAME("apophis.effect_name", "<dark_purple>Apophis Effect"),
+    APOPHIS_LORE("apophis.effect_lore", "<dark_purple><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Combine Fire, Emerald and Heart's effects", "<dark_purple>🍼 <gray>Have a custom skin and nametag", "<gray>", "<dark_purple><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Activate Fire, Emerald and Heart's sparks", "<dark_purple>🍼 <gray>Upon hitting a player blind their screen", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 20s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 2m"),
+    AUG_APOPHIS_NAME("aug_apophis.effect_name", "<dark_purple>Augmented Apophis Effect"),
+    AUG_APOPHIS_LORE("aug_apophis.effect_lore", "<dark_purple><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Combine Fire, Emerald and Heart's effects", "<dark_purple>🍼 <gray>Have a custom skin and nametag", "<gray>", "<dark_purple><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Activate Fire, Emerald and Heart's sparks", "<dark_purple>🍼 <gray>Upon hitting a player blind their screen", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 1m 30s"),
+    
+    THIEF_NAME("thief.effect_name", "<dark_red>Thief Effect"),
+    THIEF_LORE("thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to shapeshift into them", "", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown"),
+    AUG_THIEF_NAME("aug_thief.effect_name", "<dark_red>Augmented Thief Effect"),
+    AUG_THIEF_LORE("aug_thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to shapeshift into them", "<gray>", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown");
+
+    // Config and config files
     public static final File file = new File("plugins/Infuse/messages.yml");
-    public static final FileConfiguration config = new YamlConfiguration();
+    public static final YamlConfiguration config = new YamlConfiguration();
 
-    public static final MiniMessage minimessageSerializer = MiniMessage.miniMessage();
-    public static final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
+    // Text serializers
+    public static final MiniMessage minimessage = MiniMessage.miniMessage();
+    public static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
 
+    // Enum attributes
     public final String configKey;
     public final String defaultValue;
 
@@ -118,10 +134,10 @@ public enum Messages {
         this.defaultValue = defaultValue;
     }
 
-    Messages(String configKey, String... lines) {
+    Messages(String configKey, String... defaultLines) {
         this.configKey = configKey;
         StringBuilder builder = new StringBuilder();
-        for (String line : lines) {
+        for (String line : defaultLines) {
             builder.append(line);
             builder.append("\n");
         }
@@ -257,10 +273,10 @@ public enum Messages {
      */
     public static Component toComponent(String message) {
         // Passing the string through legacy and minimessage serialization
-        Component legacy = legacySerializer.deserialize(message);
-        message = minimessageSerializer.serialize(legacy).replace("\\", "");
+        Component legacy = legacyAmpersand.deserialize(message);
+        message = minimessage.serialize(legacy).replace("\\", "");
 
-        return minimessageSerializer.deserialize(message);
+        return minimessage.deserialize(message);
     }
 
 
