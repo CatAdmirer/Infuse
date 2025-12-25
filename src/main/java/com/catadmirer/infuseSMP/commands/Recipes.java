@@ -4,6 +4,8 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,10 +69,10 @@ public class Recipes implements CommandExecutor, Listener {
 
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
-            List<String> lore = new ArrayList<>();
-            lore.add("§7Augmented Limit: §b" + limits.get("augmented_limit"));
-            lore.add("§7Regular Limit: §b" + limits.get("regular_limit"));
-            meta.setLore(lore);
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
+            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
+            meta.lore(lore);
             potionItem.setItemMeta(meta);
         }
 
@@ -144,7 +146,7 @@ public class Recipes implements CommandExecutor, Listener {
     public static void fillRemainingSlots(Inventory inventory) {
         ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         ItemMeta meta = stainedGlassPane.getItemMeta();
-        meta.setDisplayName("§7");
+        meta.displayName(Component.empty());
         for (int i = 0; i < inventory.getSize(); i++) {
             if (inventory.getItem(i) == null) {
                 inventory.setItem(i, stainedGlassPane);
