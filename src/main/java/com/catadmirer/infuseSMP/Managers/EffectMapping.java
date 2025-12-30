@@ -1,8 +1,9 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.Managers;
 
+import com.catadmirer.infuseSMP.Effects.*;
+import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
+import com.catadmirer.infuseSMP.ExtraEffects.Thief;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.*;
 
 import java.awt.Color;
 import java.util.List;
@@ -203,7 +204,7 @@ public enum EffectMapping {
             // Setting the usual data
             meta.setDisplayName(getName());
             meta.setLore(getLore());
-            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB()));
+            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB() & 0xFFFFFF));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
 
             // Applying the custom model if the key has the "aug_" prefix

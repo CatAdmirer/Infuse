@@ -1,13 +1,14 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.ApophisManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.catadmirer.infuseSMP.Managers.ApophisManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

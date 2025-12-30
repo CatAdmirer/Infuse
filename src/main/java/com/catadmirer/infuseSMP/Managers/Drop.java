@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import org.bukkit.Color;

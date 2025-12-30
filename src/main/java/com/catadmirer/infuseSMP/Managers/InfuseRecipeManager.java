@@ -1,7 +1,6 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.inventories.BrewingStandGUI;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -12,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.catadmirer.infuseSMP.Inventories.BrewingStandGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -295,6 +296,7 @@ public class InfuseRecipeManager implements Listener {
                     Bukkit.broadcastMessage("§f" + finishedMessage);
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
+                    activeBossBar.setVisible(false);
                     this.cancel();
                 } else {
                     progress -= progressDecrement;

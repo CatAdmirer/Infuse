@@ -1,8 +1,6 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +11,9 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

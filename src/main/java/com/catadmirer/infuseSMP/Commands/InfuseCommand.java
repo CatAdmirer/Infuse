@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.ArrayList;
 import java.util.Arrays;

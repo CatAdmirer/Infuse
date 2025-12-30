@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.extraeffects;
+package com.catadmirer.infuseSMP.ExtraEffects;
 
 public class Border {
 }

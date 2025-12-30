@@ -1,16 +1,14 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.commands.*;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
-import com.catadmirer.infuseSMP.managers.*;
-import com.catadmirer.infuseSMP.particles.Particles;
-import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.Commands.*;
+import com.catadmirer.infuseSMP.Effects.*;
+import com.catadmirer.infuseSMP.ExtraEffects.Apophis;
+import com.catadmirer.infuseSMP.ExtraEffects.Thief;
+import com.catadmirer.infuseSMP.Managers.*;
+import com.catadmirer.infuseSMP.Particles.Particles;
+import com.catadmirer.infuseSMP.Placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import java.io.File;
@@ -96,12 +94,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Getting the abilities handler
         this.abilitiesHandler = new Abilities(this);
-
-        // Initializing PacketEvents and its listeners
-        PacketEvents.getAPI().init();
-        PacketEvents.getAPI().getEventManager().registerListener(new Invisibility(this), PacketListenerPriority.HIGHEST);
-        PacketEvents.getAPI().getEventManager().registerListener(new Thief(dataManager, this), PacketListenerPriority.HIGHEST);
-        PacketEvents.getAPI().getEventManager().registerListener(new Fire(this), PacketListenerPriority.HIGHEST);
 
         // Registering infuse commands
         this.registerCommands();
@@ -217,15 +209,15 @@ public class Infuse extends JavaPlugin implements Listener {
         // Getting regular effect names
         effectNames.put("emerald",  messages.getString("emerald.effect_name", "§aEmerald Effect"));
         effectNames.put("ender",    messages.getString("ender.effect_name", "§5Ender Effect"));
-        effectNames.put("feather",  messages.getString("feather.effect_name", "§#BEA3CAFeather Effect"));
-        effectNames.put("fire",     messages.getString("fire.effect_name", "§#E85720Fire Effect"));
+        effectNames.put("feather",  MessageUtil.applyHexColors(messages.getString("feather.effect_name", "§#BEA3CAFeather Effect")));
+        effectNames.put("fire",     MessageUtil.applyHexColors(messages.getString("fire.effect_name", "§#E85720Fire Effect")));
         effectNames.put("frost",    messages.getString("frost.effect_name", "§bFrost Effect"));
         effectNames.put("haste",    messages.getString("haste.effect_name", "§6Haste Effect"));
         effectNames.put("heart",    messages.getString("heart.effect_name", "§cHeart Effect"));
         effectNames.put("invis",    messages.getString("invisibility.effect_name", "§5Invisibility Effect"));
         effectNames.put("ocean",    messages.getString("ocean.effect_name", "§9Ocean Effect"));
         effectNames.put("regen",    messages.getString("regen.effect_name", "§cRegeneration Effect"));
-        effectNames.put("speed",    messages.getString("speed.effect_name", "§#E8BD74Speed Effect"));
+        effectNames.put("speed",    MessageUtil.applyHexColors(messages.getString("speed.effect_name", "§#E8BD74Speed Effect")));
         effectNames.put("strength", messages.getString("strength.effect_name", "§4Strength Effect"));
         effectNames.put("thunder",  messages.getString("thunder.effect_name", "§eThunder Effect"));
         effectNames.put("apophis",  messages.getString("apophis.effect_name", "§5Apophis Effect"));
@@ -234,15 +226,15 @@ public class Infuse extends JavaPlugin implements Listener {
         // Getting augmented effect names
         effectNames.put("aug_emerald",  messages.getString("aug_emerald.effect_name", "§aAugmented Emerald Effect"));
         effectNames.put("aug_ender",    messages.getString("aug_ender.effect_name", "§5Augmented Ender Effect"));
-        effectNames.put("aug_fire",     messages.getString("aug_fire.effect_name", "§#E85720Augmented Fire Effect"));
-        effectNames.put("aug_feather",  messages.getString("aug_feather.effect_name", "§#BEA3CAAugmented Feather Effect"));
+        effectNames.put("aug_fire",     MessageUtil.applyHexColors(messages.getString("aug_fire.effect_name", "§#E85720Augmented Fire Effect")));
+        effectNames.put("aug_feather",  MessageUtil.applyHexColors(messages.getString("aug_feather.effect_name", "§#BEA3CAAugmented Feather Effect")));
         effectNames.put("aug_frost",    messages.getString("aug_frost.effect_name", "§bAugmented Frost Effect"));
         effectNames.put("aug_haste",    messages.getString("aug_haste.effect_name", "§6Augmented Haste Effect"));
         effectNames.put("aug_heart",    messages.getString("aug_heart.effect_name", "§cAugmented Heart Effect"));
         effectNames.put("aug_invis",    messages.getString("aug_invisibility.effect_name", "§5Augmented Invisibility Effect"));
         effectNames.put("aug_ocean",    messages.getString("aug_ocean.effect_name", "§9Augmented Ocean Effect"));
         effectNames.put("aug_regen",    messages.getString("aug_regen.effect_name", "§cAugmented Regeneration Effect"));
-        effectNames.put("aug_speed",    messages.getString("aug_speed.effect_name", "§#E8BD74Augmented Speed Effect"));
+        effectNames.put("aug_speed",    MessageUtil.applyHexColors(messages.getString("aug_speed.effect_name", "§#E8BD74Augmented Speed Effect")));
         effectNames.put("aug_strength", messages.getString("aug_strength.effect_name", "§4Augmented Strength Effect"));
         effectNames.put("aug_thunder",  messages.getString("aug_thunder.effect_name", "§eAugmented Thunder Effect"));
         effectNames.put("aug_apophis",  messages.getString("aug_apophis.effect_name", "§5Augmented Apophis Effect"));
@@ -256,15 +248,15 @@ public class Infuse extends JavaPlugin implements Listener {
         // Getting regular effect lore
         effectLore.put("emerald",  messages.getStringList("emerald.effect_lore"));
         effectLore.put("ender",    messages.getStringList("ender.effect_lore"));
-        effectLore.put("feather",  messages.getStringList("feather.effect_lore"));
-        effectLore.put("fire",     messages.getStringList("fire.effect_lore"));
+        effectLore.put("feather",  MessageUtil.applyLore(messages.getStringList("feather.effect_lore")));
+        effectLore.put("fire",     MessageUtil.applyLore(messages.getStringList("fire.effect_lore")));
         effectLore.put("frost",    messages.getStringList("frost.effect_lore"));
         effectLore.put("haste",    messages.getStringList("haste.effect_lore"));
         effectLore.put("heart",    messages.getStringList("heart.effect_lore"));
         effectLore.put("invis",    messages.getStringList("invisibility.effect_lore"));
         effectLore.put("ocean",    messages.getStringList("ocean.effect_lore"));
         effectLore.put("regen",    messages.getStringList("regen.effect_lore"));
-        effectLore.put("speed",    messages.getStringList("speed.effect_lore"));
+        effectLore.put("speed",    MessageUtil.applyLore(messages.getStringList("speed.effect_lore")));
         effectLore.put("strength", messages.getStringList("strength.effect_lore"));
         effectLore.put("thunder",  messages.getStringList("thunder.effect_lore"));
         effectLore.put("apophis",  messages.getStringList("apophis.effect_lore"));
@@ -273,15 +265,15 @@ public class Infuse extends JavaPlugin implements Listener {
         // Getting augmented effect lore
         effectLore.put("aug_emerald",  messages.getStringList("aug_emerald.effect_lore"));
         effectLore.put("aug_ender",    messages.getStringList("aug_ender.effect_lore"));
-        effectLore.put("aug_fire",     messages.getStringList("aug_fire.effect_lore"));
-        effectLore.put("aug_feather",  messages.getStringList("aug_feather.effect_lore"));
+        effectLore.put("aug_fire",     MessageUtil.applyLore(messages.getStringList("aug_fire.effect_lore")));
+        effectLore.put("aug_feather",  MessageUtil.applyLore(messages.getStringList("aug_feather.effect_lore")));
         effectLore.put("aug_frost",    messages.getStringList("aug_frost.effect_lore"));
         effectLore.put("aug_haste",    messages.getStringList("aug_haste.effect_lore"));
         effectLore.put("aug_heart",    messages.getStringList("aug_heart.effect_lore"));
         effectLore.put("aug_invis",    messages.getStringList("aug_invisibility.effect_lore"));
         effectLore.put("aug_ocean",    messages.getStringList("aug_ocean.effect_lore"));
         effectLore.put("aug_regen",    messages.getStringList("aug_regen.effect_lore"));
-        effectLore.put("aug_speed",    messages.getStringList("aug_speed.effect_lore"));
+        effectLore.put("aug_speed",    MessageUtil.applyLore(messages.getStringList("aug_speed.effect_lore")));
         effectLore.put("aug_strength", messages.getStringList("aug_strength.effect_lore"));
         effectLore.put("aug_thunder",  messages.getStringList("aug_thunder.effect_lore"));
         effectLore.put("aug_apophis",  messages.getStringList("aug_apophis.effect_lore"));
@@ -366,9 +358,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Sending the log message
         this.getLogger().info("Infuse Plugin is disabling...");
-
-        // Disabling packetevents
-        PacketEvents.getAPI().terminate();
 
         // Removing ritual beams
         // TODO: Do this in a better way than removing all ender crystals

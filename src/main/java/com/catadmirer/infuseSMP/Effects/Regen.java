@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 
 import java.util.UUID;
 import org.bukkit.Bukkit;

@@ -1,11 +1,12 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.Effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 import java.util.UUID;
+
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -85,8 +86,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, Infuse.getInstance().getConfig("ocean_pulling.pull.interval"));
-
+        }.runTaskTimer(plugin, 0L, ((Number) Infuse.getInstance().getConfig("ocean_pulling.pull.interval")).longValue());
     }
 
     private boolean isTrusted(Player player, Player caster) {

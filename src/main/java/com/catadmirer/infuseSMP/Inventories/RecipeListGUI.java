@@ -1,14 +1,14 @@
-package com.catadmirer.infuseSMP.inventories;
+package com.catadmirer.infuseSMP.Inventories;
 
 import java.util.Map;
+
+import com.catadmirer.infuseSMP.Commands.Recipes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import com.catadmirer.infuseSMP.commands.Recipes;
 
 public class RecipeListGUI implements InventoryHolder {
     private final Inventory inventory;

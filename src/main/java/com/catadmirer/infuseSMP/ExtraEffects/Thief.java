@@ -1,14 +1,11 @@
-package com.catadmirer.infuseSMP.extraeffects;
+package com.catadmirer.infuseSMP.ExtraEffects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.particles.Particles;
+import com.catadmirer.infuseSMP.Managers.CooldownManager;
+import com.catadmirer.infuseSMP.Managers.DataManager;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
+import com.catadmirer.infuseSMP.Particles.Particles;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,7 +41,7 @@ import org.bukkit.profile.PlayerTextures;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Thief implements Listener, PacketListener {
+public class Thief implements Listener {
 
     private final Plugin plugin;
 
@@ -880,7 +877,6 @@ public class Thief implements Listener, PacketListener {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
                             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
-                            hideHealthForPlayer(p, 2);
                         }
                     }
 
@@ -894,22 +890,4 @@ public class Thief implements Listener, PacketListener {
         return dataManager.isTrusted(player, caster);
     }
 
-    private void hideHealthForPlayer(final Player player, final int durationSeconds) {
-        (new BukkitRunnable() {
-            int elapsedTicks = 0;
-
-            public void run() {
-                WrapperPlayServerUpdateHealth packet = new WrapperPlayServerUpdateHealth(
-                        20,
-                        20,
-                        5);
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-                this.elapsedTicks += 2;
-                if (this.elapsedTicks >= durationSeconds * 20) {
-                    this.cancel();
-                }
-
-            }
-        }).runTaskTimer(this.plugin, 0L, 2L);
-    }
 }

@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.Commands;
 
-import com.catadmirer.infuseSMP.inventories.EffectInventory;
-import com.catadmirer.infuseSMP.inventories.EffectLevelInventory;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.Inventories.EffectInventory;
+import com.catadmirer.infuseSMP.Inventories.EffectLevelInventory;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;

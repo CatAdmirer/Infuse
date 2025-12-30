@@ -1,15 +1,16 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.Commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.inventories.RecipeGUI;
-import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.catadmirer.infuseSMP.Inventories.RecipeGUI;
+import com.catadmirer.infuseSMP.Inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

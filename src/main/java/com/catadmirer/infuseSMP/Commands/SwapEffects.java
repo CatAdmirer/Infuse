@@ -1,12 +1,12 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.Commands;
 
+import com.catadmirer.infuseSMP.Managers.EffectMapping;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 public class SwapEffects implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

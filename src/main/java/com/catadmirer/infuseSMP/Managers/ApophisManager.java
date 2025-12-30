@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.Managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -14,7 +14,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ApophisManager implements CommandExecutor {
+public class ApophisManager {
 
     private final Infuse plugin;
 
@@ -26,31 +26,6 @@ public class ApophisManager implements CommandExecutor {
     public ApophisManager(Infuse plugin, String relativePath) {
         this.plugin = plugin;
         this.apophisFile = new File(plugin.getDataFolder(), relativePath);
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length != 1) {
-            sender.sendMessage("§cUsage: /" + label + " <player>");
-            return true;
-        }
-
-        String playerName = args[0];
-
-        if (command.getName().equalsIgnoreCase("setapophis")) {
-            Player target = Bukkit.getPlayerExact(playerName);
-            if (target == null) {
-                sender.sendMessage("§cPlayer not found or not online.");
-                return true;
-            }
-            return disguiseAsApophis(target);
-        }
-
-        if (command.getName().equalsIgnoreCase("unsetapophis")) {
-            return unsetApophis(sender, playerName);
-        }
-
-        return false;
     }
 
     public File getApophisFile() {
