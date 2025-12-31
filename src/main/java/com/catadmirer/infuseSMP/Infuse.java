@@ -100,7 +100,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.registerEvents();
 
         // Initializing the action bar updater
-        new ActionBarUpdater().runTaskTimer(this, 0L, 20L);
+        new ActionBarUpdater().runTaskTimer(this, 0, 20);
 
         // Registering the PlaceholderAPI listener if the plugin is installed
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
