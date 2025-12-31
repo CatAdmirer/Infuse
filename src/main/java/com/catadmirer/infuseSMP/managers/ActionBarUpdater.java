@@ -1,74 +1,61 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import java.util.HashSet;
-import java.util.Set;
+import com.catadmirer.infuseSMP.Messages;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
-    private final Set<UUID> playersWithActiveEffects = new HashSet<>();
-
     public void run() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        Bukkit.getOnlinePlayers().forEach(player -> {
             UUID uuid = player.getUniqueId();
-            if (this.playersWithActiveEffects.contains(uuid)) continue;
-            String firstTime = "";
-            boolean emptyEffectIcon = Infuse.getInstance().getConfig("empty_effect_icon");
-            char firstEmoji = 0;
-            if (emptyEffectIcon) {
-                firstEmoji = '\uE901';
-            }
-            EffectMapping primaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "1");
-            if (primaryEffect != null) {
-                String key = primaryEffect.regular().getKey();
-                if (CooldownManager.isEffectActive(uuid, key)) {
-                    long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    firstTime = this.formatTime(timeLeft, ChatColor.of(primaryEffect.getColor()));
-                    firstEmoji = primaryEffect.getActiveIcon();
-                } else if (CooldownManager.isOnCooldown(uuid, key)) {
-                    long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                    firstTime = this.formatTime(timeLeft, ChatColor.WHITE);
-                    firstEmoji = primaryEffect.getIcon();
-                } else {
-                    firstEmoji = primaryEffect.getIcon();
-                }
-            }
-            String secondTime = "";
-            char secondEmoji = 0;
-            if (emptyEffectIcon) {
-                secondEmoji = '\uE901';
-            }
-            EffectMapping secondaryEffect = Infuse.getInstance().getEffectManager().getEffect(uuid, "2");
-            if (secondaryEffect != null) {
-                String key = secondaryEffect.regular().getKey();
-                if (CooldownManager.isEffectActive(uuid, key)) {
-                    long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    secondTime = this.formatTime(timeLeft, ChatColor.of(secondaryEffect.getColor()));
-                    secondEmoji = secondaryEffect.getActiveIcon();
-                } else if (CooldownManager.isOnCooldown(uuid, key)) {
-                    long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-                    secondTime = this.formatTime(timeLeft, ChatColor.WHITE);
-                    secondEmoji = secondaryEffect.getIcon();
-                } else {
-                    secondEmoji = secondaryEffect.getIcon();
-                }
-            }
-            StringBuilder actionBar = new StringBuilder();
-            if (!firstTime.isEmpty()) actionBar.append(firstTime).append("  ");
-            if (firstEmoji != 0) actionBar.append(firstEmoji).append(" ");
-            if (secondEmoji != 0) actionBar.append(secondEmoji).append("  ");
-            if (!secondTime.isEmpty()) actionBar.append(secondTime).append(" ");
 
-            String finalMessage = actionBar.toString().trim();
-            if (!finalMessage.isEmpty()) {
-                player.sendActionBar(TextComponent.fromLegacy(finalMessage));
+            // Composing the action bar
+            StringBuilder actionBar = new StringBuilder();
+            actionBar.append(getPart(uuid, "1"));
+            if (!actionBar.isEmpty()) actionBar.append(" ");
+            actionBar.append(getPart(uuid, "2"));
+
+            // Sending the action bar
+            if (!actionBar.isEmpty()) {
+                player.sendActionBar(Messages.legacyAmpersand.deserialize(actionBar.toString()));
             }
+        });
+    }
+
+    private String getPart(UUID uuid, String slot) {
+        String time = "";
+
+        // Getting the effect equipped in the slot
+        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+
+        // Handling empty slots
+        boolean emptyEffectEmoji = Infuse.getInstance().getConfig("empty_effect_icon");
+        if (effect == null) {
+            return emptyEffectEmoji ? "\uE901 " : "";
         }
+
+
+        // Getting the right emoji to use and time to display
+        String key = effect.regular().getKey();
+        char emoji = effect.getIcon();
+        if (CooldownManager.isEffectActive(uuid, key)) {
+            long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
+            time = formatTime(timeLeft, ChatColor.of(effect.getColor()));
+            emoji = effect.getActiveIcon();
+        } else if (CooldownManager.isOnCooldown(uuid, key)) {
+            long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
+            time = formatTime(timeLeft, ChatColor.WHITE);
+        }
+
+        // Building the result
+        StringBuilder result = new StringBuilder();
+        if (!time.isEmpty()) result.append(time).append("  ");
+        if (emoji != 0) result.append(emoji);
+
+        return result.toString();
     }
 
     private String formatTime(long totalSeconds, ChatColor color) {
