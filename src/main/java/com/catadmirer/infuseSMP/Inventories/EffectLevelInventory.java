@@ -14,7 +14,7 @@ public class EffectLevelInventory implements InventoryHolder {
     private final Inventory inventory;
 
     public EffectLevelInventory(ItemStack regularEffect, ItemStack augmentedEffect, Material backgroundItem) {
-        inventory = Bukkit.createInventory(null, 27, Component.text("Choose", NamedTextColor.YELLOW));
+        inventory = Bukkit.createInventory(this, 27, Component.text("Choose", NamedTextColor.YELLOW));
         fillChoiceGUI(inventory, backgroundItem);
         inventory.setItem(11, regularEffect);
         inventory.setItem(15, augmentedEffect);

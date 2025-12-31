@@ -1,5 +1,5 @@
 name: Infuse
-version: '2.0.1'
+version: '2.0.2'
 main: com.catadmirer.infuseSMP.Infuse
 api-version: '1.21'
 author: "CatAdmirer"

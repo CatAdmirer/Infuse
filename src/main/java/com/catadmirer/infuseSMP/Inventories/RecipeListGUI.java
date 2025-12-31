@@ -14,7 +14,7 @@ public class RecipeListGUI implements InventoryHolder {
     private final Inventory inventory;
 
     public RecipeListGUI(Map<String, Map<String, Integer>> craftLimits) {
-        inventory = Bukkit.createInventory(null, 36, Component.text("Potion Crafting"));
+        inventory = Bukkit.createInventory(this, 36, Component.text("Potion Crafting"));
 
         int[] customSlots = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33};
         int index = 0;

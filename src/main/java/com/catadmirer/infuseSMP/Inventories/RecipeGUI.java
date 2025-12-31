@@ -15,7 +15,7 @@ public class RecipeGUI implements InventoryHolder {
     private final Inventory inventory;
 
     public RecipeGUI(String potionKey, List<String> shape, Map<Character,String> ingredients) {
-        inventory = Bukkit.createInventory(null, 45, "Recipes");
+        inventory = Bukkit.createInventory(this, 45, "Recipes");
 
         int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
         int slotIndex = 0;
