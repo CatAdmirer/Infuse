@@ -6,9 +6,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +28,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Fire implements Listener {
-    
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     public Fire(Plugin plugin) {
@@ -50,21 +46,6 @@ public class Fire implements Listener {
 
     private void applyFireResistance(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
-    }
-
-    public static String applyHexColors(String input) {
-        String regex = "(#(?:[0-9a-fA-F]{6}))";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        StringBuilder result = new StringBuilder();
-        while (matcher.find()) {
-            String hexCode = matcher.group(1);
-            String colorCode = ChatColor.of(hexCode).toString();
-            matcher.appendReplacement(result, colorCode);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 
     public void handleSwim(Player player) {

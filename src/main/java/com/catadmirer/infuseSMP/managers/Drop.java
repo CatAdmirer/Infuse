@@ -35,7 +35,6 @@ public class Drop implements Listener {
         if (this.isMace(item)) {
             this.playDustEffect(event.getPlayer(), true, EffectMapping.fromItem(item), event.getItem().getLocation());
         }
-
     }
 
     @EventHandler

@@ -84,8 +84,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, Infuse.getInstance().getConfig("ocean_pulling.pull.interval"));
-
+        }.runTaskTimer(plugin, 0L, ((Number) Infuse.getInstance().getConfig("ocean_pulling.pull.interval")).longValue());
     }
 
     private boolean isTrusted(Player player, Player caster) {

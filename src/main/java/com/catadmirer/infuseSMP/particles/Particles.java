@@ -32,8 +32,11 @@ public class Particles {
 
         final double regularRadius = 0;
         final double augmentedRadius = 0.3;
-
-        spawnEffect(player, Color.fromRGB(effect.getColor().getRGB()), effect.isAugmented() ? augmentedRadius : regularRadius);
+        if (effect.isAugmented()) {
+            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), augmentedRadius);
+        } else {
+            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), regularRadius);
+        }
     }
 
     public static void spawnDragon(Player player) {

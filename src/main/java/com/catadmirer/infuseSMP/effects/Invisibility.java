@@ -2,10 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.github.retrooper.packetevents.PacketEvents;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.github.retrooper.packetevents.event.*;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,7 +27,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Invisibility implements Listener, PacketListener {
+public class Invisibility implements Listener {
 
     private final Plugin plugin;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
@@ -50,25 +47,6 @@ public class Invisibility implements Listener, PacketListener {
         }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    private static void hideHealthForPlayer(final Player player, final int durationSeconds) {
-        (new BukkitRunnable() {
-            int elapsedTicks = 0;
-
-            public void run() {
-                WrapperPlayServerUpdateHealth packet = new WrapperPlayServerUpdateHealth(
-                        20,
-                        20,
-                        5);
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-                this.elapsedTicks += 2;
-                if (this.elapsedTicks >= durationSeconds * 20) {
-                    this.cancel();
-                }
-
-            }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 2L);
-    }
-
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
@@ -76,7 +54,6 @@ public class Invisibility implements Listener, PacketListener {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-                        hideHealthForPlayer(target, 4);
                         this.spawnBlackParticles(target, 4);
                     }
                 }
@@ -93,7 +70,6 @@ public class Invisibility implements Listener, PacketListener {
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-                        hideHealthForPlayer(target, 4);
                         this.spawnBlackParticles(target, 4);
                         this.meleeHitCounter.put(attacker.getUniqueId(), 0);
                     }
@@ -192,7 +168,6 @@ public class Invisibility implements Listener, PacketListener {
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
                                 p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
-                                hideHealthForPlayer(p, 2);
                             }
                         }
 

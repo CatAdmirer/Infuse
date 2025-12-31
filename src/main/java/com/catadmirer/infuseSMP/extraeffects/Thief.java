@@ -6,8 +6,6 @@ import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -879,7 +877,6 @@ public class Thief implements Listener {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
                             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
-                            hideHealthForPlayer(p, 2);
                         }
                     }
 
@@ -893,22 +890,4 @@ public class Thief implements Listener {
         return dataManager.isTrusted(player, caster);
     }
 
-    private void hideHealthForPlayer(final Player player, final int durationSeconds) {
-        (new BukkitRunnable() {
-            int elapsedTicks = 0;
-
-            public void run() {
-                WrapperPlayServerUpdateHealth packet = new WrapperPlayServerUpdateHealth(
-                        20,
-                        20,
-                        5);
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-                this.elapsedTicks += 2;
-                if (this.elapsedTicks >= durationSeconds * 20) {
-                    this.cancel();
-                }
-
-            }
-        }).runTaskTimer(this.plugin, 0L, 2L);
-    }
 }

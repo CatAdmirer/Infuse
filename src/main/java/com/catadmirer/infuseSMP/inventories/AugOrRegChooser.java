@@ -12,7 +12,7 @@ public class AugOrRegChooser implements InventoryHolder {
     private final Inventory inventory;
 
     public AugOrRegChooser(ItemStack regularEffect, ItemStack augmentedEffect, Material backgroundItem) {
-        inventory = Bukkit.createInventory(null, 27, "§eChoose");
+        inventory = Bukkit.createInventory(this, 27, "§eChoose");
         
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(backgroundItem));

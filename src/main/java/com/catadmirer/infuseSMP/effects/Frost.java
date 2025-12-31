@@ -1,4 +1,5 @@
 package com.catadmirer.infuseSMP.effects;
+
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;

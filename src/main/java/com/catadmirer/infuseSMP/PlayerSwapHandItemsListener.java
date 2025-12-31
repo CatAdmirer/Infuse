@@ -1,24 +1,12 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.effects.Emerald;
-import com.catadmirer.infuseSMP.effects.Ender;
-import com.catadmirer.infuseSMP.effects.Feather;
-import com.catadmirer.infuseSMP.effects.Fire;
-import com.catadmirer.infuseSMP.effects.Frost;
-import com.catadmirer.infuseSMP.effects.Haste;
-import com.catadmirer.infuseSMP.effects.Heart;
-import com.catadmirer.infuseSMP.effects.Invisibility;
-import com.catadmirer.infuseSMP.effects.Ocean;
-import com.catadmirer.infuseSMP.effects.Regen;
-import com.catadmirer.infuseSMP.effects.Speed;
-import com.catadmirer.infuseSMP.effects.Strength;
-import com.catadmirer.infuseSMP.effects.Thunder;
+import java.util.UUID;
+
+import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-
-import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;

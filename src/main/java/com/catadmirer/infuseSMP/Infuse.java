@@ -8,8 +8,6 @@ import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import java.io.InputStreamReader;
@@ -86,15 +84,8 @@ public class Infuse extends JavaPlugin implements Listener {
         // Getting the abilities handler
         this.abilitiesHandler = new Abilities();
 
-        // Initializing PacketEvents and its listeners
-        PacketEvents.getAPI().init();
-        PacketEvents.getAPI().getEventManager().registerListener(new Invisibility(this), PacketListenerPriority.HIGHEST);
-
         // Registering infuse commands
         this.registerCommands();
-
-        // Checking for any updates to the plugin
-        checkForUpdate();
 
         // Registering event listeners for the plugin
         this.registerEvents();
@@ -115,7 +106,19 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public <T> T getConfig(String key) {
-        return (T) settings.get(key);
+        Object value = settings.get(key);
+
+        if (value instanceof Number) {
+            Number number = (Number) value;
+            try {
+                return (T) Long.valueOf(number.longValue());
+            } catch (ClassCastException ignored) {}
+            try {
+                return (T) Integer.valueOf(number.intValue());
+            } catch (ClassCastException ignored) {}
+        }
+
+        return (T) value;
     }
 
     /**
@@ -248,9 +251,6 @@ public class Infuse extends JavaPlugin implements Listener {
         // Sending the log message
         this.getLogger().info("Infuse Plugin is disabling...");
 
-        // Disabling packetevents
-        PacketEvents.getAPI().terminate();
-
         // Removing ritual beams
         // TODO: Do this in a better way than removing all ender crystals
         for (World world : Bukkit.getWorlds()) {
@@ -348,6 +348,8 @@ public class Infuse extends JavaPlugin implements Listener {
         }
     }
 
+
+    // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
     private void checkForUpdate() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -393,35 +395,35 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Checking for updates but only notifying the player if they are op.
         // TODO: Only run this on startup and save the result for when players join.
-        try {
-            String currentVersion = getPluginMeta().getVersion();
-            URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
-            connection.connect();
+        // try {
+        //     String currentVersion = getPluginMeta().getVersion();
+        //     URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
+        //     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        //     connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
+        //     connection.connect();
 
-            if (connection.getResponseCode() != 200) {
-                player.sendMessage("Could not check for updates: HTTP " + connection.getResponseCode());
-                return;
-            }
+        //     if (connection.getResponseCode() != 200) {
+        //         player.sendMessage("Could not check for updates: HTTP " + connection.getResponseCode());
+        //         return;
+        //     }
             
-            Gson gson = new Gson();
-            JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-            if (versions.size() == 0) return;
+        //     Gson gson = new Gson();
+        //     JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
+        //     if (versions.size() == 0) return;
 
-            JsonObject latest = versions.get(0).getAsJsonObject();
-            String latestVersion = latest.get("version_number").getAsString();
+        //     JsonObject latest = versions.get(0).getAsJsonObject();
+        //     String latestVersion = latest.get("version_number").getAsString();
 
-            if (!latestVersion.equalsIgnoreCase(currentVersion)) {
-                String updateMessage = "§d[Infuse] §aA new version (" + latestVersion + ") is available! §7You are on " + currentVersion + " §bhttps://modrinth.com/plugin/infusesmp";
-                if (player.isOp()) {
-                    player.sendMessage(updateMessage);
-                }
-            }
+        //     if (!latestVersion.equalsIgnoreCase(currentVersion)) {
+        //         String updateMessage = "§d[Infuse] §aA new version (" + latestVersion + ") is available! §7You are on " + currentVersion + " §bhttps://modrinth.com/plugin/infusesmp";
+        //         if (player.isOp()) {
+        //             player.sendMessage(updateMessage);
+        //         }
+        //     }
 
-        } catch (Exception e) {
-            player.sendMessage("Failed to check for Infuse updates" + e);
-        }
+        // } catch (Exception e) {
+        //     player.sendMessage("Failed to check for Infuse updates" + e);
+        // }
     }
 
     public DataManager getEffectManager() {

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.catadmirer'
-version = '2.0.0'
+version = '2.0.2'
 
 repositories {
     maven {
@@ -23,8 +23,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT'
-    compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
+    compileOnly 'io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
 }
 

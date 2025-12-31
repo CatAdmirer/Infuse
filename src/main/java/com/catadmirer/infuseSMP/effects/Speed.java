@@ -5,11 +5,8 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.particles.Particles;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -84,21 +81,6 @@ public class Speed implements Listener {
                 }
             }
         }
-    }
-
-    public static String applyHexColors(String input) {
-        String regex = "(#(?:[0-9a-fA-F]{6}))";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        StringBuilder result = new StringBuilder();
-        while (matcher.find()) {
-            String hexCode = matcher.group(1);
-            String colorCode = ChatColor.of(hexCode).toString();
-            matcher.appendReplacement(result, colorCode);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 
     public static void activateSpark(final Player player) {

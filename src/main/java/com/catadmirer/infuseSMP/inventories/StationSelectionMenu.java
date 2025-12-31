@@ -14,7 +14,7 @@ public class StationSelectionMenu implements InventoryHolder {
     private final Inventory inventory;
 
     public StationSelectionMenu() {
-        inventory = Bukkit.createInventory(null, 27, Component.text("Station Selection"));
+        inventory = Bukkit.createInventory(this, 27, Component.text("Station Selection"));
 
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(Material.GRAY_STAINED_GLASS_PANE));

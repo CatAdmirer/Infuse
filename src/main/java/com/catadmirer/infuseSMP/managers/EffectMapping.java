@@ -1,9 +1,9 @@
 package com.catadmirer.infuseSMP.managers;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
@@ -249,8 +249,9 @@ public enum EffectMapping {
      * @return Whether or not this effect is augmented.
      */
     public boolean isAugmented() {
-        return this == augmented;
+        return name() != null && name().startsWith("AUG_");
     }
+
 
     /**
      * Creates the effect as a potion item.
@@ -266,7 +267,7 @@ public enum EffectMapping {
             // Setting the usual data
             meta.setDisplayName(getName());
             meta.setLore(getLore());
-            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB()));
+            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB() & 0xFFFFFF));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
 
             // Applying the custom model if the key has the "aug_" prefix
