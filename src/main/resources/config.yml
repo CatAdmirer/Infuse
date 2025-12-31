@@ -55,10 +55,10 @@ craft_limits:
   fire:
     augmented_limit: 1
     regular_limit: 3
-  end_first:
+  aug_ender:
     augmented_limit: 1 # Augmented End Recipe
     regular_limit: 0
-  end_second:
+  ender:
     augmented_limit: 0
     regular_limit: 3 # Regular End Recipe
   frost:

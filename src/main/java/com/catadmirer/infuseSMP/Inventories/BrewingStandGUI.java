@@ -13,7 +13,7 @@ public class BrewingStandGUI implements InventoryHolder {
     private final Inventory inventory;
 
     public BrewingStandGUI() {
-        inventory = Bukkit.createInventory(null, 27, Component.text("Choose GUI"));
+        inventory = Bukkit.createInventory(this, 27, Component.text("Choose GUI"));
 
         ItemStack filler = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta fillerMeta = filler.getItemMeta();

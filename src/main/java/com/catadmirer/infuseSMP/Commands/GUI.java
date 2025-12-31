@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.Commands;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Inventories.EffectInventory;
 import com.catadmirer.infuseSMP.Inventories.EffectLevelInventory;
 import com.catadmirer.infuseSMP.Managers.EffectMapping;
@@ -14,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class GUI implements Listener, CommandExecutor {
@@ -24,16 +26,20 @@ public class GUI implements Listener, CommandExecutor {
     @EventHandler
     public void onClicky(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        Inventory clickedInventory = event.getClickedInventory();
 
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null || clicked.getType() == Material.AIR) return;
+        Inventory top = event.getView().getTopInventory();
+        InventoryHolder holder = top.getHolder();
 
-        if (clickedInventory instanceof EffectInventory) {
+        if (holder instanceof EffectInventory) {
             event.setCancelled(true);
+
+            ItemStack clicked = event.getCurrentItem();
+            if (clicked == null || clicked.getType() == Material.AIR) return;
+
             EffectMapping effect = EffectMapping.fromItem(clicked);
-            Material background;
-            background = switch (effect) {
+            if (effect == null) return;
+
+            Material background = switch (effect) {
                 case HEART, AUG_HEART, REGEN, AUG_REGEN, STRENGTH, AUG_STRENGTH, THIEF, AUG_THIEF -> Material.RED_STAINED_GLASS_PANE;
                 case FIRE, AUG_FIRE, HASTE, AUG_HASTE -> Material.ORANGE_STAINED_GLASS_PANE;
                 case THUNDER, AUG_THUNDER -> Material.YELLOW_STAINED_GLASS_PANE;
@@ -46,15 +52,27 @@ public class GUI implements Listener, CommandExecutor {
                 case INVIS, AUG_INVIS -> Material.LIGHT_GRAY_STAINED_GLASS_PANE;
             };
 
-            player.openInventory(new EffectLevelInventory(effect.regular().createItem(), effect.augmented().createItem(), background).getInventory());
+            player.openInventory(new EffectLevelInventory(
+                    effect.regular().createItem(),
+                    effect.augmented().createItem(),
+                    background
+            ).getInventory());
+
+            return;
         }
 
-        if (clickedInventory instanceof EffectLevelInventory) {
+        if (holder instanceof EffectLevelInventory) {
+            event.setCancelled(true);
+
+            ItemStack clicked = event.getCurrentItem();
+            if (clicked == null) return;
+
             if (clicked.getType() != Material.POTION) {
                 event.setCancelled(true);
             }
         }
     }
+
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!command.getName().equalsIgnoreCase("infuses")) return false;

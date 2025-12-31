@@ -98,9 +98,6 @@ public class Infuse extends JavaPlugin implements Listener {
         // Registering infuse commands
         this.registerCommands();
 
-        // Checking for any updates to the plugin
-        checkForUpdate();
-
         // Registering event listeners for the plugin
         this.registerEvents();
 
@@ -120,7 +117,19 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public <T> T getConfig(String key) {
-        return (T) settings.get(key);
+        Object value = settings.get(key);
+
+        if (value instanceof Number) {
+            Number number = (Number) value;
+            try {
+                return (T) Long.valueOf(number.longValue());
+            } catch (ClassCastException ignored) {}
+            try {
+                return (T) Integer.valueOf(number.intValue());
+            } catch (ClassCastException ignored) {}
+        }
+
+        return (T) value;
     }
 
     public String getEffectName(String key) {
@@ -453,77 +462,6 @@ public class Infuse extends JavaPlugin implements Listener {
             activeSkinModifiers.remove(uuid);
         } else {
             activeSkinModifiers.put(uuid, count);
-        }
-    }
-
-    /** Checks the modrinth api for any updates to the plugin. */
-    private void checkForUpdate() {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try {
-                String currentVersion = getPluginMeta().getVersion();
-                URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
-                connection.connect();
-
-                if (connection.getResponseCode() != 200) {
-                    getLogger().warning("Could not check for updates: HTTP " + connection.getResponseCode());
-                    return;
-                }
-
-                Gson gson = new Gson();
-                JsonArray object = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-                String latestVersion = object.get(0).getAsJsonObject().get("version_number").getAsString();
-
-                if (!currentVersion.equalsIgnoreCase(latestVersion)) {
-                    String updateMessage = "A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp";
-                    getLogger().info(ChatColor.stripColor(updateMessage));
-                }
-
-            } catch (Exception e) {
-                getLogger().log(Level.WARNING, "Failed to check for Infuse updates", e);
-            }
-        });
-    }
-
-    @EventHandler
-    private void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        
-        // Telling the player their current control mode
-        String controlMode = dataManager.getControlDefault(player.getUniqueId());
-        if (controlMode == null) controlMode = "Offhand";
-        boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
-        player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
-        player.sendMessage("§7Your ability mode is set to: " + controlMode);
-
-        // Checking for updates but only notifying the player if they are op.
-        // TODO: Only run this on startup and save the result for when players join.
-        try {
-            String currentVersion = getPluginMeta().getVersion();
-            URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
-            connection.connect();
-
-            if (connection.getResponseCode() != 200) {
-                player.sendMessage("Could not check for updates: HTTP " + connection.getResponseCode());
-                return;
-            }
-
-            Gson gson = new Gson();
-            JsonArray object = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-            String latestVersion = object.get(0).getAsJsonObject().get("version_number").getAsString();
-
-            if (!latestVersion.equalsIgnoreCase(currentVersion)) {
-                String updateMessage = "§d[Infuse] §aA new version (" + latestVersion + ") is available! §7You are on " + currentVersion + " §bhttps://modrinth.com/plugin/infusesmp";
-                if (player.isOp()) {
-                    player.sendMessage(updateMessage);
-                }
-            }
-
-        } catch (Exception e) {
-            player.sendMessage("Failed to check for Infuse updates" + e);
         }
     }
 

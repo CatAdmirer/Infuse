@@ -187,8 +187,9 @@ public enum EffectMapping {
      * @return Whether or not this effect is augmented.
      */
     public boolean isAugmented() {
-        return this == augmented;
+        return name() != null && name().startsWith("AUG_");
     }
+
 
     /**
      * Creates the effect as a potion item.

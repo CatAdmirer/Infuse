@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.catadmirer.infuseSMP.Inventories.BrewingStandGUI;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -32,10 +34,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -139,10 +138,10 @@ public class InfuseRecipeManager implements Listener {
                 case "thunder":
                     this.Thunder();
                     break;
-                case "end_first":
+                case "aug_ender":
                     this.Ender();
                     break;
-                case "end_second":
+                case "ender":
                     break;
                 case "apophis":
                     this.Apophis();
@@ -174,7 +173,7 @@ public class InfuseRecipeManager implements Listener {
             marker.setCustomNameVisible(false);
             crystal.setBeamTarget(marker.getLocation().toBlockLocation());
             int ritualDuration;
-            if (recipeKey.equalsIgnoreCase("end_first")) {
+            if (recipeKey.equalsIgnoreCase("aug_ender")) {
                 ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
             } else {
                 ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
@@ -198,7 +197,8 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.activeBossBar != null) {
+        if (this.activeBossBar == null) return;
+        if (!this.activeBossBar.isVisible()) {
             this.activeBossBar.addPlayer(event.getPlayer());
         }
     }
@@ -219,7 +219,7 @@ public class InfuseRecipeManager implements Listener {
 
         isRitualActive = true;
 
-        Component itemName = craftedItem.getItemMeta().displayName();
+        Component itemName = Component.text(MessageUtil.stripAllColors(craftedItem.getItemMeta().getDisplayName()), NamedTextColor.WHITE);
         TextColor itemColor = itemName.color();
         String formattedItemName = legacySection.serialize(Component.text("\uD83E\uDDEA ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" \uD83E\uDDEA")));
 
@@ -264,8 +264,8 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%y%", y)
                 .replace("%z%", z)
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
-
-        Bukkit.broadcastMessage(formattedMessage);
+        Component e = LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage);
+        Bukkit.broadcast(e);
         if (Infuse.getInstance().<Boolean>getConfig("enable_discord_broadcasts")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
@@ -277,7 +277,7 @@ public class InfuseRecipeManager implements Listener {
         this.spawnCustomBeam(brewingStandLocation, recipeKey);
         int ritualDuration;
 
-        if (recipeKey.equalsIgnoreCase("end_first")) {
+        if (recipeKey.equalsIgnoreCase("aug_ender")) {
             ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
         } else {
             ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
@@ -285,25 +285,38 @@ public class InfuseRecipeManager implements Listener {
 
 
         new BukkitRunnable() {
-            double progress = 1;
-            final double progressDecrement = 1 / (ritualDuration * 20);
 
+            double progress = 1.0;
+            final double progressDecrement = 1.0 / (ritualDuration * 20.0);
+
+            @Override
             public void run() {
-                if (progress <= 0) {
+                if (activeBossBar == null) { cancel(); return; }
+                progress -= progressDecrement;
+                progress = Math.max(0.0, Math.min(1.0, progress));
+                activeBossBar.setProgress(progress);
+
+                if (progress <= 0.0) {
                     activeBossBar.removeAll();
-                    String finishedTemplate = plugin.getMessages().getString("effect_finished", "%item% has been brewed!");
-                    String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
-                    Bukkit.broadcastMessage("§f" + finishedMessage);
+                    activeBossBar.setVisible(false);
+                    String finishedTemplate = plugin.getMessages()
+                            .getString("effect_finished", "%item% has been brewed!");
+                    String finishedMessage = finishedTemplate.replace(
+                            "%item%",
+                            LegacyComponentSerializer.legacySection().serialize(itemName)
+                    );
+                    Bukkit.broadcast(
+                            LegacyComponentSerializer.legacySection().deserialize("§f" + finishedMessage)
+                    );
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
-                    activeBossBar.setVisible(false);
-                    this.cancel();
-                } else {
-                    progress -= progressDecrement;
-                    activeBossBar.setProgress(progress);
+                    activeBossBar = null;
+                    cancel();
                 }
             }
+
         }.runTaskTimer(this.plugin, 0L, 1L);
+
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
@@ -366,8 +379,8 @@ public class InfuseRecipeManager implements Listener {
                 return BarColor.RED;
             case "invis":
             case "aug_invis":
-            case "end_first":
-            case "end_second":
+            case "aug_ender":
+            case "ender":
             case "apophis":
             case "aug_apophis":
                 return BarColor.PURPLE;
@@ -408,8 +421,8 @@ public class InfuseRecipeManager implements Listener {
         String recipeKey = shaped.getKey().getKey();
         if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
         Player player = (Player) event.getWhoClicked();
-        if (recipeKey.equals("end_second")) {
-            int endFirstAugLimit = Infuse.getInstance().getConfig("craft_limits.end_first.augmented_limit");
+        if (recipeKey.equals("aug_ender")) {
+            int endFirstAugLimit = Infuse.getInstance().getConfig("craft_limits.aug_ender.augmented_limit");
             if (endFirstAugLimit > 0) {
                 event.setCancelled(true);
                 return;
@@ -441,7 +454,6 @@ public class InfuseRecipeManager implements Listener {
 
         int augmentedLimit = augmentedLimitNumber.intValue();
         int regularLimit = regularLimitNumber.intValue();
-        boolean allowInfinite = Infuse.getInstance().getConfig("allow_infinite_effects");
 
         ItemStack result = event.getCurrentItem();
         if (result == null) {
@@ -459,7 +471,7 @@ public class InfuseRecipeManager implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (augmentedLimit <= 0 && !allowInfinite) {
+            if (augmentedLimit <= 0 && !(augmentedLimit == -1)) {
                 event.setCancelled(true);
                 return;
             }
@@ -476,7 +488,7 @@ public class InfuseRecipeManager implements Listener {
             inv.setMatrix(matrix);
             player.updateInventory();
             player.closeInventory();
-            if (!allowInfinite) {
+            if (!(augmentedLimit == -1)) {
                 plugin.getConfig().set("craft_limits." + recipeKey + ".augmented_limit", augmentedLimit - 1);
                 plugin.saveConfig();
             }
@@ -485,11 +497,11 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
 
         } else {
-            if (regularLimit <= 0 && !allowInfinite) {
+            if (regularLimit <= 0 && !(regularLimit == -1)) {
                 event.setCancelled(true);
                 return;
             }
-            if (!allowInfinite) {
+            if (!(regularLimit == -1)) {
                 plugin.getConfig().set("craft_limits." + recipeKey + ".regular_limit", regularLimit - 1);
                 plugin.saveConfig();
             }
@@ -568,7 +580,6 @@ public class InfuseRecipeManager implements Listener {
             return;
         }
 
-        boolean allowInfinite = Infuse.getInstance().getConfig("allow_infinite_effects");
         Number augmentedLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".augmented_limit");
         Number regularLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".regular_limit");
 
@@ -580,9 +591,9 @@ public class InfuseRecipeManager implements Listener {
         int augmentedLimit = augmentedLimitNumber.intValue();
         int regularLimit = regularLimitNumber.intValue();
 
-        if (allowInfinite || augmentedLimit > 0) {
+        if (augmentedLimit > 0 || augmentedLimit == -1) {
             event.getInventory().setResult(firstTimeRewards.get(recipeKey));
-        } else if (regularLimit > 0) {
+        } else if (regularLimit > 0 || regularLimit == -1) {
             event.getInventory().setResult(standardResults.get(recipeKey));
         } else {
             event.getInventory().setResult(null);
@@ -646,122 +657,122 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Emerald() {
-        ItemStack firstTime = EffectMapping.EMERALD.createItem();
-        ItemStack standard = EffectMapping.AUG_EMERALD.createItem();
+        ItemStack firstTime = EffectMapping.AUG_EMERALD.createItem();
+        ItemStack standard = EffectMapping.EMERALD.createItem();
         this.firstTimeRewards.put("emerald", firstTime);
         this.standardResults.put("emerald", standard);
         registerRecipeFromConfig("emerald", standard);
     }
 
     private void Feather() {
-        ItemStack firstTime = EffectMapping.FEATHER.createItem();
-        ItemStack standard = EffectMapping.AUG_FEATHER.createItem();
+        ItemStack firstTime = EffectMapping.AUG_FEATHER.createItem();
+        ItemStack standard = EffectMapping.FEATHER.createItem();
         this.firstTimeRewards.put("feather", firstTime);
         this.standardResults.put("feather", standard);
         registerRecipeFromConfig("feather", standard);
     }
 
     private void Fire() {
-        ItemStack firstTime = EffectMapping.FIRE.createItem();
-        ItemStack standard = EffectMapping.AUG_FIRE.createItem();
+        ItemStack firstTime = EffectMapping.AUG_FIRE.createItem();
+        ItemStack standard = EffectMapping.FIRE.createItem();
         this.firstTimeRewards.put("fire", firstTime);
         this.standardResults.put("fire", standard);
         registerRecipeFromConfig("fire", standard);
     }
 
     private void Ender() {
-        ItemStack firstTime = EffectMapping.ENDER.createItem();
-        ItemStack standard = EffectMapping.AUG_ENDER.createItem();
-        this.firstTimeRewards.put("end_first", firstTime);
-        this.standardResults.put("end_second", standard);
+        ItemStack firstTime = EffectMapping.AUG_ENDER.createItem();
+        ItemStack standard = EffectMapping.ENDER.createItem();
+        this.firstTimeRewards.put("aug_ender", firstTime);
+        this.standardResults.put("ender", standard);
 
-        registerRecipeFromConfig("end_first", firstTime);
-        registerRecipeFromConfig("end_second", standard);
+        registerRecipeFromConfig("aug_ender", firstTime);
+        registerRecipeFromConfig("ender", standard);
     }
 
     private void Frost() {
-        ItemStack firstTime = EffectMapping.FROST.createItem();
-        ItemStack standard = EffectMapping.AUG_FROST.createItem();
+        ItemStack firstTime = EffectMapping.AUG_FROST.createItem();
+        ItemStack standard = EffectMapping.FROST.createItem();
         this.firstTimeRewards.put("frost", firstTime);
         this.standardResults.put("frost", standard);
         registerRecipeFromConfig("frost", standard);
     }
 
     private void Haste() {
-        ItemStack firstTime = EffectMapping.HASTE.createItem();
-        ItemStack standard = EffectMapping.AUG_HASTE.createItem();
+        ItemStack firstTime = EffectMapping.AUG_HASTE.createItem();
+        ItemStack standard = EffectMapping.HASTE.createItem();
         this.firstTimeRewards.put("haste", firstTime);
         this.standardResults.put("haste", standard);
         registerRecipeFromConfig("haste", standard);
     }
 
     private void Heart() {
-        ItemStack firstTime = EffectMapping.HEART.createItem();
-        ItemStack standard = EffectMapping.AUG_HEART.createItem();
+        ItemStack firstTime = EffectMapping.AUG_HEART.createItem();
+        ItemStack standard = EffectMapping.HEART.createItem();
         this.firstTimeRewards.put("heart", firstTime);
         this.standardResults.put("heart", standard);
         registerRecipeFromConfig("heart", standard);
     }
 
     private void Invis() {
-        ItemStack firstTime = EffectMapping.INVIS.createItem();
-        ItemStack standard = EffectMapping.AUG_INVIS.createItem();
+        ItemStack firstTime = EffectMapping.AUG_INVIS.createItem();
+        ItemStack standard = EffectMapping.INVIS.createItem();
         this.firstTimeRewards.put("invis", firstTime);
         this.standardResults.put("invis", standard);
         registerRecipeFromConfig("invis", standard);
     }
 
     private void Ocean() {
-        ItemStack firstTime = EffectMapping.OCEAN.createItem();
-        ItemStack standard = EffectMapping.AUG_OCEAN.createItem();
+        ItemStack firstTime = EffectMapping.AUG_OCEAN.createItem();
+        ItemStack standard = EffectMapping.OCEAN.createItem();
         this.firstTimeRewards.put("ocean", firstTime);
         this.standardResults.put("ocean", standard);
         registerRecipeFromConfig("ocean", standard);
     }
 
     private void Regen() {
-        ItemStack firstTime = EffectMapping.REGEN.createItem();
-        ItemStack standard = EffectMapping.AUG_REGEN.createItem();
+        ItemStack firstTime = EffectMapping.AUG_REGEN.createItem();
+        ItemStack standard = EffectMapping.REGEN.createItem();
         this.firstTimeRewards.put("regen", firstTime);
         this.standardResults.put("regen", standard);
         registerRecipeFromConfig("regen", standard);
     }
 
     private void Speed() {
-        ItemStack firstTime = EffectMapping.SPEED.createItem();
-        ItemStack standard = EffectMapping.AUG_SPEED.createItem();
+        ItemStack firstTime = EffectMapping.AUG_SPEED.createItem();
+        ItemStack standard = EffectMapping.SPEED.createItem();
         this.firstTimeRewards.put("speed", firstTime);
         this.standardResults.put("speed", standard);
         registerRecipeFromConfig("speed", standard);
     }
 
     private void Strength() {
-        ItemStack firstTime = EffectMapping.STRENGTH.createItem();
-        ItemStack standard = EffectMapping.AUG_STRENGTH.createItem();
+        ItemStack firstTime = EffectMapping.AUG_STRENGTH.createItem();
+        ItemStack standard = EffectMapping.STRENGTH.createItem();
         this.firstTimeRewards.put("strength", firstTime);
         this.standardResults.put("strength", standard);
         registerRecipeFromConfig("strength", standard);
     }
 
     private void Thunder() {
-        ItemStack firstTime = EffectMapping.THUNDER.createItem();
-        ItemStack standard = EffectMapping.AUG_THUNDER.createItem();
+        ItemStack firstTime = EffectMapping.AUG_THUNDER.createItem();
+        ItemStack standard = EffectMapping.THUNDER.createItem();
         this.firstTimeRewards.put("thunder", firstTime);
         this.standardResults.put("thunder", standard);
         registerRecipeFromConfig("thunder", standard);
     }
 
     private void Apophis() {
-        ItemStack firstTime = EffectMapping.APOPHIS.createItem();
-        ItemStack standard = EffectMapping.AUG_APOPHIS.createItem();
+        ItemStack firstTime = EffectMapping.AUG_APOPHIS.createItem();
+        ItemStack standard = EffectMapping.APOPHIS.createItem();
         this.firstTimeRewards.put("apophis", firstTime);
         this.standardResults.put("apophis", standard);
         registerRecipeFromConfig("apophis", standard);
     }
 
     private void Thief() {
-        ItemStack firstTime = EffectMapping.THIEF.createItem();
-        ItemStack standard = EffectMapping.AUG_THIEF.createItem();
+        ItemStack firstTime = EffectMapping.AUG_THIEF.createItem();
+        ItemStack standard = EffectMapping.THIEF.createItem();
         this.firstTimeRewards.put("thief", firstTime);
         this.standardResults.put("thief", standard);
         registerRecipeFromConfig("thief", standard);

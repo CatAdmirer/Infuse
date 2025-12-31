@@ -87,15 +87,27 @@ public class DataManager {
     }
 
     public void setEffect(UUID playerUUID, String slot, @Nullable EffectMapping effect) {
-        config.set(playerUUID.toString() + "." + slot, effect);
+        if (effect == null) {
+            config.set(playerUUID.toString() + "." + slot, null);
+        } else {
+            config.set(playerUUID.toString() + "." + slot, effect.name());
+        }
         saveConfig();
     }
 
+
     @Nullable
     public EffectMapping getEffect(UUID playerUUID, String slot) {
-        String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
-        return EffectMapping.fromEffectKey(effectKey);
+        String effectKey = config.getString(playerUUID.toString() + "." + slot);
+        if (effectKey == null) return null;
+
+        try {
+            return EffectMapping.valueOf(effectKey);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
+
 
     public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
