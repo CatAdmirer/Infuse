@@ -181,7 +181,7 @@ public enum Messages {
     public static boolean createFile(Plugin plugin, boolean replace) {
         // Creating the file if it doesn't exist.
         if (!file.exists()) {
-            Infuse.getInstance().saveResource(file.getName(), replace);
+            plugin.saveResource(file.getName(), replace);
         }
 
         // Checking if the file still doesn't exist.

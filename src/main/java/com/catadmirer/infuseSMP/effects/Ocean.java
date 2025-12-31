@@ -15,16 +15,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ocean implements Listener {
+    private static Infuse plugin;
+
     private final DataManager dataManager;
 
-    public Ocean(Plugin plugin, DataManager dataManager) {
+    public Ocean(Infuse plugin, DataManager dataManager) {
+        Ocean.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
@@ -66,8 +68,8 @@ public class Ocean implements Listener {
                     if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
-                    double radius = Infuse.getInstance().getConfig("ocean_pulling.pull.radius");
-                    double strength = Infuse.getInstance().getConfig("ocean_pulling.pull.strength");
+                    double radius = plugin.getConfig("ocean_pulling.pull.radius");
+                    double strength = plugin.getConfig("ocean_pulling.pull.strength");
 
                     for (Player p : world.getPlayers()) {
                         if (p.equals(effectHolder)) continue;
@@ -84,7 +86,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, ((Number) Infuse.getInstance().getConfig("ocean_pulling.pull.interval")).longValue());
+        }.runTaskTimer(plugin, 0L, ((Number) plugin.getConfig("ocean_pulling.pull.interval")).longValue());
     }
 
     private boolean isTrusted(Player player, Player caster) {
@@ -96,7 +98,7 @@ public class Ocean implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (Infuse.getInstance().<Boolean>getConfig("invis_deaths")) {
+        if (plugin.<Boolean>getConfig("invis_deaths")) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 String msg = Messages.INVIS_KILL.getMessage();
                 msg = msg.replace("%victim%", victim.getName());
@@ -122,9 +124,9 @@ public class Ocean implements Listener {
             final double radius = 5;
             final World world = caster.getWorld();
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);
             CooldownManager.setCooldown(playerUUID, "ocean", cooldown);
@@ -168,7 +170,7 @@ public class Ocean implements Listener {
 
                     this.ticksElapsed += 10L;
                 }
-            }.runTaskTimer(Infuse.getInstance(), 0L, 10L);
+            }.runTaskTimer(plugin, 0L, 10L);
         }
     }
 }

@@ -22,18 +22,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invisibility implements Listener {
+    private static Infuse plugin;
 
-    private final Plugin plugin;
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
-    public Invisibility(Plugin plugin) {
-        this.plugin = plugin;
+    public Invisibility(Infuse plugin) {
+        Invisibility.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -110,9 +109,9 @@ public class Invisibility implements Listener {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "invis", duration);
             CooldownManager.setCooldown(playerUUID, "invis", cooldown);
@@ -131,7 +130,7 @@ public class Invisibility implements Listener {
             for (Player vanished : vanishedPlayers) {
                 for (Player other : Bukkit.getOnlinePlayers()) {
                     if (!other.equals(vanished) && !isTeammate(other, vanished)) {
-                        other.hidePlayer(Infuse.getInstance(), vanished);
+                        other.hidePlayer(plugin, vanished);
                     }
                 }
             }
@@ -144,7 +143,7 @@ public class Invisibility implements Listener {
                         this.cancel();
                         for (Player vanished : vanishedPlayers) {
                             for (Player other : Bukkit.getOnlinePlayers()) {
-                                other.showPlayer(Infuse.getInstance(), vanished);
+                                other.showPlayer(plugin, vanished);
                             }
                         }
 
@@ -174,11 +173,11 @@ public class Invisibility implements Listener {
                         this.ticksElapsed += 10L;
                     }
                 }
-            }).runTaskTimer(Infuse.getInstance(), 0L, 10L);
+            }).runTaskTimer(plugin, 0L, 10L);
         }
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
+        return plugin.getEffectManager().isTrusted(player, caster);
     }
 }

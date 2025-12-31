@@ -22,13 +22,13 @@ public class DataManager {
     private FileConfiguration config;
     private final Map<UUID, Set<UUID>> trustMap = new HashMap<>();
 
-    public DataManager(File dataFolder) {
+    public DataManager(Infuse plugin, File dataFolder) {
         File oldFile = new File(dataFolder, "player_hacks.yml");
         this.dataFile = new File(dataFolder, "playerdata.yml");
         if (oldFile.exists() && !dataFile.exists()) {
             boolean success = oldFile.renameTo(dataFile);
             if (!success) {
-                Infuse.getInstance().getLogger().warning("Failed to rename the file");
+                plugin.getLogger().warning("Failed to rename the file");
             }
         }
         if (!dataFile.exists()) {

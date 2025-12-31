@@ -30,16 +30,16 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Emerald implements Listener {
-    private final Plugin plugin;
+    private static Infuse plugin;
 
-    public Emerald(Plugin plugin) {
-        this.plugin = plugin;
+    public Emerald(Infuse plugin) {
+        Emerald.plugin = plugin;
+
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -162,7 +162,7 @@ public class Emerald implements Listener {
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                             player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
                         }
-                    }).runTaskLater(this.plugin, 1L);
+                    }).runTaskLater(plugin, 1L);
                 }
             }
         }
@@ -179,9 +179,9 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "emerald", duration);
         CooldownManager.setCooldown(playerUUID, "emerald", cooldown);

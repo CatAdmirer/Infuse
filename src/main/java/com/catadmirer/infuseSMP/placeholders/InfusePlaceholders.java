@@ -71,7 +71,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
         if (effect != null) {
             String key = effect.regular().getKey();
             if (key != null) {
@@ -91,7 +91,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getTime(UUID uuid, String slot) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
         if (effect == null) return "";
 
         String key = effect.getKey();
@@ -108,14 +108,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
         if (effect != null) return MessageUtil.stripAllColors(effect.getName());
 
         return "";
     }
 
     public String getEffectName(UUID uuid, String slot) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
         if (effect != null) return effect.getName();
 
         return "";

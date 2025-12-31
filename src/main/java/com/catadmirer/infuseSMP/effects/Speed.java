@@ -18,18 +18,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Speed implements Listener {
+    private static Infuse plugin;
+
     private final Map<UUID, Integer> speedLevels = new HashMap<>();
     private final Map<UUID, Long> lastHitTime = new HashMap<>();
     private final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
-    public Speed(Plugin plugin) {
+    public Speed(Infuse plugin) {
+        Speed.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -90,13 +92,13 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            double playerVelocityMultiplier = Infuse.getInstance().getConfig("speed.playerVelocityMultiplier");
+            double playerVelocityMultiplier = plugin.getConfig("speed.playerVelocityMultiplier");
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
             final int[] ticksPassed = new int[]{0};
             final Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runAtFixedRate(Infuse.getInstance(), anchor, (task) -> {
+            Bukkit.getRegionScheduler().runAtFixedRate(plugin, anchor, (task) -> {
                 if (!player.isOnline()) {
                     task.cancel();
                     return;
@@ -125,9 +127,9 @@ public class Speed implements Listener {
             }, 1L, 1L);
 
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

@@ -15,14 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Haste implements Listener {
+    private static Infuse plugin;
 
-    public Haste(Plugin plugin) {
+    public Haste(Infuse plugin) {
+        Haste.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -56,9 +57,9 @@ public class Haste implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "haste", duration);
             CooldownManager.setCooldown(playerUUID, "haste", cooldown);
@@ -76,7 +77,7 @@ public class Haste implements Listener {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-                        Bukkit.getScheduler().runTaskLater(Infuse.getInstance(), () -> {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
                             this.stunShield(player);
                         }, 20L);
                     }

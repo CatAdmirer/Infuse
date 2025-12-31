@@ -15,7 +15,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Regen implements Listener {
+    private static Infuse plugin;
+
     public Regen(Infuse plugin) {
+        Regen.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -53,9 +56,9 @@ public class Regen implements Listener {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("regen.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("regen.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("regen.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("regen.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "regen", duration);
             CooldownManager.setCooldown(playerUUID, "regen", cooldown);

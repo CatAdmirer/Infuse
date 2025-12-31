@@ -21,16 +21,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Fire implements Listener {
+    private static Infuse plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
-    public Fire(Plugin plugin) {
+    public Fire(Infuse plugin) {
+        Fire.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -140,12 +141,12 @@ public class Fire implements Listener {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
-            }.runTaskLater(Infuse.getInstance(), 20L);
+            }.runTaskLater(plugin, 20L);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "fire", duration);
             CooldownManager.setCooldown(playerUUID, "fire", cooldown);
@@ -184,7 +185,7 @@ public class Fire implements Listener {
                     ++this.tick;
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 
     private static void startDarkRedDustEffect(final Location startLoc, Player caster) {
@@ -223,6 +224,6 @@ public class Fire implements Listener {
                     }
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 }

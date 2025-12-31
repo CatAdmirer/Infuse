@@ -27,7 +27,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Apophis implements Listener {
+    private static Infuse plugin;
+
     public Apophis(Infuse plugin) {
+        Apophis.plugin = plugin;
+
         this.startHealthCheckTask();
         (new BukkitRunnable() {
             public void run() {
@@ -70,7 +74,7 @@ public class Apophis implements Listener {
                 }
 
             }
-        }).runTaskLater(Infuse.getInstance(), 15L);
+        }).runTaskLater(plugin, 15L);
     }
 
     private void startHealthCheckTask() {
@@ -88,7 +92,7 @@ public class Apophis implements Listener {
                     }
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0, 20);
+        }).runTaskTimer(plugin, 0, 20);
     }
 
     @EventHandler
@@ -104,6 +108,7 @@ public class Apophis implements Listener {
             }
         }
     }
+
     public static void activateSpark(final Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
@@ -121,16 +126,17 @@ public class Apophis implements Listener {
                 public void run() {
                     player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
                 }
-            }).runTaskLater(Infuse.getInstance(), 20L);
+            }).runTaskLater(plugin, 20L);
+
             if (maxHealthAttribute != null) {
                 maxHealthAttribute.setBaseValue(40);
             }
 
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
@@ -141,7 +147,7 @@ public class Apophis implements Listener {
                         maxHealthAttribute.setBaseValue(20);
                     }
                 }
-            }).runTaskLater(Infuse.getInstance(), 1200L);
+            }).runTaskLater(plugin, 1200L);
         }
     }
 
@@ -177,7 +183,7 @@ public class Apophis implements Listener {
                     ++this.tick;
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 
     private static void startDarkRedDustEffect(final Location startLoc, Player caster) {
@@ -216,7 +222,7 @@ public class Apophis implements Listener {
                     }
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 }
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class EffectChooser implements InventoryHolder {
     private final Inventory inventory;
 
-    public EffectChooser() {
+    public EffectChooser(Infuse plugin) {
         inventory = Bukkit.createInventory(this, 54, "§lInfuses");
 
         // Filling the inventory with decorative glass panes
@@ -37,10 +37,10 @@ public class EffectChooser implements InventoryHolder {
         inventory.setItem(33, EffectMapping.HASTE.createItem());
         inventory.setItem(40, EffectMapping.THUNDER.createItem());
 
-        if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Thief")) {
+        if (plugin.<Boolean>getConfig("extra_effects.Thief")) {
             inventory.setItem(39, EffectMapping.THIEF.createItem());
         }
-        if (Infuse.getInstance().<Boolean>getConfig("extra_effects.Apophis")) {
+        if (plugin.<Boolean>getConfig("extra_effects.Apophis")) {
             inventory.setItem(41, EffectMapping.APOPHIS.createItem());
         }
     }

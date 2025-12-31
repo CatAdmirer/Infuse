@@ -19,9 +19,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EquipEffect implements Listener, CommandExecutor {
-    private ApophisManager apophisManager;
+    private final Infuse plugin;
+    private final ApophisManager apophisManager;
 
-    public EquipEffect(ApophisManager apophisManager) {
+    public EquipEffect(Infuse plugin, ApophisManager apophisManager) {
+        this.plugin = plugin;
         this.apophisManager = apophisManager;
     }
 
@@ -30,8 +32,8 @@ public class EquipEffect implements Listener, CommandExecutor {
         Player player = event.getPlayer();
 
         // Giving the player their starting effects if they haven't been given already
-        if (!player.hasPlayedBefore() && Infuse.getInstance().<Boolean>getConfig("join_effects_enabled")) {
-            List<String> effects = Infuse.getInstance().getConfig("join_effects");
+        if (!player.hasPlayedBefore() && plugin.<Boolean>getConfig("join_effects_enabled")) {
+            List<String> effects = plugin.getConfig("join_effects");
             if (effects.isEmpty()) return;
             String chosenKey = effects.get(new Random().nextInt(effects.size()));
             EffectMapping effect = EffectMapping.fromEffectKey(chosenKey);
@@ -65,11 +67,11 @@ public class EquipEffect implements Listener, CommandExecutor {
      */
     private boolean equipEffect(Player player, EffectMapping effect, String slot) {
         // Checking for an effect in the slot.
-        EffectMapping currentEffect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping currentEffect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) return false;
         
         // Equipping the effect to the slot.
-        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), slot, effect);
+        plugin.getEffectManager().setEffect(player.getUniqueId(), slot, effect);
         player.sendMessage("§aYou have equipped " + effect.getName());
         return true;
     }
@@ -120,9 +122,9 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
-        String dropMode = Infuse.getInstance().getConfig().getString("effect_drops", "random");
+        EffectMapping effect1 = plugin.getEffectManager().getEffect(player.getUniqueId(), "1");
+        EffectMapping effect2 = plugin.getEffectManager().getEffect(player.getUniqueId(), "2");
+        String dropMode = plugin.getConfig().getString("effect_drops", "random");
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
             case "1":
@@ -153,12 +155,12 @@ public class EquipEffect implements Listener, CommandExecutor {
                 break;
         }
 
-        File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
+        File disguiseFile = new File(plugin.getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
 
         // Removing the player's apophis disguise file if it exists.
         if (disguiseFile.exists()) {
             disguiseFile.delete();
-            Infuse.getInstance().resetSkinWithoutKick(player);
+            plugin.resetSkinWithoutKick(player);
         }
     }
 
@@ -170,7 +172,7 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
+        File disguiseFile = new File(plugin.getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
         if (disguiseFile.exists()) {
             apophisManager.disguiseAsApophis(player);
         }
@@ -184,11 +186,11 @@ public class EquipEffect implements Listener, CommandExecutor {
      */
     private void dropEffect(Player player, String slot) {
         // Getting the equipped effect from the data file.
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 
         // Removing the effect from the player.
-        Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
@@ -202,8 +204,8 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
 
         // Getting the equipped effects
-        EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), "2");
+        EffectMapping effect1 = plugin.getEffectManager().getEffect(player.getUniqueId(), "1");
+        EffectMapping effect2 = plugin.getEffectManager().getEffect(player.getUniqueId(), "2");
 
         // Erroring out if the player doesn't have any effects equipped
         if (effect1 == null && effect2 == null) {
@@ -212,8 +214,8 @@ public class EquipEffect implements Listener, CommandExecutor {
         }
 
         // Swapping the effects
-        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
-        Infuse.getInstance().getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
+        plugin.getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
+        plugin.getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
         player.sendMessage("§aYour Effects have been swapped.");
         return true;
     }

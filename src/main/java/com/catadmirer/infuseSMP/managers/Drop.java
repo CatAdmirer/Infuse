@@ -18,7 +18,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class Drop implements Listener {
-
     private final Infuse plugin;
 
     public Drop(Infuse plugin) {
@@ -78,7 +77,7 @@ public class Drop implements Listener {
                     this.y += 0.15;
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0, 1);
+        }).runTaskTimer(plugin, 0, 1);
         world.playSound(base, Sound.ENTITY_TURTLE_EGG_BREAK, 1.3F, 1.2F);
     }
 
@@ -108,7 +107,7 @@ public class Drop implements Listener {
                     this.y += 0.15;
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 1L);
+        }).runTaskTimer(plugin, 0L, 1L);
         world.playSound(base, Sound.ENTITY_TURTLE_EGG_BREAK, 1.3F, 1.2F);
     }
 }

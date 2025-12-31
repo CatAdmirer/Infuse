@@ -34,7 +34,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.profile.PlayerTextures;
@@ -42,9 +41,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Thief implements Listener {
-
-    private final Plugin plugin;
-
+    private static Infuse plugin;
 
     private Map<UUID, UUID> shapeshiftedPlayers = new HashMap<>();
     private Map<UUID, BossBar> shapeshiftedBossBars = new HashMap<>();
@@ -53,7 +50,7 @@ public class Thief implements Listener {
     private final DataManager dataManager;
 
     public Thief(DataManager dataManager, Infuse plugin) {
-        this.plugin = plugin;
+        Thief.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         new BukkitRunnable() {
@@ -80,9 +77,9 @@ public class Thief implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "emerald", duration);
             CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
@@ -182,8 +179,8 @@ public class Thief implements Listener {
             UUID playerUUID = player.getUniqueId();
             if (EffectMapping.THIEF.hasEffect(player)) {
                 if (active.contains(playerUUID)) {
-                    EffectMapping effect1 = Infuse.getInstance().getEffectManager().getEffect(victim.getUniqueId(), "1");
-                    EffectMapping effect2 = Infuse.getInstance().getEffectManager().getEffect(victim.getUniqueId(), "2");
+                    EffectMapping effect1 = plugin.getEffectManager().getEffect(victim.getUniqueId(), "1");
+                    EffectMapping effect2 = plugin.getEffectManager().getEffect(victim.getUniqueId(), "2");
                     
                     Random rand = new Random();
                     if (effect1 != null && effect2 != null) {
@@ -291,9 +288,9 @@ public class Thief implements Listener {
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -304,7 +301,7 @@ public class Thief implements Listener {
                     maxHealthAttribute.setBaseValue(20);
                 }
             }
-        }).runTaskLater(Infuse.getInstance(), 1200L);
+        }).runTaskLater(plugin, 1200L);
     }
 
     private void spawnSparkEffect(final Player caster) {
@@ -346,9 +343,9 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
        
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -396,9 +393,9 @@ public class Thief implements Listener {
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -440,9 +437,9 @@ public class Thief implements Listener {
     public void activateRegen(final Player player) {
         final UUID playerUUID = player.getUniqueId();
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("regen.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("regen.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("regen.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("regen.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -458,9 +455,9 @@ public class Thief implements Listener {
         caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -500,9 +497,9 @@ public class Thief implements Listener {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -536,9 +533,9 @@ public class Thief implements Listener {
         }.runTaskLater(this.plugin, 10L);
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -571,9 +568,9 @@ public class Thief implements Listener {
         }
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("health.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("health.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("health.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("health.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -593,9 +590,9 @@ public class Thief implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -619,9 +616,9 @@ public class Thief implements Listener {
         }.runTaskLater(this.plugin, 20L);
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("fire.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("fire.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -681,9 +678,9 @@ public class Thief implements Listener {
             player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "thief", duration);
             CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -717,7 +714,7 @@ public class Thief implements Listener {
                 Vector knockback = new Vector(0, 1, 0);
                 target.setVelocity(target.getVelocity().add(knockback));
                 Location anchor = target.getLocation();
-                Bukkit.getRegionScheduler().run(Infuse.getInstance(), anchor, (task) -> {
+                Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
                     target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
                 });
             }
@@ -749,9 +746,9 @@ public class Thief implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -767,9 +764,9 @@ public class Thief implements Listener {
         final World world = caster.getWorld();
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);
@@ -820,9 +817,9 @@ public class Thief implements Listener {
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown * 2);

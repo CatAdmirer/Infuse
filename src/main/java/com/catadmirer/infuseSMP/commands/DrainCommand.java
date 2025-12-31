@@ -17,9 +17,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 public class DrainCommand implements CommandExecutor, Listener {
-    private ApophisManager apophisManager;
+    private final Infuse plugin;
+    private final ApophisManager apophisManager;
 
-    public DrainCommand(ApophisManager apophisManager) {
+    public DrainCommand(Infuse plugin, ApophisManager apophisManager) {
+        this.plugin = plugin;
         this.apophisManager = apophisManager;
     }
 
@@ -41,7 +43,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Getting the mapping from the slot
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
 
         // Handling an invalid or empty mapping
         if (effect == null) {
@@ -63,7 +65,7 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Handling special apophis effects
         if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
+            plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
             ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);
             apophisManager.unsetApophis(Bukkit.getConsoleSender(), player.getName());
@@ -71,7 +73,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Removing the effect from the player
-        Infuse.getInstance().getEffectManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
         String currentEffectColored = applyHexColors(effect.getName());
         player.sendMessage("§aYou have drained your: " + currentEffectColored);
 

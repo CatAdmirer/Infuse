@@ -19,6 +19,12 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class Strength implements Listener {
+    private static Infuse plugin;
+    
+    public Strength(Infuse plugin) {
+        Strength.plugin = plugin;
+    }
+
     public static void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
@@ -26,9 +32,9 @@ public class Strength implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "strength", duration);
             CooldownManager.setCooldown(playerUUID, "strength", cooldown);
@@ -101,7 +107,7 @@ public class Strength implements Listener {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE") && EffectMapping.STRENGTH.hasEffect(attacker)) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-                        Bukkit.getScheduler().runTaskLater(Infuse.getInstance(), () -> {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
                             this.stunShield(player);
                         }, 20L);
                     }

@@ -9,18 +9,23 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 public class Particles {
+    private final Infuse plugin;
+
+    public Particles(Infuse plugin) {
+        this.plugin = plugin;
+    }
+
     public void startTask() {
-        Bukkit.getGlobalRegionScheduler().runAtFixedRate(Infuse.getInstance(), (task) -> {
+        Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, (task) -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 applyParticlesForEffect(player, "1");
                 applyParticlesForEffect(player, "2");
             }
-
         }, 1, 20);
     }
 
     private void applyParticlesForEffect(Player player, String type) {
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), type);
+        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), type);
         if (effect == null) return;
 
         // Handling special particles for ender effect

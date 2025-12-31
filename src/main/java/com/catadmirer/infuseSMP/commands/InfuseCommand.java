@@ -16,6 +16,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
+    private final Infuse plugin;
+    
+    public InfuseCommand(Infuse plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -35,7 +40,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                player.openInventory(new EffectChooser().getInventory());
+                player.openInventory(new EffectChooser(plugin).getInventory());
                 break;
 
             case "reload":
@@ -44,7 +49,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                Infuse.getInstance().reloadConfig();
+                plugin.reloadConfig();
                 break;
             case "recipes":
                 Recipes.openGUI(player);
@@ -111,7 +116,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                Infuse.getInstance().getEffectManager().setEffect(target.getUniqueId(), args[3], mapping);
+                plugin.getEffectManager().setEffect(target.getUniqueId(), args[3], mapping);
                 player.sendMessage("§aSuccessfully set the effect in slot " + slot + " of player " + target.getName() + " to " + effectKey + ".");
                 break;
             case "cleareffect":
@@ -133,8 +138,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Removing the effects from the player
-                Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "1");
-                Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "2");
+                plugin.getEffectManager().removeEffect(target.getUniqueId(), "1");
+                plugin.getEffectManager().removeEffect(target.getUniqueId(), "2");
                 player.sendMessage("§aCleared " + target.getName() + "'s effects");
                 break;
             case "cooldown":
@@ -173,11 +178,11 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the control mode for the user.
-                Infuse.getInstance().getEffectManager().setControlDefault(player.getUniqueId(), choice);
+                plugin.getEffectManager().setControlDefault(player.getUniqueId(), choice);
 
                 // Assigning the permission for offhand use if the user chose offhand mode
                 boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
-                player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
+                player.addAttachment(plugin, "ability.use", !offhandEnabled);
 
                 player.sendMessage("§4Your controls are now " + choice);
                 break;

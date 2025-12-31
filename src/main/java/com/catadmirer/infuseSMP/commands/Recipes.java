@@ -29,7 +29,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 public class Recipes implements CommandExecutor, Listener {
-    private final Infuse plugin;
+    private static Infuse plugin;
 
     private final Map<String, List<String>> potionShapes = new HashMap<>();
     private final Map<String, Map<Character, String>> potionIngredients = new HashMap<>();
@@ -39,7 +39,7 @@ public class Recipes implements CommandExecutor, Listener {
             "thunder", "apophis", "thief");
 
     public Recipes(Infuse plugin) {
-        this.plugin = plugin;
+        Recipes.plugin = plugin;
     }
 
     @Override
@@ -129,8 +129,8 @@ public class Recipes implements CommandExecutor, Listener {
                 "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
         )) {
             Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".augmented_limit"));
-            limits.put("regular_limit", Infuse.getInstance().getConfig("craft_limits." + itemName + ".regular_limit"));
+            limits.put("augmented_limit", plugin.getConfig("craft_limits." + itemName + ".augmented_limit"));
+            limits.put("regular_limit", plugin.getConfig("craft_limits." + itemName + ".regular_limit"));
             result.put(itemName, limits);
         }
 

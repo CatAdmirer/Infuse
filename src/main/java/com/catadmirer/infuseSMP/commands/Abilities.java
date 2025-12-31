@@ -11,6 +11,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Abilities implements CommandExecutor {
+    private final Infuse plugin;
+    public Abilities(Infuse plugin) {
+        this.plugin = plugin;
+    }
+
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("§cOnly players can use this command.");
@@ -29,7 +34,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        EffectMapping equippedEffect = Infuse.getInstance().getEffectManager().getEffect(playerUUID, slot);
+        EffectMapping equippedEffect = plugin.getEffectManager().getEffect(playerUUID, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {

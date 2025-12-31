@@ -8,6 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
+    private final Infuse plugin;
+
+    public ActionBarUpdater(Infuse plugin) {
+        this.plugin = plugin;
+    }
+
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             UUID uuid = player.getUniqueId();
@@ -29,10 +35,10 @@ public class ActionBarUpdater extends BukkitRunnable {
         String time = "";
 
         // Getting the effect equipped in the slot
-        EffectMapping effect = Infuse.getInstance().getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
 
         // Handling empty slots
-        boolean emptyEffectEmoji = Infuse.getInstance().getConfig("empty_effect_icon");
+        boolean emptyEffectEmoji = plugin.getConfig("empty_effect_icon");
         if (effect == null) {
             return emptyEffectEmoji ? "\uE901 " : "";
         }

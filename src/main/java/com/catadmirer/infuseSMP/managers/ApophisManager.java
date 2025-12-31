@@ -66,7 +66,7 @@ public class ApophisManager implements CommandExecutor {
             return false;
 
         try {
-            Infuse.getInstance().saveOriginalSkin(target);
+            plugin.saveOriginalSkin(target);
             apohpisActive.add(uuid);
 
             // Overriding the player's skin
@@ -118,7 +118,7 @@ public class ApophisManager implements CommandExecutor {
         target.customName(null);
         target.setCustomNameVisible(false);
 
-        Infuse.getInstance().resetSkinWithoutKick(target);
+        plugin.resetSkinWithoutKick(target);
         return true;
     }
 

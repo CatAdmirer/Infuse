@@ -34,7 +34,6 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -44,10 +43,11 @@ public class Feather implements Listener {
 
     private static final Set<UUID> spark = new HashSet<>();
 
+    private static Infuse plugin;
     private final DataManager dataManager;
 
-
-    public Feather(Plugin plugin, DataManager dataManager) {
+    public Feather(Infuse plugin, DataManager dataManager) {
+        Feather.plugin = plugin;
         this.dataManager = dataManager;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -73,7 +73,7 @@ public class Feather implements Listener {
                 target.setVelocity(target.getVelocity().add(knockback));
                 Location anchor = target.getLocation();
                 LivingEntity finalTarget = target;
-                Bukkit.getRegionScheduler().run(Infuse.getInstance(), anchor, (task) -> {
+                Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
                     finalTarget.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
                 });
             }
@@ -81,7 +81,7 @@ public class Feather implements Listener {
             world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
             world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
             Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+            Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
                 if (player.isOnline()) {
                     Vector dashDirection = player.getEyeLocation().getDirection().normalize();
                     Vector launchVector = dashDirection.multiply(5);
@@ -141,7 +141,7 @@ public class Feather implements Listener {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                         Location anchor = player.getLocation();
-                        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+                        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
                             player.setCooldown(Material.WIND_CHARGE, 5);
                         }, 1L);
                     }
@@ -210,15 +210,15 @@ public class Feather implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "feather", duration);
         CooldownManager.setCooldown(playerUUID, "feather", cooldown);
 
         Location anchor = player.getLocation();
-        Bukkit.getRegionScheduler().runDelayed(Infuse.getInstance(), anchor, (task) -> {
+        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
             if (player.isOnline()) {
                 CooldownManager.setDuration(playerUUID, "feathermace", 5L);
             }

@@ -9,6 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 public class ClearEffect implements Listener, CommandExecutor {
+    private final Infuse plugin;
+
+    public ClearEffect(Infuse plugin) {
+        this.plugin = plugin;
+    }
+    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!command.getName().equalsIgnoreCase("cleareffects")) return false;
         
@@ -19,8 +25,8 @@ public class ClearEffect implements Listener, CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target != null && target.isOnline()) {
-            Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "2");
-            Infuse.getInstance().getEffectManager().removeEffect(target.getUniqueId(), "1");
+            plugin.getEffectManager().removeEffect(target.getUniqueId(), "2");
+            plugin.getEffectManager().removeEffect(target.getUniqueId(), "1");
         }
         
         return true;

@@ -27,10 +27,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
+    private static Infuse plugin;
+
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
     public Heart(Infuse plugin) {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Infuse.getInstance());
+        Heart.plugin = plugin;
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.startHealthCheckTask();
     }
 
@@ -46,7 +49,7 @@ public class Heart implements Listener {
                     if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
                 }
             }
-        }).runTaskTimer(Infuse.getInstance(), 0L, 20L);
+        }).runTaskTimer(plugin, 0L, 20L);
     }
 
     @EventHandler
@@ -84,14 +87,14 @@ public class Heart implements Listener {
                 }
             }
         };
-        updateTask.runTaskTimer(Infuse.getInstance(), 0L, 10L);
+        updateTask.runTaskTimer(plugin, 0L, 10L);
         (new BukkitRunnable() {
             public void run() {
                 updateTask.cancel();
                 entity.setCustomNameVisible(false);
                 entity.customName(null);
             }
-        }).runTaskLater(Infuse.getInstance(), 200L);
+        }).runTaskLater(plugin, 200L);
     }
 
     private void updateHealthDisplay(LivingEntity entity) {
@@ -125,9 +128,9 @@ public class Heart implements Listener {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);
@@ -139,7 +142,7 @@ public class Heart implements Listener {
                     }
                     player.sendMessage("§cYour Health Boost has ended.");
                 }
-            }.runTaskLater(Infuse.getInstance(), duration * 20L);
+            }.runTaskLater(plugin, duration * 20L);
         }
     }
 
@@ -155,6 +158,6 @@ public class Heart implements Listener {
                 }
 
             }
-        }).runTaskLater(Infuse.getInstance(), 15L);
+        }).runTaskLater(plugin, 15L);
     }
 }

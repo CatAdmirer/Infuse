@@ -157,7 +157,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-        if (Infuse.getInstance().<Boolean>getConfig("brewing_particles")) {
+        if (plugin.<Boolean>getConfig("brewing_particles")) {
             World world = brewingStandLocation.getWorld();
             Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
             final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
@@ -174,9 +174,9 @@ public class InfuseRecipeManager implements Listener {
             crystal.setBeamTarget(marker.getLocation().toBlockLocation());
             int ritualDuration;
             if (recipeKey.equalsIgnoreCase("aug_ender")) {
-                ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
+                ritualDuration = plugin.getConfig("ritual_duration_ender");
             } else {
-                ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
+                ritualDuration = plugin.getConfig("ritual_duration");
             }
             (new BukkitRunnable() {
                 public void run() {
@@ -263,10 +263,10 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
 
         Bukkit.broadcast(Messages.toComponent(formattedMessage));
-        if (Infuse.getInstance().<Boolean>getConfig("enable_discord_broadcasts")) {
+        if (plugin.<Boolean>getConfig("enable_discord_broadcasts")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
-        String webhookUrl = Infuse.getInstance().getConfig("discord_webhook_url");
+        String webhookUrl = plugin.getConfig("discord_webhook_url");
         if (webhookUrl != null && !webhookUrl.isEmpty()) {
             sendToDiscord(webhookUrl, formattedDiscordMessage);
         }
@@ -275,9 +275,9 @@ public class InfuseRecipeManager implements Listener {
         int ritualDuration;
 
         if (recipeKey.equalsIgnoreCase("aug_ender")) {
-            ritualDuration = Infuse.getInstance().getConfig("ritual_duration_ender");
+            ritualDuration = plugin.getConfig("ritual_duration_ender");
         } else {
-            ritualDuration = Infuse.getInstance().getConfig("ritual_duration");
+            ritualDuration = plugin.getConfig("ritual_duration");
         }
 
 
@@ -354,55 +354,6 @@ public class InfuseRecipeManager implements Listener {
         return nearestLocation;
     }
 
-    private BarColor getColorFromItemName(String itemName) {
-        switch (itemName.toLowerCase()) {
-            case "emerald":
-            case "aug_emerald":
-                return BarColor.GREEN;
-            case "haste":
-            case "aug_haste":
-                return BarColor.YELLOW;
-            case "heart":
-            case "aug_heart":
-                return BarColor.RED;
-            case "invis":
-            case "aug_invis":
-            case "aug_ender":
-            case "ender":
-            case "apophis":
-            case "aug_apophis":
-                return BarColor.PURPLE;
-            case "frost":
-            case "aug_frost":
-                return BarColor.BLUE;
-            case "feather":
-            case "aug_feather":
-                return BarColor.WHITE;
-            case "thunder":
-            case "aug_thunder":
-                return BarColor.YELLOW;
-            case "speed":
-            case "aug_speed":
-                return BarColor.BLUE;
-            case "regen":
-            case "aug_regen":
-                return BarColor.RED;
-            case "ocean":
-            case "aug_ocean":
-                return BarColor.BLUE;
-            case "fire":
-            case "aug_fire":
-                return BarColor.RED;
-            case "strength":
-            case "aug_strength":
-            case "thief":
-            case "aug_thief":
-                return BarColor.RED;
-            default:
-                return BarColor.WHITE;
-        }
-    }
-
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         if (!(event.getRecipe() instanceof ShapedRecipe shaped)) return;
@@ -410,7 +361,7 @@ public class InfuseRecipeManager implements Listener {
         if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
         Player player = (Player) event.getWhoClicked();
         if (recipeKey.equals("aug_ender")) {
-            int endFirstAugLimit = Infuse.getInstance().getConfig("craft_limits.aug_ender.augmented_limit");
+            int endFirstAugLimit = plugin.getConfig("craft_limits.aug_ender.augmented_limit");
             if (endFirstAugLimit > 0) {
                 event.setCancelled(true);
                 return;

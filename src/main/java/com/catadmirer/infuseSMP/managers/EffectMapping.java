@@ -98,6 +98,12 @@ public enum EffectMapping {
         base.augmented = this;
     }
 
+    private static DataManager dataManager;
+
+    public static void init(DataManager dataManager) {
+        EffectMapping.dataManager = dataManager;
+    }
+
     /**
      * Getting the key for the effect.
      * 
@@ -312,7 +318,7 @@ public enum EffectMapping {
      * @return Whether or not the player has this effect equipped in the provided slot.
      */
     public boolean hasEffect(OfflinePlayer player, String slot) {
-        return this == Infuse.getInstance().getEffectManager().getEffect(player.getUniqueId(), slot);
+        return this == dataManager.getEffect(player.getUniqueId(), slot);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
@@ -18,6 +19,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class GUI implements Listener, CommandExecutor {
+    private final Infuse plugin;
+    
+    public GUI(Infuse plugin) {
+        this.plugin = plugin;
+    }
+
     private void augmentedOrRegular(HumanEntity player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
         player.openInventory(new AugOrRegChooser(augmented, regular, backgroundColor).getInventory());
     }
@@ -68,7 +75,7 @@ public class GUI implements Listener, CommandExecutor {
         if (command.getName().equalsIgnoreCase("infuses")) {
             // Opening the gui for players only.
             if (sender instanceof Player player) {
-                player.openInventory(new EffectChooser().getInventory());
+                player.openInventory(new EffectChooser(plugin).getInventory());
             } else {
                 sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
             }

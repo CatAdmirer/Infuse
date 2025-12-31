@@ -53,10 +53,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
 
-    public static Infuse getInstance() {
-        return instance;
-    }
-
     public void onEnable() {
         if (instance != null) {
             throw new IllegalStateException("Plugin already initialized!");
@@ -64,6 +60,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Loading the Infuse plugin instance
         instance = this;
+
 
         // Saving the default config.yml
         saveDefaultConfig();
@@ -79,10 +76,13 @@ public class Infuse extends JavaPlugin implements Listener {
         new InfuseRecipeManager(this);
 
         // Getting the data manager
-        this.dataManager = new DataManager(getDataFolder());
+        this.dataManager = new DataManager(this, getDataFolder());
+
+        // Giving the mapping class an instance of the data manager
+        EffectMapping.init(dataManager);
 
         // Getting the abilities handler
-        this.abilitiesHandler = new Abilities();
+        this.abilitiesHandler = new Abilities(this);
 
         // Registering infuse commands
         this.registerCommands();
@@ -91,7 +91,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.registerEvents();
 
         // Initializing the action bar updater
-        new ActionBarUpdater().runTaskTimer(this, 0, 20);
+        new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
 
         // Registering the PlaceholderAPI listener if the plugin is installed
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -190,11 +190,11 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("trust").setExecutor(new TrustCommand(dataManager));
         getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
-        getCommand("swap").setExecutor(new SwapEffects());
-        getCommand("infuse").setExecutor(new InfuseCommand());
-        getCommand("infuse").setTabCompleter(new InfuseCommand());
-        getCommand("ldrain").setExecutor(new DrainCommand(apophisCommand));
-        getCommand("rdrain").setExecutor(new DrainCommand(apophisCommand));
+        getCommand("swap").setExecutor(new SwapEffects(this));
+        getCommand("infuse").setExecutor(new InfuseCommand(this));
+        getCommand("infuse").setTabCompleter(new InfuseCommand(this));
+        getCommand("ldrain").setExecutor(new DrainCommand(this, apophisCommand));
+        getCommand("rdrain").setExecutor(new DrainCommand(this, apophisCommand));
         getCommand("rspark").setExecutor(abilitiesHandler);
         getCommand("lspark").setExecutor(abilitiesHandler);
         getCommand("controls").setExecutor((sender, command, label, args) -> {
@@ -221,7 +221,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
             // Setting the control mode for the player
             dataManager.setControlDefault(player.getUniqueId(), choice);
-            player.addAttachment(Infuse.getInstance(), "ability.use", choice.equals("command"));
+            player.addAttachment(this, "ability.use", choice.equals("command"));
             return true;
         });
         getCommand("controls").setTabCompleter((sender, command, label, args) -> {
@@ -265,20 +265,20 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private void registerEvents() {
         // Registering strength listener here for some reason?
-        Bukkit.getPluginManager().registerEvents(new Strength(), this);
+        Bukkit.getPluginManager().registerEvents(new Strength(this), this);
 
         // Initializing the particle manager
-        new Particles().startTask();
+        new Particles(this).startTask();
 
         // Registering events for all the listeners
-        Bukkit.getPluginManager().registerEvents(new GUI(), this);
+        Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipEffect(apophisCommand), this);
+        Bukkit.getPluginManager().registerEvents(new EquipEffect(this, apophisCommand), this);
         Bukkit.getPluginManager().registerEvents(new Ocean(this, dataManager), this);
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new Regen(this), this);
@@ -288,7 +288,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
         Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffect(), this);
+        Bukkit.getPluginManager().registerEvents(new ClearEffect(this), this);
 
         // Enabling apophis listeners if the config allows
         if (getConfig().getBoolean("extra_effects.Apophis")) {
@@ -390,7 +390,7 @@ public class Infuse extends JavaPlugin implements Listener {
         String controlMode = dataManager.getControlDefault(player.getUniqueId());
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
-        player.addAttachment(Infuse.getInstance(), "ability.use", !offhandEnabled);
+        player.addAttachment(this, "ability.use", !offhandEnabled);
         player.sendMessage("§7Your ability mode is set to: " + controlMode);
 
         // Checking for updates but only notifying the player if they are op.

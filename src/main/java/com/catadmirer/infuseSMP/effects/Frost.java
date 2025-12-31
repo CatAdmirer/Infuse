@@ -37,10 +37,10 @@ public class Frost implements Listener {
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
     private static final Set<Material> ICE_BLOCKS;
 
-    private final Infuse plugin;
+    private static Infuse plugin;
 
     public Frost(DataManager dataManager, Infuse plugin) {
-        this.plugin = plugin;
+        Frost.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
@@ -139,9 +139,9 @@ public class Frost implements Listener {
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "frost", duration);
             CooldownManager.setCooldown(playerUUID, "frost", cooldown);
@@ -175,7 +175,7 @@ public class Frost implements Listener {
                     }
                     frozenAttackers.remove(caster.getUniqueId());
                 }
-            }.runTaskLater(Infuse.getInstance(), duration * 20L);
+            }.runTaskLater(plugin, duration * 20L);
         }
     }
 
@@ -191,7 +191,7 @@ public class Frost implements Listener {
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
+        return plugin.getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler

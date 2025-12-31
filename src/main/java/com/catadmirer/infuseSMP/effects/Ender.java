@@ -35,7 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ender implements Listener {
-    private final Infuse plugin;
+    private static Infuse plugin;
 
     private final HashMap<UUID, Integer> dragonBreathCooldowns = new HashMap<>();
 
@@ -51,7 +51,7 @@ public class Ender implements Listener {
 
     public Ender(DataManager dataManager, Infuse plugin) {
         this.dataManager = dataManager;
-        this.plugin = plugin;
+        Ender.plugin = plugin;
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -142,9 +142,9 @@ public class Ender implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-        long cooldown = Infuse.getInstance().getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = Infuse.getInstance().getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        long cooldown = plugin.getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
+        long duration = plugin.getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
 
         CooldownManager.setDuration(playerUUID, "ender", duration);
         CooldownManager.setCooldown(playerUUID, "ender", cooldown);

@@ -60,9 +60,9 @@ public class Thunder implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = Infuse.getInstance().getEffectManager().getEffect(playerUUID, "1").isAugmented() || Infuse.getInstance().getEffectManager().getEffect(playerUUID, "2").isAugmented();
-            long cooldown = Infuse.getInstance().getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = Infuse.getInstance().getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            long cooldown = plugin.getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
+            long duration = plugin.getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
@@ -98,13 +98,13 @@ public class Thunder implements Listener {
 
                     this.ticksElapsed += 20;
                 }
-            }.runTaskTimer(Infuse.getInstance(), 0L, 20L);
+            }.runTaskTimer(plugin, 0L, 20L);
         }
     }
 
 
     private static boolean isTeammate(Player player, Player caster) {
-        return Infuse.getInstance().getEffectManager().isTrusted(player, caster);
+        return plugin.getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler
