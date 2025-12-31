@@ -74,8 +74,8 @@ public class Infuse extends JavaPlugin implements Listener {
         loadConfig();
 
         // Loading the apophis manager
-        new ApophisManager(this, "AphopisPlayers/").getApophisFile();
-        apophisCommand = new ApophisManager(this, "AphopisPlayers/");
+        new ApophisManager(this, "data/AphopisPlayers/").getApophisFile();
+        apophisCommand = new ApophisManager(this, "data/AphopisPlayers/");
 
         // Initializing the recipe manager
         new InfuseRecipeManager(this);

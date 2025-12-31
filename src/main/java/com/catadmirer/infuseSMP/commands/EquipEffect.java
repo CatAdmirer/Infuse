@@ -201,10 +201,7 @@ public class EquipEffect implements Listener, CommandExecutor {
                 break;
         }
 
-        File disguiseFile = new File(
-                Infuse.getInstance().getDataFolder(),
-                "AphopisPlayers/" + player.getUniqueId() + ".yml"
-        );
+        File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
 
         // Removing the player's apophis disguise file if it exists.
         if (disguiseFile.exists()) {
@@ -221,7 +218,7 @@ public class EquipEffect implements Listener, CommandExecutor {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "AphopisPlayers/" + player.getUniqueId() + ".yml");
+        File disguiseFile = new File(Infuse.getInstance().getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
         if (disguiseFile.exists()) {
             apophisManager.disguiseAsApophis(player);
         }

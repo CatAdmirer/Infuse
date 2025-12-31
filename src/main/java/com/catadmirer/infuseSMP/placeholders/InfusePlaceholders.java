@@ -67,7 +67,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         long minutes = totalSeconds / 60L;
         long seconds = totalSeconds % 60L;
         String timeString = minutes + ":" + String.format("%02d", seconds);
-        return color + "§l" + timeString + "§r";
+        return color + "&l" + timeString + "&r";
     }
 
     public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
