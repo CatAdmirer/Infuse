@@ -14,6 +14,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         this.plugin = plugin;
     }
 
+    @Override
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             UUID uuid = player.getUniqueId();
@@ -43,7 +44,6 @@ public class ActionBarUpdater extends BukkitRunnable {
             return emptyEffectEmoji ? "\uE901 " : "";
         }
 
-
         // Getting the right emoji to use and time to display
         String key = effect.regular().getKey();
         char emoji = effect.getIcon();
@@ -65,8 +65,8 @@ public class ActionBarUpdater extends BukkitRunnable {
     }
 
     private String formatTime(long totalSeconds, ChatColor color) {
-        long minutes = totalSeconds / 60L;
-        long seconds = totalSeconds % 60L;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
         String timeString = minutes + ":" + String.format("%02d", seconds);
         return color + "§l" + timeString + "§r";
     }
