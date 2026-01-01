@@ -25,7 +25,6 @@ import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
@@ -38,22 +37,23 @@ public class Thunder implements Listener {
     }
 
     @EventHandler
-    public void onTridentHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Trident trident) {
-            if (!trident.hasMetadata("thunderProcessed")) {
-                trident.setMetadata("thunderProcessed", new FixedMetadataValue(plugin, true));
-                if (trident.getShooter() instanceof Player attacker) {
-                    if (EffectMapping.THUNDER.hasEffect(attacker)) {
+    public void thunderAutoChanneling(EntityDamageByEntityEvent event) {
+        // Ignoring non-trident damage
+        if (!(event.getDamager() instanceof Trident trident)) return;
+
+        // Making sure the shooter has the thunder effect
+        if (!(trident.getShooter() instanceof Player attacker)) return;
+        if (!EffectMapping.THUNDER.hasEffect(attacker)) return;
+
+        // Only summoning lightning if the target is a living entity
                         if (event.getEntity() instanceof LivingEntity target) {
+            // TODO: Talk with cat about just striking lightning normally
+            //target.getWorld().strikeLightning(target.getLocation());
                             target.getWorld().strikeLightningEffect(target.getLocation());
                             target.damage(4, attacker);
                             target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
                         }
                     }
-                }
-            }
-        }
-    }
 
     public static void activateSpark(final Player caster) {
         final UUID playerUUID = caster.getUniqueId();
