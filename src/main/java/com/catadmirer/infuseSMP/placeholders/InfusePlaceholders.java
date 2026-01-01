@@ -63,22 +63,12 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
-        if (effect != null) {
-            String key = effect.regular().getKey();
-            if (key != null) {
-                if (CooldownManager.isEffectActive(uuid, key)) {
-                    return "" + effect.getActiveIcon();
-                } else {
-                    return "" + effect.getIcon();
-                }
-            }
+
+        if (effect == null) {
+            return useEmptyIcon ? "\uE901" : "";
         }
 
-        if (useEmptyIcon) {
-            return "\uE901";
-        }
-
-        return "";
+        return "" + (CooldownManager.isEffectActive(uuid, effect.regular().getKey()) ? effect.getActiveIcon() : effect.getIcon());
     }
 
     public String getTime(UUID uuid, String slot) {
@@ -100,15 +90,15 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     public String getEffectRaw(UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
-        if (effect != null) return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
-
-        return "";
+        if (effect== null) return "";
+        
+        return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
     }
 
     public String getEffectName(UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
-        if (effect != null) return effect.getName();
-
-        return "";
+        if (effect == null) return "";
+        
+        return effect.getName();
     }
 }
