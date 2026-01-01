@@ -50,6 +50,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 plugin.reloadConfig();
+                Messages.load(plugin);
                 break;
             case "recipes":
                 Recipes.openGUI(player);
