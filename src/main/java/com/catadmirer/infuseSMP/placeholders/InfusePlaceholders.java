@@ -36,14 +36,13 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        boolean useEmptyIcon = plugin.getConfig("empty_effect_icon");
         UUID uuid = player.getUniqueId();
 
         switch (params.toLowerCase()) {
             case "first_effect":
-                return getEffectIcon(useEmptyIcon, uuid, "1");
+                return getEffectIcon(uuid, "1");
             case "second_effect":
-                return getEffectIcon(useEmptyIcon, uuid, "2");
+                return getEffectIcon(uuid, "2");
             case "first_time":
                 return getTime(uuid, "1");
             case "second_time":
@@ -61,11 +60,11 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return null;
     }
 
-    public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
+    public String getEffectIcon(UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
 
         if (effect == null) {
-            return useEmptyIcon ? "\uE901" : "";
+            return plugin.<Boolean>getConfig("empty_effect_icon") ? "\uE901" : "";
         }
 
         return "" + (CooldownManager.isEffectActive(uuid, effect.regular().getKey()) ? effect.getActiveIcon() : effect.getIcon());
