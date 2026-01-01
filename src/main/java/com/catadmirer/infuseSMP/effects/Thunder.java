@@ -46,14 +46,14 @@ public class Thunder implements Listener {
         if (!EffectMapping.THUNDER.hasEffect(attacker)) return;
 
         // Only summoning lightning if the target is a living entity
-                        if (event.getEntity() instanceof LivingEntity target) {
+        if (event.getEntity() instanceof LivingEntity target) {
             // TODO: Talk with cat about just striking lightning normally
             //target.getWorld().strikeLightning(target.getLocation());
-                            target.getWorld().strikeLightningEffect(target.getLocation());
-                            target.damage(4, attacker);
-                            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
-                        }
-                    }
+            target.getWorld().strikeLightningEffect(target.getLocation());
+            target.damage(4, attacker);
+            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+        }
+    }
 
     public static void activateSpark(final Player caster) {
         final UUID playerUUID = caster.getUniqueId();
@@ -89,7 +89,7 @@ public class Thunder implements Listener {
                         if (target.equals(caster)) continue;
 
                         if (target instanceof Player p) {
-                            if (isTeammate(p, caster)) continue;
+                            if (plugin.getEffectManager().isTrusted(p, caster)) continue;
                         }
 
                         target.getWorld().strikeLightningEffect(target.getLocation());
@@ -101,11 +101,6 @@ public class Thunder implements Listener {
                 }
             }.runTaskTimer(plugin, 0L, 20L);
         }
-    }
-
-
-    private static boolean isTeammate(Player player, Player caster) {
-        return plugin.getEffectManager().isTrusted(player, caster);
     }
 
     @EventHandler
