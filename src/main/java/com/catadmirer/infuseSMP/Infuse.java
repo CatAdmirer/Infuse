@@ -392,7 +392,9 @@ public class Infuse extends JavaPlugin implements Listener {
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
-        player.sendMessage(Messages.JOIN_ABILITY_NOTIFY.getMessage().replace("%control_mode%", controlMode));
+        String msg = Messages.JOIN_ABILITY_NOTIFY.getMessage();
+        msg = msg.replace("%control_mode%", controlMode);
+        player.sendMessage(Messages.toComponent(msg));
 
         // Checking for updates but only notifying the player if they are op.
         // TODO: Only run this on startup and save the result for when players join.
