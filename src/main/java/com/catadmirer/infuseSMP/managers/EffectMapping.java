@@ -271,8 +271,8 @@ public enum EffectMapping {
 
         if (meta != null) {
             // Setting the usual data
-            meta.setDisplayName(getName());
-            meta.setLore(getLore());
+            meta.displayName(Messages.toComponent(getName()));
+            meta.lore(getLore().stream().map(Messages::toComponent).toList());
             meta.setColor(org.bukkit.Color.fromRGB(color.getRGB() & 0xFFFFFF));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
 
