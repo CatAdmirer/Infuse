@@ -80,7 +80,7 @@ public enum Messages {
 
     THIEF_STEAL("thief_steal", "<yellow>You stole %victim%'s %effect_name% Effect"),
 
-    RECIPE_NOT_FOUND("recipe_not_found", "§cNo recipe found for this potion."),
+    RECIPE_NOT_FOUND("recipe_not_found", "<red>No recipe found for this potion."),
     RECIPE_DISABLED("recipe_disabled", "Recipe is disabled/broken"),
 
     ERROR_INV_FULL("errors.inv_full", "<red>Your inventory is full! Make space before unequipping."),

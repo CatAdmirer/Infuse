@@ -27,7 +27,7 @@ public class ActionBarUpdater extends BukkitRunnable {
 
             // Sending the action bar
             if (!actionBar.isEmpty()) {
-                player.sendActionBar(Messages.legacyAmpersand.deserialize(actionBar.toString()));
+                player.sendActionBar(Messages.toComponent(actionBar.toString()));
             }
         });
     }
@@ -68,6 +68,6 @@ public class ActionBarUpdater extends BukkitRunnable {
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
         String timeString = minutes + ":" + String.format("%02d", seconds);
-        return color + "§l" + timeString + "§r";
+        return color + "<b>" + timeString + "<reset>";
     }
 }

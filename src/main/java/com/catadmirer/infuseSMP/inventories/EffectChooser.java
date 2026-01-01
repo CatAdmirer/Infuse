@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.inventories;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InventoryUtils;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -13,7 +15,7 @@ public class EffectChooser implements InventoryHolder {
     private final Inventory inventory;
 
     public EffectChooser(Infuse plugin) {
-        inventory = Bukkit.createInventory(this, 54, "§lInfuses");
+        inventory = Bukkit.createInventory(this, 54, Component.text("Infuses").decorate(TextDecoration.BOLD));
 
         // Filling the inventory with decorative glass panes
         int[] magentaSlots = {0, 1, 2, 6, 7, 8, 9, 10, 16, 17, 18, 26, 27, 35};

@@ -32,6 +32,7 @@ public class ApophisManager implements CommandExecutor {
         this.apophisFile = new File(plugin.getDataFolder(), relativePath);
     }
 
+    // TODO: Figure out what to do with this.  The commands aren't registered
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {

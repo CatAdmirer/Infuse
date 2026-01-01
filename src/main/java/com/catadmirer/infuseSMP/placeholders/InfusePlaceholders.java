@@ -3,9 +3,9 @@ package com.catadmirer.infuseSMP.placeholders;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +109,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     public String getEffectRaw(UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
-        if (effect != null) return MessageUtil.stripAllColors(effect.getName());
+        if (effect != null) return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
 
         return "";
     }

@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.catadmirer.infuseSMP.util.MessageUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -216,7 +214,7 @@ public class InfuseRecipeManager implements Listener {
 
         isRitualActive = true;
 
-        Component itemName = Component.text(MessageUtil.stripAllColors(craftedItem.getItemMeta().getDisplayName()), NamedTextColor.WHITE);
+        Component itemName = craftedItem.getItemMeta().displayName();
         TextColor itemColor = itemName.color();
         String formattedItemName = legacySection.serialize(Component.text("\uD83E\uDDEA ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" \uD83E\uDDEA")));
         
@@ -230,13 +228,13 @@ public class InfuseRecipeManager implements Listener {
         String worldName = brewingStandLocation.getWorld().getName();
         String dimensionMessage;
         if (worldName.equalsIgnoreCase("world")) {
-            dimensionMessage = "§aOverworld";
+            dimensionMessage = "<green>Overworld";
         } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            dimensionMessage = "§5End";
+            dimensionMessage = "<dark_purple>End";
         } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            dimensionMessage = "§4Nether";
+            dimensionMessage = "<dark_red>Nether";
         } else {
-            dimensionMessage = "§7" + worldName;
+            dimensionMessage = "<gray>" + worldName;
         }
 
         String messageTemplate = Messages.EFFECT_BROADCAST.getMessage();
@@ -295,9 +293,9 @@ public class InfuseRecipeManager implements Listener {
 
                 if (progress <= 0.0) {
                     activeBossBar.removeAll();
-                    String finishedTemplate = Messages.EFFECT_FINISHED.getMessage();
-                    String finishedMessage = finishedTemplate.replace("%item%", legacySection.serialize(itemName));
-                    Bukkit.broadcastMessage("§f" + finishedMessage);
+                    String msg = Messages.EFFECT_FINISHED.getMessage();
+                    msg = msg.replace("%item%", legacySection.serialize(itemName));
+                    Bukkit.broadcast(Messages.toComponent(msg));
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
                     activeBossBar = null;

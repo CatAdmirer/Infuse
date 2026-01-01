@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.inventories;
 
 import com.catadmirer.infuseSMP.InventoryUtils;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -12,7 +14,7 @@ public class AugOrRegChooser implements InventoryHolder {
     private final Inventory inventory;
 
     public AugOrRegChooser(ItemStack regularEffect, ItemStack augmentedEffect, Material backgroundItem) {
-        inventory = Bukkit.createInventory(this, 27, "§eChoose");
+        inventory = Bukkit.createInventory(this, 27, Component.text("Choose", NamedTextColor.YELLOW));
         
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(backgroundItem));
