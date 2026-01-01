@@ -38,9 +38,9 @@ public class Particles {
         final double regularRadius = 0;
         final double augmentedRadius = 0.3;
         if (effect.isAugmented()) {
-            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), augmentedRadius);
+            spawnEffect(player, Color.fromARGB(effect.getColor().getRGB()), augmentedRadius);
         } else {
-            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), regularRadius);
+            spawnEffect(player, Color.fromARGB(effect.getColor().getRGB()), regularRadius);
         }
     }
 
