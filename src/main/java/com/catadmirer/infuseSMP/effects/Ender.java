@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -142,7 +143,7 @@ public class Ender implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_ENDER || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_ENDER;
         long cooldown = plugin.getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
 
@@ -220,7 +221,9 @@ public class Ender implements Listener {
 
         int cooldown = dragonBreathCooldowns.getOrDefault(uuid, 0);
         if (cooldown > 0) {
-            player.sendMessage("§cYou must wait " + cooldown + " seconds before using Dragon's Breath again!");
+            String msg = Messages.ENDER_FIREBALL_COOLDOWN.getMessage();
+            msg = msg.replace("%cooldown%", "" + cooldown);
+            player.sendMessage(Messages.toComponent(msg));
             return;
         }
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -235,7 +238,7 @@ public class Ender implements Listener {
         fireball.customName(fireballName);
         dragonBreathCooldowns.put(uuid, 30);
 
-        player.sendMessage("§aYou shot a cursing fireball! Cooldown started.");
+        player.sendMessage(Messages.ENDER_FIREBALL_SHOOT.toComponent());
     }
 
     @EventHandler
@@ -254,7 +257,7 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
-        target.sendMessage("§cYou have been cursed!");
+        target.sendMessage(Messages.CURSE_START.toComponent());
         removeCurseLater(target.getUniqueId(), 1200);
     }
 
@@ -265,7 +268,7 @@ public class Ender implements Listener {
                 cursedPlayers.remove(playerUUID);
                 Player player = Bukkit.getPlayer(playerUUID);
                 if (player != null && player.isOnline()) {
-                    player.sendMessage("§aThe curse has worn off.");
+                    player.sendMessage(Messages.CURSE_END.toComponent());
                 }
             }
         }.runTaskLater(plugin, delayTicks);

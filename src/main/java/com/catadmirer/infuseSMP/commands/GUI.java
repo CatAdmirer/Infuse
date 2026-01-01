@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
@@ -77,7 +78,7 @@ public class GUI implements Listener, CommandExecutor {
             if (sender instanceof Player player) {
                 player.openInventory(new EffectChooser(plugin).getInventory());
             } else {
-                sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
+                sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
             }
 
             return true;

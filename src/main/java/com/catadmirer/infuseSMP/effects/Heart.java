@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,7 +129,7 @@ public class Heart implements Listener {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HEART || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HEART;
             long cooldown = plugin.getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
 
@@ -140,7 +141,8 @@ public class Heart implements Listener {
                     if (maxHealthAttribute != null) {
                         maxHealthAttribute.setBaseValue(20);
                     }
-                    player.sendMessage("§cYour Health Boost has ended.");
+                    
+                    player.sendMessage(Messages.HEART_BOOST_END.toComponent());
                 }
             }.runTaskLater(plugin, duration * 20L);
         }

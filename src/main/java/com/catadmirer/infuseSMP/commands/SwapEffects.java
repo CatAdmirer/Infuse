@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 
 public class SwapEffects implements CommandExecutor {
     private final Infuse plugin;
@@ -15,22 +16,27 @@ public class SwapEffects implements CommandExecutor {
         this.plugin = plugin;
     }
     
+    // Defining the command for swapping effects...
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
+            sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
             return true;
         }
-        
+
+        // Getting the equipped effects
         EffectMapping effect1 = plugin.getEffectManager().getEffect(player.getUniqueId(), "1");
         EffectMapping effect2 = plugin.getEffectManager().getEffect(player.getUniqueId(), "2");
+
+        // Erroring out if the player doesn't have any effects equipped
         if (effect1 == null && effect2 == null) {
-            player.sendMessage("§cYou do not have any effects equipped to swap.");
+            player.sendMessage(Messages.SWAP_NO_EFFECTS.toComponent());
             return true;
         }
-        
+
+        // Swapping the effects
         plugin.getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
         plugin.getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
-        player.sendMessage("§aYour Effects have been swapped.");
+        player.sendMessage(Messages.SWAP_SUCCESS.toComponent());
         return true;
     }
 }

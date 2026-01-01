@@ -60,7 +60,7 @@ public class Thunder implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THUNDER || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THUNDER;
             long cooldown = plugin.getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
 

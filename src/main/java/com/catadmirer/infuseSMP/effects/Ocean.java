@@ -124,7 +124,7 @@ public class Ocean implements Listener {
             final double radius = 5;
             final World world = caster.getWorld();
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_OCEAN || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_OCEAN;
             long cooldown = plugin.getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
 

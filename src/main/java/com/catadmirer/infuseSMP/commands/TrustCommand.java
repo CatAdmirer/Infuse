@@ -34,13 +34,13 @@ public class TrustCommand implements CommandExecutor {
         // Getting the target to trust/untrust
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {
-            caster.sendMessage(Messages.TRUST_NOPLAYER.getMessage());
+            caster.sendMessage(Messages.TRUST_NOPLAYER.toComponent());
             return true;
         }
 
         // Preventing the caster from trusting/untrusting themself.
         if (caster.getUniqueId().equals(target.getUniqueId())) {
-            caster.sendMessage(Messages.TRUST_SELF.getMessage());
+            caster.sendMessage(Messages.TRUST_SELF.toComponent());
             return true;
         }
 

@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +20,7 @@ public class ClearEffect implements Listener, CommandExecutor {
         if (!command.getName().equalsIgnoreCase("cleareffects")) return false;
         
         if (args.length != 1) {
-            sender.sendMessage("§cUsage: /cleareffects <player>");
+            sender.sendMessage(Messages.CLEAREFFECTS_USAGE.toComponent());
             return true;
         }
 

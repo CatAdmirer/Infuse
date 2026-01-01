@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -216,7 +217,7 @@ public class Recipes implements CommandExecutor, Listener {
         // Getting the potion key from the clicked item
         String potionKey = getPotionKeyFromItem(clickedItem);
         if (potionKey == null) {
-            player.sendMessage("§cNo recipe found for this potion.");
+            player.sendMessage(Messages.RECIPE_NOT_FOUND.toComponent());
             return;
         }
 
@@ -229,7 +230,7 @@ public class Recipes implements CommandExecutor, Listener {
 
         // Erroring out if the recipe is not found
         if (shape == null) {
-            player.sendMessage("Recipe is disabled/broken");
+            player.sendMessage(Messages.RECIPE_DISABLED.toComponent());
             return;
         }
 

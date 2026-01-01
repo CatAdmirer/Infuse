@@ -205,7 +205,7 @@ public class InfuseRecipeManager implements Listener {
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
         if (isRitualActive) {
-            player.sendMessage("§cA ritual is already in progress!");
+            player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
             return;
         }
         final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
@@ -406,7 +406,7 @@ public class InfuseRecipeManager implements Listener {
 
         if (isAugmented) {
             if (isRitualActive) {
-                player.sendMessage("§cA ritual is already in progress!");
+                player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
                 event.setCancelled(true);
                 return;
             }

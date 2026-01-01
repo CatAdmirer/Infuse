@@ -4,9 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
@@ -28,7 +25,7 @@ public class DrainCommand implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players can use this command.");
+            sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
             return true;
         }
 
@@ -37,8 +34,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (label.contains("ldrain")) slot = "1";
         else if (label.contains("rdrain")) slot = "2";
         else {
-            String msg = Messages.getMessage(Messages.WITHDRAW_INVALID);
-            player.sendMessage(Messages.toComponent(msg));
+            player.sendMessage(Messages.WITHDRAW_INVALID.toComponent());
             return true;
         }
 
@@ -49,13 +45,13 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (effect == null) {
             String msg = Messages.EFFECT_NONE_EQUIPPED.getMessage();
             msg = msg.replace("%slot%", slot);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+            player.sendMessage(Messages.toComponent(msg));
             return true;
         }
 
         // Making sure the player has inventory space for the drained item.
         if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
+            player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
             return true;
         }
     
@@ -74,29 +70,14 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Removing the effect from the player
         plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
-        String currentEffectColored = applyHexColors(effect.getName());
-        player.sendMessage("§aYou have drained your: " + currentEffectColored);
+        String msg = Messages.DRAIN_SUCCESS.getMessage();
+        msg = msg.replace("%effect_name%", effect.getName());
+        player.sendMessage(Messages.toComponent(msg));
 
         // Giving the player the effect item.
         ItemStack item = effect.createItem();
         player.getInventory().addItem(item);
 
         return true;
-    }
-
-    // TODO: Remove this in favor of components
-    public static String applyHexColors(String input) {
-        String regex = "(#(?:[0-9a-fA-F]{6}))";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        StringBuilder result = new StringBuilder();
-        while (matcher.find()) {
-            String hexCode = matcher.group(1);
-            String colorCode = ChatColor.of(hexCode).toString();
-            matcher.appendReplacement(result, colorCode);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 }

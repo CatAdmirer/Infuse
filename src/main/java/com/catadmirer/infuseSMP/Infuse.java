@@ -105,6 +105,7 @@ public class Infuse extends JavaPlugin implements Listener {
         getLogger().info("Infuse Plugin has been enabled!");
     }
 
+    // TODO: do this better.  Maybe just expose the config
     public <T> T getConfig(String key) {
         Object value = settings.get(key);
 
@@ -200,13 +201,13 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("controls").setExecutor((sender, command, label, args) -> {
             // Making sure only players can run the command
             if (!(sender instanceof Player player)) {
-                sender.sendMessage("§cOnly players can use this command.");
+                sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
                 return true;
             }
 
             // Making sure the command has an argument
             if (args.length != 1) {
-                player.sendMessage("§cUsage: /controls <offhand|command>");
+                player.sendMessage(Messages.CONTROLS_USAGE.toComponent());
                 return true;
             }
 
@@ -215,7 +216,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
             // Validating the control mode string
             if (!choice.equals("offhand") && !choice.equals("command")) {
-                player.sendMessage("§cInvalid option. Use 'Offhand' or 'Command'.");
+                player.sendMessage(Messages.CONTROLS_INVALID_PARAM.toComponent());
                 return true;
             }
 
@@ -297,7 +298,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Enabling thief listeners if the config allows
         if (getConfig().getBoolean("extra_effects.Thief")) {
-            getServer().getPluginManager().registerEvents(new Thief(dataManager, this), this);
+            getServer().getPluginManager().registerEvents(new Thief(this), this);
         }
     }
 
@@ -391,7 +392,7 @@ public class Infuse extends JavaPlugin implements Listener {
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
-        player.sendMessage("§7Your ability mode is set to: " + controlMode);
+        player.sendMessage(Messages.JOIN_ABILITY_NOTIFY.getMessage().replace("%control_mode%", controlMode));
 
         // Checking for updates but only notifying the player if they are op.
         // TODO: Only run this on startup and save the result for when players join.

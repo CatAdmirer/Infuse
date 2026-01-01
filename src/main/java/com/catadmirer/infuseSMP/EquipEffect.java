@@ -1,15 +1,11 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +14,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class EquipEffect implements Listener, CommandExecutor {
+public class EquipEffect implements Listener {
     private final Infuse plugin;
     private final ApophisManager apophisManager;
 
@@ -72,7 +68,9 @@ public class EquipEffect implements Listener, CommandExecutor {
         
         // Equipping the effect to the slot.
         plugin.getEffectManager().setEffect(player.getUniqueId(), slot, effect);
-        player.sendMessage("§aYou have equipped " + effect.getName());
+        String msg = Messages.EFFECT_EQUIPPED.getMessage();
+        msg = msg.replace("%effect_name%", effect.getName());
+        player.sendMessage(Messages.toComponent(msg));
         return true;
     }
 
@@ -98,7 +96,7 @@ public class EquipEffect implements Listener, CommandExecutor {
         // Skipping if the plauer's inventory is full.
         if (player.getInventory().firstEmpty() == -1) {
             event.setCancelled(true);
-            player.sendMessage("§cYour inventory is full! Make space before unequipping.");
+            player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
             return;
         }
          
@@ -194,29 +192,5 @@ public class EquipEffect implements Listener, CommandExecutor {
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
-    }
-
-    // Defining the command for swapping effects...
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
-            return true;
-        }
-
-        // Getting the equipped effects
-        EffectMapping effect1 = plugin.getEffectManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = plugin.getEffectManager().getEffect(player.getUniqueId(), "2");
-
-        // Erroring out if the player doesn't have any effects equipped
-        if (effect1 == null && effect2 == null) {
-            player.sendMessage("§cYou do not have any effects equipped to swap.");
-            return true;
-        }
-
-        // Swapping the effects
-        plugin.getEffectManager().setEffect(player.getUniqueId(), "1", effect2);
-        plugin.getEffectManager().setEffect(player.getUniqueId(), "2", effect1);
-        player.sendMessage("§aYour Effects have been swapped.");
-        return true;
     }
 }

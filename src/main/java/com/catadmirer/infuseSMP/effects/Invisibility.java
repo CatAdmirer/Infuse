@@ -107,9 +107,9 @@ public class Invisibility implements Listener {
         UUID playerUUID = caster.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            
+                        
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_INVIS || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_INVIS;
             long cooldown = plugin.getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
 

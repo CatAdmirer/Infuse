@@ -40,6 +40,56 @@ public enum Messages {
     INVIS_KILL("invis.kill_invis", "%victim% was slain by %killer%"),
     INVIS_DEATH("invis.death_invis", "%victim% was slain by %killer%"),
 
+    HEART_BOOST_END("heart.boost_end", "<red>Your Health Boost has ended."),
+
+    ENDER_FIREBALL_COOLDOWN("ender.fireball_cooldown", "<red>You must wait %cooldown% seconds before using Dragon's Breath again!"),
+    ENDER_FIREBALL_SHOOT("ender.fireball_shoot", "<green>You shot a cursing fireball! Cooldown started."),
+    CURSE_START("curse_start", "<red>You have been cursed!"),
+    CURSE_END("curse_end", "<green>The curse has worn off."),
+
+    CONTROLS_USAGE("controls.usage", "<red>Usage: /controls <offhand|command>"),
+    CONTROLS_INVALID_PARAM("controls.invalid_param", "<red>Invalid option.  Use \"offhand\" or \"command\"."),
+
+    INFUSE_INVALID_PARAM("infuse.invalid_param", "<red>Please use the tab completions as a reference."),
+    INFUSE_INVALID_SLOT("infuse.invalid_slot", "<red>Invalid Argument! Could not identify slot %slot%.  Please use \"1\" or \"2\"."),
+    INFUSE_CONTROLS_USAGE("infuse_controls.usage", "<red>Usage: /infuse controls <offhand|command>"),
+    INFUSE_CONTROLS_SUCCESS("infuse_controls.success", "<dark_red>Your controls are now %controlMode%"),
+
+    INFUSE_SETEFFECT_USAGE("infuse_seteffect.usage", "<red>Invalid Argument! Please use /infuse setEffect <player> <aug_fire|ocean> <1|2>"),
+    INFUSE_SETEFFECT_SUCCESS("infuse_seteffect.success", "<green>Successfully set the effect in slot %slot% of player %player_name% to %effect_name%."),
+
+    INFUSE_GIVEEFFECT_USAGE("infuse_geteffect.usage", "<red>Invalid Argument! Please use /infuse giveEffect <player> <aug_fire|ocean>"),
+    INFUSE_GIVEEFFECT_SUCCESS("infuse_geteffect.success", "%effect_color%You recieved the %effect_name%"),
+
+    INFUSE_CLEAREFFECT_USAGE("infuse_cleareffect.usage", "<red>Invalid Argument! Please use /infuse clearEffect <player>"),
+    INFUSE_CLEAREFFECT_SUCCESS("infuse_cleareffect.success", "<green>Cleared %player_name%'s effects"),
+
+    INFUSE_COOLDOWN_USAGE("infuse_cooldown.usage", "<red>Invalid Argument! Please use /infuse cooldown <player>"),
+    INFUSE_COOLDOWN_SUCCESS("infuse_cooldown.success", "<green>Removed %player_name%'s cooldown"),
+
+    CLEAREFFECTS_USAGE("cleareffects.usage", "<red>Usage: /cleareffects <player>"),
+
+    JOIN_ABILITY_NOTIFY("onjoin.ability_notify", "<gray>Your ability mode is set to: %control_mode%"),
+    
+    DRAIN_SUCCESS("drain.success", "<green>You have drained your: %effect_name%"),
+
+    EFFECT_EQUIPPED("effect_equipped", "<green>You have equipped the %effect_name%"),
+
+    SWAP_NO_EFFECTS("swap_no_effects", "<red>You do not have any effects equipped to swap."),
+    SWAP_SUCCESS("swap_success", "<green>Your Effects have been swapped."),
+
+    THIEF_STEAL("thief_steal", "<yellow>You stole %victim%'s %effect_name% Effect"),
+
+    RECIPE_NOT_FOUND("recipe_not_found", "§cNo recipe found for this potion."),
+    RECIPE_DISABLED("recipe_disabled", "Recipe is disabled/broken"),
+
+    ERROR_INV_FULL("errors.inv_full", "<red>Your inventory is full! Make space before unequipping."),
+    ERROR_NOT_PLAYER("errors.not_player", "<red>Only players can use this command."),
+    ERROR_NOT_OP("errors.not_op", "<red>You must be OP to run this command."),
+    ERROR_INVALID_COMMAND("errors.invalid_command", "<red>Invalid command."),
+    ERROR_RITUAL_ACTIVE("errors.ritual_active", "<red>A ritual is already in progress!"),
+    ERROR_TARGET_NOT_FOUND("errors.target_not_found", "<red>Player not found or not online."),
+
     // Effect messages
     EMERALD_NAME("emerald.effect_name", "<green>Emerald Effect"),
     EMERALD_LORE("emerald.effect_lore", "<green><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Looting 5", "<green>$ <gray>Luck 10", "<green>$ <gray>1.5x EXP", "<green>$ <gray>Consumables have a 15% chance of not being consumed", "<green>$ <gray>Enchanting table always on level 30", "<gray>", "<green><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<green>$ <gray>Hero of the village 255", "<green>$ <gray>Consumables have a 25% chance of not being consumed", "<green>$ <gray>3x EXP", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),

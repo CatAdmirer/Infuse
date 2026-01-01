@@ -15,6 +15,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+// TODO: remove commandExecutor  It's not used.
 public class ApophisManager implements CommandExecutor {
     private final Infuse plugin;
     private final Set<UUID> apohpisActive = new HashSet<>();

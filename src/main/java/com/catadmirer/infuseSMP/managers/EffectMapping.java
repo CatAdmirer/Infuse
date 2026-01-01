@@ -255,7 +255,7 @@ public enum EffectMapping {
      * @return Whether or not this effect is augmented.
      */
     public boolean isAugmented() {
-        return name() != null && name().startsWith("AUG_");
+        return this == augmented;
     }
 
 
