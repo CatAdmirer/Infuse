@@ -34,6 +34,10 @@ public class Thunder implements Listener {
 
     private static Infuse plugin;
 
+    public Thunder(Infuse plugin) {
+        Thunder.plugin = plugin;
+    }
+
     @EventHandler
     public void onTridentHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Trident trident) {

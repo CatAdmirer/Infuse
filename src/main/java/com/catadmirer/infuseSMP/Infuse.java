@@ -284,7 +284,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new Regen(this), this);
         Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
-        Bukkit.getPluginManager().registerEvents(new Thunder(), this);
+        Bukkit.getPluginManager().registerEvents(new Thunder(this), this);
         Bukkit.getPluginManager().registerEvents(new Haste(this), this);
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
