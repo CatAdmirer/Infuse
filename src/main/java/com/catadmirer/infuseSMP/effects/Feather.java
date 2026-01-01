@@ -196,8 +196,6 @@ public class Feather implements Listener {
     }
 
     public static void activateSpark(final Player player) {
-        if (EffectMapping.FEATHER.hasEffect(player));
-
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;

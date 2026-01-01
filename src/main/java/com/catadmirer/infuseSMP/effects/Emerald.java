@@ -169,8 +169,6 @@ public class Emerald implements Listener {
     }
 
     public static void activateSpark(Player player) {
-        if (!EffectMapping.EMERALD.hasEffect(player)) return;
-
         UUID playerUUID = player.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
 
