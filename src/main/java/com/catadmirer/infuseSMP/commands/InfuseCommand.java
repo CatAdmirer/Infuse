@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -213,15 +214,10 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        // Only tabcompleting for players
-        if (!(sender instanceof Player player)) {
-            return Arrays.asList();
-        }
-
         if (args.length == 1) {
-            List<String> completions = Arrays.asList("recipes", "controls");
+            List<String> completions = new ArrayList<>(Arrays.asList("recipes", "controls"));
             
-            if (player.isOp()) {
+            if (sender.isOp()) {
                 completions.addAll(Arrays.asList("gui", "reload", "giveEffect", "setEffect", "clearEffect", "cooldown"));
             }
 
@@ -236,7 +232,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 case "seteffect":
                 case "cleareffect":
                 case "cooldown":
-                    if (!player.isOp()) return Arrays.asList();
+                    if (!sender.isOp()) return Arrays.asList();
                     return Bukkit.getOnlinePlayers().stream().map(p -> p.getName()).filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
             }
         }
@@ -245,15 +241,15 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
             switch(args[0].toLowerCase()) {
                 case "giveEffect":
                 case "setEffect":
-                    if (!player.isOp()) return Arrays.asList();
+                    if (!sender.isOp()) return Arrays.asList();
                     return Stream.of(EffectMapping.values()).map(EffectMapping::getKey).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
         
-        if (args.length == 4 && args[0].equalsIgnoreCase("setEffect") && player.isOp()) {
+        if (args.length == 4 && args[0].equalsIgnoreCase("setEffect") && sender.isOp()) {
             return Stream.of("1", "2").filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
         }
 
-        return Arrays.asList();
+        return List.of();
     }
 }
