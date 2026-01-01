@@ -2,8 +2,10 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -49,11 +51,11 @@ public class ActionBarUpdater extends BukkitRunnable {
         char emoji = effect.getIcon();
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-            time = formatTime(timeLeft, ChatColor.of(effect.getColor()));
+            time = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getColor().getRGB()));
             emoji = effect.getActiveIcon();
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
-            time = formatTime(timeLeft, ChatColor.WHITE);
+            time = MessageUtil.formatTime(timeLeft, NamedTextColor.WHITE);
         }
 
         // Building the result
@@ -62,12 +64,5 @@ public class ActionBarUpdater extends BukkitRunnable {
         if (emoji != 0) result.append(emoji);
 
         return result.toString();
-    }
-
-    private String formatTime(long totalSeconds, ChatColor color) {
-        long minutes = totalSeconds / 60;
-        long seconds = totalSeconds % 60;
-        String timeString = minutes + ":" + String.format("%02d", seconds);
-        return color + "<b>" + timeString + "<reset>";
     }
 }

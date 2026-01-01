@@ -3,10 +3,12 @@ package com.catadmirer.infuseSMP.placeholders;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,10 +17,6 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     public InfusePlaceholders(Infuse plugin) {
         this.plugin = plugin;
-    }
-
-    public String removeAug(String key) {
-        return key.replaceFirst("aug_", "");
     }
 
     @Override
@@ -63,13 +61,6 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return null;
     }
 
-    private String formatTime(long totalSeconds, ChatColor color) {
-        long minutes = totalSeconds / 60L;
-        long seconds = totalSeconds % 60L;
-        String timeString = minutes + ":" + String.format("%02d", seconds);
-        return color + "&l" + timeString + "&r";
-    }
-
     public String getEffectIcon(boolean useEmptyIcon, UUID uuid, String slot) {
         EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
         if (effect != null) {
@@ -97,11 +88,11 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         String key = effect.getKey();
 
         if (CooldownManager.isEffectActive(uuid, key)) {
-            return formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, ChatColor.of(effect.getColor()));
+            return MessageUtil.formatTime(CooldownManager.getEffectTimeLeft(uuid, key) / 1000, TextColor.color(effect.getColor().getRGB()));
         }
 
         if (CooldownManager.isOnCooldown(uuid, key)) {
-            return formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, ChatColor.WHITE);
+            return MessageUtil.formatTime(CooldownManager.getCooldownTimeLeft(uuid, key) / 1000, NamedTextColor.WHITE);
         }
 
         return "";
