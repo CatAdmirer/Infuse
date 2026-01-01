@@ -29,7 +29,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Thunder implements Listener {
-    private final static Set<UUID> activeSparks = new HashSet<>();
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
 
     private static Infuse plugin;
@@ -59,8 +58,7 @@ public class Thunder implements Listener {
     public static void activateSpark(final Player caster) {
         final UUID playerUUID = caster.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "thunder") && !activeSparks.contains(playerUUID)) {
-            activeSparks.add(playerUUID);
+        if (!CooldownManager.isOnCooldown(playerUUID, "thunder")) {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
@@ -81,7 +79,6 @@ public class Thunder implements Listener {
 
                 public void run() {
                     if (this.ticksElapsed >= effectDuration) {
-                        activeSparks.remove(playerUUID);
                         this.cancel();
                         return;
                     }
