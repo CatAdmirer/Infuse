@@ -37,7 +37,7 @@ recipes:
       N: NETHERITE_INGOT
       P: MUSIC_DISC_PIGSTEP
 
-  end_first:
+  aug_ender:
     enabled: true
     shape:
       - "RAR"
@@ -48,7 +48,7 @@ recipes:
       A: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
       P: DRAGON_EGG
 
-  end_second:
+  ender:
     enabled: true
     shape:
       - "RAR"
