@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,34 +10,114 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class DataManager {
-
+    private final Infuse plugin;
     private final File dataFile;
-    private FileConfiguration config;
+    private final YamlConfiguration config;
     private final Map<UUID, Set<UUID>> trustMap = new HashMap<>();
 
-    public DataManager(Infuse plugin, File dataFolder) {
-        File oldFile = new File(dataFolder, "player_hacks.yml");
-        this.dataFile = new File(dataFolder, "playerdata.yml");
-        if (oldFile.exists() && !dataFile.exists()) {
-            boolean success = oldFile.renameTo(dataFile);
-            if (!success) {
-                plugin.getLogger().warning("Failed to rename the file");
-            }
-        }
-        if (!dataFile.exists()) {
-            try { dataFile.createNewFile(); }
-            catch (IOException e) { e.printStackTrace(); }
-        }
+    public DataManager(Infuse plugin) {   
+        this.plugin = plugin;     
+        this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
-        loadTrustData();
+    }
+
+    /**
+     * Reloads the configuration.
+     *
+     * @return Whether the configuration was loaded successfully.
+     */
+    public boolean load() {
+        if (plugin == null) {
+            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot load {1}.", new String[]{plugin.getName(), dataFile.getName()});
+            return false;
+        }
+
+        // Creating the file if it doesn't exist.
+        // If the function returns false, the load function fails too.
+        if (!createFile(false)) {
+            return false;
+        }
+
+        // Loading the config
+        try {
+            config.load(dataFile);
+            plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", dataFile.getName());
+            return true;
+        } catch (InvalidConfigurationException err) {
+            plugin.getLogger().log(Level.WARNING, "{0]} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
+        } catch (IOException err) {
+            plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", dataFile.getName());
+        }
+
+        return false;
+    }
+
+    /**
+     * Writes the config to the file.
+     * 
+     * @return Whether or not the config was successfully written.
+     */
+    public boolean save() {
+        // Getting a plugin instance to use
+        if (plugin == null) {
+            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot save the {1}.", new String[]{plugin.getName(), dataFile.getName()});
+            return false;
+        }
+
+        // Creating the file if it doesn't exist.
+        // If the function returns false, the load function fails too.
+        if (!createFile(false)) {
+            return false;
+        }
+
+        // Saving the config
+        try {
+            config.save(dataFile);
+            plugin.getLogger().log(Level.INFO, "Successfully saved the config to {0}", dataFile.getName());
+            return true;
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "Could not save to {0}.  Make sure the user has write permissions.", dataFile.getName());
+        }
+
+        return false;
+    }
+
+    /**
+     * Creating the config file. If it doesn't exist, it loads the default config. If the file does
+     * exist, it will only replace it if the parameter is true.
+     * 
+     * @param replace Whether or not to replace the config file with the default configs.
+     * @return Whether or not the file was created successfully.
+     */
+    public boolean createFile(boolean replace) {
+        // Getting a plugin instance to use
+        if (plugin == null) {
+            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot create default {1}.", new String[]{plugin.getName(), dataFile.getName()});
+            return false;
+        }
+
+        // Creating the file if it doesn't exist.
+        if (!dataFile.exists()) {
+            plugin.saveResource(dataFile.getName(), replace);
+        }
+
+        // Checking if the file still doesn't exist.
+        if (!dataFile.exists()) {
+            plugin.getLogger().log(Level.SEVERE, "Could not create {1}.  Check if it already exists.", dataFile.getName());
+
+            return false;
+        }
+
+        return true;
     }
 
     public void addTrust(Player caster, Player trusted) {
@@ -131,7 +212,15 @@ public class DataManager {
     }
 
     public void reloadConfig() {
-        this.config = YamlConfiguration.loadConfiguration(dataFile);
+        try {
+            config.load(dataFile);
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + dataFile.getName(), ex);
+        } catch (InvalidConfigurationException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + dataFile.getName(), ex);
+        }
+
         loadTrustData();
     }
 }

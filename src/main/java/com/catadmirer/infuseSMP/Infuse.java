@@ -76,7 +76,8 @@ public class Infuse extends JavaPlugin implements Listener {
         new InfuseRecipeManager(this);
 
         // Getting the data manager
-        this.dataManager = new DataManager(this, getDataFolder());
+        this.dataManager = new DataManager(this);
+        dataManager.load();
 
         // Giving the mapping class an instance of the data manager
         EffectMapping.init(dataManager);
