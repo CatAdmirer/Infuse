@@ -96,7 +96,7 @@ craft_limits:
     regular_limit: 3
 # Cooldown is Duration + Cooldown
 
-invisibility:
+invis:
   cooldown:
     default: 121
     augmented: 61

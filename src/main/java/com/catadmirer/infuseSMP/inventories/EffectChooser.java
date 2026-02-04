@@ -25,25 +25,25 @@ public class EffectChooser implements InventoryHolder {
         InventoryUtils.setItems(inventory, purpleSlots, InventoryUtils.createNoName(Material.PURPLE_STAINED_GLASS_PANE));
         InventoryUtils.setItems(inventory, lightBlueSlots, InventoryUtils.createNoName(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
 
-        inventory.setItem(12, EffectMapping.FROST.createItem());
-        inventory.setItem(14, EffectMapping.SPEED.createItem());
-        inventory.setItem(20, EffectMapping.FEATHER.createItem());
-        inventory.setItem(21, EffectMapping.OCEAN.createItem());
-        inventory.setItem(22, EffectMapping.INVIS.createItem());
-        inventory.setItem(23, EffectMapping.ENDER.createItem());
-        inventory.setItem(24, EffectMapping.EMERALD.createItem());
-        inventory.setItem(29, EffectMapping.HEART.createItem());
-        inventory.setItem(30, EffectMapping.REGEN.createItem());
-        inventory.setItem(31, EffectMapping.STRENGTH.createItem());
-        inventory.setItem(32, EffectMapping.FIRE.createItem());
-        inventory.setItem(33, EffectMapping.HASTE.createItem());
-        inventory.setItem(40, EffectMapping.THUNDER.createItem());
+        inventory.setItem(12, EffectMapping.AUG_FROST.createItem());
+        inventory.setItem(14, EffectMapping.AUG_SPEED.createItem());
+        inventory.setItem(20, EffectMapping.AUG_FEATHER.createItem());
+        inventory.setItem(21, EffectMapping.AUG_OCEAN.createItem());
+        inventory.setItem(22, EffectMapping.AUG_INVIS.createItem());
+        inventory.setItem(23, EffectMapping.AUG_ENDER.createItem());
+        inventory.setItem(24, EffectMapping.AUG_EMERALD.createItem());
+        inventory.setItem(29, EffectMapping.AUG_HEART.createItem());
+        inventory.setItem(30, EffectMapping.AUG_REGEN.createItem());
+        inventory.setItem(31, EffectMapping.AUG_STRENGTH.createItem());
+        inventory.setItem(32, EffectMapping.AUG_FIRE.createItem());
+        inventory.setItem(33, EffectMapping.AUG_HASTE.createItem());
+        inventory.setItem(40, EffectMapping.AUG_THUNDER.createItem());
 
         if (plugin.<Boolean>getConfig("extra_effects.Thief")) {
-            inventory.setItem(39, EffectMapping.THIEF.createItem());
+            inventory.setItem(39, EffectMapping.AUG_THIEF.createItem());
         }
         if (plugin.<Boolean>getConfig("extra_effects.Apophis")) {
-            inventory.setItem(41, EffectMapping.APOPHIS.createItem());
+            inventory.setItem(41, EffectMapping.AUG_APOPHIS.createItem());
         }
     }
 

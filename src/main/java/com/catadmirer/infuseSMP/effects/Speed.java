@@ -92,7 +92,8 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            double playerVelocityMultiplier = plugin.getConfig("speed.playerVelocityMultiplier");
+            Object obj = plugin.getConfig("speed.playerVelocityMultiplier");
+            double playerVelocityMultiplier = ((Number) obj).doubleValue();
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};

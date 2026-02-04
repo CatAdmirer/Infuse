@@ -23,27 +23,25 @@ public enum Messages {
     DISCORD_BROADCAST("discord_broadcast", "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
     EFFECT_FINISHED("effect_finished", "%item% has been brewed!"),
 
-    SLOT_EMPTY("slot_empty", "&cYou don't have any effect equipped in slot %slot%."),
-    EFFECT_NONE_EQUIPPED("effect_none_equipped", "&cYou don't have an Effect equipped in slot %slot%."),
+    SLOT_EMPTY("slot_empty", "<red>You don't have any effect equipped in slot %slot%."),
+    EFFECT_NONE_EQUIPPED("effect_none_equipped", "<red>You don't have an Effect equipped in slot %slot%."),
 
-    WITHDRAW_INVALID("withdraw_invalid", "&cInvalid usage. Use /ldrain or /rdrain"),
+    WITHDRAW_INVALID("withdraw_invalid", "<red>Invalid usage. Use /ldrain or /rdrain"),
 
-    TRUST_CONSOLEUSAGE("trust_consoleusage", "&cOnly players can use this command."),
-    TRUST_INCORRECTUSAGE("trust_incorrectusage", "&cUsage: /%label% <player>"),
-    TRUST_NOPLAYER("trust_noplayer", "&cPlayer not found."),
-    TRUST_SELF("trust_self", "&cYou always trust yourself. Surely..."),
-    TRUST_ADDED("trust_added", "&aYou now trust %target%."),
-    TRUST_REMOVED("trust_removed", "&eYou no longer trust %target%."),
+    TRUST_CONSOLEUSAGE("trust_consoleusage", "<red>Only players can use this command."),
+    TRUST_INCORRECTUSAGE("trust_incorrectusage", "<red>Usage: /%label% <player>"),
+    TRUST_NOPLAYER("trust_noplayer", "<red>Player not found."),
+    TRUST_SELF("trust_self", "<red>You always trust yourself. Surely..."),
+    TRUST_ADDED("trust_added", "<green>You now trust %target%."),
+    TRUST_REMOVED("trust_removed", "<green>You no longer trust %target%."),
 
-    EFFECT_NOBREWING("effect_nobrewing", "&cYou need to craft this in a brewing stand!"),
+    EFFECT_NOBREWING("effect_nobrewing", "<red>You need to craft this in a brewing stand!"),
 
     INVIS_KILL("invis.kill_invis", "%victim% was slain by %killer%"),
     INVIS_DEATH("invis.death_invis", "%victim% was slain by %killer%"),
 
     HEART_BOOST_END("heart.boost_end", "<red>Your Health Boost has ended."),
 
-    ENDER_FIREBALL_COOLDOWN("ender.fireball_cooldown", "<red>You must wait %cooldown% seconds before using Dragon's Breath again!"),
-    ENDER_FIREBALL_SHOOT("ender.fireball_shoot", "<green>You shot a cursing fireball! Cooldown started."),
     CURSE_START("curse_start", "<red>You have been cursed!"),
     CURSE_END("curse_end", "<green>The curse has worn off."),
 
@@ -322,12 +320,9 @@ public enum Messages {
      * @return The component value of the message.
      */
     public static Component toComponent(String message) {
-        // Passing the string through legacy and minimessage serialization
-        Component legacy = legacyAmpersand.deserialize(message);
-        message = minimessage.serialize(legacy).replace("\\", "");
-
-        return minimessage.deserialize(message);
+        return MiniMessage.miniMessage().deserialize("<i:false>" + message);
     }
+
 
 
 }

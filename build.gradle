@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.catadmirer'
-version = '2.0.2'
+version = '2.1.0'
 
 repositories {
     maven {
@@ -20,11 +20,15 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven {
+        url 'https://maven.zetaplugins.com/'
+    }
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly files("libs/lifestealz-2.20.6.jar")
 }
 
 tasks {

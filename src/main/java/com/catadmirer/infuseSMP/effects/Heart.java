@@ -4,8 +4,11 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+
+import com.zetaplugins.lifestealz.LifeStealZ;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
@@ -35,20 +38,36 @@ public class Heart implements Listener {
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.startHealthCheckTask();
+        LifestealZtask();
     }
 
-    private void startHealthCheckTask() {
+    private void LifestealZtask() {
         (new BukkitRunnable() {
             public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                    if (maxHealthAttribute == null) continue;
-                    double currentMaxHealth = maxHealthAttribute.getBaseValue();
-                    if (!EffectMapping.HEART.hasEffect(player)) continue;
+                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
 
-                    if (currentMaxHealth == 20) maxHealthAttribute.setBaseValue(30);
+                while(var1.hasNext()) {
+                    Player player = (Player)var1.next();
+                    if (Bukkit.getPluginManager().getPlugin("LifestealZ") == null) {
+                        if (EffectMapping.HEART.hasEffect(player)) {
+                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                            maxHealthAttribute.setBaseValue(30.0D);
+                        } else {
+                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                            maxHealthAttribute.setBaseValue(20.0D);
+                        }
+                    } else {
+                        double e = LifeStealZ.getAPI().getPlayerData(player.getUniqueId()).getMaxHealth();
+                        if (EffectMapping.HEART.hasEffect(player)) {
+                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                            maxHealthAttribute.setBaseValue(e + 10);
+                        } else {
+                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                            maxHealthAttribute.setBaseValue(e);
+                        }
+                    }
                 }
+
             }
         }).runTaskTimer(plugin, 0L, 20L);
     }
@@ -146,20 +165,5 @@ public class Heart implements Listener {
                 }
             }.runTaskLater(plugin, duration * 20L);
         }
-    }
-
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        (new BukkitRunnable() {
-            public void run() {
-                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20);
-                }
-
-            }
-        }).runTaskLater(plugin, 15L);
     }
 }

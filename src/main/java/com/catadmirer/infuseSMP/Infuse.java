@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import com.google.gson.JsonObject;
+import com.zetaplugins.lifestealz.LifeStealZ;
+import com.zetaplugins.lifestealz.api.LifeStealZAPI;
+import com.zetaplugins.lifestealz.api.LifeStealZAPIImpl;
 import org.bukkit.Bukkit;
 import java.util.stream.Stream;
 import org.bukkit.Material;
@@ -277,6 +280,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(new Emerald(this), this);

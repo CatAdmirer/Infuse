@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.List;
@@ -216,8 +217,8 @@ public class InfuseRecipeManager implements Listener {
 
         Component itemName = craftedItem.getItemMeta().displayName();
         TextColor itemColor = itemName.color();
-        String formattedItemName = legacySection.serialize(Component.text("\uD83E\uDDEA ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" \uD83E\uDDEA")));
-        
+        String formattedItemName = MiniMessage.miniMessage().serialize(Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪")));
+
         BarColor barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
         this.activeBossBar = Bukkit.createBossBar(formattedItemName, barColor, BarStyle.SOLID);
 
