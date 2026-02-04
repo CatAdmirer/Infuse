@@ -5,6 +5,8 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -84,12 +86,8 @@ public class EquipEffect implements Listener {
         Player player = event.getPlayer();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
-        // Ignoring if the player is not holding a potion
-        if (mainHandItem.getType() == Material.POTION) return;
-
         // Getting the effect from the item
         EffectMapping effect = EffectMapping.fromItem(mainHandItem);
-
         // Skipping if the effect is not found.
         if (effect == null) return;
 

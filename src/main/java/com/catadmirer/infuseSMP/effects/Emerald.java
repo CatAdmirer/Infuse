@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import io.papermc.paper.registry.RegistryAccess;
@@ -22,6 +23,7 @@ import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,18 +73,21 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void onPlayerExpChange(PlayerExpChangeEvent event) {
+    public void pickupexp(PlayerPickupExperienceEvent event) {
         Player player = event.getPlayer();
-        if (EffectMapping.EMERALD.hasEffect(player)) {
-            double multiplier = 1.5;
-            PotionEffect heroEffect = player.getPotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
-            if (heroEffect != null && heroEffect.getAmplifier() >= 200) {
-                multiplier = 3;
-            }
 
-            event.setAmount((int) (event.getAmount() * multiplier));
+        if (!EffectMapping.EMERALD.hasEffect(player)) return;
+
+        ExperienceOrb orb = event.getExperienceOrb();
+        int amount = orb.getExperience();
+
+        double multiplier = 1.5;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) {
+            multiplier = 3.0;
         }
 
+        int newAmount = (int) Math.round(amount * multiplier);
+        orb.setExperience(newAmount);
     }
 
     @EventHandler
@@ -155,7 +160,7 @@ public class Emerald implements Listener {
 
                 if (Math.random() < chance) {
                     ItemStack refund = consumedItem.clone();
-                    refund.setAmount(originalCount + 1);
+                    refund.setAmount(originalCount);
                     event.setItem(refund);
                     (new BukkitRunnable() {
                         public void run() {

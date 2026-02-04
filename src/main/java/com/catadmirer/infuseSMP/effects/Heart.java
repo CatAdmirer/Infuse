@@ -48,7 +48,7 @@ public class Heart implements Listener {
 
                 while(var1.hasNext()) {
                     Player player = (Player)var1.next();
-                    if (LifeStealZ.getInstance() == null) {
+                    if (Bukkit.getPluginManager().getPlugin("LifestealZ") == null) {
                         if (EffectMapping.HEART.hasEffect(player)) {
                             AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                             maxHealthAttribute.setBaseValue(30.0D);

@@ -382,7 +382,7 @@ public enum EffectMapping {
     @Nullable
     public static EffectMapping fromEffectKey(@Nullable String key) {
         for (EffectMapping mapping : values()) {
-            if (mapping.getKey().equals(key)) return mapping;
+            if (mapping.getKey().equalsIgnoreCase(key)) return mapping;
         }
 
         return null;

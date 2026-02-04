@@ -17,10 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -206,7 +203,7 @@ public class Ender implements Listener {
         Player player = event.getPlayer();
         Action action = event.getAction();
         if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-        if (EffectMapping.ENDER.hasEffect(player)) {
+        if (EffectMapping.ENDER.hasEffect(player) || EffectMapping.AUG_ENDER.hasEffect(player)) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item.getType() != Material.DRAGON_BREATH) return;
 
@@ -221,9 +218,6 @@ public class Ender implements Listener {
 
         int cooldown = dragonBreathCooldowns.getOrDefault(uuid, 0);
         if (cooldown > 0) {
-            String msg = Messages.ENDER_FIREBALL_COOLDOWN.getMessage();
-            msg = msg.replace("%cooldown%", "" + cooldown);
-            player.sendMessage(Messages.toComponent(msg));
             return;
         }
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -232,26 +226,33 @@ public class Ender implements Listener {
         } else {
             player.getInventory().setItemInMainHand(null);
         }
-        Fireball fireball = player.launchProjectile(Fireball.class);
+        Fireball fireball = player.launchProjectile(DragonFireball.class);
         fireball.setIsIncendiary(false);
-        fireball.setYield(4);
         fireball.customName(fireballName);
         dragonBreathCooldowns.put(uuid, 30);
 
-        player.sendMessage(Messages.ENDER_FIREBALL_SHOOT.toComponent());
+        Vector velocity = fireball.getVelocity();
+        velocity.multiply(2.0);
+        fireball.setVelocity(velocity);
     }
 
     @EventHandler
     public void onFireballDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Fireball fireball)) return;
+        if (!(event.getDamager() instanceof DragonFireball fireball)) return;
         if (!fireballName.equals(fireball.customName())) return;
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(fireball.getShooter() instanceof Player shooter)) return;
+        if (isTeammate(target, shooter)) return;
+        cursedPlayers.add(target.getUniqueId());
+        target.sendMessage(Messages.CURSE_START.toComponent());
+        removeCurseLater(target.getUniqueId(), 1200);
         event.setDamage(0);
     }
 
 
     @EventHandler
     public void onFireballHit(ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Fireball fireball)) return;
+        if (!(event.getEntity() instanceof DragonFireball fireball)) return;
         if (!fireballName.equals(fireball.customName())) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
@@ -275,7 +276,7 @@ public class Ender implements Listener {
     }
 
     public void applyGlowingToUntrusted(Player player) {
-        if (!EffectMapping.ENDER.hasEffect(player)) return;
+        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
 
         double radius = 10;
 

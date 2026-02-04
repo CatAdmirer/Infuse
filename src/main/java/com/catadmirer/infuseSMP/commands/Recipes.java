@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -35,8 +37,8 @@ public class Recipes implements CommandExecutor, Listener {
     private final Map<String, List<String>> potionShapes = new HashMap<>();
     private final Map<String, Map<Character, String>> potionIngredients = new HashMap<>();
 
-    public static final List<String> recipeKeys = List.of("emerald", "feather", "fire", "end_first",
-            "end_second", "frost", "haste", "heart", "invis", "ocean", "regen", "speed", "strength",
+    public static final List<String> recipeKeys = List.of("emerald", "feather", "fire", "aug_ender",
+            "ender", "frost", "haste", "heart", "invis", "ocean", "regen", "speed", "strength",
             "thunder", "apophis", "thief");
 
     public Recipes(Infuse plugin) {
@@ -65,14 +67,17 @@ public class Recipes implements CommandExecutor, Listener {
         ItemStack potionItem = createPotion(potionName);
         if (potionItem == null) return null;
 
-        // Getting the craft limits from the config
         Map<String,Integer> limits = loadCraftLimitsFromConfig().get(potionName);
+
+        if (limits == null) {
+            return new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        }
 
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
-            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
+            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
+            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
             meta.lore(lore);
             potionItem.setItemMeta(meta);
         }
@@ -91,8 +96,8 @@ public class Recipes implements CommandExecutor, Listener {
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
             case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
-            case "end_first" -> EffectMapping.AUG_ENDER.createItem();
-            case "end_second" -> EffectMapping.ENDER.createItem();
+            case "aug_ender" -> EffectMapping.AUG_ENDER.createItem();
+            case "ender" -> EffectMapping.ENDER.createItem();
             case "feather" -> EffectMapping.AUG_FEATHER.createItem();
             case "fire" -> EffectMapping.AUG_FIRE.createItem();
             case "frost" -> EffectMapping.AUG_FROST.createItem();
@@ -126,12 +131,24 @@ public class Recipes implements CommandExecutor, Listener {
         Map<String, Map<String, Integer>> result = new HashMap<>();
 
         for (String itemName : Arrays.asList(
-                "emerald","feather","fire","end_first","end_second","frost",
+                "emerald","feather","fire","aug_ender","ender","frost",
                 "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
         )) {
+            if (!(Boolean) plugin.getConfig("extra_effects.Apophis") && itemName.equals("apophis")) continue;
+            if (!(Boolean) plugin.getConfig("extra_effects.Thief")  && itemName.equals("thief"))   continue;
+
+            Object augObj = plugin.getConfig().get("craft_limits." + itemName + ".augmented_limit");
+            Object regObj = plugin.getConfig().get("craft_limits." + itemName + ".regular_limit");
+
+            if (!(augObj instanceof Number) || !(regObj instanceof Number)) {
+                plugin.getLogger().warning("bug: " + itemName);
+                continue;
+            }
+
             Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", plugin.getConfig("craft_limits." + itemName + ".augmented_limit"));
-            limits.put("regular_limit", plugin.getConfig("craft_limits." + itemName + ".regular_limit"));
+            limits.put("augmented_limit", ((Number) augObj).intValue());
+            limits.put("regular_limit",   ((Number) regObj).intValue());
+
             result.put(itemName, limits);
         }
 
@@ -249,8 +266,8 @@ public class Recipes implements CommandExecutor, Listener {
         return switch (EffectMapping.fromItem(item)) {
             case APOPHIS, AUG_APOPHIS -> "apophis";
             case EMERALD, AUG_EMERALD -> "emerald";
-            case AUG_ENDER -> "end_first";
-            case ENDER -> "end_second";
+            case AUG_ENDER -> "aug_ender";
+            case ENDER -> "ender";
             case FEATHER, AUG_FEATHER -> "feather";
             case FIRE, AUG_FIRE -> "fire";
             case FROST, AUG_FROST -> "frost";

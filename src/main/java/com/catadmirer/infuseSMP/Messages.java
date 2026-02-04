@@ -42,8 +42,6 @@ public enum Messages {
 
     HEART_BOOST_END("heart.boost_end", "<red>Your Health Boost has ended."),
 
-    ENDER_FIREBALL_COOLDOWN("ender.fireball_cooldown", "<red>You must wait %cooldown% seconds before using Dragon's Breath again!"),
-    ENDER_FIREBALL_SHOOT("ender.fireball_shoot", "<green>You shot a cursing fireball! Cooldown started."),
     CURSE_START("curse_start", "<red>You have been cursed!"),
     CURSE_END("curse_end", "<green>The curse has worn off."),
 
@@ -322,7 +320,7 @@ public enum Messages {
      * @return The component value of the message.
      */
     public static Component toComponent(String message) {
-        return MiniMessage.miniMessage().deserialize(message);
+        return MiniMessage.miniMessage().deserialize("<i:false>" + message);
     }
 
 
