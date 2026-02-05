@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 public class Abilities implements CommandExecutor {
     private final Infuse plugin;
+
     public Abilities(Infuse plugin) {
         this.plugin = plugin;
     }
@@ -25,9 +26,11 @@ public class Abilities implements CommandExecutor {
 
         // Finding which slot to activate the spark for.
         String slot;
-        if (label.contains("lspark")) slot = "1";
-        else if (label.contains("rspark")) slot = "2";
-        else {
+        if (label.contains("lspark")) {
+            slot = "1";
+        } else if (label.contains("rspark")) {
+            slot = "2";
+        } else {
             sender.sendMessage(Messages.ERROR_INVALID_COMMAND.toComponent());
             return true;
         }
