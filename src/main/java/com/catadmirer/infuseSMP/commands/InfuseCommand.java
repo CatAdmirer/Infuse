@@ -194,7 +194,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the control mode for the user.
-                plugin.getEffectManager().setControlDefault(player.getUniqueId(), choice);
+                plugin.getEffectManager().setControlMode(player.getUniqueId(), choice);
 
                 // Assigning the permission for offhand use if the user chose offhand mode
                 boolean offhandEnabled = choice.equalsIgnoreCase("offhand");

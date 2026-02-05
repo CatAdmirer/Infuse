@@ -2,16 +2,10 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,7 +16,6 @@ public class DataManager {
     private final Infuse plugin;
     private final File dataFile;
     private final YamlConfiguration config;
-    private final Map<UUID, Set<UUID>> trustMap = new HashMap<>();
 
     public DataManager(Infuse plugin) {   
         this.plugin = plugin;     
@@ -120,52 +113,35 @@ public class DataManager {
         return true;
     }
 
-    public void addTrust(Player caster, Player trusted) {
-        if (caster == null || trusted == null || caster.getUniqueId().equals(trusted.getUniqueId())) return;
+    public List<Player> getTrusted(Player truster) {
+        return config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList();
+    }
 
-        trustMap.computeIfAbsent(caster.getUniqueId(), k -> new HashSet<>()).add(trusted.getUniqueId());
-        saveTrustData(caster.getUniqueId());
+    public void setTrusted(Player truster, List<Player> trusted) {
+        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).toList());
+
+        save();
+    }
+
+    public void addTrust(Player caster, Player toTrust) {
+        List<Player> trustedPlayers = getTrusted(caster);
+        trustedPlayers.add(toTrust);
+
+        setTrusted(caster, trustedPlayers);
     }
 
     public void removeTrust(Player caster, Player trusted) {
-        if (caster == null || trusted == null) return;
+        List<Player> trustedSet = getTrusted(caster);
+        trustedSet.remove(trusted);
 
-        Set<UUID> trustedSet = trustMap.get(caster.getUniqueId());
-        if (trustedSet != null) {
-            trustedSet.remove(trusted.getUniqueId());
-            saveTrustData(caster.getUniqueId());
-        }
+        setTrusted(caster, trustedSet);
     }
 
-    public boolean isTrusted(Player personwhostrusted, Player person) {
-        if (personwhostrusted == null || person == null) return false;
-        if (personwhostrusted.getUniqueId().equals(person.getUniqueId())) return true;
+    public boolean isTrusted(Player caster, Player trusted) {
+        if (caster == null || trusted == null) return false;
+        if (caster.getUniqueId().equals(trusted.getUniqueId())) return true;
 
-        Set<UUID> trustedSet = trustMap.get(person.getUniqueId());
-        return trustedSet != null && trustedSet.contains(personwhostrusted.getUniqueId());
-    }
-
-    private void loadTrustData() {
-        trustMap.clear();
-        for (String uuidStr : config.getKeys(false)) {
-            List<String> trustedUUIDStrings = config.getStringList(uuidStr + ".trust");
-            Set<UUID> trustedSet = new HashSet<>();
-            for (String trustedUUIDStr : trustedUUIDStrings) {
-                try { trustedSet.add(UUID.fromString(trustedUUIDStr)); }
-                catch (IllegalArgumentException ignored) {}
-            }
-            if (!trustedSet.isEmpty()) {
-                try { trustMap.put(UUID.fromString(uuidStr), trustedSet); }
-                catch (IllegalArgumentException ignored) {}
-            }
-        }
-    }
-
-    private void saveTrustData(UUID playerUUID) {
-        Set<UUID> trustedSet = trustMap.getOrDefault(playerUUID, new HashSet<>());
-        List<String> trustedList = trustedSet.stream().map(UUID::toString).collect(Collectors.toList());
-        config.set(playerUUID.toString() + ".trust", trustedList);
-        saveConfig();
+        return getTrusted(caster).contains(trusted);
     }
 
     public void setEffect(UUID playerUUID, String slot, @Nullable EffectMapping effect) {
@@ -174,7 +150,7 @@ public class DataManager {
         } else {
             config.set(playerUUID.toString() + "." + slot, effect.name());
         }
-        saveConfig();
+        save();
     }
 
 
@@ -191,36 +167,15 @@ public class DataManager {
 
     public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
-        saveConfig();
+        save();
     }
 
-    public void setControlDefault(UUID playerUUID, String defaultMode) {
+    public void setControlMode(UUID playerUUID, String defaultMode) {
         config.set(playerUUID.toString() + ".controls", defaultMode);
-        saveConfig();
+        save();
     }
 
-    public String getControlDefault(UUID playerUUID) {
+    public String getControlMode(UUID playerUUID) {
         return config.getString(playerUUID.toString() + ".controls", "offhand");
-    }
-
-    private void saveConfig() {
-        try {
-            config.save(dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void reloadConfig() {
-        try {
-            config.load(dataFile);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + dataFile.getName(), ex);
-        } catch (InvalidConfigurationException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + dataFile.getName(), ex);
-        }
-
-        loadTrustData();
     }
 }

@@ -222,7 +222,7 @@ public class Infuse extends JavaPlugin implements Listener {
             }
 
             // Setting the control mode for the player
-            dataManager.setControlDefault(player.getUniqueId(), choice);
+            dataManager.setControlMode(player.getUniqueId(), choice);
             player.addAttachment(this, "ability.use", choice.equals("command"));
             return true;
         });
@@ -390,7 +390,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         
         // Telling the player their current control mode
-        String controlMode = dataManager.getControlDefault(player.getUniqueId());
+        String controlMode = dataManager.getControlMode(player.getUniqueId());
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
