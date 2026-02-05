@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +27,16 @@ public class Drop implements Listener {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();
     }
 
-    @EventHandler
-    public void onPickup(PlayerPickupItemEvent event) {
+    public void onPickup(EntityPickupItemEvent event) {
+        // Making sure the entity is a player
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        // Making sure the item has been picked up.
+        if (event.isCancelled()) return;
+
         ItemStack item = event.getItem().getItemStack();
         if (this.isMace(item)) {
-            this.playDustEffect(event.getPlayer(), true, EffectMapping.fromItem(item), event.getItem().getLocation());
+            this.playDustEffect(player, true, EffectMapping.fromItem(item), event.getItem().getLocation());
         }
     }
 
