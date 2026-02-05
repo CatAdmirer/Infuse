@@ -11,6 +11,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +24,7 @@ public class Drop implements Listener {
         this.plugin = plugin;
     }
 
-    private boolean isMace(ItemStack item) {
+    private boolean isPotion(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();
     }
 
@@ -35,7 +36,7 @@ public class Drop implements Listener {
         if (event.isCancelled()) return;
 
         ItemStack item = event.getItem().getItemStack();
-        if (this.isMace(item)) {
+        if (this.isPotion(item)) {
             this.playDustEffect(player, true, EffectMapping.fromItem(item), event.getItem().getLocation());
         }
     }
@@ -44,7 +45,7 @@ public class Drop implements Listener {
     public void onDrop(PlayerDropItemEvent event) {
         final Item droppedItem = event.getItemDrop();
         ItemStack itemStack = droppedItem.getItemStack();
-        if (this.isMace(itemStack)) {
+        if (this.isPotion(itemStack)) {
             this.playDustEffectDrop(event.getPlayer(), false, EffectMapping.fromItem(itemStack), droppedItem.getLocation());
             (new BukkitRunnable() {
                 public void run() {
@@ -52,7 +53,6 @@ public class Drop implements Listener {
                 }
             }).runTaskLater(this.plugin, 1L);
         }
-
     }
 
     private void playDustEffect(Player player, final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
