@@ -7,9 +7,10 @@ import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
+
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -20,21 +21,21 @@ import org.jetbrains.annotations.Nullable;
 
 public enum EffectMapping {
     // Defining regular effects
-    EMERALD  ("emerald",   1, Color.GREEN,         BarColor.GREEN,  Emerald::activateSpark),
-    ENDER    ("ender",     2, new Color(0x800080), BarColor.PURPLE, Ender::activateSpark),
-    FEATHER  ("feather",   3, new Color(0xBEA3CA), BarColor.WHITE,  Feather::activateSpark),
-    FIRE     ("fire",      4, new Color(0xEE5522), BarColor.RED,    Fire::activateSpark),
-    FROST    ("frost",     5, new Color(0x55FFFF), BarColor.BLUE,   Frost::activateSpark),
-    HASTE    ("haste",     6, new Color(0xFFCC33), BarColor.YELLOW, Haste::activateSpark),
-    HEART    ("heart",     7, Color.RED,           BarColor.RED,    Heart::activateSpark),
-    INVIS    ("invis",     8, new Color(0xAA00AA), BarColor.PURPLE, Invisibility::activateSpark),
-    OCEAN    ("ocean",     9, new Color(0x0066FF), BarColor.BLUE,   Ocean::activateSpark),
-    REGEN    ("regen",    10, new Color(0xFF5555), BarColor.PINK,   Regen::activateSpark),
-    SPEED    ("speed",    11, new Color(0xEEBB77), BarColor.YELLOW, Speed::activateSpark),
-    STRENGTH ("strength", 12, new Color(0x800000), BarColor.RED,    Strength::activateSpark),
-    THUNDER  ("thunder",  13, Color.YELLOW,        BarColor.YELLOW, Thunder::activateSpark),
-    APOPHIS  ("apophis",  14, new Color(0x440044), BarColor.PURPLE, Apophis::activateSpark),
-    THIEF    ("thief",    15, new Color(0xAA0000), BarColor.RED,    Thief::activateSpark),
+    EMERALD  ("emerald",   1, Color.GREEN,         BossBar.Color.GREEN,  Emerald::activateSpark),
+    ENDER    ("ender",     2, new Color(0x800080), BossBar.Color.PURPLE, Ender::activateSpark),
+    FEATHER  ("feather",   3, new Color(0xBEA3CA), BossBar.Color.WHITE,  Feather::activateSpark),
+    FIRE     ("fire",      4, new Color(0xEE5522), BossBar.Color.RED,    Fire::activateSpark),
+    FROST    ("frost",     5, new Color(0x55FFFF), BossBar.Color.BLUE,   Frost::activateSpark),
+    HASTE    ("haste",     6, new Color(0xFFCC33), BossBar.Color.YELLOW, Haste::activateSpark),
+    HEART    ("heart",     7, Color.RED,           BossBar.Color.RED,    Heart::activateSpark),
+    INVIS    ("invis",     8, new Color(0xAA00AA), BossBar.Color.PURPLE, Invisibility::activateSpark),
+    OCEAN    ("ocean",     9, new Color(0x0066FF), BossBar.Color.BLUE,   Ocean::activateSpark),
+    REGEN    ("regen",    10, new Color(0xFF5555), BossBar.Color.PINK,   Regen::activateSpark),
+    SPEED    ("speed",    11, new Color(0xEEBB77), BossBar.Color.YELLOW, Speed::activateSpark),
+    STRENGTH ("strength", 12, new Color(0x800000), BossBar.Color.RED,    Strength::activateSpark),
+    THUNDER  ("thunder",  13, Color.YELLOW,        BossBar.Color.YELLOW, Thunder::activateSpark),
+    APOPHIS  ("apophis",  14, new Color(0x440044), BossBar.Color.PURPLE, Apophis::activateSpark),
+    THIEF    ("thief",    15, new Color(0xAA0000), BossBar.Color.RED,    Thief::activateSpark),
 
     // Defining augmented effects
     AUG_EMERALD(EMERALD),
@@ -56,7 +57,7 @@ public enum EffectMapping {
     private final String key;
     private final int id;
     private final Color color;
-    private final BarColor ritualColor;
+    private final BossBar.Color ritualColor;
     private final Consumer<Player> sparkFunction;
 
     private EffectMapping regular;
@@ -70,7 +71,7 @@ public enum EffectMapping {
      * @param potionColor The color for the potion and related chat messages.
      * @param ritualColor The bossbar color to use during rituals.
      */
-    private EffectMapping(String key, int id, Color potionColor, BarColor ritualColor, Consumer<Player> sparkFunction) {
+    private EffectMapping(String key, int id, Color potionColor, BossBar.Color ritualColor, Consumer<Player> sparkFunction) {
         this.key = key;
         this.id = id;
         this.color = potionColor;
@@ -133,10 +134,10 @@ public enum EffectMapping {
 
     /**
      * Getting the boss bar color for rituals.
-     * 
+     *
      * @return The boss bar color for rituals.
      */
-    public BarColor getRitualColor() {
+    public BossBar.Color getRitualColor() {
         return ritualColor;
     }
 
