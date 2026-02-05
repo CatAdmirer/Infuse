@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import net.kyori.adventure.text.Component;
 
 public class InventoryUtils {
     /**
@@ -16,7 +17,7 @@ public class InventoryUtils {
     public static ItemStack createNoName(Material material) {
         ItemStack pane = new ItemStack(material);
         ItemMeta meta = pane.getItemMeta();
-        meta.setDisplayName("");
+        meta.displayName(Component.empty());
         pane.setItemMeta(meta);
         return pane;
     }
