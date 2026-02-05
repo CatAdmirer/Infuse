@@ -574,14 +574,12 @@ public class InfuseRecipeManager implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
-            Player player = (Player) event.getWhoClicked();
-            ItemStack clicked = event.getCurrentItem();
-            if (clicked == null || !clicked.hasItemMeta()) return;
-            String name = clicked.getItemMeta().getDisplayName();
-            if (name.contains("Crafting")) {
+            HumanEntity player = event.getWhoClicked();
+            
+            if (event.getSlot() == 11) {
                 player.closeInventory();
                 MenuType.CRAFTING.create(player).open();
-            } else if (name.contains("Brewing")) {
+            } else if (event.getSlot() == 15) {
                 player.closeInventory();
                 BrewingStand stand = brewingStandCache.get(player.getUniqueId());
                 if (stand != null) {
