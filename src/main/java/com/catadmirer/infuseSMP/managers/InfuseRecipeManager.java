@@ -3,10 +3,13 @@ package com.catadmirer.infuseSMP.managers;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import java.io.File;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpRequest.BodyPublishers;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -304,26 +308,27 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
+        String payload = "{\"content\": \"" + message + "\"}";
+
+        HttpRequest request = HttpRequest.newBuilder(URI.create(webhookUrl))
+            .header("Content-Type", "application/json")
+            .POST(BodyPublishers.ofString(payload)).build();
+
+        HttpClient client = HttpClient.newHttpClient();
         try {
-            String payload = "{\"content\": \"" + message + "\"}";
-            URL url = new URL(webhookUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            HttpResponse<Void> response = client.send(request, BodyHandlers.discarding());
+
+            // Checking the response status code
+            int status = response.statusCode();
+            if (status == 200) {
                 plugin.getLogger().info("Message sent to Discord!");
             } else {
-                plugin.getLogger().info("Error sending message to Discord: " + responseCode);
+                plugin.getLogger().info("Error sending message to Discord: " + status);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException err) {
+            plugin.getLogger().log(Level.SEVERE, "Could not send webhook message to discord.", err);
+        } catch (InterruptedException err) {
+            plugin.getLogger().log(Level.SEVERE, "Discord webhook request was interrupted!", err);
         }
     }
 
@@ -575,7 +580,7 @@ public class InfuseRecipeManager implements Listener {
         if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
-            
+
             if (event.getSlot() == 11) {
                 player.closeInventory();
                 MenuType.CRAFTING.create(player).open();
