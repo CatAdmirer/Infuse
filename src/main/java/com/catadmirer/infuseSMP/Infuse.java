@@ -9,17 +9,20 @@ import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import com.google.gson.JsonObject;
-import org.bukkit.Bukkit;
 import java.util.stream.Stream;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -309,37 +312,51 @@ public class Infuse extends JavaPlugin implements Listener {
         }
     }
 
+    public String getVersion() {
+        return getPluginMeta().getVersion();
+    }
+
     // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
-    private void checkForUpdate() {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try {
-                String currentVersion = getPluginMeta().getVersion();
-                URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
-                connection.connect();
+    private String getLatestVersion() {
+        HttpRequest request = HttpRequest.newBuilder()
+            .GET()
+            .header("User-Agent", "Infuse/" + getVersion())
+            .uri(URI.create("https://api.modrinth.com/v2/project/infusesmp/version"))
+            .build();
 
-                if (connection.getResponseCode() != 200) {
-                    getLogger().warning("Could not check for updates: HTTP " + connection.getResponseCode());
-                    return;
-                }
+        HttpClient client = HttpClient.newHttpClient();
 
-                Gson gson = new Gson();
-                JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-                if (versions.size() == 0) return;
+        try {
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
-                JsonObject latest = versions.get(0).getAsJsonObject();
-                String latestVersion = latest.get("version_number").getAsString();
-
-                if (!latestVersion.equalsIgnoreCase(currentVersion)) {
-                    getLogger().info("A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp");
-                }
-
-            } catch (Exception e) {
-                getLogger().log(Level.WARNING, "Failed to check for Infuse updates", e);
+            // Handling http error codes
+            if (response.statusCode() != 200) {
+                getLogger().log(Level.WARNING, "Recieved error code {0} from api.modrinth.com", response.statusCode());
+                return null;
             }
-        });
+
+            // Parsing json
+            Gson gson = new Gson();
+            JsonArray versions = gson.fromJson(response.body(), JsonArray.class);
+
+            // If no versions are returned, defaulting to the current version
+            if (versions.size() == 0) {
+                getLogger().log(Level.WARNING, "No versions published to modrinth, defaulting to current version");
+                return getVersion();
+            }
+
+            JsonObject latestVersion = versions.get(0).getAsJsonObject();
+            return latestVersion.get("verson_number").getAsString();
+        } catch (JsonSyntaxException err) {
+            getLogger().log(Level.SEVERE, "Could not parse the json given by modrinth.", err);
+        } catch (InterruptedException err) {
+            getLogger().log(Level.SEVERE, "Version request was interrupted", err);
+        } catch (IOException err) {
+            getLogger().log(Level.SEVERE, "Could not get versions from modrinth", err);
+        }
+
+        return null;
     }
 
     @EventHandler
