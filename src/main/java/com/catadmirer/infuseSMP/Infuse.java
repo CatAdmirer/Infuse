@@ -291,7 +291,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
         Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffect(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
 
         // Enabling apophis listeners if the config allows
         if (getConfig().getBoolean("extra_effects.Apophis")) {
