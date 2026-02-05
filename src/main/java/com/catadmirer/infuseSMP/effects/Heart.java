@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,7 +23,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -44,10 +42,7 @@ public class Heart implements Listener {
     private void LifestealZtask() {
         (new BukkitRunnable() {
             public void run() {
-                Iterator var1 = Bukkit.getOnlinePlayers().iterator();
-
-                while(var1.hasNext()) {
-                    Player player = (Player)var1.next();
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     if (Bukkit.getPluginManager().getPlugin("LifestealZ") == null) {
                         if (EffectMapping.HEART.hasEffect(player)) {
                             AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
@@ -148,7 +143,7 @@ public class Heart implements Listener {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HEART || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HEART;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HEART || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HEART;
             long cooldown = plugin.getConfig("heart.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("heart.duration." + (isAugmented ? "augmented" : "default"));
 

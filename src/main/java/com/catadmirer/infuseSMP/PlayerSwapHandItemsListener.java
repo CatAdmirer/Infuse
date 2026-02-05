@@ -26,7 +26,7 @@ public class PlayerSwapHandItemsListener implements Listener {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        String data = dataManager.getControlDefault(playerUUID);
+        String data = dataManager.getControlMode(playerUUID);
         if (data.equals("offhand")) {
             // Getting the effect equipped in each slot
             EffectMapping lEffect = dataManager.getEffect(player.getUniqueId(), "1");

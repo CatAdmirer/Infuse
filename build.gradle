@@ -8,20 +8,11 @@ version = '2.1.0'
 
 repositories {
     maven {
-        url = "https://repo.codemc.io/repository/maven-releases/"
-    }
-    maven {
-        url = "https://repo.codemc.io/repository/maven-snapshots/"
-    }
-    maven {
         url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
-        url 'https://maven.zetaplugins.com/'
     }
 }
 

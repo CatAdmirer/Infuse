@@ -208,7 +208,7 @@ public class Feather implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FEATHER || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FEATHER;
+        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FEATHER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FEATHER;
         long cooldown = plugin.getConfig("feather.cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig("feather.duration." + (isAugmented ? "augmented" : "default"));
 

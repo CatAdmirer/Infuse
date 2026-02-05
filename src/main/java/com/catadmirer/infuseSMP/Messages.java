@@ -320,9 +320,8 @@ public enum Messages {
      * @return The component value of the message.
      */
     public static Component toComponent(String message) {
-        return MiniMessage.miniMessage().deserialize("<i:false>" + message);
+        Component legacyComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        String miniMessageSerialized = MiniMessage.miniMessage().serialize(legacyComponent);
+        return MiniMessage.miniMessage().deserialize(miniMessageSerialized);
     }
-
-
-
 }

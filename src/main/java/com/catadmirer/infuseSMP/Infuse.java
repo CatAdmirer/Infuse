@@ -20,9 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import com.google.gson.JsonObject;
-import com.zetaplugins.lifestealz.LifeStealZ;
-import com.zetaplugins.lifestealz.api.LifeStealZAPI;
-import com.zetaplugins.lifestealz.api.LifeStealZAPIImpl;
 import org.bukkit.Bukkit;
 import java.util.stream.Stream;
 import org.bukkit.Material;
@@ -79,7 +76,8 @@ public class Infuse extends JavaPlugin implements Listener {
         new InfuseRecipeManager(this);
 
         // Getting the data manager
-        this.dataManager = new DataManager(this, getDataFolder());
+        this.dataManager = new DataManager(this);
+        dataManager.load();
 
         // Giving the mapping class an instance of the data manager
         EffectMapping.init(dataManager);
@@ -224,7 +222,7 @@ public class Infuse extends JavaPlugin implements Listener {
             }
 
             // Setting the control mode for the player
-            dataManager.setControlDefault(player.getUniqueId(), choice);
+            dataManager.setControlMode(player.getUniqueId(), choice);
             player.addAttachment(this, "ability.use", choice.equals("command"));
             return true;
         });
@@ -293,7 +291,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
         Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffect(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
 
         // Enabling apophis listeners if the config allows
         if (getConfig().getBoolean("extra_effects.Apophis")) {
@@ -392,7 +390,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         
         // Telling the player their current control mode
-        String controlMode = dataManager.getControlDefault(player.getUniqueId());
+        String controlMode = dataManager.getControlMode(player.getUniqueId());
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
@@ -433,7 +431,7 @@ public class Infuse extends JavaPlugin implements Listener {
         // }
     }
 
-    public DataManager getEffectManager() {
+    public DataManager getDataManager() {
         return dataManager;
     }
 }

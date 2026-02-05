@@ -5,9 +5,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -65,11 +62,11 @@ public class EquipEffect implements Listener {
      */
     private boolean equipEffect(Player player, EffectMapping effect, String slot) {
         // Checking for an effect in the slot.
-        EffectMapping currentEffect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping currentEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) return false;
         
         // Equipping the effect to the slot.
-        plugin.getEffectManager().setEffect(player.getUniqueId(), slot, effect);
+        plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
         String msg = Messages.EFFECT_EQUIPPED.getMessage();
         msg = msg.replace("%effect_name%", effect.getName());
         player.sendMessage(Messages.toComponent(msg));
@@ -118,8 +115,8 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        EffectMapping effect1 = plugin.getEffectManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = plugin.getEffectManager().getEffect(player.getUniqueId(), "2");
+        EffectMapping effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        EffectMapping effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
         String dropMode = plugin.getConfig().getString("effect_drops", "random");
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
@@ -182,11 +179,11 @@ public class EquipEffect implements Listener {
      */
     private void dropEffect(Player player, String slot) {
         // Getting the equipped effect from the data file.
-        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 
         // Removing the effect from the player.
-        plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());

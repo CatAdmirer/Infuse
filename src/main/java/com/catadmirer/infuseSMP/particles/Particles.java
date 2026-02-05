@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -15,8 +14,9 @@ public class Particles {
         this.plugin = plugin;
     }
 
+    // TODO: There HAS to be a better way to do this.  Maybe a listener like this could be started when a player equips an effect?
     public void startTask() {
-        Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, (task) -> {
+        Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 applyParticlesForEffect(player, "1");
                 applyParticlesForEffect(player, "2");
@@ -24,28 +24,22 @@ public class Particles {
         }, 1, 20);
     }
 
-    private void applyParticlesForEffect(Player player, String type) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), type);
+    private void applyParticlesForEffect(Player player, String slot) {
+        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
+
+        final double regularRadius = 0;
+        final double augmentedRadius = 0.3;
+        double radius = effect.isAugmented() ? augmentedRadius : regularRadius;
 
         // Handling special particles for ender effect
         // TODO: Decide whether or not to keep this
         if (effect == EffectMapping.ENDER || effect == EffectMapping.AUG_ENDER) {
-            spawnDragon(player);
+            player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, radius, 0.5, radius, 0);
             return;
         }
 
-        final double regularRadius = 0;
-        final double augmentedRadius = 0.3;
-        if (effect.isAugmented()) {
-            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), augmentedRadius);
-        } else {
-            spawnEffect(player, Color.fromRGB(effect.getColor().getRGB() & 0xFFFFFF), regularRadius);
-        }
-    }
-
-    public static void spawnDragon(Player player) {
-        player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5, 0.3, 0);
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, Color.fromARGB(effect.getColor().getRGB()));
     }
 
     /**
@@ -55,27 +49,6 @@ public class Particles {
      * @param color The color the particles should be.
      */
     public static void spawnEffectCloud(Player player, Color color) {
-        Location base = player.getLocation().clone();
-        int count = 30;
-        double spread = 0.5;
-
-        for(int i = 0; i < count; ++i) {
-            double x = (Math.random() - 0.5) * spread * 2;
-            double y = Math.random() * 1.2;
-            double z = (Math.random() - 0.5) * spread * 2;
-            player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, base.clone().add(x, y, z), 1, 0, 0, 0, 0, color);
-        }
-
-    }
-
-    /**
-     * Spawns a ring of effect particles around a player.
-     *
-     * @param player The player to spawn the particles on.
-     * @param color The color the particles should be.
-     * @param radius The offset radius of the effects.
-     */
-    public static void spawnEffect(Player player, Color color, double radius) {
-        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, color);
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 30, 0.5, 0.6, 0.5, 0, color);
     }
 }

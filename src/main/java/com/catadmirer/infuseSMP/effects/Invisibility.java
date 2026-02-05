@@ -109,7 +109,7 @@ public class Invisibility implements Listener {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
                         
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_INVIS || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_INVIS;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_INVIS || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_INVIS;
 
             long cooldown = plugin.getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
@@ -179,6 +179,6 @@ public class Invisibility implements Listener {
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return plugin.getEffectManager().isTrusted(player, caster);
+        return plugin.getDataManager().isTrusted(player, caster);
     }
 }

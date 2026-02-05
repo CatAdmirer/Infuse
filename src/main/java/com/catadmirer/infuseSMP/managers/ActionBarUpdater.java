@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 
@@ -39,7 +38,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         Component time = Component.empty();
 
         // Getting the effect equipped in the slot
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
         boolean emptyEffectEmoji = plugin.getConfig("empty_effect_icon");
@@ -71,7 +70,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         Component time = Component.empty();
 
         // Getting the effect equipped in the slot
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
         boolean emptyEffectEmoji = plugin.getConfig("empty_effect_icon");

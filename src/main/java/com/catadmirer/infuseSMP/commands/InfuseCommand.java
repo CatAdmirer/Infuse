@@ -124,7 +124,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                plugin.getEffectManager().setEffect(target.getUniqueId(), args[3], mapping);
+                plugin.getDataManager().setEffect(target.getUniqueId(), args[3], mapping);
                 msg = Messages.INFUSE_SETEFFECT_SUCCESS.getMessage();
                 msg = msg.replace("%slot%", slot);
                 msg = msg.replace("%player_name%", target.getName());
@@ -150,8 +150,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Removing the effects from the player
-                plugin.getEffectManager().removeEffect(target.getUniqueId(), "1");
-                plugin.getEffectManager().removeEffect(target.getUniqueId(), "2");
+                plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
+                plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
                 msg = Messages.INFUSE_CLEAREFFECT_SUCCESS.getMessage();
                 msg = msg.replace("%player_name%", target.getName());
                 player.sendMessage(Messages.toComponent(msg));
@@ -194,7 +194,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the control mode for the user.
-                plugin.getEffectManager().setControlDefault(player.getUniqueId(), choice);
+                plugin.getDataManager().setControlMode(player.getUniqueId(), choice);
 
                 // Assigning the permission for offhand use if the user chose offhand mode
                 boolean offhandEnabled = choice.equalsIgnoreCase("offhand");

@@ -274,7 +274,7 @@ public enum EffectMapping {
             // Setting the usual data
             meta.displayName(Messages.toComponent(getName()));
             meta.lore(getLore().stream().map(Messages::toComponent).toList());
-            meta.setColor(org.bukkit.Color.fromRGB(color.getRGB() & 0xFFFFFF));
+            meta.setColor(org.bukkit.Color.fromARGB(color.getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
 
             // Applying the custom model if the key has the "aug_" prefix

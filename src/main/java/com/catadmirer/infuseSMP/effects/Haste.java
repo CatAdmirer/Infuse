@@ -57,7 +57,7 @@ public class Haste implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HASTE || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HASTE;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HASTE || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HASTE;
             long cooldown = plugin.getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
 
