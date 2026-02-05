@@ -148,13 +148,7 @@ public class EquipEffect implements Listener {
                 break;
         }
 
-        File disguiseFile = new File(plugin.getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
-
-        // Removing the player's apophis disguise file if it exists.
-        if (disguiseFile.exists()) {
-            disguiseFile.delete();
-            plugin.resetSkinWithoutKick(player);
-        }
+        apophisManager.unsetApophis(player);
     }
 
     /**

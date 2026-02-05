@@ -7,7 +7,6 @@ import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import java.io.InputStreamReader;
@@ -17,7 +16,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
@@ -44,9 +42,6 @@ public class Infuse extends JavaPlugin implements Listener {
     private DataManager dataManager;
     private Abilities abilitiesHandler;
 
-    private final Map<UUID, PlayerProfile> originalProfiles = new HashMap<>();
-    private final Map<UUID, Integer> activeSkinModifiers = new HashMap<>();
-
     private ApophisManager apophisCommand;
 
     private final Map<String, Object> settings = new HashMap<>();
@@ -69,8 +64,7 @@ public class Infuse extends JavaPlugin implements Listener {
         loadConfig();
 
         // Loading the apophis manager
-        new ApophisManager(this, "data/AphopisPlayers/").getApophisFile();
-        apophisCommand = new ApophisManager(this, "data/AphopisPlayers/");
+        apophisCommand = new ApophisManager(this);
 
         // Initializing the recipe manager
         new InfuseRecipeManager(this);
@@ -314,43 +308,6 @@ public class Infuse extends JavaPlugin implements Listener {
             player.getWorld().dropItem(player.getLocation(), playerHead);
         }
     }
-
-
-    // TODO: Review this implementation...
-    /**
-     * Saving the skin of a player.
-     * 
-     * @param player The player to save the skin of.
-     */
-    public void saveOriginalSkin(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (!originalProfiles.containsKey(uuid)) {
-            originalProfiles.put(uuid, player.getPlayerProfile());
-        }
-        activeSkinModifiers.put(uuid, activeSkinModifiers.getOrDefault(uuid, 0) + 1);
-    }
-
-    /**
-     * Overriding a player's skin without kicking them.
-     * 
-     * @param player The player to set the skin of.
-     */
-    public void resetSkinWithoutKick(Player player) {
-        UUID uuid = player.getUniqueId();
-        int count = activeSkinModifiers.getOrDefault(uuid, 0) - 1;
-
-        if (count <= 0) {
-            PlayerProfile originalProfile = originalProfiles.get(uuid);
-            if (originalProfile != null) {
-                player.setPlayerProfile(originalProfile);
-            }
-            originalProfiles.remove(uuid);
-            activeSkinModifiers.remove(uuid);
-        } else {
-            activeSkinModifiers.put(uuid, count);
-        }
-    }
-
 
     // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
