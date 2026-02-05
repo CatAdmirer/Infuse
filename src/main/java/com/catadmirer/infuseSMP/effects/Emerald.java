@@ -91,7 +91,6 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void emeraldEnchantBonus(PrepareItemEnchantEvent event) {
-        // Setting the enchantment bonus to 15 if the function exists
         if (!EffectMapping.EMERALD.hasEffect(event.getEnchanter())) return;
 
         // Getting the world seed of the player
