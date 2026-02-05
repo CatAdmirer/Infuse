@@ -111,8 +111,8 @@ public class Thief implements Listener {
     }
 
     private void shapeshift(Player killer, Player deadPlayer) {
-        killer.setCustomName(deadPlayer.getName());
-        killer.setDisplayName(deadPlayer.getName());
+        killer.customName(deadPlayer.customName());
+        killer.displayName(deadPlayer.displayName());
         killer.setCustomNameVisible(true);
         PlayerTextures skinTexture = deadPlayer.getPlayerProfile().getTextures();;
         PlayerProfile profile = Bukkit.createProfile(killer.getUniqueId(), killer.getName());
@@ -127,8 +127,8 @@ public class Thief implements Listener {
         Player originalPlayer = Bukkit.getPlayer(originalUUID);
 
         if (originalPlayer != null) {
-            player.setCustomName(originalPlayer.getName());
-            player.setDisplayName(originalPlayer.getName());
+            player.customName(originalPlayer.customName());
+            player.displayName(originalPlayer.displayName());
             PlayerTextures skinTexture = originalPlayer.getPlayerProfile().getTextures();
             PlayerProfile profile = Bukkit.createProfile(originalUUID, originalPlayer.getName());
             profile.setTextures(skinTexture);

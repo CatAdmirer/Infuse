@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.inventories;
 import com.catadmirer.infuseSMP.commands.Recipes;
 import java.util.List;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +15,7 @@ public class RecipeGUI implements InventoryHolder {
     private final Inventory inventory;
 
     public RecipeGUI(String potionKey, List<String> shape, Map<Character,String> ingredients) {
-        inventory = Bukkit.createInventory(this, 45, "Recipes");
+        inventory = Bukkit.createInventory(this, 45, Component.text("Recipes"));
         
         // Loading the ingredients into the gui
         int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
