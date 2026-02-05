@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +26,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -55,7 +52,7 @@ public class InfuseRecipeManager implements Listener {
     private final Map<String, ItemStack> firstTimeRewards;
     private final Map<String, ItemStack> standardResults;
 
-    private BossBar activeBossBar;
+    private net.kyori.adventure.bossbar.BossBar activeBossBar;
 
     FileConfiguration recipesConfig;
 
@@ -197,9 +194,7 @@ public class InfuseRecipeManager implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (this.activeBossBar == null) return;
-        if (!this.activeBossBar.isVisible()) {
-            this.activeBossBar.addPlayer(event.getPlayer());
-        }
+        event.getPlayer().showBossBar(activeBossBar);
     }
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
@@ -217,13 +212,13 @@ public class InfuseRecipeManager implements Listener {
 
         Component itemName = craftedItem.getItemMeta().displayName();
         TextColor itemColor = itemName.color();
-        String formattedItemName = MiniMessage.miniMessage().serialize(Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪")));
+        Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
-        BarColor barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
-        this.activeBossBar = Bukkit.createBossBar(formattedItemName, barColor, BarStyle.SOLID);
+        BossBar.Color barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
+        this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            activeBossBar.addPlayer(p);
+            p.showBossBar(activeBossBar);
         }
 
         String worldName = brewingStandLocation.getWorld().getName();
@@ -282,18 +277,20 @@ public class InfuseRecipeManager implements Listener {
 
         new BukkitRunnable() {
 
-            double progress = 1.0;
+            float progress = 1.0F;
             final double progressDecrement = 1.0 / (ritualDuration * 20.0);
 
             @Override
             public void run() {
                 if (activeBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
-                progress = Math.max(0.0, Math.min(1.0, progress));
-                activeBossBar.setProgress(progress);
+                progress = Math.max(0.0F, Math.min(1.0F, progress));
+                activeBossBar = activeBossBar.progress(progress);
 
                 if (progress <= 0.0) {
-                    activeBossBar.removeAll();
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.hideBossBar(activeBossBar);
+                    }
                     String msg = Messages.EFFECT_FINISHED.getMessage();
                     msg = msg.replace("%item%", legacySection.serialize(itemName));
                     Bukkit.broadcast(Messages.toComponent(msg));
