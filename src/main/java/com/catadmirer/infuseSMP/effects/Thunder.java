@@ -62,7 +62,7 @@ public class Thunder implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THUNDER || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THUNDER;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THUNDER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THUNDER;
             long cooldown = plugin.getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
 
@@ -89,7 +89,7 @@ public class Thunder implements Listener {
                         if (target.equals(caster)) continue;
 
                         if (target instanceof Player p) {
-                            if (plugin.getEffectManager().isTrusted(p, caster)) continue;
+                            if (plugin.getDataManager().isTrusted(p, caster)) continue;
                         }
 
                         target.getWorld().strikeLightningEffect(target.getLocation());

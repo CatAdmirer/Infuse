@@ -128,7 +128,7 @@ public class Speed implements Listener {
             }, 1L, 1L);
 
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_SPEED || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_SPEED;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_SPEED || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_SPEED;
             long cooldown = plugin.getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
 

@@ -25,9 +25,9 @@ public class ClearEffect implements Listener, CommandExecutor {
         }
 
         Player target = Bukkit.getPlayer(args[0]);
-        if (target != null && target.isOnline()) {
-            plugin.getEffectManager().removeEffect(target.getUniqueId(), "2");
-            plugin.getEffectManager().removeEffect(target.getUniqueId(), "1");
+        if (target != null) {
+            plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
+            plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
         }
         
         return true;

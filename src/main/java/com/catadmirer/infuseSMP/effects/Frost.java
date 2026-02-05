@@ -139,7 +139,7 @@ public class Frost implements Listener {
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FROST || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FROST;
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FROST || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FROST;
             long cooldown = plugin.getConfig("frost.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("frost.duration." + (isAugmented ? "augmented" : "default"));
 
@@ -191,7 +191,7 @@ public class Frost implements Listener {
     }
 
     private static boolean isTeammate(Player player, Player caster) {
-        return plugin.getEffectManager().isTrusted(player, caster);
+        return plugin.getDataManager().isTrusted(player, caster);
     }
 
     @EventHandler

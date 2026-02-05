@@ -36,7 +36,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        EffectMapping equippedEffect = plugin.getEffectManager().getEffect(playerUUID, slot);
+        EffectMapping equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {

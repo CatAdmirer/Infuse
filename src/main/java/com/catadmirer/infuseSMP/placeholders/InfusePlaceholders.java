@@ -63,7 +63,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectIcon(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         if (effect == null) {
             return plugin.<Boolean>getConfig("empty_effect_icon") ? "\uE901" : "";
@@ -73,7 +73,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getTime(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         String key = effect.getKey();
         Component comp;
@@ -90,14 +90,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect== null) return "";
         
         return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
     }
 
     public String getEffectName(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(uuid, slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         
         return effect.getName();

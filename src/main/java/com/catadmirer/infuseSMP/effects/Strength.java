@@ -35,7 +35,7 @@ public class Strength implements Listener {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_STRENGTH || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_STRENGTH;
+        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_STRENGTH || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_STRENGTH;
         long cooldown = plugin.getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
 

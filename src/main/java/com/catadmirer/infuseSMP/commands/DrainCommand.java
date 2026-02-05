@@ -39,7 +39,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Getting the mapping from the slot
-        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
 
         // Handling an invalid or empty mapping
         if (effect == null) {
@@ -61,7 +61,7 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Handling special apophis effects
         if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
+            plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
             ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);
             apophisManager.unsetApophis(Bukkit.getConsoleSender(), player.getName());
@@ -69,7 +69,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Removing the effect from the player
-        plugin.getEffectManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
         String msg = Messages.DRAIN_SUCCESS.getMessage();
         msg = msg.replace("%effect_name%", effect.getName());
         player.sendMessage(Messages.toComponent(msg));

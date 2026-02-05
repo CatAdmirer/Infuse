@@ -431,7 +431,7 @@ public class Infuse extends JavaPlugin implements Listener {
         // }
     }
 
-    public DataManager getEffectManager() {
+    public DataManager getDataManager() {
         return dataManager;
     }
 }

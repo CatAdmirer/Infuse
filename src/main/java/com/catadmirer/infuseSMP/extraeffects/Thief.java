@@ -62,7 +62,7 @@ public class Thief implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1").isAugmented() || plugin.getEffectManager().getEffect(playerUUID, "2").isAugmented();
+            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1").isAugmented() || plugin.getDataManager().getEffect(playerUUID, "2").isAugmented();
             long cooldown = plugin.getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
             long duration = plugin.getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 
@@ -164,8 +164,8 @@ public class Thief implements Listener {
             UUID playerUUID = player.getUniqueId();
             if (EffectMapping.THIEF.hasEffect(player)) {
                 if (active.contains(playerUUID)) {
-                    EffectMapping effect1 = plugin.getEffectManager().getEffect(victim.getUniqueId(), "1");
-                    EffectMapping effect2 = plugin.getEffectManager().getEffect(victim.getUniqueId(), "2");
+                    EffectMapping effect1 = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
+                    EffectMapping effect2 = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
                     
                     Random rand = new Random();
                     if (effect1 != null && effect2 != null) {
@@ -200,7 +200,7 @@ public class Thief implements Listener {
         CooldownManager.clearSpecificDuration(playerUUID, effect.regular().getKey());
         
         // Applying cooldowns for the thief effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THIEF || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THIEF;
+        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THIEF || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THIEF;
 
         long cooldown = plugin.getConfig(effect.regular().getKey() + ".cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig(effect.regular().getKey() + ".duration." + (isAugmented ? "augmented" : "default"));

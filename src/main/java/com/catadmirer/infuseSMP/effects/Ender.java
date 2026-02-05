@@ -140,7 +140,7 @@ public class Ender implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_ENDER || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_ENDER;
+        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_ENDER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_ENDER;
         long cooldown = plugin.getConfig("ender.cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig("ender.duration." + (isAugmented ? "augmented" : "default"));
 

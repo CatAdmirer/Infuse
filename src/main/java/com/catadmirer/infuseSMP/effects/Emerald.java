@@ -180,7 +180,7 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getEffectManager().getEffect(playerUUID, "1") == EffectMapping.AUG_EMERALD || plugin.getEffectManager().getEffect(playerUUID, "2") == EffectMapping.AUG_EMERALD;
+        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_EMERALD || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_EMERALD;
         long cooldown = plugin.getConfig("emerald.cooldown." + (isAugmented ? "augmented" : "default"));
         long duration = plugin.getConfig("emerald.duration." + (isAugmented ? "augmented" : "default"));
 

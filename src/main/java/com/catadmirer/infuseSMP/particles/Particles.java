@@ -25,7 +25,7 @@ public class Particles {
     }
 
     private void applyParticlesForEffect(Player player, String slot) {
-        EffectMapping effect = plugin.getEffectManager().getEffect(player.getUniqueId(), slot);
+        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 
         final double regularRadius = 0;
