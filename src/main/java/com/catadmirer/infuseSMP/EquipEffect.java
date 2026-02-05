@@ -5,9 +5,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

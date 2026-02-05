@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 
