@@ -40,13 +40,8 @@ public enum Messages {
     INVIS_KILL("invis.kill_invis", "%victim% was slain by %killer%"),
     INVIS_DEATH("invis.death_invis", "%victim% was slain by %killer%"),
 
-    HEART_BOOST_END("heart.boost_end", "<red>Your Health Boost has ended."),
-
-    CURSE_START("curse_start", "<red>You have been cursed!"),
-    CURSE_END("curse_end", "<green>The curse has worn off."),
-
     CONTROLS_USAGE("controls.usage", "<red>Usage: /controls <offhand|command>"),
-    CONTROLS_INVALID_PARAM("controls.invalid_param", "<red>Invalid option.  Use \"offhand\" or \"command\"."),
+    CONTROLS_INVALID_PARAM("controls.invalid_param", "<red>Invalid option. Use \"offhand\" or \"command\"."),
 
     INFUSE_INVALID_PARAM("infuse.invalid_param", "<red>Please use the tab completions as a reference."),
     INFUSE_INVALID_SLOT("infuse.invalid_slot", "<red>Invalid Argument! Could not identify slot %slot%.  Please use \"1\" or \"2\"."),
@@ -65,7 +60,7 @@ public enum Messages {
     INFUSE_COOLDOWN_USAGE("infuse_cooldown.usage", "<red>Invalid Argument! Please use /infuse cooldown <player>"),
     INFUSE_COOLDOWN_SUCCESS("infuse_cooldown.success", "<green>Removed %player_name%'s cooldown"),
 
-    CLEAREFFECTS_USAGE("cleareffects.usage", "<red>Usage: /cleareffects <player>"),
+    CLEAREFFECTS_USAGE("cleareffects.usage", "<red>Usage: /infuse clearEffects <player>"),
 
     JOIN_ABILITY_NOTIFY("onjoin.ability_notify", "<gray>Your ability mode is set to: %control_mode%"),
     
