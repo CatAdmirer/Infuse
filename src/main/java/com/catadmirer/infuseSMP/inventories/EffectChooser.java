@@ -39,10 +39,10 @@ public class EffectChooser implements InventoryHolder {
         inventory.setItem(33, EffectMapping.AUG_HASTE.createItem());
         inventory.setItem(40, EffectMapping.AUG_THUNDER.createItem());
 
-        if (plugin.<Boolean>getConfig("extra_effects.Thief")) {
+        if (plugin.getConfigFile().enableThief()) {
             inventory.setItem(39, EffectMapping.AUG_THIEF.createItem());
         }
-        if (plugin.<Boolean>getConfig("extra_effects.Apophis")) {
+        if (plugin.getConfigFile().enableApophis()) {
             inventory.setItem(41, EffectMapping.AUG_APOPHIS.createItem());
         }
     }

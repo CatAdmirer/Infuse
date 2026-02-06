@@ -3,10 +3,13 @@ package com.catadmirer.infuseSMP.managers;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import java.io.File;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpRequest.BodyPublishers;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -153,7 +157,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-        if (plugin.<Boolean>getConfig("brewing_particles")) {
+        if (plugin.getConfigFile().brewingParticles()) {
             World world = brewingStandLocation.getWorld();
             Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
             final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
@@ -170,9 +174,9 @@ public class InfuseRecipeManager implements Listener {
             crystal.setBeamTarget(marker.getLocation().toBlockLocation());
             int ritualDuration;
             if (recipeKey.equalsIgnoreCase("aug_ender")) {
-                ritualDuration = plugin.getConfig("ritual_duration_ender");
+                ritualDuration = plugin.getConfigFile().ritualDurationEnder();
             } else {
-                ritualDuration = plugin.getConfig("ritual_duration");
+                ritualDuration = plugin.getConfigFile().ritualDuration();
             }
             (new BukkitRunnable() {
                 public void run() {
@@ -257,10 +261,10 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
 
         Bukkit.broadcast(Messages.toComponent(formattedMessage));
-        if (plugin.<Boolean>getConfig("enable_discord_broadcasts")) {
+        if (plugin.getConfigFile().enableDiscordBroadcasts()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
-        String webhookUrl = plugin.getConfig("discord_webhook_url");
+        String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
         if (webhookUrl != null && !webhookUrl.isEmpty()) {
             sendToDiscord(webhookUrl, formattedDiscordMessage);
         }
@@ -269,9 +273,9 @@ public class InfuseRecipeManager implements Listener {
         int ritualDuration;
 
         if (recipeKey.equalsIgnoreCase("aug_ender")) {
-            ritualDuration = plugin.getConfig("ritual_duration_ender");
+            ritualDuration = plugin.getConfigFile().ritualDurationEnder();
         } else {
-            ritualDuration = plugin.getConfig("ritual_duration");
+            ritualDuration = plugin.getConfigFile().ritualDuration();
         }
 
 
@@ -304,26 +308,27 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
+        String payload = "{\"content\": \"" + message + "\"}";
+
+        HttpRequest request = HttpRequest.newBuilder(URI.create(webhookUrl))
+            .header("Content-Type", "application/json")
+            .POST(BodyPublishers.ofString(payload)).build();
+
+        HttpClient client = HttpClient.newHttpClient();
         try {
-            String payload = "{\"content\": \"" + message + "\"}";
-            URL url = new URL(webhookUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            HttpResponse<Void> response = client.send(request, BodyHandlers.discarding());
+
+            // Checking the response status code
+            int status = response.statusCode();
+            if (status == 200) {
                 plugin.getLogger().info("Message sent to Discord!");
             } else {
-                plugin.getLogger().info("Error sending message to Discord: " + responseCode);
+                plugin.getLogger().info("Error sending message to Discord: " + status);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException err) {
+            plugin.getLogger().log(Level.SEVERE, "Could not send webhook message to discord.", err);
+        } catch (InterruptedException err) {
+            plugin.getLogger().log(Level.SEVERE, "Discord webhook request was interrupted!", err);
         }
     }
 
@@ -357,7 +362,7 @@ public class InfuseRecipeManager implements Listener {
         if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
         Player player = (Player) event.getWhoClicked();
         if (recipeKey.equals("aug_ender")) {
-            int endFirstAugLimit = plugin.getConfig("craft_limits.aug_ender.augmented_limit");
+            int endFirstAugLimit = plugin.getConfigFile().augmentedLimit("aug_ender.augmented_limit");
             if (endFirstAugLimit > 0) {
                 event.setCancelled(true);
                 return;
@@ -379,16 +384,8 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
             return;
         }
-        Number augmentedLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".augmented_limit");
-        Number regularLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".regular_limit");
-
-        if (augmentedLimitNumber == null || regularLimitNumber == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        int augmentedLimit = augmentedLimitNumber.intValue();
-        int regularLimit = regularLimitNumber.intValue();
+        int augmentedLimit = plugin.getConfigFile().augmentedLimit(recipeKey);
+        int regularLimit = plugin.getConfigFile().regularLimit(recipeKey);
 
         ItemStack result = event.getCurrentItem();
         if (result == null) {
@@ -515,8 +512,8 @@ public class InfuseRecipeManager implements Listener {
             return;
         }
 
-        Number augmentedLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".augmented_limit");
-        Number regularLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".regular_limit");
+        Number augmentedLimitNumber = plugin.getConfigFile().augmentedLimit(recipeKey);
+        Number regularLimitNumber = plugin.getConfigFile().regularLimit(recipeKey);
 
         if (augmentedLimitNumber == null || regularLimitNumber == null) {
             event.getInventory().setResult(null);
@@ -558,7 +555,7 @@ public class InfuseRecipeManager implements Listener {
                 && event.getClickedBlock().getType() == Material.BREWING_STAND) {
             event.setCancelled(true);
             Player player = event.getPlayer();
-            if (plugin.<Boolean>getConfig("brewing_gui")) {
+            if (plugin.getConfigFile().brewingGui()) {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);
@@ -574,14 +571,12 @@ public class InfuseRecipeManager implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
-            Player player = (Player) event.getWhoClicked();
-            ItemStack clicked = event.getCurrentItem();
-            if (clicked == null || !clicked.hasItemMeta()) return;
-            String name = clicked.getItemMeta().getDisplayName();
-            if (name.contains("Crafting")) {
+            HumanEntity player = event.getWhoClicked();
+
+            if (event.getSlot() == 11) {
                 player.closeInventory();
                 MenuType.CRAFTING.create(player).open();
-            } else if (name.contains("Brewing")) {
+            } else if (event.getSlot() == 15) {
                 player.closeInventory();
                 BrewingStand stand = brewingStandCache.get(player.getUniqueId());
                 if (stand != null) {

@@ -57,8 +57,8 @@ public class Regen implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_REGEN || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_REGEN;
-            long cooldown = plugin.getConfig("regen.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("regen.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
 
             CooldownManager.setDuration(playerUUID, "regen", duration);
             CooldownManager.setCooldown(playerUUID, "regen", cooldown);

@@ -68,8 +68,8 @@ public class Ocean implements Listener {
                     if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
-                    double radius = plugin.getConfig("ocean_pulling.pull.radius");
-                    double strength = plugin.getConfig("ocean_pulling.pull.strength");
+                    double radius = plugin.getConfigFile().oceanPullRadius();
+                    double strength = plugin.getConfigFile().oceanPullStrength();
 
                     for (Player p : world.getPlayers()) {
                         if (p.equals(effectHolder)) continue;
@@ -86,7 +86,7 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, ((Number) plugin.getConfig("ocean_pulling.pull.interval")).longValue());
+        }.runTaskTimer(plugin, 0L, plugin.getConfigFile().oceanPullInterval());
     }
 
     private boolean isTrusted(Player player, Player caster) {
@@ -98,7 +98,7 @@ public class Ocean implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (plugin.<Boolean>getConfig("invis_deaths")) {
+        if (plugin.getConfigFile().invisDeaths()) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 String msg = Messages.INVIS_KILL.getMessage();
                 msg = msg.replace("%victim%", victim.getName());
@@ -125,8 +125,8 @@ public class Ocean implements Listener {
             final World world = caster.getWorld();
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_OCEAN || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_OCEAN;
-            long cooldown = plugin.getConfig("ocean.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("ocean.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);
             CooldownManager.setCooldown(playerUUID, "ocean", cooldown);

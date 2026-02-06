@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -64,7 +63,7 @@ public class DrainCommand implements CommandExecutor, Listener {
             plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
             ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);
-            apophisManager.unsetApophis(Bukkit.getConsoleSender(), player.getName());
+            apophisManager.unsetApophis(player);
             return true;
         }
 

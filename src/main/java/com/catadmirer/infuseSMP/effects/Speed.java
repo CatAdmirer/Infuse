@@ -92,8 +92,7 @@ public class Speed implements Listener {
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
             final Vector direction = player.getEyeLocation().getDirection().normalize();
-            Object obj = plugin.getConfig("speed.playerVelocityMultiplier");
-            double playerVelocityMultiplier = ((Number) obj).doubleValue();
+            double playerVelocityMultiplier = plugin.getConfigFile().speedPlayerVelocityMultiplier();
             player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
             final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
             final Location[] previousLocation = new Location[]{player.getLocation().clone()};
@@ -129,8 +128,8 @@ public class Speed implements Listener {
 
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_SPEED || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_SPEED;
-            long cooldown = plugin.getConfig("speed.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("speed.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
 
             CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

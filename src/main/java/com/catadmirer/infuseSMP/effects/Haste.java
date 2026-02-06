@@ -58,8 +58,8 @@ public class Haste implements Listener {
             
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_HASTE || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_HASTE;
-            long cooldown = plugin.getConfig("haste.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("haste.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
 
             CooldownManager.setDuration(playerUUID, "haste", duration);
             CooldownManager.setCooldown(playerUUID, "haste", cooldown);

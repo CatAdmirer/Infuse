@@ -63,8 +63,8 @@ public class Thunder implements Listener {
             
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THUNDER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THUNDER;
-            long cooldown = plugin.getConfig("thunder.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("thunder.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);

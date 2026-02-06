@@ -7,21 +7,22 @@ import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
-import com.google.gson.JsonObject;
-import org.bukkit.Bukkit;
 import java.util.stream.Stream;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -43,15 +44,17 @@ public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
     private DataManager dataManager;
     private Abilities abilitiesHandler;
-
-    private final Map<UUID, PlayerProfile> originalProfiles = new HashMap<>();
-    private final Map<UUID, Integer> activeSkinModifiers = new HashMap<>();
+    private final MainConfig mainConfig;
 
     private ApophisManager apophisCommand;
 
     private final Map<String, Object> settings = new HashMap<>();
 
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
+
+    public Infuse() {
+        this.mainConfig = new MainConfig(this);
+    }
 
     public void onEnable() {
         if (instance != null) {
@@ -69,8 +72,7 @@ public class Infuse extends JavaPlugin implements Listener {
         loadConfig();
 
         // Loading the apophis manager
-        new ApophisManager(this, "data/AphopisPlayers/").getApophisFile();
-        apophisCommand = new ApophisManager(this, "data/AphopisPlayers/");
+        apophisCommand = new ApophisManager(this);
 
         // Initializing the recipe manager
         new InfuseRecipeManager(this);
@@ -107,20 +109,24 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     // TODO: do this better.  Maybe just expose the config
-    public <T> T getConfig(String key) {
-        Object value = settings.get(key);
+    // public <T> T getConfig(String key) {
+    //     Object value = settings.get(key);
 
-        if (value instanceof Number) {
-            Number number = (Number) value;
-            try {
-                return (T) Long.valueOf(number.longValue());
-            } catch (ClassCastException ignored) {}
-            try {
-                return (T) Integer.valueOf(number.intValue());
-            } catch (ClassCastException ignored) {}
-        }
+    //     if (value instanceof Number) {
+    //         Number number = (Number) value;
+    //         try {
+    //             return (T) Long.valueOf(number.longValue());
+    //         } catch (ClassCastException ignored) {}
+    //         try {
+    //             return (T) Integer.valueOf(number.intValue());
+    //         } catch (ClassCastException ignored) {}
+    //     }
 
-        return (T) value;
+    //     return (T) value;
+    // }
+
+    public MainConfig getConfigFile() {
+        return mainConfig;
     }
 
     /**
@@ -315,74 +321,51 @@ public class Infuse extends JavaPlugin implements Listener {
         }
     }
 
-
-    // TODO: Review this implementation...
-    /**
-     * Saving the skin of a player.
-     * 
-     * @param player The player to save the skin of.
-     */
-    public void saveOriginalSkin(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (!originalProfiles.containsKey(uuid)) {
-            originalProfiles.put(uuid, player.getPlayerProfile());
-        }
-        activeSkinModifiers.put(uuid, activeSkinModifiers.getOrDefault(uuid, 0) + 1);
+    public String getVersion() {
+        return getPluginMeta().getVersion();
     }
-
-    /**
-     * Overriding a player's skin without kicking them.
-     * 
-     * @param player The player to set the skin of.
-     */
-    public void resetSkinWithoutKick(Player player) {
-        UUID uuid = player.getUniqueId();
-        int count = activeSkinModifiers.getOrDefault(uuid, 0) - 1;
-
-        if (count <= 0) {
-            PlayerProfile originalProfile = originalProfiles.get(uuid);
-            if (originalProfile != null) {
-                player.setPlayerProfile(originalProfile);
-            }
-            originalProfiles.remove(uuid);
-            activeSkinModifiers.remove(uuid);
-        } else {
-            activeSkinModifiers.put(uuid, count);
-        }
-    }
-
 
     // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
-    private void checkForUpdate() {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try {
-                String currentVersion = getPluginMeta().getVersion();
-                URL url = new URI("https://api.modrinth.com/v2/project/infusesmp/version").toURL();
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("User-Agent", "Infuse/" + currentVersion);
-                connection.connect();
+    private String getLatestVersion() {
+        HttpRequest request = HttpRequest.newBuilder()
+            .GET()
+            .header("User-Agent", "Infuse/" + getVersion())
+            .uri(URI.create("https://api.modrinth.com/v2/project/infusesmp/version"))
+            .build();
 
-                if (connection.getResponseCode() != 200) {
-                    getLogger().warning("Could not check for updates: HTTP " + connection.getResponseCode());
-                    return;
-                }
+        HttpClient client = HttpClient.newHttpClient();
 
-                Gson gson = new Gson();
-                JsonArray versions = gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-                if (versions.size() == 0) return;
+        try {
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
-                JsonObject latest = versions.get(0).getAsJsonObject();
-                String latestVersion = latest.get("version_number").getAsString();
-
-                if (!latestVersion.equalsIgnoreCase(currentVersion)) {
-                    getLogger().info("A new version (" + latestVersion + ") is available! You are on " + currentVersion + " " + "https://modrinth.com/plugin/infusesmp");
-                }
-
-            } catch (Exception e) {
-                getLogger().log(Level.WARNING, "Failed to check for Infuse updates", e);
+            // Handling http error codes
+            if (response.statusCode() != 200) {
+                getLogger().log(Level.WARNING, "Recieved error code {0} from api.modrinth.com", response.statusCode());
+                return null;
             }
-        });
+
+            // Parsing json
+            Gson gson = new Gson();
+            JsonArray versions = gson.fromJson(response.body(), JsonArray.class);
+
+            // If no versions are returned, defaulting to the current version
+            if (versions.size() == 0) {
+                getLogger().log(Level.WARNING, "No versions published to modrinth, defaulting to current version");
+                return getVersion();
+            }
+
+            JsonObject latestVersion = versions.get(0).getAsJsonObject();
+            return latestVersion.get("verson_number").getAsString();
+        } catch (JsonSyntaxException err) {
+            getLogger().log(Level.SEVERE, "Could not parse the json given by modrinth.", err);
+        } catch (InterruptedException err) {
+            getLogger().log(Level.SEVERE, "Version request was interrupted", err);
+        } catch (IOException err) {
+            getLogger().log(Level.SEVERE, "Could not get versions from modrinth", err);
+        }
+
+        return null;
     }
 
     @EventHandler

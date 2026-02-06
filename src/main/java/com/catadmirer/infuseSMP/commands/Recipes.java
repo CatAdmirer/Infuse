@@ -134,8 +134,8 @@ public class Recipes implements CommandExecutor, Listener {
                 "emerald","feather","fire","aug_ender","ender","frost",
                 "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
         )) {
-            if (!(Boolean) plugin.getConfig("extra_effects.Apophis") && itemName.equals("apophis")) continue;
-            if (!(Boolean) plugin.getConfig("extra_effects.Thief")  && itemName.equals("thief"))   continue;
+            if (!plugin.getConfigFile().enableApophis() && itemName.equals("apophis")) continue;
+            if (!plugin.getConfigFile().enableThief()  && itemName.equals("thief"))   continue;
 
             Object augObj = plugin.getConfig().get("craft_limits." + itemName + ".augmented_limit");
             Object regObj = plugin.getConfig().get("craft_limits." + itemName + ".regular_limit");

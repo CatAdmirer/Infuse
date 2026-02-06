@@ -111,8 +111,8 @@ public class Invisibility implements Listener {
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_INVIS || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_INVIS;
 
-            long cooldown = plugin.getConfig("invis.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("invis.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
 
             CooldownManager.setDuration(playerUUID, "invis", duration);
             CooldownManager.setCooldown(playerUUID, "invis", cooldown);
