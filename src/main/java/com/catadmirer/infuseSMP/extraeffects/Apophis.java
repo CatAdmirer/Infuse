@@ -140,8 +140,8 @@ public class Apophis implements Listener {
             
             // Applying cooldowns and durations for the effect
             boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_APOPHIS || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_APOPHIS;
-            long cooldown = plugin.getConfig("apophis.cooldown." + (isAugmented ? "augmented" : "default"));
-            long duration = plugin.getConfig("apophis.duration." + (isAugmented ? "augmented" : "default"));
+            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
+            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
 
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);

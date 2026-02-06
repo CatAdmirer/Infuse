@@ -36,8 +36,8 @@ public class Strength implements Listener {
         
         // Applying cooldowns and durations for the effect
         boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_STRENGTH || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_STRENGTH;
-        long cooldown = plugin.getConfig("strength.cooldown." + (isAugmented ? "augmented" : "default"));
-        long duration = plugin.getConfig("strength.duration." + (isAugmented ? "augmented" : "default"));
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
 
         CooldownManager.setDuration(playerUUID, "strength", duration);
         CooldownManager.setCooldown(playerUUID, "strength", cooldown);

@@ -157,7 +157,7 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-        if (plugin.<Boolean>getConfig("brewing_particles")) {
+        if (plugin.getConfigFile().brewingParticles()) {
             World world = brewingStandLocation.getWorld();
             Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
             final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
@@ -174,9 +174,9 @@ public class InfuseRecipeManager implements Listener {
             crystal.setBeamTarget(marker.getLocation().toBlockLocation());
             int ritualDuration;
             if (recipeKey.equalsIgnoreCase("aug_ender")) {
-                ritualDuration = plugin.getConfig("ritual_duration_ender");
+                ritualDuration = plugin.getConfigFile().ritualDurationEnder();
             } else {
-                ritualDuration = plugin.getConfig("ritual_duration");
+                ritualDuration = plugin.getConfigFile().ritualDuration();
             }
             (new BukkitRunnable() {
                 public void run() {
@@ -261,10 +261,10 @@ public class InfuseRecipeManager implements Listener {
                 .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
 
         Bukkit.broadcast(Messages.toComponent(formattedMessage));
-        if (plugin.<Boolean>getConfig("enable_discord_broadcasts")) {
+        if (plugin.getConfigFile().enableDiscordBroadcasts()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
         }
-        String webhookUrl = plugin.getConfig("discord_webhook_url");
+        String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
         if (webhookUrl != null && !webhookUrl.isEmpty()) {
             sendToDiscord(webhookUrl, formattedDiscordMessage);
         }
@@ -273,9 +273,9 @@ public class InfuseRecipeManager implements Listener {
         int ritualDuration;
 
         if (recipeKey.equalsIgnoreCase("aug_ender")) {
-            ritualDuration = plugin.getConfig("ritual_duration_ender");
+            ritualDuration = plugin.getConfigFile().ritualDurationEnder();
         } else {
-            ritualDuration = plugin.getConfig("ritual_duration");
+            ritualDuration = plugin.getConfigFile().ritualDuration();
         }
 
 
@@ -362,7 +362,7 @@ public class InfuseRecipeManager implements Listener {
         if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
         Player player = (Player) event.getWhoClicked();
         if (recipeKey.equals("aug_ender")) {
-            int endFirstAugLimit = plugin.getConfig("craft_limits.aug_ender.augmented_limit");
+            int endFirstAugLimit = plugin.getConfigFile().augmentedLimit("aug_ender.augmented_limit");
             if (endFirstAugLimit > 0) {
                 event.setCancelled(true);
                 return;
@@ -384,16 +384,8 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
             return;
         }
-        Number augmentedLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".augmented_limit");
-        Number regularLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".regular_limit");
-
-        if (augmentedLimitNumber == null || regularLimitNumber == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        int augmentedLimit = augmentedLimitNumber.intValue();
-        int regularLimit = regularLimitNumber.intValue();
+        int augmentedLimit = plugin.getConfigFile().augmentedLimit(recipeKey);
+        int regularLimit = plugin.getConfigFile().regularLimit(recipeKey);
 
         ItemStack result = event.getCurrentItem();
         if (result == null) {
@@ -520,8 +512,8 @@ public class InfuseRecipeManager implements Listener {
             return;
         }
 
-        Number augmentedLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".augmented_limit");
-        Number regularLimitNumber = plugin.getConfig("craft_limits." + recipeKey + ".regular_limit");
+        Number augmentedLimitNumber = plugin.getConfigFile().augmentedLimit(recipeKey);
+        Number regularLimitNumber = plugin.getConfigFile().regularLimit(recipeKey);
 
         if (augmentedLimitNumber == null || regularLimitNumber == null) {
             event.getInventory().setResult(null);
@@ -563,7 +555,7 @@ public class InfuseRecipeManager implements Listener {
                 && event.getClickedBlock().getType() == Material.BREWING_STAND) {
             event.setCancelled(true);
             Player player = event.getPlayer();
-            if (plugin.<Boolean>getConfig("brewing_gui")) {
+            if (plugin.getConfigFile().brewingGui()) {
                 Block block = event.getClickedBlock();
                 BrewingStand stand = (BrewingStand) block.getState();
                 brewingStandCache.put(player.getUniqueId(), stand);

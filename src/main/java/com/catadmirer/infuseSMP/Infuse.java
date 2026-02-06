@@ -44,12 +44,17 @@ public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
     private DataManager dataManager;
     private Abilities abilitiesHandler;
+    private final MainConfig mainConfig;
 
     private ApophisManager apophisCommand;
 
     private final Map<String, Object> settings = new HashMap<>();
 
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
+
+    public Infuse() {
+        this.mainConfig = new MainConfig(this);
+    }
 
     public void onEnable() {
         if (instance != null) {
@@ -104,20 +109,24 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     // TODO: do this better.  Maybe just expose the config
-    public <T> T getConfig(String key) {
-        Object value = settings.get(key);
+    // public <T> T getConfig(String key) {
+    //     Object value = settings.get(key);
 
-        if (value instanceof Number) {
-            Number number = (Number) value;
-            try {
-                return (T) Long.valueOf(number.longValue());
-            } catch (ClassCastException ignored) {}
-            try {
-                return (T) Integer.valueOf(number.intValue());
-            } catch (ClassCastException ignored) {}
-        }
+    //     if (value instanceof Number) {
+    //         Number number = (Number) value;
+    //         try {
+    //             return (T) Long.valueOf(number.longValue());
+    //         } catch (ClassCastException ignored) {}
+    //         try {
+    //             return (T) Integer.valueOf(number.intValue());
+    //         } catch (ClassCastException ignored) {}
+    //     }
 
-        return (T) value;
+    //     return (T) value;
+    // }
+
+    public MainConfig getConfigFile() {
+        return mainConfig;
     }
 
     /**
