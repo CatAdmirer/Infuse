@@ -17,9 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
@@ -27,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -48,8 +45,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private ApophisManager apophisCommand;
 
-    private final Map<String, Object> settings = new HashMap<>();
-
     public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
 
     public Infuse() {
@@ -57,6 +52,7 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public void onEnable() {
+        // Making sure the plugin hasn't been initialized twice
         if (instance != null) {
             throw new IllegalStateException("Plugin already initialized!");
         }
@@ -64,12 +60,8 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the Infuse plugin instance
         instance = this;
 
-
-        // Saving the default config.yml
-        saveDefaultConfig();
-
         // Loading the config
-        loadConfig();
+        mainConfig.load();
 
         // Loading the apophis manager
         apophisCommand = new ApophisManager(this);
@@ -108,89 +100,8 @@ public class Infuse extends JavaPlugin implements Listener {
         getLogger().info("Infuse Plugin has been enabled!");
     }
 
-    // TODO: do this better.  Maybe just expose the config
-    // public <T> T getConfig(String key) {
-    //     Object value = settings.get(key);
-
-    //     if (value instanceof Number) {
-    //         Number number = (Number) value;
-    //         try {
-    //             return (T) Long.valueOf(number.longValue());
-    //         } catch (ClassCastException ignored) {}
-    //         try {
-    //             return (T) Integer.valueOf(number.intValue());
-    //         } catch (ClassCastException ignored) {}
-    //     }
-
-    //     return (T) value;
-    // }
-
     public MainConfig getConfigFile() {
         return mainConfig;
-    }
-
-    /**
-     * Reloading the config and returning the amount of time it takes to reload the config.
-     * 
-     * @return The amount of time it takes to reload the config.
-     */
-    public long loadConfig() {
-        // Reloading the config file itself
-        reloadConfig();
-
-        // Getting the start time
-        long start = System.nanoTime();
-
-        // Loading the configs
-        FileConfiguration config = getConfig();
-        Messages.load(this);
-
-        // Clearing the existing maps
-        settings.clear();
-
-        // Getting various configs
-        settings.put("allow_infinite_effects", config.getBoolean("allow_infinite_effects", false));
-        settings.put("ritual_duration", config.getInt("ritual_duration", 600));
-        settings.put("ritual_duration_ender", config.getInt("ritual_duration_ender", 3600));
-        settings.put("brewing_particles", config.getBoolean("brewing_particles", true));
-        settings.put("empty_effect_icon", config.getBoolean("empty_effect_icon", true));
-        settings.put("player_head_drops", config.getBoolean("player_head_drops", true));
-        settings.put("enable_discord_broadcasts", config.getBoolean("enable_discord_broadcasts", false));
-        settings.put("discord_webhook_url", config.getString("discord_webhook_url", ""));
-        settings.put("invis_deaths", config.getBoolean("invis_deaths", false));
-        settings.put("brewing_gui", config.getBoolean("brewing_gui", true));
-        settings.put("join_effects_enabled", config.getBoolean("join_effects_enabled", false));
-        settings.put("join_effects", config.getStringList("join_effects"));
-
-        // Loading the craft limits for the effects
-        for (String effect : config.getConfigurationSection("craft_limits").getKeys(false)) {
-            settings.put("craft_limits." + effect + ".augmented_limit", config.getInt("craft_limits." + effect + ".augmented_limit", 0));
-            settings.put("craft_limits." + effect + ".regular_limit", config.getInt("craft_limits." + effect + ".regular_limit", 0));
-        }
-
-        // Looping over configs to get cooldowns and durations
-        for (String effect : config.getKeys(false)) {
-            if (config.isConfigurationSection(effect + ".cooldown")) {
-                settings.put(effect + ".cooldown.default", config.getInt(effect + ".cooldown.default", 0));
-                settings.put(effect + ".cooldown.augmented", config.getInt(effect + ".cooldown.augmented", 0));
-            }
-
-            if (config.isConfigurationSection(effect + ".duration")) {
-                settings.put(effect + ".duration.default", config.getInt(effect + ".duration.default", 0));
-                settings.put(effect + ".duration.augmented", config.getInt(effect + ".duration.augmented", 0));
-            }
-        }
-
-        // Getting configs from settings
-        settings.put("ocean_pulling.pull.interval", config.getInt("ocean_pulling.pull.interval", 20));
-        settings.put("ocean_pulling.pull.radius", config.getDouble("ocean_pulling.pull.radius", 5));
-        settings.put("ocean_pulling.pull.strength", config.getDouble("ocean_pulling.pull.strength", 0.3));
-        settings.put("speed.dashMultiplier", config.getDouble("speed.dashMultiplier", 20));
-        settings.put("speed.playerVelocityMultiplier", config.getDouble("speed.playerVelocityMultiplier", 2));
-        settings.put("extra_effects.Apophis", config.getBoolean("extra_effects.Apophis", false));
-        settings.put("extra_effects.Thief", config.getBoolean("extra_effects.Thief", false));
-
-        return (System.nanoTime() - start) / 1000000;
     }
 
     /** Registers the commands for the plugin. */
@@ -300,12 +211,12 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
 
         // Enabling apophis listeners if the config allows
-        if (getConfig().getBoolean("extra_effects.Apophis")) {
+        if (mainConfig.enableApophis()) {
             getServer().getPluginManager().registerEvents(new Apophis(this), this);
         }
 
         // Enabling thief listeners if the config allows
-        if (getConfig().getBoolean("extra_effects.Thief")) {
+        if (mainConfig.enableThief()) {
             getServer().getPluginManager().registerEvents(new Thief(this), this);
         }
     }
@@ -313,7 +224,7 @@ public class Infuse extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        boolean dropHead = getConfig().getBoolean("player_head_drops", true);
+        boolean dropHead = mainConfig.playerHeadDrops();
 
         if (dropHead) {
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
