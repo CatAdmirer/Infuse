@@ -155,8 +155,6 @@ public class Heart implements Listener {
                     if (maxHealthAttribute != null) {
                         maxHealthAttribute.setBaseValue(20);
                     }
-                    
-                    player.sendMessage(Messages.HEART_BOOST_END.toComponent());
                 }
             }.runTaskLater(plugin, duration * 20L);
         }
