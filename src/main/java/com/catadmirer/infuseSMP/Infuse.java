@@ -39,16 +39,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
-    private DataManager dataManager;
-    private Abilities abilitiesHandler;
+
+    private final ApophisManager apophisManager;
+    private final DataManager dataManager;
     private final MainConfig mainConfig;
 
-    private ApophisManager apophisCommand;
-
-    public static NamespacedKey EFFECT_KEY = NamespacedKey.fromString("infuse:effect_key");
+    public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
     public Infuse() {
+        this.apophisManager = new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
+        this.dataManager = new DataManager(this);
     }
 
     public void onEnable() {
@@ -60,24 +61,20 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the Infuse plugin instance
         instance = this;
 
+        // Loading the messages
+        Messages.load(this);
+        
         // Loading the config
         mainConfig.load();
-
-        // Loading the apophis manager
-        apophisCommand = new ApophisManager(this);
 
         // Initializing the recipe manager
         new InfuseRecipeManager(this);
 
-        // Getting the data manager
-        this.dataManager = new DataManager(this);
+        // Loading the data manager
         dataManager.load();
 
         // Giving the mapping class an instance of the data manager
         EffectMapping.init(dataManager);
-
-        // Getting the abilities handler
-        this.abilitiesHandler = new Abilities(this);
 
         // Registering infuse commands
         this.registerCommands();
@@ -110,12 +107,16 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
         getCommand("swap").setExecutor(new SwapEffects(this));
+        
         getCommand("infuse").setExecutor(new InfuseCommand(this));
         getCommand("infuse").setTabCompleter(new InfuseCommand(this));
-        getCommand("ldrain").setExecutor(new DrainCommand(this, apophisCommand));
-        getCommand("rdrain").setExecutor(new DrainCommand(this, apophisCommand));
-        getCommand("rspark").setExecutor(abilitiesHandler);
-        getCommand("lspark").setExecutor(abilitiesHandler);
+
+        getCommand("ldrain").setExecutor(new DrainCommand(this, apophisManager));
+        getCommand("rdrain").setExecutor(new DrainCommand(this, apophisManager));
+
+        getCommand("rspark").setExecutor(new Abilities(this));
+        getCommand("lspark").setExecutor(new Abilities(this));
+
         getCommand("controls").setExecutor((sender, command, label, args) -> {
             // Making sure only players can run the command
             if (!(sender instanceof Player player)) {
@@ -183,32 +184,32 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     private void registerEvents() {
-        // Registering strength listener here for some reason?
-        Bukkit.getPluginManager().registerEvents(new Strength(this), this);
-
         // Initializing the particle manager
         new Particles(this).startTask();
 
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
-        Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
-        Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
-        Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipEffect(this, apophisCommand), this);
-        Bukkit.getPluginManager().registerEvents(new Ocean(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new EquipEffect(this, apophisManager), this);
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new Regen(this), this);
-        Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
-        Bukkit.getPluginManager().registerEvents(new Thunder(this), this);
-        Bukkit.getPluginManager().registerEvents(new Haste(this), this);
-        Bukkit.getPluginManager().registerEvents(new Speed(this), this);
-        Bukkit.getPluginManager().registerEvents(new Fire(this), this);
-        Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
+
+        // Registering events for all the effects
+        Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
+        Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
+        Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Fire(this), this);
+        Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
+        Bukkit.getPluginManager().registerEvents(new Haste(this), this);
+        Bukkit.getPluginManager().registerEvents(new Heart(this), this);
+        Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
+        Bukkit.getPluginManager().registerEvents(new Ocean(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Regen(this), this);
+        Bukkit.getPluginManager().registerEvents(new Speed(this), this);
+        Bukkit.getPluginManager().registerEvents(new Strength(this), this);
+        Bukkit.getPluginManager().registerEvents(new Thunder(this), this);
 
         // Enabling apophis listeners if the config allows
         if (mainConfig.enableApophis()) {
@@ -288,6 +289,7 @@ public class Infuse extends JavaPlugin implements Listener {
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
+
         String msg = Messages.JOIN_ABILITY_NOTIFY.getMessage();
         msg = msg.replace("%control_mode%", controlMode);
         player.sendMessage(Messages.toComponent(msg));
