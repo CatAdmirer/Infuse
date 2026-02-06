@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -243,8 +242,9 @@ public class Ender implements Listener {
         if (!(event.getEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
-        cursedPlayers.add(target.getUniqueId());
-        removeCurseLater(target.getUniqueId(), 1200);
+
+        cursePlayer(target.getUniqueId(), 1200);
+
         event.setDamage(0);
     }
 
@@ -256,18 +256,14 @@ public class Ender implements Listener {
         if (!(event.getHitEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
-        cursedPlayers.add(target.getUniqueId());
-        removeCurseLater(target.getUniqueId(), 1200);
+
+        cursePlayer(target.getUniqueId(), 1200);
     }
 
-    public void removeCurseLater(UUID playerUUID, long delayTicks) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                cursedPlayers.remove(playerUUID);
-                Player player = Bukkit.getPlayer(playerUUID);
-            }
-        }.runTaskLater(plugin, delayTicks);
+    public void cursePlayer(UUID playerUUID, long delayTicks) {
+        cursedPlayers.add(playerUUID);
+
+        Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), delayTicks);
     }
 
     public void applyGlowingToUntrusted(Player player) {
@@ -279,11 +275,8 @@ public class Ender implements Listener {
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
-            if (!dataManager.isTrusted(nearby, player)) {
-                if (!nearby.hasPotionEffect(PotionEffectType.GLOWING)) {
-                    nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
-                }
-            }
+            if (dataManager.isTrusted(nearby, player)) continue;
+            nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
         }
     }
 }
