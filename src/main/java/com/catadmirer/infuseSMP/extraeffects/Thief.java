@@ -148,13 +148,6 @@ public class Thief implements Listener {
         }
     }
 
-    public String removeAug(String key) {
-        if (key.startsWith("aug_")) {
-            return key.substring(4);
-        }
-        return key;
-    }
-
     private final static Set<UUID> active = new HashSet<>();
 
     @EventHandler
