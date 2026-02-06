@@ -75,10 +75,10 @@ public class DataManager {
         // Saving the config
         try {
             config.save(dataFile);
-            plugin.getLogger().log(Level.INFO, "Successfully saved the config to {0}", dataFile.getName());
+            plugin.getLogger().log(Level.INFO, "Saved {0}", dataFile.getName());
             return true;
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Could not save to {0}.  Make sure the user has write permissions.", dataFile.getName());
+            plugin.getLogger().log(Level.WARNING, "Could not save {0}.  Make sure the user has write permissions.", dataFile.getName());
         }
 
         return false;
@@ -100,14 +100,13 @@ public class DataManager {
 
         // Creating the file if it doesn't exist.
         if (!dataFile.exists()) {
-            plugin.saveResource(dataFile.getName(), replace);
-        }
-
-        // Checking if the file still doesn't exist.
-        if (!dataFile.exists()) {
-            plugin.getLogger().log(Level.SEVERE, "Could not create {1}.  Check if it already exists.", dataFile.getName());
-
-            return false;
+            try {
+                dataFile.getParentFile().mkdirs();
+                dataFile.createNewFile();
+            } catch (IOException e) {
+                plugin.getLogger().log(Level.SEVERE, "Could not create {0}.  Make sure the user has the right permissions.", dataFile.getName());
+                return false;
+            }
         }
 
         return true;

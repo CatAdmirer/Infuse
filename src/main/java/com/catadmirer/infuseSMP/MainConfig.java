@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -32,7 +33,7 @@ public class MainConfig {
     public boolean load() {
         // Not doing anything if the plugin isn't enabled
         if (!plugin.isEnabled()) {
-            Bukkit.getLogger().severe("HeroesOfLegend plugin not loaded, cannot load player data.");
+            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot load {1}.", new String[]{plugin.getName(), file.getName()});
             return false;
         }
 
@@ -48,12 +49,12 @@ public class MainConfig {
         // Loading the config
         try {
             config.load(file);
-            plugin.getLogger().info("Successfully loaded playerdata.yml");
+            plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", file.getName());
             return true;
         } catch (InvalidConfigurationException err) {
-            plugin.getLogger().warning("playerdata.yml contains an invalid YAML configuration.  Verify the contents of the file.");
+            plugin.getLogger().log(Level.WARNING, "{0} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException err) {
-            plugin.getLogger().severe("Could not find playerdata.yml.  Check that it exists.");
+            plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", file.getName());
         }
 
         return false;
@@ -67,7 +68,7 @@ public class MainConfig {
     public boolean save() {
         // Not doing anything if the plugin isn't enabled
         if (!plugin.isEnabled()) {
-            Bukkit.getLogger().severe("HeroesOfLegend plugin not loaded, cannot save the player data.");
+            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot save {1}.", new String[]{plugin.getName(), file.getName()});
             return false;
         }
 
@@ -83,10 +84,10 @@ public class MainConfig {
         // Saving the config
         try {
             config.save(file);
-            plugin.getLogger().info("Successfully saved playerdata.yml");
+            plugin.getLogger().log(Level.INFO, "Saved {0}", file.getName());
             return true;
         } catch (IOException e) {
-            plugin.getLogger().warning("Could not save to playerdata.yml.  Make sure the user has write permissions.");
+            plugin.getLogger().log(Level.WARNING, "Could not save {0}.  Make sure the user has write permissions.", file.getName());
         }
 
         return false;
