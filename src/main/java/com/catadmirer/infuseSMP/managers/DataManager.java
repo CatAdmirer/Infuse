@@ -163,7 +163,6 @@ public class DataManager {
         return effect;
     }
 
-
     public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
         save();
