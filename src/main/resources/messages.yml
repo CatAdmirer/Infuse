@@ -28,6 +28,62 @@ trust_removed: "<yellow>You no longer trust %target%."
 
 effect_nobrewing: "<red>You need to craft this in a brewing stand!"
 
+controls:
+  usage: "<red>Usage: /controls <offhand|command>"
+  invalid_param: "<red>Invalid option. Use \"offhand\" or \"command\"."
+
+infuse:
+  invalid_param: "<red>Please use the tab completions as a reference."
+  invalid_slot: "<red>Invalid Argument! Could not identify slot %slot%. Please use \"1\" or \"2\"."
+
+infuse_controls:
+  usage: "<red>Usage: /infuse controls <offhand|command>"
+  success: "<dark_red>Your controls are now %controlMode%"
+
+infuse_seteffect:
+  usage: "<red>Invalid Argument! Please use /infuse setEffect <player> <aug_fire|ocean> <1|2>"
+  success: "<green>Successfully set the effect in slot %slot% of player %player_name% to %effect_name%."
+
+infuse_geteffect:
+  usage: "<red>Invalid Argument! Please use /infuse giveEffect <player> <aug_fire|ocean>"
+  success: "%effect_color%You recieved the %effect_name%"
+
+infuse_cleareffect:
+  usage: "<red>Invalid Argument! Please use /infuse clearEffect <player>"
+  success: "<green>Cleared %player_name%'s effects"
+
+infuse_cooldown:
+  usage: "<red>Invalid Argument! Please use /infuse cooldown <player>"
+  success: "<green>Removed %player_name%'s cooldown"
+
+cleareffects:
+  usage: "<red>Usage: /infuse clearEffects <player>"
+
+onjoin:
+  ability_notify: "<gray>Your ability mode is set to: %control_mode%"
+
+drain:
+  success: "<green>You have drained your: %effect_name%"
+
+effect_equipped: "<green>You have equipped the %effect_name%"
+
+swap_no_effects: "<red>You do not have any effects equipped to swap."
+swap_success: "<green>Your Effects have been swapped."
+
+thief_steal: "<yellow>You stole %victim%'s %effect_name% Effect"
+
+recipe_not_found: "<red>No recipe found for this potion."
+
+recipe_disabled: "Recipe is disabled/broken"
+
+errors:
+  inv_full: "<red>Your inventory is full! Make space before unequipping."
+  not_player: "<red>Only players can use this command."
+  not_op: "<red>You must be OP to run this command."
+  invalid_command: "<red>Invalid command."
+  ritual_active: "<red>A ritual is already in progress!"
+  target_not_found: "<red>Player not found or not online."
+
 invis:
   kill_invis: "%victim% was slain by %killer%"
   death_invis: "%victim% was slain by %killer%"

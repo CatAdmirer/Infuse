@@ -244,7 +244,6 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
-        target.sendMessage(Messages.CURSE_START.toComponent());
         removeCurseLater(target.getUniqueId(), 1200);
         event.setDamage(0);
     }
@@ -258,7 +257,6 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (isTeammate(target, shooter)) return;
         cursedPlayers.add(target.getUniqueId());
-        target.sendMessage(Messages.CURSE_START.toComponent());
         removeCurseLater(target.getUniqueId(), 1200);
     }
 
@@ -268,9 +266,6 @@ public class Ender implements Listener {
             public void run() {
                 cursedPlayers.remove(playerUUID);
                 Player player = Bukkit.getPlayer(playerUUID);
-                if (player != null && player.isOnline()) {
-                    player.sendMessage(Messages.CURSE_END.toComponent());
-                }
             }
         }.runTaskLater(plugin, delayTicks);
     }
