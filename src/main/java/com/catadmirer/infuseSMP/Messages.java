@@ -156,9 +156,9 @@ public enum Messages {
     AUG_APOPHIS_LORE("aug_apophis.effect_lore", "<dark_purple><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Combine Fire, Emerald and Heart's effects", "<dark_purple>🍼 <gray>Have a custom skin and nametag", "<gray>", "<dark_purple><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_purple>🍼 <gray>Activate Fire, Emerald and Heart's sparks", "<dark_purple>🍼 <gray>Upon hitting a player blind their screen", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 1m 30s"),
     
     THIEF_NAME("thief.effect_name", "<dark_red>Thief Effect"),
-    THIEF_LORE("thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to shapeshift into them", "", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown"),
+    THIEF_LORE("thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to disguise yourself as them", "", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown"),
     AUG_THIEF_NAME("aug_thief.effect_name", "<dark_red>Augmented Thief Effect"),
-    AUG_THIEF_LORE("aug_thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to shapeshift into them", "<gray>", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown");
+    AUG_THIEF_LORE("aug_thief.effect_lore", "<dark_red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>You're not shown on tablist", "<dark_red>🥷 <gray>Your footsteps don't make noise", "<dark_red>🥷 <gray>Kill a player to disguise yourself as them", "<gray>", "<dark_red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<dark_red>🥷 <gray>Temporarily steal your opponents effect", "<gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: Unknown", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: Unknown");
 
     // Config and config files
     public static final File file = new File("plugins/Infuse/messages.yml");

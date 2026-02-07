@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
@@ -68,6 +69,11 @@ public class EquipEffect implements Listener {
         String msg = Messages.EFFECT_EQUIPPED.getMessage();
         msg = msg.replace("%effect_name%", effect.getName());
         player.sendMessage(Messages.toComponent(msg));
+
+        if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
+            Thief.equipThief(player);
+        }
+
         return true;
     }
 
