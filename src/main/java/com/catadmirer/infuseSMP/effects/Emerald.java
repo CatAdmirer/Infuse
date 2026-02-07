@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -66,8 +67,7 @@ public class Emerald implements Listener {
     private boolean isSword(ItemStack item) {
         if (item == null) return false;
 
-        Material type = item.getType();
-        return type == Material.WOODEN_SWORD || type == Material.STONE_SWORD || type == Material.IRON_SWORD || type == Material.GOLDEN_SWORD || type == Material.DIAMOND_SWORD || type == Material.NETHERITE_SWORD;
+        return MaterialSetTag.ITEMS_SWORDS.isTagged(item.getType());
     }
 
     @EventHandler
