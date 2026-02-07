@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,108 +24,58 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Ender implements Listener {
+    public static final Component fireballName = Component.text("Cursing Projectile");
+
     private static Infuse plugin;
 
-    private final HashMap<UUID, Integer> dragonBreathCooldowns = new HashMap<>();
-
     private final Set<UUID> cursedPlayers = new HashSet<>();
-
-    private final Set<UUID> processingDamage = new HashSet<>();
-
-    private DataManager dataManager;
-
-    private final Set<UUID> curseChain = new HashSet<>();
-
-    public static final Component fireballName = Component.text("Cursing Projectile");
+    private final DataManager dataManager;
 
     public Ender(DataManager dataManager, Infuse plugin) {
         this.dataManager = dataManager;
         Ender.plugin = plugin;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                dragonBreathCooldowns.replaceAll((uuid, time) -> time > 0 ? time - 1 : 0);
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.ENDER.hasEffect(player)) {
-                        applyGlowingToUntrusted(player);
-                    }
-
-                    if (cursedPlayers.contains(player.getUniqueId())) {
-                        player.getWorld().spawnParticle(
-                                Particle.WITCH,
-                                player.getLocation().add(0, 1, 0),
-                                10,
-                                0.3, 0.5, 0.3,
-                                0.01
-                        );
-                    }
+        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (EffectMapping.ENDER.hasEffect(player)) {
+                    applyGlowingToUntrusted(player);
                 }
 
+                // Spawning particles on cursed players
+                if (cursedPlayers.contains(player.getUniqueId())) {
+                    player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.01);
+                }
             }
-        }.runTaskTimer(plugin, 0L, 20L);
+        }, 0L, 20L);
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player damagedPlayer)) return;
 
+        // Making sure the damaged player is cursed
         UUID damagedUUID = damagedPlayer.getUniqueId();
         if (!cursedPlayers.contains(damagedUUID)) return;
-        if (processingDamage.contains(damagedUUID) || curseChain.contains(damagedUUID)) return;
 
-        double damage = event.getDamage();
-        processingDamage.add(damagedUUID);
+        // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
+        if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
+        
+        // Making the fake damageSource
+        DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    curseChain.add(damagedUUID);
+        // Sharing curse damage with all other cursed players
+        for (UUID cursedUUID : cursedPlayers) {
+            // Skipping the player who was hit
+            if (cursedUUID == damagedUUID) continue;
 
-                    for (UUID cursedUUID : new HashSet<>(cursedPlayers)) {
-                        if (!cursedUUID.equals(damagedUUID)) {
-                            if (processingDamage.contains(cursedUUID) || curseChain.contains(cursedUUID)) continue;
-
-                            Player cursed = Bukkit.getPlayer(cursedUUID);
-                            if (cursed != null && cursed.isOnline() && !cursed.isDead()) {
-                                processingDamage.add(cursedUUID);
-                                curseChain.add(cursedUUID);
-                                cursed.damage(damage, damagedPlayer);
-
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        processingDamage.remove(cursedUUID);
-                                        curseChain.remove(cursedUUID);
-                                    }
-                                }.runTaskLater(plugin, 5L);
-                            }
-                        }
-                    }
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            processingDamage.remove(damagedUUID);
-                            curseChain.remove(damagedUUID);
-                        }
-                    }.runTaskLater(plugin, 5L);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    processingDamage.remove(damagedUUID);
-                    curseChain.remove(damagedUUID);
-                }
-            }
-        }.runTaskLater(plugin, 1L);
+            Player player = Bukkit.getPlayer(cursedUUID);
+            player.damage(event.getDamage(), fakeSource);
+        }
     }
 
     private boolean isTeammate(Player player, Player caster) {
@@ -147,6 +97,7 @@ public class Ender implements Listener {
 
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
+        // Teleporting the player in the direction they're looking
         Location startLoc = player.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
         int maxDistance = 15;
@@ -171,63 +122,59 @@ public class Ender implements Listener {
     }
 
     private static boolean isSafeTeleportLocation(Location loc) {
-        World world = loc.getWorld();
-        if (world == null) return false;
-
-        Location feet = loc.clone();
-        Location head = loc.clone().add(0, 1, 0);
-
-        return !feet.getBlock().getType().isSolid() && !head.getBlock().getType().isSolid();
+        return loc.getBlock().getType().isAir() && loc.clone().add(0, 1, 0).getBlock().getType().isAir();
     }
 
-
     @EventHandler
-    public void onPlayerHit(EntityDamageByEntityEvent event) {
+    public void enderOnehitMobs(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof LivingEntity mob)) return;
+        if (event.getEntity() instanceof Player) return;
+
         UUID attackerUUID = attacker.getUniqueId();
-        long sparkActive1 = CooldownManager.getEffectTimeLeft(attackerUUID, "ender");
-        long sparkActive2 = CooldownManager.getEffectTimeLeft(attackerUUID, "aug_ender");
-        long sparkActive = Math.max(sparkActive1, sparkActive2);
-        if (event.getEntity() instanceof LivingEntity mob && !(event.getEntity() instanceof Player)) {
-            if (sparkActive > 0) {
-                mob.setHealth(0);
-            }
+        if (CooldownManager.isEffectActive(attackerUUID, "ender")) {
+            mob.setHealth(0);
         }
     }
 
     @EventHandler
     public void onUseDragonBreath(PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND) return;
-        Player player = event.getPlayer();
+        // Listening for right clicks
         Action action = event.getAction();
         if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-        if (EffectMapping.ENDER.hasEffect(player) || EffectMapping.AUG_ENDER.hasEffect(player)) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType() != Material.DRAGON_BREATH) return;
+        
+        // Making sure the player has the ender effect
+        Player player = event.getPlayer();
+        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
 
-            shootCursingFireball(player);
-            event.setCancelled(true);
-        }
+        // Making sure the player used a bottle of dragons breath
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() != Material.DRAGON_BREATH) return;
+
+        // Making sure the cursing fireball isn't on cooldown
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
+
+        shootCursingFireball(player);
+        event.setCancelled(true);
     }
-
 
     public void shootCursingFireball(Player player) {
         UUID uuid = player.getUniqueId();
 
-        int cooldown = dragonBreathCooldowns.getOrDefault(uuid, 0);
-        if (cooldown > 0) {
-            return;
-        }
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
+
         ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem.getAmount() > 1) {
             handItem.setAmount(handItem.getAmount() - 1);
         } else {
             player.getInventory().setItemInMainHand(null);
         }
+
         Fireball fireball = player.launchProjectile(DragonFireball.class);
         fireball.setIsIncendiary(false);
         fireball.customName(fireballName);
-        dragonBreathCooldowns.put(uuid, 30);
+
+        CooldownManager.setCooldown(uuid, "ender_fireball", 30);
 
         Vector velocity = fireball.getVelocity();
         velocity.multiply(2.0);
@@ -246,7 +193,6 @@ public class Ender implements Listener {
 
         event.setDamage(0);
     }
-
 
     @EventHandler
     public void onFireballHit(ProjectileHitEvent event) {
