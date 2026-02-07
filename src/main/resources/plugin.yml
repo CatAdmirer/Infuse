@@ -1,7 +1,7 @@
 name: Infuse
-version: '2.1.0'
+version: '$version'
 main: com.catadmirer.infuseSMP.Infuse
-api-version: '1.21'
+api-version: '$mcVersion'
 author: "CatAdmirer"
 softdepend: [PlaceholderAPI, LifeStealZ]
 commands:
