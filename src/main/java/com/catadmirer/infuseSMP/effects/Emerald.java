@@ -64,12 +64,10 @@ public class Emerald implements Listener {
     }
 
     private boolean isSword(ItemStack item) {
-        if (item == null) {
-            return false;
-        } else {
-            Material type = item.getType();
-            return type == Material.WOODEN_SWORD || type == Material.STONE_SWORD || type == Material.IRON_SWORD || type == Material.GOLDEN_SWORD || type == Material.DIAMOND_SWORD || type == Material.NETHERITE_SWORD;
-        }
+        if (item == null) return false;
+
+        Material type = item.getType();
+        return type == Material.WOODEN_SWORD || type == Material.STONE_SWORD || type == Material.IRON_SWORD || type == Material.GOLDEN_SWORD || type == Material.DIAMOND_SWORD || type == Material.NETHERITE_SWORD;
     }
 
     @EventHandler
