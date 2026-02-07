@@ -47,11 +47,7 @@ public class Emerald implements Listener {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!EffectMapping.EMERALD.hasEffect(player)) continue;
 
-                    ItemStack mainHand = player.getInventory().getItemInMainHand();
-                    Emerald.this.applyPassiveEffects(player);
-                    if (Emerald.this.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
-                        mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
-                    }
+                    applyPassiveEffects(player);
                 }
             }
         }).runTaskTimer(plugin, 0L, 20L);
@@ -60,6 +56,11 @@ public class Emerald implements Listener {
     private void applyPassiveEffects(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
+
+        ItemStack mainHand = player.getInventory().getItemInMainHand();
+        if (isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
+        }
     }
 
     private boolean isSword(ItemStack item) {
