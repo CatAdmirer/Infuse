@@ -101,10 +101,8 @@ public class Apophis implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         UUID attackerUUID = attacker.getUniqueId();
 
-        long sparkActive = CooldownManager.getEffectTimeLeft(attackerUUID, "apophis");
-
         if (event.getEntity() instanceof Player target) {
-            if (sparkActive > 0) {
+            if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
                 target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), 0, 60, 0));
             }
         }
