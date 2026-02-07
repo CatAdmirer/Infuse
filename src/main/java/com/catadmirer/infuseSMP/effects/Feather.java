@@ -49,7 +49,6 @@ public class Feather implements Listener {
     public Feather(Infuse plugin, DataManager dataManager) {
         Feather.plugin = plugin;
         this.dataManager = dataManager;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler

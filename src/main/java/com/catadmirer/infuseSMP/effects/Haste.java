@@ -24,7 +24,6 @@ public class Haste implements Listener {
 
     public Haste(Infuse plugin) {
         Haste.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {

@@ -41,7 +41,6 @@ public class Emerald implements Listener {
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
 
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {

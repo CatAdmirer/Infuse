@@ -32,7 +32,6 @@ public class Heart implements Listener {
 
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         healthMonitor();
     }
 

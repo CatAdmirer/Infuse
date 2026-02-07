@@ -41,7 +41,6 @@ public class Frost implements Listener {
 
     public Frost(DataManager dataManager, Infuse plugin) {
         Frost.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {

@@ -28,7 +28,6 @@ public class Ocean implements Listener {
     public Ocean(Infuse plugin, DataManager dataManager) {
         Ocean.plugin = plugin;
         this.dataManager = dataManager;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {

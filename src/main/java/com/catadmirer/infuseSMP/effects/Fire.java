@@ -32,7 +32,6 @@ public class Fire implements Listener {
 
     public Fire(Infuse plugin) {
         Fire.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {

@@ -19,7 +19,6 @@ public class Regen implements Listener {
 
     public Regen(Infuse plugin) {
         Regen.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler

@@ -33,7 +33,6 @@ public class Invisibility implements Listener {
 
     public Invisibility(Infuse plugin) {
         Invisibility.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {

@@ -32,7 +32,6 @@ public class Speed implements Listener {
 
     public Speed(Infuse plugin) {
         Speed.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
