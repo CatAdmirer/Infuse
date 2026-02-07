@@ -70,15 +70,12 @@ public class Apophis implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        (new BukkitRunnable() {
-            public void run() {
-                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                if (maxHealthAttribute != null) {
-                    maxHealthAttribute.setBaseValue(20);
-                }
-
+        Bukkit.getScheduler().runTaskLater(plugin, task -> {
+            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttribute != null) {
+                maxHealthAttribute.setBaseValue(20);
             }
-        }).runTaskLater(plugin, 15L);
+        }, 15);
     }
 
     private void startHealthCheckTask() {
