@@ -19,7 +19,6 @@ repositories {
 dependencies {
     compileOnly "io.papermc.paper:paper-api:${minecraftVersion}-R0.1-SNAPSHOT"
     compileOnly "me.clip:placeholderapi:${placeholderAPIVersion}"
-    compileOnly files("libs/lifestealz-2.20.6.jar")
 }
 
 tasks {

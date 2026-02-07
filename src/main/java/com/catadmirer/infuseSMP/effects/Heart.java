@@ -1,13 +1,10 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.zetaplugins.lifestealz.LifeStealZ;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
@@ -36,33 +33,18 @@ public class Heart implements Listener {
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        LifestealZtask();
+        healthMonitor();
     }
 
-    private void LifestealZtask() {
+    private void healthMonitor() {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (Bukkit.getPluginManager().getPlugin("LifestealZ") == null) {
-                        if (EffectMapping.HEART.hasEffect(player)) {
-                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                            maxHealthAttribute.setBaseValue(30.0D);
-                        } else {
-                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                            maxHealthAttribute.setBaseValue(20.0D);
-                        }
-                    } else {
-                        double e = LifeStealZ.getAPI().getPlayerData(player.getUniqueId()).getMaxHealth();
-                        if (EffectMapping.HEART.hasEffect(player)) {
-                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                            maxHealthAttribute.setBaseValue(e + 10);
-                        } else {
-                            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                            maxHealthAttribute.setBaseValue(e);
-                        }
+                    if (EffectMapping.HEART.hasEffect(player)) {
+                        AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + 10);
                     }
                 }
-
             }
         }).runTaskTimer(plugin, 0L, 20L);
     }
