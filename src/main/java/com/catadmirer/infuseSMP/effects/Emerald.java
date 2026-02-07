@@ -30,7 +30,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -71,7 +70,7 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void pickupexp(PlayerPickupExperienceEvent event) {
+    public void emeraldExpMultiplier(PlayerPickupExperienceEvent event) {
         Player player = event.getPlayer();
 
         if (!EffectMapping.EMERALD.hasEffect(player)) return;
@@ -142,32 +141,31 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void onPlayerConsume(PlayerItemConsumeEvent event) {
-        if (event.getHand() == EquipmentSlot.HAND) {
-            final Player player = event.getPlayer();
-            ItemStack consumedItem = event.getItem();
-            int originalCount = consumedItem.getAmount();
-            if (EffectMapping.EMERALD.hasEffect(player)) {
-                if (consumedItem.getType() == Material.POTION) {
-                    return;
-                }
+    public void emeraldPreserveConsumables(PlayerItemConsumeEvent event) {
+        Player player = event.getPlayer();
 
-                double chance = 0.15;
-                if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.25;
+        // Making sure the player has the emerald effect
+        if (!(EffectMapping.EMERALD.hasEffect(player))) return;
 
-                if (Math.random() < chance) {
-                    ItemStack refund = consumedItem.clone();
-                    refund.setAmount(originalCount);
-                    event.setItem(refund);
-                    (new BukkitRunnable() {
-                        public void run() {
-                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-                            player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
-                        }
-                    }).runTaskLater(plugin, 1L);
-                }
-            }
-        }
+        ItemStack consumedItem = event.getItem();
+
+        // Not allowing potions to be be preserved
+        if (consumedItem.getType() == Material.POTION) return;
+
+        // Getting the chance for the item to not be consumed
+        double chance = 0.15;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.25;
+
+        // Rolling the dice
+        if (Math.random() > chance) return;
+
+        // Refunding the item
+        consumedItem.add(1);
+        event.setItem(consumedItem);
+
+        // Playing a noise
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

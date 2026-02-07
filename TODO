@@ -13,3 +13,6 @@ To get the character for the action bar:
 
 Player Schedulers!  They cancel automatically if the player goes offline.
     player.getScheduler().runDelayed(plugin, task -> { if (maxHealthAttribute != null) maxHealthAttribute.setBaseValue(20); }, null, 1200);
+
+
+Tie activateSpark to an instance of EffectMapping to prevent an error where a player can activate augmented sparks if the effects are the same type and only one of them is augmented.
