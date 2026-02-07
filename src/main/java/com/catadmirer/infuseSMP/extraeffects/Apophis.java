@@ -82,21 +82,18 @@ public class Apophis implements Listener {
     }
 
     private void startHealthCheckTask() {
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                    if (maxHealthAttribute == null) continue;
-                    double currentMaxHealth = maxHealthAttribute.getBaseValue();
+        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                    if (!EffectMapping.APOPHIS.hasEffect(player)) continue;
-
-                    if (currentMaxHealth == 20) {
+                if (EffectMapping.APOPHIS.hasEffect(player)) {
+                    if (currentMaxHealth != 30) {
                         maxHealthAttribute.setBaseValue(30);
                     }
                 }
             }
-        }).runTaskTimer(plugin, 0, 20);
+        }, 0, 20);
     }
 
     @EventHandler
