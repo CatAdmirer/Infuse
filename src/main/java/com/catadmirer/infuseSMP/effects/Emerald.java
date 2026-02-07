@@ -170,8 +170,10 @@ public class Emerald implements Listener {
         }
     }
 
-    public static void activateSpark(Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
+
+        // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
 
         // Applying effects for the emerald spark
@@ -179,7 +181,6 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_EMERALD || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_EMERALD;
         long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
         long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
 

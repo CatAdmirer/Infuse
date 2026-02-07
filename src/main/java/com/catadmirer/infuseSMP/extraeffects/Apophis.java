@@ -105,7 +105,7 @@ public class Apophis implements Listener {
         }
     }
 
-    public static void activateSpark(final Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -131,7 +131,6 @@ public class Apophis implements Listener {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_APOPHIS || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_APOPHIS;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
 

@@ -124,7 +124,7 @@ public class Fire implements Listener {
         }
     }
 
-    public static void activateSpark(final Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "fire")) {
@@ -144,7 +144,6 @@ public class Fire implements Listener {
             }.runTaskLater(plugin, 20L);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FIRE || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FIRE;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
 

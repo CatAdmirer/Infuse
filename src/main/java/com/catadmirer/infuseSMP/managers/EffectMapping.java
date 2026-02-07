@@ -6,8 +6,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;
 import java.util.List;
-import java.util.function.Consumer;
-
+import java.util.function.BiConsumer;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -58,7 +57,7 @@ public enum EffectMapping {
     private final int id;
     private final Color color;
     private final BossBar.Color ritualColor;
-    private final Consumer<Player> sparkFunction;
+    private final BiConsumer<Boolean,Player> sparkFunction;
 
     private EffectMapping regular;
     private EffectMapping augmented;
@@ -71,7 +70,7 @@ public enum EffectMapping {
      * @param potionColor The color for the potion and related chat messages.
      * @param ritualColor The bossbar color to use during rituals.
      */
-    private EffectMapping(String key, int id, Color potionColor, BossBar.Color ritualColor, Consumer<Player> sparkFunction) {
+    private EffectMapping(String key, int id, Color potionColor, BossBar.Color ritualColor, BiConsumer<Boolean,Player> sparkFunction) {
         this.key = key;
         this.id = id;
         this.color = potionColor;
@@ -296,7 +295,7 @@ public enum EffectMapping {
      * @param player The player to activate the spark ability for.
      */
     public void activateSpark(Player player) {
-        sparkFunction.accept(player);
+        sparkFunction.accept(isAugmented(), player);
     }
 
     /**

@@ -133,13 +133,12 @@ public class Ender implements Listener {
     }
 
 
-    public static void activateSpark(Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_ENDER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_ENDER;
         long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
         long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
 

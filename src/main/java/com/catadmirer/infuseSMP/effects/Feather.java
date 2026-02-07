@@ -195,7 +195,7 @@ public class Feather implements Listener {
         return result.toString();
     }
 
-    public static void activateSpark(final Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
@@ -208,7 +208,6 @@ public class Feather implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FEATHER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FEATHER;
         long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
         long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
 

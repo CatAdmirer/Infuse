@@ -55,14 +55,13 @@ public class Thunder implements Listener {
         }
     }
 
-    public static void activateSpark(final Player caster) {
+    public static void activateSpark(Boolean isAugmented, Player caster) {
         final UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "thunder")) {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_THUNDER || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_THUNDER;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
 

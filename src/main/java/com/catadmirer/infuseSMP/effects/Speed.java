@@ -85,7 +85,7 @@ public class Speed implements Listener {
         }
     }
 
-    public static void activateSpark(final Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "speed")) {
@@ -127,7 +127,6 @@ public class Speed implements Listener {
             }, 1L, 1L);
 
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_SPEED || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_SPEED;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
 

@@ -131,7 +131,7 @@ public class Frost implements Listener {
             }
         }
     }
-    public static void activateSpark(final Player caster) {
+    public static void activateSpark(Boolean isAugmented, Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "frost")) {
@@ -139,7 +139,6 @@ public class Frost implements Listener {
             caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
             
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_FROST || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_FROST;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
 

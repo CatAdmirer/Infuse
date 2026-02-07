@@ -64,14 +64,13 @@ public class Thief implements Listener {
         }
     }
 
-    public static void activateSpark(Player player) {
+    public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "thief")) return;
 
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1").isAugmented() || plugin.getDataManager().getEffect(playerUUID, "2").isAugmented();
         long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
         long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
 

@@ -115,7 +115,7 @@ public class Ocean implements Listener {
         }
     }
 
-    public static void activateSpark(final Player caster) {
+    public static void activateSpark(Boolean isAugmented, Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (!CooldownManager.isOnCooldown(playerUUID, "ocean")) {
@@ -124,7 +124,6 @@ public class Ocean implements Listener {
             final double radius = 5;
             final World world = caster.getWorld();
             // Applying cooldowns and durations for the effect
-            boolean isAugmented = plugin.getDataManager().getEffect(playerUUID, "1") == EffectMapping.AUG_OCEAN || plugin.getDataManager().getEffect(playerUUID, "2") == EffectMapping.AUG_OCEAN;
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
             long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
 
