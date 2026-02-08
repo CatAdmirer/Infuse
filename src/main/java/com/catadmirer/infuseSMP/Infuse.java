@@ -73,9 +73,6 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the data manager
         dataManager.load();
 
-        // Giving the mapping class an instance of the data manager
-        EffectMapping.init(dataManager);
-
         // Registering infuse commands
         this.registerCommands();
 
@@ -204,7 +201,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new Haste(this), this);
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
-        Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
+        Bukkit.getPluginManager().registerEvents(new Invis(this), this);
         Bukkit.getPluginManager().registerEvents(new Ocean(this, dataManager), this);
         Bukkit.getPluginManager().registerEvents(new Regen(this), this);
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
