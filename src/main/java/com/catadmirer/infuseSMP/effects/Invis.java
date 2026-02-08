@@ -26,13 +26,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Invisibility implements Listener {
+public class Invis implements Listener {
     private static Infuse plugin;
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
-    public Invisibility(Infuse plugin) {
-        Invisibility.plugin = plugin;
+    public Invis(Infuse plugin) {
+        Invis.plugin = plugin;
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
