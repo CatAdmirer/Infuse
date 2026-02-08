@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
+import com.catadmirer.infuseSMP.listeners.EmeraldListeners;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
@@ -194,7 +195,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
 
         // Registering events for all the effects
-        Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
+        Bukkit.getPluginManager().registerEvents(new EmeraldListeners(this), this);
         Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
