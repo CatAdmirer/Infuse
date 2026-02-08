@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
+import com.catadmirer.infuseSMP.listeners.ApophisListeners;
 import com.catadmirer.infuseSMP.listeners.EmeraldListeners;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
@@ -211,7 +212,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Enabling apophis listeners if the config allows
         if (mainConfig.enableApophis()) {
-            getServer().getPluginManager().registerEvents(new Apophis(this), this);
+            getServer().getPluginManager().registerEvents(new ApophisListeners(this), this);
         }
 
         // Enabling thief listeners if the config allows
