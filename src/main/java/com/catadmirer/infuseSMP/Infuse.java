@@ -189,7 +189,7 @@ public class Infuse extends JavaPlugin implements Listener {
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(this), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(new EquipEffect(this, apophisManager), this);
         Bukkit.getPluginManager().registerEvents(this, this);

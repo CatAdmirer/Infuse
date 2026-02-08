@@ -46,7 +46,7 @@ public class Abilities implements CommandExecutor {
             return true;
         }
 
-        equippedEffect.activateSpark(player);
+        equippedEffect.activateSpark(plugin, player);
 
         return true;
     }
