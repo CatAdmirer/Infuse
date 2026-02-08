@@ -163,6 +163,30 @@ public class DataManager {
         return effect;
     }
 
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect) {
+        return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented) {
+        return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");        
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, String slot) {
+        return effect.equals(getEffect(player.getUniqueId(), slot));
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot) {
+        EffectMapping equippedEffect = getEffect(player.getUniqueId(), slot);
+
+        if (equippedEffect == null) return false;
+
+        if (differentiateAugmented) {
+            return effect == equippedEffect;
+        }
+
+        return effect.regular() == equippedEffect.regular();
+    }
+
     public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
         save();
