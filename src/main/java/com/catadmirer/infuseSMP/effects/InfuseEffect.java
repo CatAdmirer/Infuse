@@ -59,6 +59,11 @@ public abstract class InfuseEffect {
 
     public abstract List<Component> getItemLore();
 
+    public abstract void equip(Player player);
+    public abstract void unequip(Player player);
+
+    public abstract void activateSpark(Infuse plugin, Player player);
+
     public char getIcon() {
         return (char) Integer.parseInt("E" + (augmented ? 2 : 0) + String.format("%02d", id), 16);
     }
@@ -162,9 +167,4 @@ public abstract class InfuseEffect {
 
         return null;
     }
-
-    public void equip(Player player) {}
-    public void unequip(Player player) {}
-
-    public abstract void activateSpark(Player player);
 }

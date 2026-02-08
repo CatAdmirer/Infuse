@@ -14,8 +14,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald extends InfuseEffect {
-    private static Infuse plugin;
-
     public Emerald() {
         super(1, "emerald", false, Color.GREEN, BossBar.Color.GREEN);
     }
@@ -46,7 +44,8 @@ public class Emerald extends InfuseEffect {
         player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
     }
 
-    public void activateSpark(Player player) {
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown
