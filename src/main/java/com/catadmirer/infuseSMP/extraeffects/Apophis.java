@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -40,7 +40,7 @@ public class Apophis implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.APOPHIS.hasEffect(onlinePlayer)) continue;
+                    if (!plugin.getDataManager().hasEffect(onlinePlayer, new Apophis())) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Apophis.this.applyPassiveEffects(onlinePlayer);
@@ -84,7 +84,7 @@ public class Apophis implements Listener {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                 double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                if (EffectMapping.APOPHIS.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, new Apophis())) {
                     if (currentMaxHealth != 30) {
                         maxHealthAttribute.setBaseValue(30);
                     }
@@ -131,8 +131,8 @@ public class Apophis implements Listener {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);

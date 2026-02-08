@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -27,7 +27,7 @@ public class Haste implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.HASTE.hasEffect(player)) {
+                    if (plugin.getDataManager().hasEffect(player, new Haste())) {
                         Haste.this.enchantItemIfApplicable(player);
                     }
                 }
@@ -56,8 +56,8 @@ public class Haste implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "haste", duration);
             CooldownManager.setCooldown(playerUUID, "haste", cooldown);
@@ -71,7 +71,7 @@ public class Haste implements Listener {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
-            if (offHand.getType() == Material.SHIELD && player.isBlocking() && EffectMapping.HASTE.hasEffect(player)) {
+            if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, new Haste())) {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);

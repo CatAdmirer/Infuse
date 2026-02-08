@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -37,7 +38,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         Component time = Component.empty();
 
         // Getting the effect equipped in the slot
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
         boolean emptyEffectEmoji = plugin.getConfigFile().emptyEffectIcon();
@@ -46,11 +47,11 @@ public class ActionBarUpdater extends BukkitRunnable {
         }
 
         // Getting the right emoji to use and time to display
-        String key = effect.regular().getKey();
+        String key = effect.getName();
         char emoji = effect.getIcon();
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-            time = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getColor().getRGB()));
+            time = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getPotionColor().getRGB()));
             emoji = effect.getActiveIcon();
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
@@ -69,7 +70,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         Component time = Component.empty();
 
         // Getting the effect equipped in the slot
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
         boolean emptyEffectEmoji = plugin.getConfigFile().emptyEffectIcon();
@@ -78,11 +79,11 @@ public class ActionBarUpdater extends BukkitRunnable {
         }
 
         // Getting the right emoji to use and time to display
-        String key = effect.regular().getKey();
+        String key = effect.getName();
         char emoji = effect.getIcon();
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-            time = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getColor().getRGB()));
+            time = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getPotionColor().getRGB()));
             emoji = effect.getActiveIcon();
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;

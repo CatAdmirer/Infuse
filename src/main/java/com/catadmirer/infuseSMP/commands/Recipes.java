@@ -1,10 +1,11 @@
 package com.catadmirer.infuseSMP.commands;
 
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import java.io.File;
@@ -95,22 +96,22 @@ public class Recipes implements CommandExecutor, Listener {
     @Nullable
     public static ItemStack createPotion(String potionName) {
         return switch (potionName) {
-            case "emerald" -> EffectMapping.AUG_EMERALD.createItem();
-            case "aug_ender" -> EffectMapping.AUG_ENDER.createItem();
-            case "ender" -> EffectMapping.ENDER.createItem();
-            case "feather" -> EffectMapping.AUG_FEATHER.createItem();
-            case "fire" -> EffectMapping.AUG_FIRE.createItem();
-            case "frost" -> EffectMapping.AUG_FROST.createItem();
-            case "haste" -> EffectMapping.AUG_HASTE.createItem();
-            case "heart" -> EffectMapping.AUG_HEART.createItem();
-            case "invis" -> EffectMapping.AUG_INVIS.createItem();
-            case "ocean" -> EffectMapping.AUG_OCEAN.createItem();
-            case "regen" -> EffectMapping.AUG_REGEN.createItem();
-            case "speed" -> EffectMapping.AUG_SPEED.createItem();
-            case "strength" -> EffectMapping.AUG_STRENGTH.createItem();
-            case "thunder" -> EffectMapping.AUG_THUNDER.createItem();
-            case "apophis" -> EffectMapping.AUG_APOPHIS.createItem();
-            case "thief" -> EffectMapping.AUG_THIEF.createItem();
+            case "emerald" -> new Emerald(true).createItem();
+            case "aug_ender" -> new Ender(true).createItem();
+            case "ender" -> new Ender().createItem();
+            case "feather" -> new Feather(true).createItem();
+            case "fire" -> new Fire(true).createItem();
+            case "frost" -> new Frost(true).createItem();
+            case "haste" -> new Haste(true).createItem();
+            case "heart" -> new Heart(true).createItem();
+            case "invis" -> new Invis(true).createItem();
+            case "ocean" -> new Ocean(true).createItem();
+            case "regen" -> new Regen(true).createItem();
+            case "speed" -> new Speed(true).createItem();
+            case "strength" -> new Strength(true).createItem();
+            case "thunder" -> new Thunder(true).createItem();
+            case "apophis" -> new Apophis(true).createItem();
+            case "thief" -> new Thief(true).createItem();
             default -> null;
         };
     }
@@ -263,24 +264,14 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @Nullable
     private String getPotionKeyFromItem(@Nullable ItemStack item) {
-        return switch (EffectMapping.fromItem(item)) {
-            case APOPHIS, AUG_APOPHIS -> "apophis";
-            case EMERALD, AUG_EMERALD -> "emerald";
-            case AUG_ENDER -> "aug_ender";
-            case ENDER -> "ender";
-            case FEATHER, AUG_FEATHER -> "feather";
-            case FIRE, AUG_FIRE -> "fire";
-            case FROST, AUG_FROST -> "frost";
-            case HASTE, AUG_HASTE -> "haste";
-            case HEART, AUG_HEART -> "heart";
-            case INVIS, AUG_INVIS -> "invis";
-            case OCEAN, AUG_OCEAN -> "ocean";
-            case REGEN, AUG_REGEN -> "regen";
-            case SPEED, AUG_SPEED -> "speed";
-            case STRENGTH, AUG_STRENGTH -> "strength";
-            case THIEF, AUG_THIEF -> "thief";
-            case THUNDER, AUG_THUNDER -> "thunder";
-            default -> null;
-        };
+        InfuseEffect effect = InfuseEffect.fromItem(item);
+
+        if (effect == null) return null;
+
+        if (effect.getId() == EffectIds.ENDER) {
+            return effect.isAugmented() ? "aug_ender" : "ender";
+        }
+
+        return effect.getName();
     }
 }

@@ -1,10 +1,11 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,22 +44,22 @@ public class GUI implements Listener, CommandExecutor {
             event.setCancelled(true);
 
             // Determining the next menu to open
-            switch (EffectMapping.fromItem(clicked)) {
-                case AUG_APOPHIS -> augmentedOrRegular(player, EffectMapping.AUG_APOPHIS.createItem(), EffectMapping.APOPHIS.createItem(), Material.MAGENTA_STAINED_GLASS_PANE);
-                case AUG_EMERALD -> augmentedOrRegular(player, EffectMapping.AUG_EMERALD.createItem(), EffectMapping.EMERALD.createItem(), Material.LIME_STAINED_GLASS_PANE);
-                case AUG_ENDER -> augmentedOrRegular(player, EffectMapping.AUG_ENDER.createItem(), EffectMapping.ENDER.createItem(), Material.PURPLE_STAINED_GLASS_PANE);
-                case AUG_FEATHER -> augmentedOrRegular(player, EffectMapping.AUG_FEATHER.createItem(), EffectMapping.FEATHER.createItem(), Material.WHITE_STAINED_GLASS_PANE);
-                case AUG_FIRE -> augmentedOrRegular(player, EffectMapping.AUG_FIRE.createItem(), EffectMapping.FIRE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
-                case AUG_FROST -> augmentedOrRegular(player, EffectMapping.AUG_FROST.createItem(), EffectMapping.FROST.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-                case AUG_HASTE -> augmentedOrRegular(player, EffectMapping.AUG_HASTE.createItem(), EffectMapping.HASTE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
-                case AUG_HEART -> augmentedOrRegular(player, EffectMapping.AUG_HEART.createItem(), EffectMapping.HEART.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_INVIS -> augmentedOrRegular(player, EffectMapping.AUG_INVIS.createItem(), EffectMapping.INVIS.createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-                case AUG_OCEAN -> augmentedOrRegular(player, EffectMapping.AUG_OCEAN.createItem(), EffectMapping.OCEAN.createItem(), Material.BLUE_STAINED_GLASS_PANE);
-                case AUG_REGEN -> augmentedOrRegular(player, EffectMapping.AUG_REGEN.createItem(), EffectMapping.REGEN.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_SPEED -> augmentedOrRegular(player, EffectMapping.AUG_SPEED.createItem(), EffectMapping.SPEED.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-                case AUG_STRENGTH -> augmentedOrRegular(player, EffectMapping.AUG_STRENGTH.createItem(), EffectMapping.STRENGTH.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_THIEF -> augmentedOrRegular(player, EffectMapping.AUG_THIEF.createItem(), EffectMapping.THIEF.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_THUNDER -> augmentedOrRegular(player, EffectMapping.AUG_THUNDER.createItem(), EffectMapping.THUNDER.createItem(), Material.YELLOW_STAINED_GLASS_PANE);
+            switch (InfuseEffect.fromItem(clicked).getId()) {
+                case EffectIds.APOPHIS -> augmentedOrRegular(player, new Apophis(true).createItem(), new Apophis().createItem(), Material.MAGENTA_STAINED_GLASS_PANE);
+                case EffectIds.EMERALD -> augmentedOrRegular(player, new Emerald(true).createItem(), new Emerald().createItem(), Material.LIME_STAINED_GLASS_PANE);
+                case EffectIds.ENDER -> augmentedOrRegular(player, new Ender(true).createItem(), new Ender().createItem(), Material.PURPLE_STAINED_GLASS_PANE);
+                case EffectIds.FEATHER -> augmentedOrRegular(player, new Feather(true).createItem(), new Feather().createItem(), Material.WHITE_STAINED_GLASS_PANE);
+                case EffectIds.FIRE -> augmentedOrRegular(player, new Fire(true).createItem(), new Fire().createItem(), Material.ORANGE_STAINED_GLASS_PANE);
+                case EffectIds.FROST -> augmentedOrRegular(player, new Frost(true).createItem(), new Frost().createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+                case EffectIds.HASTE -> augmentedOrRegular(player, new Haste(true).createItem(), new Haste().createItem(), Material.ORANGE_STAINED_GLASS_PANE);
+                case EffectIds.HEART -> augmentedOrRegular(player, new Heart(true).createItem(), new Heart().createItem(), Material.RED_STAINED_GLASS_PANE);
+                case EffectIds.INVIS -> augmentedOrRegular(player, new Invis(true).createItem(), new Invis().createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+                case EffectIds.OCEAN -> augmentedOrRegular(player, new Ocean(true).createItem(), new Ocean().createItem(), Material.BLUE_STAINED_GLASS_PANE);
+                case EffectIds.REGEN -> augmentedOrRegular(player, new Regen(true).createItem(), new Regen().createItem(), Material.RED_STAINED_GLASS_PANE);
+                case EffectIds.SPEED -> augmentedOrRegular(player, new Speed(true).createItem(), new Speed().createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+                case EffectIds.STRENGTH -> augmentedOrRegular(player, new Strength(true).createItem(), new Strength().createItem(), Material.RED_STAINED_GLASS_PANE);
+                case EffectIds.THIEF -> augmentedOrRegular(player, new Thief(true).createItem(), new Thief().createItem(), Material.RED_STAINED_GLASS_PANE);
+                case EffectIds.THUNDER -> augmentedOrRegular(player, new Thunder(true).createItem(), new Thunder().createItem(), Material.YELLOW_STAINED_GLASS_PANE);
                 default -> {}
             }
         }

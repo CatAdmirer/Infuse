@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.UUID;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,7 +36,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        EffectMapping equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
+        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {

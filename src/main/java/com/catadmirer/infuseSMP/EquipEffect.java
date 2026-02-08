@@ -1,8 +1,7 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
@@ -29,9 +28,9 @@ public class EquipEffect implements Listener {
 
         // Giving the player their starting effects if they haven't been given already
         if (!player.hasPlayedBefore() && plugin.getConfigFile().joinEffectsEnabled()) {
-            List<EffectMapping> effects = plugin.getConfigFile().joinEffects();
+            List<InfuseEffect> effects = plugin.getConfigFile().joinEffects();
             if (effects.isEmpty()) return;
-            EffectMapping effect = effects.get(new Random().nextInt(effects.size()));
+            InfuseEffect effect = effects.get(new Random().nextInt(effects.size()));
             equipEffect(player, effect, "2");
         }
     }
@@ -43,7 +42,7 @@ public class EquipEffect implements Listener {
      * @param player The player who will get the effect
      * @param effect The effect to give the player
      */
-    public void safeEquip(Player player, EffectMapping effect) {
+    public void safeEquip(Player player, InfuseEffect effect) {
         if (!equipEffect(player, effect, "1") && !equipEffect(player, effect, "2")) {
             player.performCommand("rdrain");
             equipEffect(player, effect, "2");
@@ -59,9 +58,9 @@ public class EquipEffect implements Listener {
      * 
      * @return Returns false if the slot is already taken.
      */
-    private boolean equipEffect(Player player, EffectMapping effect, String slot) {
+    private boolean equipEffect(Player player, InfuseEffect effect, String slot) {
         // Checking for an effect in the slot.
-        EffectMapping currentEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect currentEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) return false;
         
         // Equipping the effect to the slot.
@@ -70,9 +69,7 @@ public class EquipEffect implements Listener {
         msg = msg.replace("%effect_name%", effect.getName());
         player.sendMessage(Messages.toComponent(msg));
 
-        if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
-            Thief.equipThief(player);
-        }
+        effect.equip(player);
 
         return true;
     }
@@ -88,7 +85,7 @@ public class EquipEffect implements Listener {
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
         // Getting the effect from the item
-        EffectMapping effect = EffectMapping.fromItem(mainHandItem);
+        InfuseEffect effect = InfuseEffect.fromItem(mainHandItem);
         // Skipping if the effect is not found.
         if (effect == null) return;
 
@@ -104,11 +101,6 @@ public class EquipEffect implements Listener {
 
         // Removing the effect from the player
         event.setItem(event.getItem().subtract(1));
-
-        // Performing special logic for the apophis effect.
-        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            apophisManager.disguiseAsApophis(player);
-        }
     }
 
     /**
@@ -119,8 +111,8 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        EffectMapping effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        InfuseEffect effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        InfuseEffect effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
         String dropMode = plugin.getConfigFile().effectDrops();
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
@@ -177,7 +169,7 @@ public class EquipEffect implements Listener {
      */
     private void dropEffect(Player player, String slot) {
         // Getting the equipped effect from the data file.
-        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 
         // Removing the effect from the player.

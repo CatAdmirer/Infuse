@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.particles.Particles;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,7 +99,7 @@ public class Feather implements Listener {
         if (event.getEntity() instanceof Player player) {
             if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
                 if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!EffectMapping.FEATHER.hasEffect(player)) return;
+                if (!plugin.getDataManager().hasEffect(player, new Feather())) return;
                 if (event.getCause() == DamageCause.FALL) return;
 
                 UUID uuid = player.getUniqueId();
@@ -124,7 +124,7 @@ public class Feather implements Listener {
     public void onPlayerFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (EffectMapping.FEATHER.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, new Feather())) {
                     event.setCancelled(true);
                 }
             }
@@ -134,7 +134,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (EffectMapping.FEATHER.hasEffect(player)) {
+        if (plugin.getDataManager().hasEffect(player, new Feather())) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item != null && item.getType() == Material.WIND_CHARGE) {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
@@ -162,7 +162,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (EffectMapping.FEATHER.hasEffect(attacker)) {
+            if (plugin.getDataManager().hasEffect(player, new Feather())) {
                 double fallDistance = attacker.getFallDistance();
                 if (fallDistance >= 7) {
                     attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
@@ -207,8 +207,8 @@ public class Feather implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "feather", duration);
         CooldownManager.setCooldown(playerUUID, "feather", cooldown);

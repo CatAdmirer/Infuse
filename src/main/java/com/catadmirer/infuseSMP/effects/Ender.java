@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import net.kyori.adventure.text.Component;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ public class Ender implements Listener {
         Ender.plugin = plugin;
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (EffectMapping.ENDER.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, new Ender())) {
                     applyGlowingToUntrusted(player);
                 }
 
@@ -89,8 +89,8 @@ public class Ender implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "ender", duration);
         CooldownManager.setCooldown(playerUUID, "ender", cooldown);
@@ -145,7 +145,7 @@ public class Ender implements Listener {
         
         // Making sure the player has the ender effect
         Player player = event.getPlayer();
-        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Ender())) return;
 
         // Making sure the player used a bottle of dragons breath
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -212,7 +212,7 @@ public class Ender implements Listener {
     }
 
     public void applyGlowingToUntrusted(Player player) {
-        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Ender())) return;
 
         double radius = 10;
 

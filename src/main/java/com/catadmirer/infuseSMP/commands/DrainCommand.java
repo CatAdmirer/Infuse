@@ -1,9 +1,10 @@
 package com.catadmirer.infuseSMP.commands;
 
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,7 +39,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Getting the mapping from the slot
-        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
 
         // Handling an invalid or empty mapping
         if (effect == null) {
@@ -59,7 +60,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
 
         // Handling special apophis effects
-        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
+        if (effect.getId() == EffectIds.APOPHIS) {
             plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
             ItemStack glitchItem = effect.createItem();
             player.getInventory().addItem(glitchItem);

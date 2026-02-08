@@ -1,12 +1,14 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -143,48 +145,47 @@ public class DataManager {
         return getTrusted(caster).contains(trusted);
     }
 
-    public void setEffect(UUID playerUUID, String slot, @Nullable EffectMapping effect) {
+    public void setEffect(UUID playerUUID, String slot, @Nullable InfuseEffect effect) {
         if (effect == null) {
             config.set(playerUUID.toString() + "." + slot, null);
         } else {
-            config.set(playerUUID.toString() + "." + slot, effect.name());
+            config.set(playerUUID.toString() + "." + slot, effect.getKey());
         }
         save();
     }
 
-
     @Nullable
-    public EffectMapping getEffect(UUID playerUUID, String slot) {
+    public InfuseEffect getEffect(UUID playerUUID, String slot) {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
-        EffectMapping effect = EffectMapping.fromEffectKey(effectKey);
+        InfuseEffect effect = InfuseEffect.fromEffectKey(effectKey);
         if (effectKey != null && effect == null) {
             Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
         }
         return effect;
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect) {
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect) {
         return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented) {
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented) {
         return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");        
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, String slot) {
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, String slot) {
         return effect.equals(getEffect(player.getUniqueId(), slot));
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot) {
-        EffectMapping equippedEffect = getEffect(player.getUniqueId(), slot);
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented, String slot) {
+        InfuseEffect equippedEffect = getEffect(player.getUniqueId(), slot);
 
         if (equippedEffect == null) return false;
 
         if (differentiateAugmented) {
-            return effect == equippedEffect;
+            return effect.equals(equippedEffect);
         }
 
-        return effect.regular() == equippedEffect.regular();
+        return effect.getName().equals(equippedEffect.getName());
     }
 
     public void removeEffect(UUID playerUUID, String slot) {

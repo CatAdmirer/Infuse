@@ -6,7 +6,7 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -31,7 +31,7 @@ public class Ocean implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.OCEAN.hasEffect(p)) {
+                    if (plugin.getDataManager().hasEffect(p, new Speed())) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
                     }
@@ -42,7 +42,7 @@ public class Ocean implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player effectHolder : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, new Speed())) continue;
 
                     for (Player p : effectHolder.getWorld().getPlayers()) {
                         if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5 && p.getLocation().getBlock().isLiquid()) {
@@ -64,7 +64,7 @@ public class Ocean implements Listener {
                     if (!CooldownManager.isEffectActive(effectHolder.getUniqueId(), "ocean")) {
                         continue;
                     }
-                    if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, new Speed())) continue;
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
                     double radius = plugin.getConfigFile().oceanPullRadius();
@@ -123,8 +123,8 @@ public class Ocean implements Listener {
             final double radius = 5;
             final World world = caster.getWorld();
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "ocean", duration);
             CooldownManager.setCooldown(playerUUID, "ocean", cooldown);

@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.placeholders;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -63,23 +63,23 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectIcon(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
 
         if (effect == null) {
             return plugin.getConfigFile().emptyEffectIcon() ? "\uE901" : "";
         }
 
-        return "" + (CooldownManager.isEffectActive(uuid, effect.regular().getKey()) ? effect.getActiveIcon() : effect.getIcon());
+        return "" + (CooldownManager.isEffectActive(uuid, effect.getName()) ? effect.getActiveIcon() : effect.getIcon());
     }
 
     public String getTime(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         String key = effect.getKey();
         Component comp;
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getColor().getRGB()));
+            comp = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getPotionColor().getRGB()));
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
             comp = MessageUtil.formatTime(timeLeft, NamedTextColor.WHITE);
@@ -90,14 +90,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect== null) return "";
         
         return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
     }
 
     public String getEffectName(UUID uuid, String slot) {
-        EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         
         return effect.getName();

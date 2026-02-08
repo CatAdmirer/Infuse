@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ public class Drop implements Listener {
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
         if (this.isInfuseEffect(item)) {
-            this.playDustEffect(true, EffectMapping.fromItem(item), event.getItem().getLocation());
+            this.playDustEffect(true, InfuseEffect.fromItem(item), event.getItem().getLocation());
         }
     }
 
@@ -39,15 +40,15 @@ public class Drop implements Listener {
         final Item droppedItem = event.getItemDrop();
         ItemStack itemStack = droppedItem.getItemStack();
         if (this.isInfuseEffect(itemStack)) {
-            this.playDustEffectDrop(false, EffectMapping.fromItem(itemStack), droppedItem.getLocation());
+            this.playDustEffectDrop(false, InfuseEffect.fromItem(itemStack), droppedItem.getLocation());
             droppedItem.setGlowing(true);
         }
     }
 
-    private void playDustEffect(final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
+    private void playDustEffect(final boolean bottomToTop, @NotNull InfuseEffect effect, Location location) {
         final Location base = location.add(0, 0.1, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getColor().getRGB());
+        Color color = Color.fromRGB(effect.getPotionColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;
@@ -74,10 +75,10 @@ public class Drop implements Listener {
         world.playSound(base, Sound.ENTITY_TURTLE_EGG_BREAK, 1.3F, 1.2F);
     }
 
-    private void playDustEffectDrop(final boolean bottomToTop, EffectMapping effect, Location location) {
+    private void playDustEffectDrop(final boolean bottomToTop, InfuseEffect effect, Location location) {
         final Location base = location.add(0, -1.5, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getColor().getRGB());
+        Color color = Color.fromRGB(effect.getPotionColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;

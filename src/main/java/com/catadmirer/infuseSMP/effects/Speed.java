@@ -5,7 +5,7 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.particles.Particles;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -35,7 +35,7 @@ public class Speed implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.SPEED.hasEffect(p)) continue;
+                    if (!plugin.getDataManager().hasEffect(p, new Speed())) continue;
 
                     UUID uuid = p.getUniqueId();
                     long lastHit = Speed.this.lastHitTime.getOrDefault(uuid, 0L);
@@ -53,7 +53,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (EffectMapping.SPEED.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Speed())) {
                 long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
                 double adjustedPullTimeMs = pullTimeMs * 1.8;
@@ -67,7 +67,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (EffectMapping.SPEED.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Speed())) {
                 UUID uuid = player.getUniqueId();
                 long currentTime = System.currentTimeMillis();
                 long lastHit = this.lastHitTime.getOrDefault(uuid, 0L);
@@ -126,8 +126,8 @@ public class Speed implements Listener {
             }, 1L, 1L);
 
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "speed", duration);
             CooldownManager.setCooldown(playerUUID, "speed", cooldown);

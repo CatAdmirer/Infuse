@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class Fire implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (EffectMapping.FIRE.hasEffect(player)) {
+                    if (plugin.getDataManager().hasEffect(player, new Fire())) {
                         applyFireResistance(player);
                         handleSwim(player);
                     }
@@ -62,7 +62,7 @@ public class Fire implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inLava = player.isInLava();
         if (!event.isGliding()) {
-            if (inLava && EffectMapping.FIRE.hasEffect(player)) {
+            if (inLava && plugin.getDataManager().hasEffect(player, new Fire())) {
                 event.setCancelled(true);
             }
         }
@@ -73,7 +73,7 @@ public class Fire implements Listener {
         Player player = event.getPlayer();
         boolean inLava = player.isInLava();
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inLava && EffectMapping.FIRE.hasEffect(player)) {
+        if (inLava && plugin.getDataManager().hasEffect(player, new Fire())) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -84,7 +84,7 @@ public class Fire implements Listener {
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (EffectMapping.FIRE.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Fire())) {
                 if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
                     projectile.setFireTicks(100);
                 }
@@ -96,7 +96,7 @@ public class Fire implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (EffectMapping.FIRE.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, new Fire())) {
                     Material blockType = player.getLocation().getBlock().getType();
                     if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
                         event.setCancelled(true);
@@ -110,7 +110,7 @@ public class Fire implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (EffectMapping.FIRE.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Fire())) {
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
                 if (count >= 20) {
@@ -143,8 +143,8 @@ public class Fire implements Listener {
             }.runTaskLater(plugin, 20L);
             
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "fire", duration);
             CooldownManager.setCooldown(playerUUID, "fire", cooldown);

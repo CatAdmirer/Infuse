@@ -15,7 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 
 public class Strength implements Listener {
@@ -35,8 +36,8 @@ public class Strength implements Listener {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "strength", duration);
         CooldownManager.setCooldown(playerUUID, "strength", cooldown);
@@ -47,7 +48,7 @@ public class Strength implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
 
         // Skipping players without the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Strength())) return;
 
         // Boosting damage based on the attacker's health.
         double damage = event.getDamage();
@@ -86,7 +87,7 @@ public class Strength implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
 
         // Making sure the shooter has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Strength())) return;
 
         // Increasing the piercing level of the shot arrow.
         if (event.getProjectile() instanceof Arrow arrow) {
@@ -104,7 +105,7 @@ public class Strength implements Listener {
         if (entity instanceof Player) return;
 
         // Making sure the attacker has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Strength())) return;
 
         // Doubling the damage of the attack
         event.setDamage(event.getDamage() * 2);
@@ -123,7 +124,7 @@ public class Strength implements Listener {
         if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 
         // Making sure the attacker has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Strength())) return;
 
         // Playing noise and stunning the opponent
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);

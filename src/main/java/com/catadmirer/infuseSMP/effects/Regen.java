@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class Regen implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (EffectMapping.REGEN.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Regen())) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 1, false, false));
             }
         }
@@ -33,7 +33,7 @@ public class Regen implements Listener {
     @EventHandler
     public void onEntityDamageByEntityHeal(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (EffectMapping.REGEN.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, new Regen())) {
                 if (event.getFinalDamage() <= 0) {
                     player.setSaturation(Math.min(player.getSaturation() + 6, 20));
                 }
@@ -55,8 +55,8 @@ public class Regen implements Listener {
         final UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "regen", duration);
             CooldownManager.setCooldown(playerUUID, "regen", cooldown);

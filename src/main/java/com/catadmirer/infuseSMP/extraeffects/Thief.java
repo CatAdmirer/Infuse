@@ -3,9 +3,10 @@ package com.catadmirer.infuseSMP.extraeffects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,57 +26,54 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 
-public class Thief implements Listener {
-    private static Infuse plugin;
-
+public class Thief extends InfuseEffect {
     private final Map<UUID, DisguiseData> disguisedPlayers = new HashMap<>();
 
-    public Thief(Infuse plugin) {
-        Thief.plugin = plugin;
+    private Infuse plugin;
 
-        // TODO: Try to remove this
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.THIEF.hasEffect(player)) {
-                        if (otherPlayer.canSee(player)) {
-                            otherPlayer.listPlayer(player);
-                        }
-                    }
-                }
-            }
-        }, 0L, 20L);
+    public Thief(boolean augmented) {
+        super(15, "thief", augmented, Color.RED, BossBar.Color.RED);
+    }
+
+    public Thief(Infuse plugin, boolean augmented) {
+        super(15, "thief", augmented, Color.RED, BossBar.Color.RED);
+        this.plugin = plugin;
     }
 
     // Hiding a thief user from the rest of the players online
-    public static void equipThief(Player thiefUser) {
+    @Override
+    public void equip(Player thiefUser) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.unlistPlayer(thiefUser.getPlayer());
         }
     }
 
-    // Hiding thief effect users from players who recently joined
-    @EventHandler
-    public void hideThievesOnJoin(PlayerJoinEvent event) {
-        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            if (!EffectMapping.THIEF.hasEffect(otherPlayer)) continue;
-            
-            event.getPlayer().unlistPlayer(otherPlayer);
-        }
-    }
+    @Override
+    public void unequip(Player player) {}
 
-    public static void activateSpark(Boolean isAugmented, Player player) {
+    @Override
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "thief")) return;
 
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown);
+    }
+
+    // Hiding thief effect users from players who recently joined
+    @EventHandler
+    public void hideThievesOnJoin(PlayerJoinEvent event) {
+        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+            if (!plugin.getDataManager().hasEffect(otherPlayer, this)) continue;
+            
+            event.getPlayer().unlistPlayer(otherPlayer);
+        }
     }
 
     @EventHandler
@@ -88,7 +86,7 @@ public class Thief implements Listener {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player killer)) return;
 
         // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
-        if (EffectMapping.THIEF.hasEffect(killer)) {
+        if (plugin.getDataManager().hasEffect(killer, new Thief())) {
             disguise(killer, deadPlayer);
         }
     }
@@ -121,19 +119,19 @@ public class Thief implements Listener {
         long disguiseEndTime = System.currentTimeMillis() + 3600 * 1000; // 1 hour
 
         // Showing the disguise timer bossbar
-        BossBar bossBar = Bukkit.createBossBar("Disguise", BarColor.PINK, BarStyle.SOLID);
-        bossBar.setProgress(1);
-        bossBar.addPlayer(thiefUser);
+        BossBar bar = BossBar.bossBar(Component.text("Disguise"), 1, BossBar.Color.PINK, BossBar.Overlay.PROGRESS);
+        bar.progress(1);
+        bar.addViewer(thiefUser);
 
         // Starting the task to update the bossbar and eventually revert the disguise.
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             long timeLeft = disguiseEndTime - System.currentTimeMillis();
 
-            bossBar.setProgress(timeLeft / 3600);
+            bar.progress(timeLeft / 3600.0f);
 
             if (timeLeft < 0) {
                 removeDisguise(thiefUser);
-                bossBar.removePlayer(thiefUser);
+                bar.removeViewer(thiefUser);
                 task.cancel();
             }
         }, 0, 20);
@@ -179,13 +177,13 @@ public class Thief implements Listener {
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player player)) return;
-        if (!EffectMapping.THIEF.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, new Thief())) return;
 
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
 
-        EffectMapping leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
-        EffectMapping rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
+        InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
+        InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
 
         if (leftEffect != null && rightEffect != null) {
             activateEffect(player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
@@ -198,7 +196,7 @@ public class Thief implements Listener {
         CooldownManager.setDuration(playerUUID, "thief", 0);
     }
 
-    private void activateEffect(Player player, @NotNull EffectMapping effect, Entity victim) {
+    private void activateEffect(Player player, @NotNull InfuseEffect effect, Entity victim) {
         String msg = Messages.THIEF_STEAL.getMessage();
         msg = msg.replace("%player%", victim.getName());
         msg = msg.replace("%effect_name%", effect.getName());
@@ -210,8 +208,8 @@ public class Thief implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         // Removing cooldowns from the stolen spark
-        CooldownManager.clearSpecificCooldown(playerUUID, effect.regular().getKey());
-        CooldownManager.clearSpecificDuration(playerUUID, effect.regular().getKey());
+        CooldownManager.clearSpecificCooldown(playerUUID, effect.getName());
+        CooldownManager.clearSpecificDuration(playerUUID, effect.getName());
 
         // Applying cooldowns for the thief effect
         long cooldown = plugin.getConfigFile().cooldown(effect);

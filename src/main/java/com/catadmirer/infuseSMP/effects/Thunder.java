@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,7 +43,7 @@ public class Thunder implements Listener {
 
         // Making sure the shooter has the thunder effect
         if (!(trident.getShooter() instanceof Player attacker)) return;
-        if (!EffectMapping.THUNDER.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, new Thunder())) return;
 
         // Only summoning lightning if the target is a living entity
         if (event.getEntity() instanceof LivingEntity target) {
@@ -62,8 +62,8 @@ public class Thunder implements Listener {
             caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "thunder", duration);
             CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
@@ -105,7 +105,7 @@ public class Thunder implements Listener {
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (EffectMapping.THUNDER.hasEffect(attacker)) {
+            if (plugin.getDataManager().hasEffect(attacker, new Thunder())) {
                 if (event.getEntity() instanceof LivingEntity target) {
                     UUID targetUUID = target.getUniqueId();
                     long currentTime = System.currentTimeMillis();

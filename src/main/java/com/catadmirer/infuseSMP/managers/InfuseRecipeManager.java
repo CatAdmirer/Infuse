@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.*;
+import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.Messages;
 import java.io.File;
 import java.io.IOException;
@@ -218,7 +220,7 @@ public class InfuseRecipeManager implements Listener {
         TextColor itemColor = itemName.color();
         Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
-        BossBar.Color barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
+        BossBar.Color barColor = InfuseEffect.fromEffectKey(recipeKey).getRitualColor();
         this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -587,33 +589,29 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Emerald() {
-        ItemStack firstTime = EffectMapping.AUG_EMERALD.createItem();
-        ItemStack standard = EffectMapping.EMERALD.createItem();
-        this.firstTimeRewards.put("emerald", firstTime);
+        ItemStack standard = new Emerald().createItem();
+        this.firstTimeRewards.put("emerald", new Emerald(true).createItem());
         this.standardResults.put("emerald", standard);
         registerRecipeFromConfig("emerald", standard);
     }
 
     private void Feather() {
-        ItemStack firstTime = EffectMapping.AUG_FEATHER.createItem();
-        ItemStack standard = EffectMapping.FEATHER.createItem();
-        this.firstTimeRewards.put("feather", firstTime);
+        ItemStack standard = new Feather().createItem();
+        this.firstTimeRewards.put("feather", new Feather(true).createItem());
         this.standardResults.put("feather", standard);
         registerRecipeFromConfig("feather", standard);
     }
 
     private void Fire() {
-        ItemStack firstTime = EffectMapping.AUG_FIRE.createItem();
-        ItemStack standard = EffectMapping.FIRE.createItem();
-        this.firstTimeRewards.put("fire", firstTime);
+        ItemStack standard = new Fire().createItem();
+        this.firstTimeRewards.put("fire", new Fire(true).createItem());
         this.standardResults.put("fire", standard);
         registerRecipeFromConfig("fire", standard);
     }
 
     private void Ender() {
-        ItemStack firstTime = EffectMapping.AUG_ENDER.createItem();
-        ItemStack standard = EffectMapping.ENDER.createItem();
-        this.firstTimeRewards.put("aug_ender", firstTime);
+        ItemStack standard = new Ender().createItem();
+        this.firstTimeRewards.put("aug_ender", new Ender(true).createItem());
         this.standardResults.put("ender", standard);
 
         registerRecipeFromConfig("aug_ender", firstTime);
@@ -621,89 +619,78 @@ public class InfuseRecipeManager implements Listener {
     }
 
     private void Frost() {
-        ItemStack firstTime = EffectMapping.AUG_FROST.createItem();
-        ItemStack standard = EffectMapping.FROST.createItem();
-        this.firstTimeRewards.put("frost", firstTime);
+        ItemStack standard = new Frost().createItem();
+        this.firstTimeRewards.put("frost", new Frost(true).createItem());
         this.standardResults.put("frost", standard);
         registerRecipeFromConfig("frost", standard);
     }
 
     private void Haste() {
-        ItemStack firstTime = EffectMapping.AUG_HASTE.createItem();
-        ItemStack standard = EffectMapping.HASTE.createItem();
-        this.firstTimeRewards.put("haste", firstTime);
+        ItemStack standard = new Haste().createItem();
+        this.firstTimeRewards.put("haste", new Haste(true).createItem());
         this.standardResults.put("haste", standard);
         registerRecipeFromConfig("haste", standard);
     }
 
     private void Heart() {
-        ItemStack firstTime = EffectMapping.AUG_HEART.createItem();
-        ItemStack standard = EffectMapping.HEART.createItem();
-        this.firstTimeRewards.put("heart", firstTime);
+        ItemStack standard = new Heart().createItem();
+        this.firstTimeRewards.put("heart", new Heart(true).createItem());
         this.standardResults.put("heart", standard);
         registerRecipeFromConfig("heart", standard);
     }
 
     private void Invis() {
-        ItemStack firstTime = EffectMapping.AUG_INVIS.createItem();
-        ItemStack standard = EffectMapping.INVIS.createItem();
-        this.firstTimeRewards.put("invis", firstTime);
+        ItemStack standard = new Invis().createItem();
+        this.firstTimeRewards.put("invis", new Invis(true).createItem());
         this.standardResults.put("invis", standard);
         registerRecipeFromConfig("invis", standard);
     }
 
     private void Ocean() {
-        ItemStack firstTime = EffectMapping.AUG_OCEAN.createItem();
-        ItemStack standard = EffectMapping.OCEAN.createItem();
-        this.firstTimeRewards.put("ocean", firstTime);
+        ItemStack standard = new Ocean().createItem();
+        this.firstTimeRewards.put("ocean", new Ocean(true).createItem());
         this.standardResults.put("ocean", standard);
         registerRecipeFromConfig("ocean", standard);
     }
 
     private void Regen() {
-        ItemStack firstTime = EffectMapping.AUG_REGEN.createItem();
-        ItemStack standard = EffectMapping.REGEN.createItem();
-        this.firstTimeRewards.put("regen", firstTime);
+        ItemStack standard = new Regen().createItem();
+        this.firstTimeRewards.put("regen", new Regen(true).createItem());
         this.standardResults.put("regen", standard);
         registerRecipeFromConfig("regen", standard);
     }
 
     private void Speed() {
-        ItemStack firstTime = EffectMapping.AUG_SPEED.createItem();
-        ItemStack standard = EffectMapping.SPEED.createItem();
-        this.firstTimeRewards.put("speed", firstTime);
+        ItemStack standard = new Speed().createItem();
+        this.firstTimeRewards.put("speed", new Speed(true).createItem());
         this.standardResults.put("speed", standard);
         registerRecipeFromConfig("speed", standard);
     }
 
     private void Strength() {
-        ItemStack firstTime = EffectMapping.AUG_STRENGTH.createItem();
-        ItemStack standard = EffectMapping.STRENGTH.createItem();
-        this.firstTimeRewards.put("strength", firstTime);
+        ItemStack standard = new Strength().createItem();
+        this.firstTimeRewards.put("strength", new Strength(true).createItem());
         this.standardResults.put("strength", standard);
         registerRecipeFromConfig("strength", standard);
     }
 
     private void Thunder() {
-        ItemStack firstTime = EffectMapping.AUG_THUNDER.createItem();
-        ItemStack standard = EffectMapping.THUNDER.createItem();
-        this.firstTimeRewards.put("thunder", firstTime);
+        ItemStack standard = new Thunder().createItem();
+        this.firstTimeRewards.put("thunder", new Thunder(true).createItem());
         this.standardResults.put("thunder", standard);
         registerRecipeFromConfig("thunder", standard);
     }
 
     private void Apophis() {
-        ItemStack firstTime = EffectMapping.AUG_APOPHIS.createItem();
-        ItemStack standard = EffectMapping.APOPHIS.createItem();
-        this.firstTimeRewards.put("apophis", firstTime);
+        ItemStack standard = new Apophis().createItem();
+        this.firstTimeRewards.put("apophis", new Apophis(true).createItem());
         this.standardResults.put("apophis", standard);
         registerRecipeFromConfig("apophis", standard);
     }
 
     private void Thief() {
-        ItemStack firstTime = EffectMapping.AUG_THIEF.createItem();
-        ItemStack standard = EffectMapping.THIEF.createItem();
-        this.firstTimeRewards.put("thief", firstTime);
+        ItemStack standard = new Thief().createItem();
+        this.firstTimeRewards.put("thief", new Thief(true).createItem());
         this.standardResults.put("thief", standard);
         registerRecipeFromConfig("thief", standard);
     }

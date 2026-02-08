@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -75,7 +75,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 String effectKey = args[2].toLowerCase();
-                EffectMapping mapping = EffectMapping.fromEffectKey(effectKey);
+                InfuseEffect mapping = InfuseEffect.fromEffectKey(effectKey);
                 if (mapping == null) {
                     player.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
                     return true;
@@ -84,7 +84,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(mapping.createItem());
 
                 String msg = Messages.INFUSE_GIVEEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB()) + ">");
+                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getPotionColor().getRGB()) + ">");
                 msg = msg.replace("%effect_name%", mapping.getName());
                 target.sendMessage(Messages.toComponent(msg));
                 break;
@@ -108,7 +108,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 
                 // Getting the effect key and verifying its integrity.
                 effectKey = args[2].toLowerCase();
-                mapping = EffectMapping.fromEffectKey(effectKey);
+                mapping = InfuseEffect.fromEffectKey(effectKey);
                 if (mapping == null) {
                     player.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
                     return true;
@@ -243,7 +243,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 case "giveEffect":
                 case "setEffect":
                     if (!sender.isOp()) return Arrays.asList();
-                    return Stream.of(EffectMapping.values()).map(EffectMapping::getKey).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
+                    return InfuseEffect.allKeys.stream().filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
         

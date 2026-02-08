@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class Invis implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.INVIS.hasEffect(p)) {
+                    if (plugin.getDataManager().hasEffect(p, new Speed())) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
                 }
@@ -48,7 +48,7 @@ public class Invis implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (EffectMapping.INVIS.hasEffect(shooter)) {
+            if (plugin.getDataManager().hasEffect(shooter, new Speed())) {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -63,7 +63,7 @@ public class Invis implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (EffectMapping.INVIS.hasEffect(attacker)) {
+                if (plugin.getDataManager().hasEffect(attacker, new Speed())) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -95,7 +95,7 @@ public class Invis implements Listener {
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player target) {
-            if (EffectMapping.INVIS.hasEffect(target)) {
+            if (plugin.getDataManager().hasEffect(target, new Speed())) {
                 event.setCancelled(true);
             }
         }
@@ -108,8 +108,8 @@ public class Invis implements Listener {
             caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
                         
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+            long cooldown = plugin.getConfigFile().cooldown(this);
+            long duration = plugin.getConfigFile().duration(this);
 
             CooldownManager.setDuration(playerUUID, "invis", duration);
             CooldownManager.setCooldown(playerUUID, "invis", cooldown);

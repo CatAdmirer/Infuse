@@ -1,6 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,8 +24,8 @@ public class SwapEffects implements CommandExecutor {
         }
 
         // Getting the equipped effects
-        EffectMapping effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        EffectMapping effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        InfuseEffect effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        InfuseEffect effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
 
         // Erroring out if the player doesn't have any effects equipped
         if (effect1 == null && effect2 == null) {

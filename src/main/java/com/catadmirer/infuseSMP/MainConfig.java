@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class MainConfig {
     public final File file;
@@ -141,8 +141,8 @@ public class MainConfig {
         return config.getBoolean("join_effects_enabled");
     }
 
-    public List<EffectMapping> joinEffects() {
-        return config.getStringList("join_effects").stream().map(EffectMapping::fromEffectKey).filter(Objects::isNull).toList();
+    public List<InfuseEffect> joinEffects() {
+        return config.getStringList("join_effects").stream().map(InfuseEffect::fromEffectKey).filter(Objects::isNull).toList();
     }
 
     public boolean enableApophis() {
@@ -161,12 +161,12 @@ public class MainConfig {
         return config.getInt("craft_limits." + recipeKey + ".regular_limit");
     }
 
-    public long cooldown(EffectMapping effect) {
-        return config.getLong(effect.regular().getKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
+    public long cooldown(InfuseEffect effect) {
+        return config.getLong(effect.getName() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
-    public long duration(EffectMapping effect) {
-        return config.getLong(effect.regular().getKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+    public long duration(InfuseEffect effect) {
+        return config.getLong(effect.getName() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
     public int speedDashMultiplier() {
