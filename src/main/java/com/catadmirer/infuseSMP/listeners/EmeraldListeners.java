@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.effects.Emerald;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.destroystokyo.paper.MaterialSetTag;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -37,12 +37,6 @@ public class EmeraldListeners implements Listener {
     public EmeraldListeners(Infuse plugin) {
         this.plugin = plugin;
     }
-
-    private boolean isSword(ItemStack item) {
-        if (item == null) return false;
-
-        return MaterialSetTag.ITEMS_SWORDS.isTagged(item.getType());
-    }
     
     @EventHandler
     public void emeraldLooting5(PlayerItemHeldEvent event) {
@@ -51,7 +45,7 @@ public class EmeraldListeners implements Listener {
         if (!plugin.getDataManager().hasEffect(player, new Emerald())) return;
         
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (isSword(item) && item.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+        if (ItemUtil.isSword(item) && item.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
             item.addUnsafeEnchantment(Enchantment.LOOTING, 5);
         }
     }
