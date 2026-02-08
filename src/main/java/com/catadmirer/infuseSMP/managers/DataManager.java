@@ -160,7 +160,11 @@ public class DataManager {
         InfuseEffect effect = InfuseEffect.fromEffectKey(effectKey);
         if (effectKey != null && effect == null) {
             Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
+            return null;
         }
+        
+        effect.setOwner(Bukkit.getOfflinePlayer(playerUUID));
+
         return effect;
     }
 

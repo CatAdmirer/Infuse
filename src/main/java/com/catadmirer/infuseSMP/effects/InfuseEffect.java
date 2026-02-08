@@ -6,6 +6,7 @@ import java.util.List;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -22,13 +23,19 @@ public abstract class InfuseEffect {
     protected final boolean augmented;
     protected final Color potionColor;
     protected final BossBar.Color ritualColor;
+    protected OfflinePlayer owner;
 
     protected InfuseEffect(int id, String name, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
+        this(id, name, augmented, potionColor, ritualColor, null);
+    }
+
+    protected InfuseEffect(int id, String name, boolean augmented, Color potionColor, BossBar.Color ritualColor, OfflinePlayer owner) {
         this.id = id;
         this.name = name;
         this.augmented = augmented;
         this.potionColor = potionColor;
         this.ritualColor = ritualColor;
+        this.owner = owner;
     }
 
     public String getName() {
@@ -53,6 +60,15 @@ public abstract class InfuseEffect {
 
     public BossBar.Color getRitualColor() {
         return ritualColor;
+    }
+
+    @Nullable
+    public OfflinePlayer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OfflinePlayer owner) {
+        this.owner = owner;
     }
 
     public abstract Component getItemName();
