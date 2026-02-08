@@ -1,12 +1,18 @@
 package com.catadmirer.infuseSMP.util;
 
+import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.inventory.ItemStack;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
-import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
 
 public class ItemUtil {
     public static boolean isAxe(ItemStack item) {
-        return RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).getTagValues(ItemTypeTagKeys.AXES).contains(item.getType().asItemType());
+        if (item == null) return false;
+
+        return MaterialSetTag.ITEMS_AXES.isTagged(item.getType());
+    }
+
+    public static boolean isSword(ItemStack item) {
+        if (item == null) return false;
+
+        return MaterialSetTag.ITEMS_SWORDS.isTagged(item.getType());
     }
 }
