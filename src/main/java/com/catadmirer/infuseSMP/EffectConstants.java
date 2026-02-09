@@ -1,12 +1,18 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import java.awt.Color;
-
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 
-import net.kyori.adventure.bossbar.BossBar;
-
 public class EffectConstants {
+    /**
+     * Gets the {@link Material} to use in the background of this effect's {@link AugOrRegChooser} menu.
+     * 
+     * @param effectId The id of the infuse effect.
+     * 
+     * @return the {@link Material} for the effect.
+     */
     public static Material menuBackgroundColor(int effectId) {
         return switch (effectId) {
             case EffectIds.APOPHIS -> Material.MAGENTA_STAINED_GLASS_PANE;
@@ -28,6 +34,13 @@ public class EffectConstants {
         };
     }
 
+    /**
+     * Gets the {@link Color} for this effect's potion and related text.
+     * 
+     * @param effectId The id of the infuse effect.
+     * 
+     * @return the {@link Color} for the effect.
+     */
     public static Color potionColor(int effectId) {
         return switch (effectId) {
             case EffectIds.APOPHIS -> new Color(0x440044);
@@ -49,6 +62,13 @@ public class EffectConstants {
         };
     }
 
+    /**
+     * Gets the {@link BossBar.Color} for this effect's ritual.
+     * 
+     * @param effectId The id of the infuse effect.
+     * 
+     * @return the {@link BossBar.Color} for the effect.
+     */
     public static BossBar.Color bossBarColor(int effectId) {
         return switch (effectId) {
             case EffectIds.APOPHIS -> BossBar.Color.PURPLE;
