@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -60,7 +60,6 @@ public class InfuseRecipeManager implements Listener {
 
     FileConfiguration recipesConfig;
 
-    LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
     PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
 
     public InfuseRecipeManager(Infuse plugin) {
@@ -102,56 +101,23 @@ public class InfuseRecipeManager implements Listener {
             }
 
             switch (recipeKey.toLowerCase()) {
-                case "emerald":
-                    this.Emerald();
-                    break;
-                case "feather":
-                    this.Feather();
-                    break;
-                case "fire":
-                    this.Fire();
-                    break;
-                case "frost":
-                    this.Frost();
-                    break;
-                case "haste":
-                    this.Haste();
-                    break;
-                case "heart":
-                    this.Heart();
-                    break;
-                case "invis":
-                    this.Invis();
-                    break;
-                case "ocean":
-                    this.Ocean();
-                    break;
-                case "regen":
-                    this.Regen();
-                    break;
-                case "speed":
-                    this.Speed();
-                    break;
-                case "strength":
-                    this.Strength();
-                    break;
-                case "thunder":
-                    this.Thunder();
-                    break;
-                case "aug_ender":
-                    this.Ender();
-                    break;
-                case "ender":
-                    break;
-                case "apophis":
-                    this.Apophis();
-                    break;
-                case "thief":
-                    this.Thief();
-                    break;
-                default:
-                    plugin.getLogger().warning("Unknown recipe key: " + recipeKey);
-                    break;
+                case "emerald" -> this.Emerald();
+                case "feather" -> this.Feather();
+                case "fire" -> this.Fire();
+                case "frost" -> this.Frost();
+                case "haste" -> this.Haste();
+                case "heart" -> this.Heart();
+                case "invis" -> this.Invis();
+                case "ocean" -> this.Ocean();
+                case "regen" -> this.Regen();
+                case "speed" -> this.Speed();
+                case "strength" -> this.Strength();
+                case "thunder" -> this.Thunder();
+                case "aug_ender" -> this.Ender();
+                case "ender" -> {}
+                case "apophis" -> this.Apophis();
+                case "thief" -> this.Thief();
+                default -> plugin.getLogger().warning("Unknown recipe key: " + recipeKey);
             }
         }
     }
@@ -246,7 +212,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedMessage = messageTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", legacySection.serialize(itemName))
+                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -296,7 +262,7 @@ public class InfuseRecipeManager implements Listener {
                         p.hideBossBar(activeBossBar);
                     }
                     String msg = Messages.EFFECT_FINISHED.getMessage();
-                    msg = msg.replace("%item%", legacySection.serialize(itemName));
+                    msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
                     Bukkit.broadcast(Messages.toComponent(msg));
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
@@ -615,7 +581,6 @@ public class InfuseRecipeManager implements Listener {
         ItemStack standard = EffectMapping.ENDER.createItem();
         this.firstTimeRewards.put("aug_ender", firstTime);
         this.standardResults.put("ender", standard);
-
         registerRecipeFromConfig("aug_ender", firstTime);
         registerRecipeFromConfig("ender", standard);
     }
