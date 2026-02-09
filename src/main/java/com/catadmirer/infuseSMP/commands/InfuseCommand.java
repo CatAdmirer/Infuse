@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
@@ -84,7 +85,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(mapping.createItem());
 
                 String msg = Messages.INFUSE_GIVEEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getPotionColor().getRGB()) + ">");
+                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(EffectConstants.potionColor(mapping.getId()).getRGB()) + ">");
                 msg = msg.replace("%effect_name%", mapping.getName());
                 target.sendMessage(Messages.toComponent(msg));
                 break;
