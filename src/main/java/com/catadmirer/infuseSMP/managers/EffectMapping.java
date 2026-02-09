@@ -318,7 +318,9 @@ public enum EffectMapping {
      * @return Whether or not the player has this effect equipped in the provided slot.
      */
     public boolean hasEffect(OfflinePlayer player, String slot) {
-        return this == dataManager.getEffect(player.getUniqueId(), slot);
+        EffectMapping equippedEffect = dataManager.getEffect(player.getUniqueId(), slot);
+        if (equippedEffect == null) return false;
+        return this.getId() == equippedEffect.getId();
     }
 
     /**
