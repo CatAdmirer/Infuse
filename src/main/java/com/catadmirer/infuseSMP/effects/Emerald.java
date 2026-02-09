@@ -33,6 +33,16 @@ public class Emerald extends InfuseEffect {
     }
 
     @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Emerald(true);
+    }
+
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Emerald(false);
+    }
+
+    @Override
     public void equip(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));

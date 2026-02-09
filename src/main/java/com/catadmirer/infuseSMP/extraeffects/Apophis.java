@@ -49,6 +49,16 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Apophis(true);
+    }
+
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Apophis(false);
+    }
+
+    @Override
     public void equip(Player player) {
         // Setting the player's max health
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
