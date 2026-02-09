@@ -169,15 +169,15 @@ public class DataManager {
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect) {
-        return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");
+        return hasEffect(player, effect, false);
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented) {
-        return hasEffect(player, effect, "1") || hasEffect(player, effect, "2");        
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");             
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, String slot) {
-        return effect.equals(getEffect(player.getUniqueId(), slot));
+        return hasEffect(player, effect, false, slot);
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented, String slot) {
@@ -189,7 +189,7 @@ public class DataManager {
             return effect.equals(equippedEffect);
         }
 
-        return effect.getName().equals(equippedEffect.getName());
+        return effect.getId() == equippedEffect.getId();
     }
 
     public void removeEffect(UUID playerUUID, String slot) {
