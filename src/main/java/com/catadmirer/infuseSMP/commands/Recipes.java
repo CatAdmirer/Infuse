@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -76,8 +75,8 @@ public class Recipes implements CommandExecutor, Listener {
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
-            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
+            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
+            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
             meta.lore(lore);
             potionItem.setItemMeta(meta);
         }
