@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;

@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;

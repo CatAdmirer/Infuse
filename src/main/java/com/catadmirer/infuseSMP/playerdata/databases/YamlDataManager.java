@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.playerdata;
+package com.catadmirer.infuseSMP.playerdata.databases;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 
 public class YamlDataManager implements DataManager {
     private final Infuse plugin;

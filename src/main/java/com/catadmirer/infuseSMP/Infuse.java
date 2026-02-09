@@ -8,7 +8,7 @@ import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.playerdata.DataManager;
-import com.catadmirer.infuseSMP.playerdata.YamlDataManager;
+import com.catadmirer.infuseSMP.playerdata.databases.YamlDataManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
