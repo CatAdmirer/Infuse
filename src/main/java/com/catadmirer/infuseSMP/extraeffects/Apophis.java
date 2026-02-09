@@ -8,8 +8,6 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.List;
 import java.util.UUID;
-import java.awt.Color;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,11 +29,11 @@ import org.bukkit.util.Vector;
 
 public class Apophis extends InfuseEffect {
     public Apophis() {
-        super(EffectIds.APOPHIS, "apophis", false, new Color(0x440044), BossBar.Color.PURPLE);
+        super(EffectIds.APOPHIS, "apophis", false);
     }
 
     public Apophis(boolean augmented) {
-        super(EffectIds.APOPHIS, "apophis", augmented, new Color(0x440044), BossBar.Color.PURPLE);
+        super(EffectIds.APOPHIS, "apophis", augmented);
     }
 
     @Override

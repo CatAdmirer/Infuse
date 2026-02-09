@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +26,11 @@ public class Thief extends InfuseEffect {
     private InfuseEffect stolenEffect;
 
     public Thief() {
-        super(15, "thief", false, Color.RED, BossBar.Color.RED);
+        super(15, "thief", false);
     }
 
     public Thief(boolean augmented) {
-        super(15, "thief", augmented, Color.RED, BossBar.Color.RED);
+        super(15, "thief", augmented);
     }
 
     @Override

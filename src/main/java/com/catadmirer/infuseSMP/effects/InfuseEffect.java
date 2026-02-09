@@ -1,9 +1,8 @@
 package com.catadmirer.infuseSMP.effects;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
-import java.awt.Color;
 import java.util.List;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -21,20 +20,16 @@ public abstract class InfuseEffect {
     protected final int id;
     protected final String name;
     protected final boolean augmented;
-    protected final Color potionColor;
-    protected final BossBar.Color ritualColor;
     protected OfflinePlayer owner;
 
-    protected InfuseEffect(int id, String name, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
-        this(id, name, augmented, potionColor, ritualColor, null);
+    protected InfuseEffect(int id, String name, boolean augmented) {
+        this(id, name, augmented, null);
     }
 
-    protected InfuseEffect(int id, String name, boolean augmented, Color potionColor, BossBar.Color ritualColor, OfflinePlayer owner) {
+    protected InfuseEffect(int id, String name, boolean augmented, OfflinePlayer owner) {
         this.id = id;
         this.name = name;
         this.augmented = augmented;
-        this.potionColor = potionColor;
-        this.ritualColor = ritualColor;
         this.owner = owner;
     }
 
@@ -52,14 +47,6 @@ public abstract class InfuseEffect {
 
     public int getId() {
         return id;
-    }
-
-    public Color getPotionColor() {
-        return potionColor;
-    }
-
-    public BossBar.Color getRitualColor() {
-        return ritualColor;
     }
 
     @Nullable
@@ -109,7 +96,7 @@ public abstract class InfuseEffect {
             // Setting the usual data
             meta.displayName(getItemName());
             meta.lore(getItemLore());
-            meta.setColor(org.bukkit.Color.fromARGB(potionColor.getRGB()));
+            meta.setColor(org.bukkit.Color.fromARGB(EffectConstants.potionColor(id).getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, getKey());
 
             // Applying the custom model if the key has the "aug_" prefix

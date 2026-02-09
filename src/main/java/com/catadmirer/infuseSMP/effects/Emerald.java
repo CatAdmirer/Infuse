@@ -3,9 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import java.awt.Color;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Sound;
@@ -15,11 +13,11 @@ import org.bukkit.potion.PotionEffectType;
 
 public class Emerald extends InfuseEffect {
     public Emerald() {
-        super(1, "emerald", false, Color.GREEN, BossBar.Color.GREEN);
+        super(1, "emerald", false);
     }
 
     public Emerald(boolean augmented) {
-        super(1, "emerald", augmented, Color.GREEN, BossBar.Color.GREEN);
+        super(1, "emerald", augmented);
     }
 
     @Override
