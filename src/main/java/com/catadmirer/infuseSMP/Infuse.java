@@ -73,9 +73,6 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the data manager
         dataManager.load();
 
-        // Giving the mapping class an instance of the data manager
-        EffectMapping.init(dataManager);
-
         // Registering infuse commands
         this.registerCommands();
 

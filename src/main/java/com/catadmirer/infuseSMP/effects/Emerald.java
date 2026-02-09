@@ -44,7 +44,7 @@ public class Emerald implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.EMERALD.hasEffect(player)) continue;
+                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) continue;
 
                     applyPassiveEffects(player);
                 }
@@ -72,7 +72,7 @@ public class Emerald implements Listener {
     public void emeraldExpMultiplier(PlayerPickupExperienceEvent event) {
         Player player = event.getPlayer();
 
-        if (!EffectMapping.EMERALD.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
@@ -88,7 +88,7 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void emeraldEnchantBonus(PrepareItemEnchantEvent event) {
-        if (!EffectMapping.EMERALD.hasEffect(event.getEnchanter())) return;
+        if (!plugin.getDataManager().hasEffect(event.getEnchanter(), EffectMapping.EMERALD)) return;
 
         // Getting the world seed of the player
         long worldSeed = event.getEnchanter().getWorld().getSeed();
@@ -144,7 +144,7 @@ public class Emerald implements Listener {
         Player player = event.getPlayer();
 
         // Making sure the player has the emerald effect
-        if (!(EffectMapping.EMERALD.hasEffect(player))) return;
+        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD))) return;
 
         ItemStack consumedItem = event.getItem();
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -147,11 +148,10 @@ public class DataManager {
         if (effect == null) {
             config.set(playerUUID.toString() + "." + slot, null);
         } else {
-            config.set(playerUUID.toString() + "." + slot, effect.name());
+            config.set(playerUUID.toString() + "." + slot, effect.getKey());
         }
         save();
     }
-
 
     @Nullable
     public EffectMapping getEffect(UUID playerUUID, String slot) {
@@ -160,7 +160,32 @@ public class DataManager {
         if (effectKey != null && effect == null) {
             Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
         }
+
         return effect;
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect) {
+        return hasEffect(player, effect, false);
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented) {
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");        
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, String slot) {
+        return hasEffect(player, effect, false, slot);
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot) {
+        EffectMapping equippedEffect = getEffect(player.getUniqueId(), slot);
+
+        if (equippedEffect == null) return false;
+
+        if (differentiateAugmented) {
+            return effect.equals(equippedEffect);
+        }
+
+        return effect.getId() == equippedEffect.getId();
     }
 
     public void removeEffect(UUID playerUUID, String slot) {

@@ -47,7 +47,7 @@ public class Strength implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
 
         // Skipping players without the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.STRENGTH)) return;
 
         // Boosting damage based on the attacker's health.
         double damage = event.getDamage();
@@ -86,7 +86,7 @@ public class Strength implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
 
         // Making sure the shooter has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.STRENGTH)) return;
 
         // Increasing the piercing level of the shot arrow.
         if (event.getProjectile() instanceof Arrow arrow) {
@@ -104,7 +104,7 @@ public class Strength implements Listener {
         if (entity instanceof Player) return;
 
         // Making sure the attacker has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.STRENGTH)) return;
 
         // Doubling the damage of the attack
         event.setDamage(event.getDamage() * 2);
@@ -123,7 +123,7 @@ public class Strength implements Listener {
         if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 
         // Making sure the attacker has the strength effect
-        if (!EffectMapping.STRENGTH.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.STRENGTH)) return;
 
         // Playing noise and stunning the opponent
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);

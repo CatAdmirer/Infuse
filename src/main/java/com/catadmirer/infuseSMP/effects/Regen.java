@@ -24,7 +24,7 @@ public class Regen implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (EffectMapping.REGEN.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 1, false, false));
             }
         }
@@ -33,7 +33,7 @@ public class Regen implements Listener {
     @EventHandler
     public void onEntityDamageByEntityHeal(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (EffectMapping.REGEN.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
                 if (event.getFinalDamage() <= 0) {
                     player.setSaturation(Math.min(player.getSaturation() + 6, 20));
                 }

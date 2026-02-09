@@ -37,7 +37,7 @@ public class Thief implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.THIEF.hasEffect(player)) {
+                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.THIEF)) {
                         if (otherPlayer.canSee(player)) {
                             otherPlayer.listPlayer(player);
                         }
@@ -58,7 +58,7 @@ public class Thief implements Listener {
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
         for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            if (!EffectMapping.THIEF.hasEffect(otherPlayer)) continue;
+            if (!plugin.getDataManager().hasEffect(otherPlayer, EffectMapping.THIEF)) continue;
             
             event.getPlayer().unlistPlayer(otherPlayer);
         }
@@ -88,7 +88,7 @@ public class Thief implements Listener {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player killer)) return;
 
         // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
-        if (EffectMapping.THIEF.hasEffect(killer)) {
+        if (plugin.getDataManager().hasEffect(killer, EffectMapping.THIEF)) {
             disguise(killer, deadPlayer);
         }
     }
@@ -179,7 +179,7 @@ public class Thief implements Listener {
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player player)) return;
-        if (!EffectMapping.THIEF.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.THIEF)) return;
 
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;

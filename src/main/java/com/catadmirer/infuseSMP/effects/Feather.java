@@ -99,7 +99,7 @@ public class Feather implements Listener {
         if (event.getEntity() instanceof Player player) {
             if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
                 if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!EffectMapping.FEATHER.hasEffect(player)) return;
+                if (!plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) return;
                 if (event.getCause() == DamageCause.FALL) return;
 
                 UUID uuid = player.getUniqueId();
@@ -124,7 +124,7 @@ public class Feather implements Listener {
     public void onPlayerFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getCause() == DamageCause.FALL) {
-                if (EffectMapping.FEATHER.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) {
                     event.setCancelled(true);
                 }
             }
@@ -134,7 +134,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (EffectMapping.FEATHER.hasEffect(player)) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item != null && item.getType() == Material.WIND_CHARGE) {
                 if (!player.hasCooldown(Material.WIND_CHARGE)) {
@@ -162,7 +162,7 @@ public class Feather implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (EffectMapping.FEATHER.hasEffect(attacker)) {
+            if (plugin.getDataManager().hasEffect(attacker, EffectMapping.FEATHER)) {
                 double fallDistance = attacker.getFallDistance();
                 if (fallDistance >= 7) {
                     attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);

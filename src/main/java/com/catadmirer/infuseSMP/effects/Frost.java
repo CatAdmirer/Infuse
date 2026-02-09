@@ -44,7 +44,7 @@ public class Frost implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (EffectMapping.FROST.hasEffect(player) && !(player.getVelocity().lengthSquared() < 0.01)) {
+                    if (plugin.getDataManager().hasEffect(player, EffectMapping.FROST) && !(player.getVelocity().lengthSquared() < 0.01)) {
                         Frost.this.handleSwim(player);
                         Material blockType = player.getLocation().subtract(0, 1, 0).getBlock().getType();
                         if (Frost.ICE_BLOCKS.contains(blockType)) {
@@ -69,7 +69,7 @@ public class Frost implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         if (!event.isGliding()) {
-            if (inFrost && EffectMapping.FROST.hasEffect(player)) {
+            if (inFrost && plugin.getDataManager().hasEffect(player, EffectMapping.FROST)) {
                 event.setCancelled(true);
             }
         }
@@ -80,7 +80,7 @@ public class Frost implements Listener {
         Player player = event.getPlayer();
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inFrost && EffectMapping.FROST.hasEffect(player)) {
+        if (inFrost && plugin.getDataManager().hasEffect(player, EffectMapping.FROST)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = 0.6;
             Vector newVelocity = direction.multiply(boostStrength);
@@ -104,7 +104,7 @@ public class Frost implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (EffectMapping.FROST.hasEffect(attacker)) {
+                if (plugin.getDataManager().hasEffect(attacker, EffectMapping.FROST)) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {

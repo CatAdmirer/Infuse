@@ -27,7 +27,7 @@ public class Haste implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.HASTE.hasEffect(player)) {
+                    if (plugin.getDataManager().hasEffect(player, EffectMapping.HASTE)) {
                         Haste.this.enchantItemIfApplicable(player);
                     }
                 }
@@ -71,7 +71,7 @@ public class Haste implements Listener {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
             ItemStack offHand = player.getInventory().getItemInOffHand();
-            if (offHand.getType() == Material.SHIELD && player.isBlocking() && EffectMapping.HASTE.hasEffect(player)) {
+            if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, EffectMapping.HASTE)) {
                 if (event.getDamager() instanceof Player attacker) {
                     if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
                         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);

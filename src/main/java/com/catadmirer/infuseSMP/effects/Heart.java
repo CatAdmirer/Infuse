@@ -39,7 +39,7 @@ public class Heart implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.HEART.hasEffect(player)) {
+                    if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
                         AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                         maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + 10);
                     }
@@ -52,7 +52,7 @@ public class Heart implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
             if (event.getEntity() instanceof LivingEntity target) {
-                if (EffectMapping.HEART.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
                     this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -100,7 +100,7 @@ public class Heart implements Listener {
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (EffectMapping.HEART.hasEffect(player)) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
             ItemStack item = event.getItem();
             if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));

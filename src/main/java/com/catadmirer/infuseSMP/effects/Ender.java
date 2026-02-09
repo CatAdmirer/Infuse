@@ -42,7 +42,7 @@ public class Ender implements Listener {
         Ender.plugin = plugin;
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (EffectMapping.ENDER.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) {
                     applyGlowingToUntrusted(player);
                 }
 
@@ -145,7 +145,7 @@ public class Ender implements Listener {
         
         // Making sure the player has the ender effect
         Player player = event.getPlayer();
-        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
 
         // Making sure the player used a bottle of dragons breath
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -212,7 +212,7 @@ public class Ender implements Listener {
     }
 
     public void applyGlowingToUntrusted(Player player) {
-        if (!EffectMapping.ENDER.hasEffect(player) && !EffectMapping.AUG_ENDER.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
 
         double radius = 10;
 

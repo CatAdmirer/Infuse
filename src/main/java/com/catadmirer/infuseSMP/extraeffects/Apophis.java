@@ -40,7 +40,7 @@ public class Apophis implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.APOPHIS.hasEffect(onlinePlayer)) continue;
+                    if (!plugin.getDataManager().hasEffect(onlinePlayer, EffectMapping.APOPHIS)) continue;
 
                     ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
                     Apophis.this.applyPassiveEffects(onlinePlayer);
@@ -84,7 +84,7 @@ public class Apophis implements Listener {
                 AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
                 double currentMaxHealth = maxHealthAttribute.getBaseValue();
 
-                if (EffectMapping.APOPHIS.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, EffectMapping.APOPHIS)) {
                     if (currentMaxHealth != 30) {
                         maxHealthAttribute.setBaseValue(30);
                     }
