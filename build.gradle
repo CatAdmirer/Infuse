@@ -53,3 +53,8 @@ processResources {
         expand props
     }
 }
+
+task resetAndRun {
+    delete "run/plugins/$rootProject.name"
+    finalizedBy(runServer)
+}
