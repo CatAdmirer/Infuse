@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.particles;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
@@ -40,7 +41,7 @@ public class Particles {
             return;
         }
 
-        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, Color.fromARGB(effect.getPotionColor().getRGB()));
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, Color.fromARGB(EffectConstants.potionColor(effect.getId()).getRGB()));
     }
 
     /**

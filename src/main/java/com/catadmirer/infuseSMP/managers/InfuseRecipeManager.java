@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
@@ -220,7 +221,7 @@ public class InfuseRecipeManager implements Listener {
         TextColor itemColor = itemName.color();
         Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
-        BossBar.Color barColor = InfuseEffect.fromEffectKey(recipeKey).getRitualColor();
+        BossBar.Color barColor = EffectConstants.bossBarColor(InfuseEffect.fromEffectKey(recipeKey).getId());
         this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {

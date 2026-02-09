@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.placeholders;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
@@ -79,7 +80,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         Component comp;
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getPotionColor().getRGB()));
+            comp = MessageUtil.formatTime(timeLeft, TextColor.color(EffectConstants.potionColor(effect.getId()).getRGB()));
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
             comp = MessageUtil.formatTime(timeLeft, NamedTextColor.WHITE);
