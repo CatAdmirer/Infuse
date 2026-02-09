@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.inventories;
 
+import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
@@ -8,11 +9,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class EffectChooser implements InventoryHolder {
+public class EffectChooser implements InventoryHolder, Listener {
     private final Inventory inventory;
 
     public EffectChooser(Infuse plugin) {
@@ -51,5 +57,23 @@ public class EffectChooser implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return inventory;
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent event) {
+        // Only running if the inventory is an EffectChooser
+        if (!(event.getClickedInventory().getHolder() instanceof EffectChooser)) return;
+
+        // Cancelling the click event
+        event.setCancelled(true);
+        
+        // Getting the effect the player clicked
+        InfuseEffect effect = InfuseEffect.fromItem(event.getCurrentItem());
+
+        // Ignoring if the player clicked on something other than an effect.
+        if (effect == null) return;
+
+        // Opening the AugOrRegChooser menu for the effect the player clicked
+        event.getWhoClicked().openInventory(new AugOrRegChooser(effect).getInventory());
     }
 }
