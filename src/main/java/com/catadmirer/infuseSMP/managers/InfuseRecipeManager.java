@@ -93,35 +93,28 @@ public class InfuseRecipeManager implements Listener {
         }
 
         for (EffectMapping mapping : EffectMapping.values()) {
-            String recipeKey = mapping.regular().getKey();
-            if (mapping == EffectMapping.AUG_ENDER) recipeKey = "aug_ender";
-            
+            // Preventing double loading
+            if (mapping.isAugmented()) continue;
+
+            String recipeKey = mapping.getKey();
             boolean enabled = recipesSection.getBoolean(recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
                 continue;
             }
 
-            ItemStack item = mapping.createItem();
-            if (mapping.isAugmented()) {
-                if (mapping == EffectMapping.AUG_ENDER) {
-                    registerRecipeFromConfig("aug_ender", item);
-                }
-
-                firstTimeRewards.put(recipeKey, item);
-            } else {
-                standardResults.put(recipeKey, item);
-                registerRecipeFromConfig(recipeKey, item);
-            }
+            firstTimeRewards.put(recipeKey, mapping.augmented().createItem());
+            standardResults.put(recipeKey, mapping.createItem());
+            registerRecipeFromConfig(recipeKey, mapping.createItem());
         }
 
-        for (String recipeKey : recipesSection.getKeys(false)) {
-            boolean enabled = recipesSection.getBoolean(recipeKey + ".enabled", false);
-            if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
-                continue;
-            }
+        // Specifically loading the aug ender effect
+        boolean enabled = recipesSection.getBoolean("aug_ender.enabled", false);
+        if (!enabled) {
+            plugin.getLogger().info("Recipe aug_ender is disabled in config, skipping.");
+            return;
         }
+        registerRecipeFromConfig("aug_ender", EffectMapping.AUG_ENDER.createItem());
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
@@ -407,7 +400,6 @@ public class InfuseRecipeManager implements Listener {
             }
         }
     }
-
 
     private void registerRecipeFromConfig(String recipeKey, ItemStack result) {
         FileConfiguration config = recipesConfig;
