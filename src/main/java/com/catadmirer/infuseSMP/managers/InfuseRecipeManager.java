@@ -39,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -306,7 +307,7 @@ public class InfuseRecipeManager implements Listener {
                         double checkDist = checkLocation.distance(playerLocation);
                         if (checkDist < nearestDist) {
                             nearestDist = checkDist;
-                            nearestLocation = checkLocation;
+                            nearestLocation = checkLocation.setRotation(0, 0).toBlockLocation();
                         }
                     }
                 }
@@ -549,6 +550,16 @@ public class InfuseRecipeManager implements Listener {
     public void onBrewingStandBreak(BlockBreakEvent event) {
         if (event.getBlock().getLocation().equals(brewingStandLocation)){
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBrewingStandExplode(EntityExplodeEvent event) {
+        List<Block> blocks = event.blockList();
+        for (Block block : blocks) {
+            if (block.getLocation().equals(brewingStandLocation)) {
+                blocks.remove(block);
+            }
         }
     }
 }
