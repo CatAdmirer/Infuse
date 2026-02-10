@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -57,15 +57,9 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
         ItemStack mainHand = player.getInventory().getItemInMainHand();
-        if (isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
             mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
         }
-    }
-
-    private boolean isSword(ItemStack item) {
-        if (item == null) return false;
-
-        return MaterialSetTag.ITEMS_SWORDS.isTagged(item.getType());
     }
 
     @EventHandler

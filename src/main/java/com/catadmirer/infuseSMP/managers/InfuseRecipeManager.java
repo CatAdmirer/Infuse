@@ -37,7 +37,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -57,6 +59,7 @@ public class InfuseRecipeManager implements Listener {
     private final Map<String, ItemStack> standardResults;
 
     private net.kyori.adventure.bossbar.BossBar activeBossBar;
+    private Location brewingStandLocation;
 
     FileConfiguration recipesConfig;
     PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
@@ -167,7 +170,7 @@ public class InfuseRecipeManager implements Listener {
             player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
             return;
         }
-        final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
+        brewingStandLocation = this.findNearestBrewingStand(playerLocation);
         if (brewingStandLocation == null) {
             player.sendMessage(Messages.EFFECT_NOBREWING.toComponent());
             return;
@@ -239,7 +242,6 @@ public class InfuseRecipeManager implements Listener {
             ritualDuration = plugin.getConfigFile().ritualDuration();
         }
 
-
         new BukkitRunnable() {
 
             float progress = 1.0F;
@@ -249,10 +251,9 @@ public class InfuseRecipeManager implements Listener {
             public void run() {
                 if (activeBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
-                progress = Math.max(0.0F, Math.min(1.0F, progress));
                 activeBossBar = activeBossBar.progress(progress);
 
-                if (progress <= 0.0) {
+                if (progress == 0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.hideBossBar(activeBossBar);
                     }
@@ -306,7 +307,7 @@ public class InfuseRecipeManager implements Listener {
                         double checkDist = checkLocation.distance(playerLocation);
                         if (checkDist < nearestDist) {
                             nearestDist = checkDist;
-                            nearestLocation = checkLocation;
+                            nearestLocation = checkLocation.setRotation(0, 0).toBlockLocation();
                         }
                     }
                 }
@@ -528,7 +529,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
@@ -541,6 +542,23 @@ public class InfuseRecipeManager implements Listener {
                 if (stand != null) {
                     player.openInventory(stand.getInventory());
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBrewingStandBreak(BlockBreakEvent event) {
+        if (event.getBlock().getLocation().equals(brewingStandLocation)){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBrewingStandExplode(EntityExplodeEvent event) {
+        List<Block> blocks = event.blockList();
+        for (Block block : blocks) {
+            if (block.getLocation().equals(brewingStandLocation)) {
+                blocks.remove(block);
             }
         }
     }

@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 
+import java.time.Duration;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -81,12 +82,11 @@ public class Apophis implements Listener {
     private void startHealthCheckTask() {
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                double currentMaxHealth = maxHealthAttribute.getBaseValue();
-
                 if (plugin.getDataManager().hasEffect(player, EffectMapping.APOPHIS)) {
-                    if (currentMaxHealth != 30) {
+                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                    if (maxHealthAttribute.getBaseValue() < 30) {
                         maxHealthAttribute.setBaseValue(30);
+                        player.setHealth(30);
                     }
                 }
             }
@@ -100,7 +100,7 @@ public class Apophis implements Listener {
 
         if (event.getEntity() instanceof Player target) {
             if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
-                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), 0, 60, 0));
+                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
             }
         }
     }
@@ -110,7 +110,7 @@ public class Apophis implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
@@ -124,11 +124,10 @@ public class Apophis implements Listener {
                 }
             }).runTaskLater(plugin, 20L);
 
-            if (maxHealthAttribute != null) {
+            if (maxHealthAttribute.getBaseValue() < 40) {
                 maxHealthAttribute.setBaseValue(40);
+                player.setHealth(40);
             }
-
-            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
@@ -139,9 +138,7 @@ public class Apophis implements Listener {
 
             (new BukkitRunnable() {
                 public void run() {
-                    if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20);
-                    }
+                    maxHealthAttribute.setBaseValue(30);
                 }
             }).runTaskLater(plugin, 1200L);
         }
