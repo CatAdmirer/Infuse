@@ -41,7 +41,10 @@ public class Heart implements Listener {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
                         AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + 10);
+                        if (maxHealthAttribute.getBaseValue() < 30) {
+                            maxHealthAttribute.setBaseValue(30);
+                            player.setHealth(30);
+                        }
                     }
                 }
             }
@@ -117,11 +120,11 @@ public class Heart implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-            if (maxHealthAttribute != null) {
+            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttribute.getBaseValue() < 40) {
                 maxHealthAttribute.setBaseValue(40);
+                player.setHealth(40);
             }
-            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
