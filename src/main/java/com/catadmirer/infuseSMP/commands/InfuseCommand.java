@@ -53,6 +53,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
                 plugin.reloadConfig();
                 Messages.load(plugin);
+                player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
                 Recipes.openGUI(player);
