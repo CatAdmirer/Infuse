@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Speed implements Listener {
+public class Speed extends InfuseEffect {
     private static Infuse plugin;
 
     private final Map<UUID, Integer> speedLevels = new HashMap<>();

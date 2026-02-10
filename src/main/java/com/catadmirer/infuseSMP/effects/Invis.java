@@ -26,7 +26,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Invis implements Listener {
+public class Invis extends InfuseEffect {
     private static Infuse plugin;
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();

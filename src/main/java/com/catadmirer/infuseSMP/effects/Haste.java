@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Haste implements Listener {
+public class Haste extends InfuseEffect {
     private static Infuse plugin;
 
     public Haste(Infuse plugin) {

@@ -38,7 +38,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-public class Feather implements Listener {
+public class Feather extends InfuseEffect {
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     private static final Set<UUID> spark = new HashSet<>();

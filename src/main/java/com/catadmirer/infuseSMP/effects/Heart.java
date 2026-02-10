@@ -25,7 +25,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Heart implements Listener {
+public class Heart extends InfuseEffect {
     private static Infuse plugin;
 
     private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();

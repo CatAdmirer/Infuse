@@ -29,7 +29,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-public class Ender implements Listener {
+public class Ender extends InfuseEffect {
     public static final Component fireballName = Component.text("Cursing Projectile");
 
     private static Infuse plugin;

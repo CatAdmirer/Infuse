@@ -31,7 +31,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Frost implements Listener {
+public class Frost extends InfuseEffect {
     private final static Set<UUID> frozenAttackers = new HashSet<>();
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();

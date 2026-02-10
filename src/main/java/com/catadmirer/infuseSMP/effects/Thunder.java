@@ -27,7 +27,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Thunder implements Listener {
+public class Thunder extends InfuseEffect {
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
 
     private static Infuse plugin;

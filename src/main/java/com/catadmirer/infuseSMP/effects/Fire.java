@@ -26,7 +26,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Fire implements Listener {
+public class Fire extends InfuseEffect {
     private static Infuse plugin;
     private final Map<UUID, Integer> hitCounter = new HashMap<>();
 

@@ -20,7 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Ocean implements Listener {
+public class Ocean extends InfuseEffect {
     private static Infuse plugin;
 
     private final DataManager dataManager;
