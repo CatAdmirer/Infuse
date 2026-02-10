@@ -2,19 +2,18 @@ package com.catadmirer.infuseSMP.inventories;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.Component;
+import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
-import com.catadmirer.infuseSMP.util.InventoryUtils;
 
 public class AugOrRegChooser implements InventoryHolder {
     private final Inventory inventory;
 
     public AugOrRegChooser(InfuseEffect effect) {
-        inventory = Bukkit.createInventory(this, 27, Component.text("Choose", NamedTextColor.YELLOW));
+        inventory = Bukkit.createInventory(this, 27, Messages.toComponent("<yellow>Choose"));
         
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(EffectConstants.menuBackgroundColor(effect.getId())));

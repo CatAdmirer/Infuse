@@ -234,7 +234,6 @@ public class Infuse extends JavaPlugin implements Listener {
         return getPluginMeta().getVersion();
     }
 
-    // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
     private String getLatestVersion() {
         HttpRequest request = HttpRequest.newBuilder()

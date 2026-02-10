@@ -2,9 +2,10 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.effects.Ender;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +26,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -41,7 +41,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -62,6 +64,7 @@ public class InfuseRecipeManager implements Listener {
     private final FileConfiguration recipesConfig;
 
     private BossBar ritualBossBar;
+    private Location brewingStandLocation;
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
@@ -85,7 +88,7 @@ public class InfuseRecipeManager implements Listener {
             // Making sure the recipe is enabled
             boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
                 continue;
             }
 
@@ -155,7 +158,7 @@ public class InfuseRecipeManager implements Listener {
             player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
             return;
         }
-        final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
+        brewingStandLocation = this.findNearestBrewingStand(playerLocation);
         if (brewingStandLocation == null) {
             player.sendMessage(Messages.EFFECT_NOBREWING.toComponent());
             return;
@@ -227,7 +230,6 @@ public class InfuseRecipeManager implements Listener {
             ritualDuration = plugin.getConfigFile().ritualDuration();
         }
 
-
         new BukkitRunnable() {
 
             float progress = 1.0F;
@@ -237,10 +239,9 @@ public class InfuseRecipeManager implements Listener {
             public void run() {
                 if (ritualBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
-                progress = Math.max(0.0F, Math.min(1.0F, progress));
                 ritualBossBar = ritualBossBar.progress(progress);
 
-                if (progress <= 0.0) {
+                if (progress == 0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.hideBossBar(ritualBossBar);
                     }
@@ -294,7 +295,7 @@ public class InfuseRecipeManager implements Listener {
                         double checkDist = checkLocation.distance(playerLocation);
                         if (checkDist < nearestDist) {
                             nearestDist = checkDist;
-                            nearestLocation = checkLocation;
+                            nearestLocation = checkLocation.setRotation(0, 0).toBlockLocation();
                         }
                     }
                 }
@@ -388,7 +389,6 @@ public class InfuseRecipeManager implements Listener {
             }
         }
     }
-
 
     private void registerRecipeFromConfig(String recipeKey, ItemStack result) {
         FileConfiguration config = recipesConfig;
@@ -500,8 +500,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
-                && event.getClickedBlock().getType() == Material.BREWING_STAND) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.BREWING_STAND) {
             event.setCancelled(true);
             Player player = event.getPlayer();
             if (plugin.getConfigFile().brewingGui()) {
@@ -518,7 +517,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
@@ -531,6 +530,23 @@ public class InfuseRecipeManager implements Listener {
                 if (stand != null) {
                     player.openInventory(stand.getInventory());
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBrewingStandBreak(BlockBreakEvent event) {
+        if (event.getBlock().getLocation().equals(brewingStandLocation)){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBrewingStandExplode(EntityExplodeEvent event) {
+        List<Block> blocks = event.blockList();
+        for (Block block : blocks) {
+            if (block.getLocation().equals(brewingStandLocation)) {
+                blocks.remove(block);
             }
         }
     }

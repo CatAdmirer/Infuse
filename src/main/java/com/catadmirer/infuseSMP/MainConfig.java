@@ -39,11 +39,7 @@ public class MainConfig {
 
         // Creating the file if it doesn't exist.
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                return false;
-            }
+            plugin.saveResource(file.getName(), true);
         }
 
         // Loading the config
@@ -52,7 +48,7 @@ public class MainConfig {
             plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", file.getName());
             return true;
         } catch (InvalidConfigurationException err) {
-            plugin.getLogger().log(Level.WARNING, "{0} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
+            plugin.getLogger().log(Level.SEVERE, "{0} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException err) {
             plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", file.getName());
         }

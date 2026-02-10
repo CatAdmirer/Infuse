@@ -4,9 +4,8 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -22,7 +21,7 @@ public class EffectChooser implements InventoryHolder, Listener {
     private final Inventory inventory;
 
     public EffectChooser(Infuse plugin) {
-        inventory = Bukkit.createInventory(this, 54, Component.text("Infuses").decorate(TextDecoration.BOLD));
+        inventory = Bukkit.createInventory(this, 54, Messages.toComponent("<b>Infuses"));
 
         // Filling the inventory with decorative glass panes
         int[] magentaSlots = {0, 1, 2, 6, 7, 8, 9, 10, 16, 17, 18, 26, 27, 35};

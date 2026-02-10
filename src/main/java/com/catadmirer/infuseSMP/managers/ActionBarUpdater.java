@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -61,11 +62,9 @@ public class ActionBarUpdater extends BukkitRunnable {
         }
 
         // Building the result
-        if (!time.equals(Component.empty())) {
-            return time.append(Component.text("  ")).append(Component.text(emoji).color(NamedTextColor.WHITE));
-        } else {
-            return Component.text(emoji);
-        }
+        if (time.equals(Component.empty())) return Component.text(emoji);
+
+        return time.append(Messages.toComponent("  <white>" + emoji));
     }
 
     private Component getPart2(UUID uuid, String slot) {
@@ -102,10 +101,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         }
 
         // Building the result
-        if (!time.equals(Component.empty())) {
-            return Component.text(emoji).color(NamedTextColor.WHITE).append(Component.text("  ")).append(time);
-        } else {
-            return Component.text(emoji);
-        }
+        if (time.equals(Component.empty())) return Component.text(emoji);
+        return Messages.toComponent("<white>" + emoji + "  ").append(time);
     }
 }
