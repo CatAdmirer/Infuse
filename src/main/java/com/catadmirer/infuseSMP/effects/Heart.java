@@ -1,15 +1,13 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -94,7 +92,7 @@ public class Heart implements Listener {
     }
 
     private void updateHealthDisplay(LivingEntity entity) {
-        entity.customName(Component.text(String.format("%.1f", entity.getHealth()), NamedTextColor.RED, TextDecoration.BOLD));
+        entity.customName(Messages.toComponent(String.format("<red><b>%.1f", entity.getHealth())));
     }
 
     @EventHandler

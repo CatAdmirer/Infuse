@@ -6,14 +6,12 @@ import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -75,8 +73,8 @@ public class Recipes implements CommandExecutor, Listener {
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("Augmented Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("augmented_limit"), NamedTextColor.AQUA)));
-            lore.add(Component.text("Regular Limit: ", NamedTextColor.GRAY).append(Component.text(limits.get("regular_limit"), NamedTextColor.AQUA)));
+            lore.add(Messages.toComponent("<gray>Augmented Limit: <aqua>" + limits.get("augmented_limit")));
+            lore.add(Messages.toComponent("<gray>Regular Limit: <aqua>" + limits.get("regular_limit")));
             meta.lore(lore);
             potionItem.setItemMeta(meta);
         }
