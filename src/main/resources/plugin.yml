@@ -1,7 +1,7 @@
 name: Infuse
 version: '$version'
 main: com.catadmirer.infuseSMP.Infuse
-api-version: '1.21'
+api-version: '1.21.4'
 authors: [CatAdmirer, TurboJax]
 softdepend: [PlaceholderAPI]
 commands:

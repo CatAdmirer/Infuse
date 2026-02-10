@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 
+import java.time.Duration;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -100,7 +101,7 @@ public class Apophis implements Listener {
 
         if (event.getEntity() instanceof Player target) {
             if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
-                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), 0, 60, 0));
+                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
             }
         }
     }
