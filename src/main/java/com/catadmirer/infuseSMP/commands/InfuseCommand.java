@@ -51,7 +51,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                plugin.reloadConfig();
+                plugin.getConfigFile().load();
                 Messages.load(plugin);
                 player.sendMessage("Infuse configs reloaded");
                 break;
