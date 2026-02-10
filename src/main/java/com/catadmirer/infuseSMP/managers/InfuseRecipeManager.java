@@ -57,52 +57,42 @@ public class InfuseRecipeManager implements Listener {
     private final Infuse plugin;
     private final Map<String, ItemStack> firstTimeRewards;
     private final Map<String, ItemStack> standardResults;
+    private final FileConfiguration recipesConfig;
 
-    private net.kyori.adventure.bossbar.BossBar activeBossBar;
+    private BossBar ritualBossBar;
     private Location brewingStandLocation;
-
-    FileConfiguration recipesConfig;
-    PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
         this.firstTimeRewards = new HashMap<>();
         this.standardResults = new HashMap<>();
-        try {
-            File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
-            if (!recipesFile.exists()) {
-                plugin.saveResource("recipes.yml", false);
-            }
-            recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
-        } catch (Exception e) {
-            plugin.getLogger().severe("Could not load recipes.yml!");
-            e.printStackTrace();
-            recipesConfig = null;
+
+        File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
+        if (!recipesFile.exists()) {
+            plugin.saveResource("recipes.yml", false);
         }
 
-        if (recipesConfig != null) {
-            loadRecipes();
-        } else {
-            plugin.getLogger().warning("Recipes config is null.");
-        }
+        recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
 
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    private void loadRecipes() {
         ConfigurationSection recipesSection = recipesConfig.getConfigurationSection("recipes");
         if (recipesSection == null) {
             return;
         }
 
-        for (EffectMapping mapping : EffectMapping.values()) {
-            // Preventing double loading
-            if (mapping.isAugmented()) continue;
-
-            String recipeKey = mapping.getKey();
-            boolean enabled = recipesSection.getBoolean(recipeKey + ".enabled", false);
+        // Loading the recipes from the config.
+        for (String recipeKey : recipesSection.getKeys(false)) {
+            // Making sure the recipe is enabled
+            boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
                 plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
+                continue;
+            }
+
+            EffectMapping mapping = EffectMapping.fromEffectKey(recipeKey);
+
+            // Handling the augmented ender effect
+            if (mapping.isAugmented()) {
+                registerRecipeFromConfig("aug_ender", EffectMapping.AUG_ENDER.createItem());
                 continue;
             }
 
@@ -111,13 +101,7 @@ public class InfuseRecipeManager implements Listener {
             registerRecipeFromConfig(recipeKey, mapping.createItem());
         }
 
-        // Specifically loading the aug ender effect
-        boolean enabled = recipesSection.getBoolean("aug_ender.enabled", false);
-        if (!enabled) {
-            plugin.getLogger().info("Recipe aug_ender is disabled in config, skipping.");
-            return;
-        }
-        registerRecipeFromConfig("aug_ender", EffectMapping.AUG_ENDER.createItem());
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
@@ -161,8 +145,8 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.activeBossBar == null) return;
-        event.getPlayer().showBossBar(activeBossBar);
+        if (this.ritualBossBar == null) return;
+        event.getPlayer().showBossBar(ritualBossBar);
     }
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
@@ -183,10 +167,10 @@ public class InfuseRecipeManager implements Listener {
         Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
         BossBar.Color barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
-        this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
+        this.ritualBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.showBossBar(activeBossBar);
+            p.showBossBar(ritualBossBar);
         }
 
         String worldName = brewingStandLocation.getWorld().getName();
@@ -218,7 +202,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedDiscordMessage = discordTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", plaintext.serialize(itemName))
+                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -249,20 +233,20 @@ public class InfuseRecipeManager implements Listener {
 
             @Override
             public void run() {
-                if (activeBossBar == null) { cancel(); return; }
+                if (ritualBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
-                activeBossBar = activeBossBar.progress(progress);
+                ritualBossBar = ritualBossBar.progress(progress);
 
                 if (progress == 0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.hideBossBar(activeBossBar);
+                        p.hideBossBar(ritualBossBar);
                     }
                     String msg = Messages.EFFECT_FINISHED.getMessage();
                     msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
                     Bukkit.broadcast(Messages.toComponent(msg));
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
-                    activeBossBar = null;
+                    ritualBossBar = null;
                     cancel();
                 }
             }
