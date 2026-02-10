@@ -529,7 +529,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
