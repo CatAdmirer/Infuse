@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
@@ -58,105 +59,50 @@ public class InfuseRecipeManager implements Listener {
     private final Infuse plugin;
     private final Map<String, ItemStack> firstTimeRewards;
     private final Map<String, ItemStack> standardResults;
+    private final FileConfiguration recipesConfig;
 
-    private net.kyori.adventure.bossbar.BossBar activeBossBar;
-
-    FileConfiguration recipesConfig;
-
-    LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
-    PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
+    private BossBar ritualBossBar;
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
         this.firstTimeRewards = new HashMap<>();
         this.standardResults = new HashMap<>();
-        try {
-            File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
-            if (!recipesFile.exists()) {
-                plugin.saveResource("recipes.yml", false);
-            }
-            recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
-        } catch (Exception e) {
-            plugin.getLogger().severe("Could not load recipes.yml!");
-            e.printStackTrace();
-            recipesConfig = null;
+
+        File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
+        if (!recipesFile.exists()) {
+            plugin.saveResource("recipes.yml", false);
         }
 
-        if (recipesConfig != null) {
-            loadRecipes();
-        } else {
-            plugin.getLogger().warning("Recipes config is null.");
-        }
+        recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
 
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    private void loadRecipes() {
         ConfigurationSection recipesSection = recipesConfig.getConfigurationSection("recipes");
         if (recipesSection == null) {
             return;
         }
 
+        // Loading the recipes from the config.
         for (String recipeKey : recipesSection.getKeys(false)) {
-            boolean enabled = recipesSection.getBoolean(recipeKey + ".enabled", false);
+            // Making sure the recipe is enabled
+            boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
                 plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
                 continue;
             }
 
-            switch (recipeKey.toLowerCase()) {
-                case "emerald":
-                    this.Emerald();
-                    break;
-                case "feather":
-                    this.Feather();
-                    break;
-                case "fire":
-                    this.Fire();
-                    break;
-                case "frost":
-                    this.Frost();
-                    break;
-                case "haste":
-                    this.Haste();
-                    break;
-                case "heart":
-                    this.Heart();
-                    break;
-                case "invis":
-                    this.Invis();
-                    break;
-                case "ocean":
-                    this.Ocean();
-                    break;
-                case "regen":
-                    this.Regen();
-                    break;
-                case "speed":
-                    this.Speed();
-                    break;
-                case "strength":
-                    this.Strength();
-                    break;
-                case "thunder":
-                    this.Thunder();
-                    break;
-                case "aug_ender":
-                    this.Ender();
-                    break;
-                case "ender":
-                    break;
-                case "apophis":
-                    this.Apophis();
-                    break;
-                case "thief":
-                    this.Thief();
-                    break;
-                default:
-                    plugin.getLogger().warning("Unknown recipe key: " + recipeKey);
-                    break;
+            InfuseEffect mapping = InfuseEffect.fromEffectKey(recipeKey);
+
+            // Handling the augmented ender effect
+            if (mapping.isAugmented()) {
+                registerRecipeFromConfig("aug_ender", new Ender(true).createItem());
+                continue;
             }
+
+            firstTimeRewards.put(recipeKey, mapping.getAugmentedForm().createItem());
+            standardResults.put(recipeKey, mapping.createItem());
+            registerRecipeFromConfig(recipeKey, mapping.createItem());
         }
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
@@ -200,8 +146,8 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.activeBossBar == null) return;
-        event.getPlayer().showBossBar(activeBossBar);
+        if (this.ritualBossBar == null) return;
+        event.getPlayer().showBossBar(ritualBossBar);
     }
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
@@ -222,10 +168,10 @@ public class InfuseRecipeManager implements Listener {
         Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
         BossBar.Color barColor = EffectConstants.bossBarColor(InfuseEffect.fromEffectKey(recipeKey).getId());
-        this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
+        this.ritualBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.showBossBar(activeBossBar);
+            p.showBossBar(ritualBossBar);
         }
 
         String worldName = brewingStandLocation.getWorld().getName();
@@ -249,7 +195,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedMessage = messageTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", legacySection.serialize(itemName))
+                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -257,7 +203,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedDiscordMessage = discordTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", plaintext.serialize(itemName))
+                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -289,21 +235,21 @@ public class InfuseRecipeManager implements Listener {
 
             @Override
             public void run() {
-                if (activeBossBar == null) { cancel(); return; }
+                if (ritualBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
                 progress = Math.max(0.0F, Math.min(1.0F, progress));
-                activeBossBar = activeBossBar.progress(progress);
+                ritualBossBar = ritualBossBar.progress(progress);
 
                 if (progress <= 0.0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.hideBossBar(activeBossBar);
+                        p.hideBossBar(ritualBossBar);
                     }
                     String msg = Messages.EFFECT_FINISHED.getMessage();
-                    msg = msg.replace("%item%", legacySection.serialize(itemName));
+                    msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
                     Bukkit.broadcast(Messages.toComponent(msg));
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
-                    activeBossBar = null;
+                    ritualBossBar = null;
                     cancel();
                 }
             }
@@ -587,112 +533,5 @@ public class InfuseRecipeManager implements Listener {
                 }
             }
         }
-    }
-
-    private void Emerald() {
-        ItemStack standard = new Emerald().createItem();
-        this.firstTimeRewards.put("emerald", new Emerald(true).createItem());
-        this.standardResults.put("emerald", standard);
-        registerRecipeFromConfig("emerald", standard);
-    }
-
-    private void Feather() {
-        ItemStack standard = new Feather().createItem();
-        this.firstTimeRewards.put("feather", new Feather(true).createItem());
-        this.standardResults.put("feather", standard);
-        registerRecipeFromConfig("feather", standard);
-    }
-
-    private void Fire() {
-        ItemStack standard = new Fire().createItem();
-        this.firstTimeRewards.put("fire", new Fire(true).createItem());
-        this.standardResults.put("fire", standard);
-        registerRecipeFromConfig("fire", standard);
-    }
-
-    private void Ender() {
-        ItemStack standard = new Ender().createItem();
-        this.firstTimeRewards.put("aug_ender", new Ender(true).createItem());
-        this.standardResults.put("ender", standard);
-
-        registerRecipeFromConfig("aug_ender", firstTime);
-        registerRecipeFromConfig("ender", standard);
-    }
-
-    private void Frost() {
-        ItemStack standard = new Frost().createItem();
-        this.firstTimeRewards.put("frost", new Frost(true).createItem());
-        this.standardResults.put("frost", standard);
-        registerRecipeFromConfig("frost", standard);
-    }
-
-    private void Haste() {
-        ItemStack standard = new Haste().createItem();
-        this.firstTimeRewards.put("haste", new Haste(true).createItem());
-        this.standardResults.put("haste", standard);
-        registerRecipeFromConfig("haste", standard);
-    }
-
-    private void Heart() {
-        ItemStack standard = new Heart().createItem();
-        this.firstTimeRewards.put("heart", new Heart(true).createItem());
-        this.standardResults.put("heart", standard);
-        registerRecipeFromConfig("heart", standard);
-    }
-
-    private void Invis() {
-        ItemStack standard = new Invis().createItem();
-        this.firstTimeRewards.put("invis", new Invis(true).createItem());
-        this.standardResults.put("invis", standard);
-        registerRecipeFromConfig("invis", standard);
-    }
-
-    private void Ocean() {
-        ItemStack standard = new Ocean().createItem();
-        this.firstTimeRewards.put("ocean", new Ocean(true).createItem());
-        this.standardResults.put("ocean", standard);
-        registerRecipeFromConfig("ocean", standard);
-    }
-
-    private void Regen() {
-        ItemStack standard = new Regen().createItem();
-        this.firstTimeRewards.put("regen", new Regen(true).createItem());
-        this.standardResults.put("regen", standard);
-        registerRecipeFromConfig("regen", standard);
-    }
-
-    private void Speed() {
-        ItemStack standard = new Speed().createItem();
-        this.firstTimeRewards.put("speed", new Speed(true).createItem());
-        this.standardResults.put("speed", standard);
-        registerRecipeFromConfig("speed", standard);
-    }
-
-    private void Strength() {
-        ItemStack standard = new Strength().createItem();
-        this.firstTimeRewards.put("strength", new Strength(true).createItem());
-        this.standardResults.put("strength", standard);
-        registerRecipeFromConfig("strength", standard);
-    }
-
-    private void Thunder() {
-        ItemStack standard = new Thunder().createItem();
-        this.firstTimeRewards.put("thunder", new Thunder(true).createItem());
-        this.standardResults.put("thunder", standard);
-        registerRecipeFromConfig("thunder", standard);
-    }
-
-    private void Apophis() {
-        ItemStack standard = new Apophis().createItem();
-        this.firstTimeRewards.put("apophis", new Apophis(true).createItem());
-        this.standardResults.put("apophis", standard);
-        registerRecipeFromConfig("apophis", standard);
-    }
-
-    private void Thief() {
-        ItemStack standard = new Thief().createItem();
-        this.firstTimeRewards.put("thief", new Thief(true).createItem());
-        this.standardResults.put("thief", standard);
-        registerRecipeFromConfig("thief", standard);
     }
 }
