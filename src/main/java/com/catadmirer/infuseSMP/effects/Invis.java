@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -36,7 +37,7 @@ public class Invis extends InfuseEffect {
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(p, new Speed())) {
+                    if (plugin.getDataManager().hasEffect(p, new Invis())) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
                 }
@@ -48,7 +49,7 @@ public class Invis extends InfuseEffect {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (plugin.getDataManager().hasEffect(shooter, new Speed())) {
+            if (plugin.getDataManager().hasEffect(shooter, new Invis())) {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -63,7 +64,7 @@ public class Invis extends InfuseEffect {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (plugin.getDataManager().hasEffect(attacker, new Speed())) {
+                if (plugin.getDataManager().hasEffect(attacker, new Invis())) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -95,11 +96,32 @@ public class Invis extends InfuseEffect {
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player target) {
-            if (plugin.getDataManager().hasEffect(target, new Speed())) {
+            if (plugin.getDataManager().hasEffect(target, new Invis())) {
                 event.setCancelled(true);
             }
         }
+    }
 
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
+        Player killer = victim.getKiller();
+
+        if (plugin.getConfigFile().invisDeaths()) {
+            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                String msg = Messages.INVIS_KILL.getMessage();
+                msg = msg.replace("%victim%", victim.getName());
+                msg = msg.replace("%killer%", "<gray><obf>Someone");
+                event.deathMessage(Messages.toComponent(msg));
+            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                if (killer != null) {
+                    String msg = Messages.INVIS_DEATH.getMessage();
+                    msg = msg.replace("%victim%", "<gray><obf>Someone");
+                    msg = msg.replace("%killer%", killer.getName());
+                    event.deathMessage(Messages.toComponent(msg));
+                }
+            }
+        }
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {

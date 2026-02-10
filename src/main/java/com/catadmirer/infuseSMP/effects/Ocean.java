@@ -23,15 +23,12 @@ import org.bukkit.util.Vector;
 public class Ocean extends InfuseEffect {
     private static Infuse plugin;
 
-    private final DataManager dataManager;
-
-    public Ocean(Infuse plugin, DataManager dataManager) {
+    public Ocean(Infuse plugin) {
         Ocean.plugin = plugin;
-        this.dataManager = dataManager;
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(p, new Speed())) {
+                    if (plugin.getDataManager().hasEffect(p, new Ocean())) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
                     }
@@ -42,7 +39,7 @@ public class Ocean extends InfuseEffect {
         (new BukkitRunnable() {
             public void run() {
                 for (Player effectHolder : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(effectHolder, new Speed())) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, new Ocean())) continue;
 
                     for (Player p : effectHolder.getWorld().getPlayers()) {
                         if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5 && p.getLocation().getBlock().isLiquid()) {
@@ -57,6 +54,7 @@ public class Ocean extends InfuseEffect {
                 }
             }
         }).runTaskTimer(plugin, 0L, 20L);
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -64,7 +62,8 @@ public class Ocean extends InfuseEffect {
                     if (!CooldownManager.isEffectActive(effectHolder.getUniqueId(), "ocean")) {
                         continue;
                     }
-                    if (!plugin.getDataManager().hasEffect(effectHolder, new Speed())) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, new Ocean())) continue;
+
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
                     double radius = plugin.getConfigFile().oceanPullRadius();
@@ -88,30 +87,26 @@ public class Ocean extends InfuseEffect {
         }.runTaskTimer(plugin, 0L, plugin.getConfigFile().oceanPullInterval());
     }
 
-    private boolean isTrusted(Player player, Player caster) {
-        return dataManager.isTrusted(caster, player);
+    @Override
+    public void equip(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, PotionEffect.INFINITE_DURATION, 0, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, PotionEffect.INFINITE_DURATION, 0, false, false));
     }
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
-        Player killer = victim.getKiller();
+    @Override
+    public void unequip(Player player) {
+        player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        player.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
+    }
 
-        if (plugin.getConfigFile().invisDeaths()) {
-            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Messages.INVIS_KILL.getMessage();
-                msg = msg.replace("%victim%", victim.getName());
-                msg = msg.replace("%killer%", "<gray><obf>Someone");
-                event.deathMessage(Messages.toComponent(msg));
-            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                if (killer != null) {
-                    String msg = Messages.INVIS_DEATH.getMessage();
-                    msg = msg.replace("%victim%", "<gray><obf>Someone");
-                    msg = msg.replace("%killer%", killer.getName());
-                    event.deathMessage(Messages.toComponent(msg));
-                }
-            }
-        }
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private boolean isTrusted(Player player, Player caster) {
+        return plugin.getDataManager().isTrusted(caster, player);
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {

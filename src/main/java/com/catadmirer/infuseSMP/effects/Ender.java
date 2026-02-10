@@ -1,14 +1,19 @@
 package com.catadmirer.infuseSMP.effects;
 
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import net.kyori.adventure.text.Component;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +22,6 @@ import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -27,19 +31,23 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.slf4j.LoggerFactory;
 
 public class Ender extends InfuseEffect {
     public static final Component fireballName = Component.text("Cursing Projectile");
+    public static final Set<UUID> cursedPlayers = new HashSet<>();
 
-    private static Infuse plugin;
+    public Ender() {
+        this(false);
+    }
 
-    private final Set<UUID> cursedPlayers = new HashSet<>();
-    private final DataManager dataManager;
+    public Ender(boolean augmented) {
+        super(EffectIds.ENDER, "ender", augmented);
+    }
 
     public Ender(DataManager dataManager, Infuse plugin) {
-        this.dataManager = dataManager;
-        Ender.plugin = plugin;
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (plugin.getDataManager().hasEffect(player, new Ender())) {
@@ -54,36 +62,28 @@ public class Ender extends InfuseEffect {
         }, 0L, 20L);
     }
 
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player damagedPlayer)) return;
-
-        // Making sure the damaged player is cursed
-        UUID damagedUUID = damagedPlayer.getUniqueId();
-        if (!cursedPlayers.contains(damagedUUID)) return;
-
-        // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
-        if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
-        
-        // Making the fake damageSource
-        DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
-
-        // Sharing curse damage with all other cursed players
-        for (UUID cursedUUID : cursedPlayers) {
-            // Skipping the player who was hit
-            if (cursedUUID == damagedUUID) continue;
-
-            Player player = Bukkit.getPlayer(cursedUUID);
-            player.damage(event.getDamage(), fakeSource);
-        }
+    @Override
+    public Component getItemName() {
+        return augmented ? Messages.AUG_ENDER_NAME.toComponent() : Messages.ENDER_NAME.toComponent();
     }
 
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(player, caster);
+    @Override
+    public List<Component> getItemLore() {
+        return augmented ? Messages.AUG_ENDER_LORE.getComponentList() : Messages.ENDER_LORE.getComponentList();
     }
 
+    @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Ender(true);
+    }
 
-    public static void activateSpark(Boolean isAugmented, Player player) {
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Ender();
+    }
+
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
@@ -125,38 +125,11 @@ public class Ender extends InfuseEffect {
         return loc.getBlock().getType().isAir() && loc.clone().add(0, 1, 0).getBlock().getType().isAir();
     }
 
-    @EventHandler
-    public void enderOnehitMobs(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player attacker)) return;
-        if (!(event.getEntity() instanceof LivingEntity mob)) return;
-        if (event.getEntity() instanceof Player) return;
+    public void cursePlayer(Player toCurse) {
 
-        UUID attackerUUID = attacker.getUniqueId();
-        if (CooldownManager.isEffectActive(attackerUUID, "ender")) {
-            mob.setHealth(0);
-        }
     }
 
-    @EventHandler
-    public void onUseDragonBreath(PlayerInteractEvent event) {
-        // Listening for right clicks
-        Action action = event.getAction();
-        if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-        
-        // Making sure the player has the ender effect
-        Player player = event.getPlayer();
-        if (!plugin.getDataManager().hasEffect(player, new Ender())) return;
-
-        // Making sure the player used a bottle of dragons breath
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType() != Material.DRAGON_BREATH) return;
-
-        // Making sure the cursing fireball isn't on cooldown
-        if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
-
-        shootCursingFireball(player);
-        event.setCancelled(true);
-    }
+    
 
     public void shootCursingFireball(Player player) {
         UUID uuid = player.getUniqueId();
@@ -181,37 +154,25 @@ public class Ender extends InfuseEffect {
         fireball.setVelocity(velocity);
     }
 
-    @EventHandler
-    public void onFireballDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof DragonFireball fireball)) return;
-        if (!fireballName.equals(fireball.customName())) return;
-        if (!(event.getEntity() instanceof Player target)) return;
-        if (!(fireball.getShooter() instanceof Player shooter)) return;
-        if (isTeammate(target, shooter)) return;
-
-        cursePlayer(target.getUniqueId(), 1200);
-
-        event.setDamage(0);
-    }
-
-    @EventHandler
-    public void onFireballHit(ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof DragonFireball fireball)) return;
-        if (!fireballName.equals(fireball.customName())) return;
-        if (!(event.getHitEntity() instanceof Player target)) return;
-        if (!(fireball.getShooter() instanceof Player shooter)) return;
-        if (isTeammate(target, shooter)) return;
-
-        cursePlayer(target.getUniqueId(), 1200);
-    }
-
-    public void cursePlayer(UUID playerUUID, long delayTicks) {
+    public static void cursePlayer(Infuse plugin, UUID playerUUID, long durationTicks) {
         cursedPlayers.add(playerUUID);
 
-        Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), delayTicks);
+        Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), durationTicks);
     }
 
-    public void applyGlowingToUntrusted(Player player) {
+    public void applyGlowingToUntrusted(Infuse plugin) {
+        if (owner == null) {
+            plugin.getLogger().log(Level.SEVERE, "Cannot use Ender#applyGlowingToUntrusted without setting an owner for the effect.", new IllegalStateException());
+            return;
+        }
+
+        if (!owner.isOnline()) {
+            plugin.getLogger().log(Level.SEVERE, "Cannot use Ender#applyGlowingToUntrusted with effects whose owner is offline.", new IllegalStateException());
+            return;
+        }
+
+        Player player = owner.getPlayer();
+        
         if (!plugin.getDataManager().hasEffect(player, new Ender())) return;
 
         double radius = 10;
@@ -220,7 +181,7 @@ public class Ender extends InfuseEffect {
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
-            if (dataManager.isTrusted(nearby, player)) continue;
+            if (plugin.getDataManager().isTrusted(nearby, player)) continue;
             nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
         }
     }
