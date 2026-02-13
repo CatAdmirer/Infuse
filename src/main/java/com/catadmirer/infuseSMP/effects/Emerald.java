@@ -17,7 +17,6 @@ import java.util.Random;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -33,26 +32,15 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Emerald implements Listener {
     private static Infuse plugin;
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
-
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) continue;
-
-                    applyPassiveEffects(player);
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    private void applyPassiveEffects(Player player) {
+    public static void applyPassiveEffects(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 

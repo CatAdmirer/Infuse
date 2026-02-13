@@ -32,19 +32,14 @@ public class Thief implements Listener {
 
     public Thief(Infuse plugin) {
         Thief.plugin = plugin;
+    }
 
-        // TODO: Try to remove this
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.THIEF)) {
-                        if (otherPlayer.canSee(player)) {
-                            otherPlayer.listPlayer(player);
-                        }
-                    }
-                }
+    public static void applyPassiveEffects(Player player) {
+        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+            if (otherPlayer.canSee(player)) {
+                otherPlayer.listPlayer(player);
             }
-        }, 0L, 20L);
+        }
     }
 
     // Hiding a thief user from the rest of the players online
