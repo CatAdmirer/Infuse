@@ -33,11 +33,10 @@ public class Invisibility implements Listener {
 
     public Invisibility(Infuse plugin) {
         Invisibility.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.INVIS.hasEffect(p)) {
+                    if (plugin.getDataManager().hasEffect(p, EffectMapping.INVIS)) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
                     }
                 }
@@ -49,7 +48,7 @@ public class Invisibility implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (EffectMapping.INVIS.hasEffect(shooter)) {
+            if (plugin.getDataManager().hasEffect(shooter, EffectMapping.INVIS)) {
                 if (event.getEntity() instanceof Arrow) {
                     if (event.getHitEntity() instanceof Player target) {
                         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -64,7 +63,7 @@ public class Invisibility implements Listener {
     public void onMeleeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
             if (event.getEntity() instanceof Player target) {
-                if (EffectMapping.INVIS.hasEffect(attacker)) {
+                if (plugin.getDataManager().hasEffect(attacker, EffectMapping.INVIS)) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
                     if (count >= 20) {
@@ -96,7 +95,7 @@ public class Invisibility implements Listener {
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player target) {
-            if (EffectMapping.INVIS.hasEffect(target)) {
+            if (plugin.getDataManager().hasEffect(target, EffectMapping.INVIS)) {
                 event.setCancelled(true);
             }
         }

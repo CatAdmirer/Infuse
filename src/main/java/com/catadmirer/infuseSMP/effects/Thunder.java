@@ -43,7 +43,7 @@ public class Thunder implements Listener {
 
         // Making sure the shooter has the thunder effect
         if (!(trident.getShooter() instanceof Player attacker)) return;
-        if (!EffectMapping.THUNDER.hasEffect(attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) return;
 
         // Only summoning lightning if the target is a living entity
         if (event.getEntity() instanceof LivingEntity target) {
@@ -105,7 +105,7 @@ public class Thunder implements Listener {
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            if (EffectMapping.THUNDER.hasEffect(attacker)) {
+            if (plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) {
                 if (event.getEntity() instanceof LivingEntity target) {
                     UUID targetUUID = target.getUniqueId();
                     long currentTime = System.currentTimeMillis();

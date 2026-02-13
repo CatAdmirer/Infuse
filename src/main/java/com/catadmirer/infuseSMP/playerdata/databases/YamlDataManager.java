@@ -194,7 +194,7 @@ public class YamlDataManager implements DataManager {
         if (effect == null) {
             config.set(playerUUID.toString() + "." + slot, null);
         } else {
-            config.set(playerUUID.toString() + "." + slot, effect.name());
+            config.set(playerUUID.toString() + "." + slot, effect.getKey());
         }
         save();
     }
@@ -215,7 +215,20 @@ public class YamlDataManager implements DataManager {
         if (effectKey != null && effect == null) {
             Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
         }
+
         return effect;
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot) {
+        EffectMapping equippedEffect = getEffect(player.getUniqueId(), slot);
+
+        if (equippedEffect == null) return false;
+
+        if (differentiateAugmented) {
+            return effect.equals(equippedEffect);
+        }
+
+        return effect.getId() == equippedEffect.getId();
     }
 
     /**
@@ -225,7 +238,7 @@ public class YamlDataManager implements DataManager {
      * @param slot The slot to remove an effect from.
      */
     @Override
-    public void removeEffect(@NotNull UUID playerUUID, @NotNull String slot) {
+    public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
         save();
     }

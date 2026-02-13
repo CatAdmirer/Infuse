@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -97,12 +96,6 @@ public enum EffectMapping {
         regular = base;
         augmented = this;
         base.augmented = this;
-    }
-
-    private static DataManager dataManager;
-
-    public static void init(DataManager dataManager) {
-        EffectMapping.dataManager = dataManager;
     }
 
     /**
@@ -297,29 +290,6 @@ public enum EffectMapping {
      */
     public void activateSpark(Player player) {
         sparkFunction.accept(isAugmented(), player);
-    }
-
-    /**
-     * Checks if a player has this effect in any slot.
-     * 
-     * @param player The player to check for the effect.
-     * 
-     * @return Whether or not the player has this effect equipped in any slot.
-     */
-    public boolean hasEffect(OfflinePlayer player) {
-        return hasEffect(player, "1") || hasEffect(player, "2");
-    }
-
-    /**
-     * Checks if a player has this effect in a specific slot.
-     * 
-     * @param player The player to check for the effect.
-     * @param slot The slot to check for the effect in.
-     * 
-     * @return Whether or not the player has this effect equipped in the provided slot.
-     */
-    public boolean hasEffect(OfflinePlayer player, String slot) {
-        return this == dataManager.getEffect(player.getUniqueId(), slot);
     }
 
     /**

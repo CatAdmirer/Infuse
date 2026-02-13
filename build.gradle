@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.catadmirer'
-version = '2.1.0'
+version = '2.2.2'
 
 repositories {
     maven {
@@ -52,4 +52,9 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+task resetAndRun {
+    delete "run/plugins/$rootProject.name"
+    finalizedBy(runServer)
 }

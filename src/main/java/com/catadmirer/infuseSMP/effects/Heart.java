@@ -1,15 +1,13 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -32,7 +30,6 @@ public class Heart implements Listener {
 
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         healthMonitor();
     }
 
@@ -40,9 +37,12 @@ public class Heart implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.HEART.hasEffect(player)) {
+                    if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
                         AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + 10);
+                        if (maxHealthAttribute.getBaseValue() < 30) {
+                            maxHealthAttribute.setBaseValue(30);
+                            player.setHealth(30);
+                        }
                     }
                 }
             }
@@ -53,7 +53,7 @@ public class Heart implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
             if (event.getEntity() instanceof LivingEntity target) {
-                if (EffectMapping.HEART.hasEffect(player)) {
+                if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
                     UUID playerUUID = player.getUniqueId();
                     UUID targetUUID = target.getUniqueId();
                     this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -95,13 +95,13 @@ public class Heart implements Listener {
     }
 
     private void updateHealthDisplay(LivingEntity entity) {
-        entity.customName(Component.text(String.format("%.1f", entity.getHealth()), NamedTextColor.RED, TextDecoration.BOLD));
+        entity.customName(Messages.toComponent(String.format("<red><b>%.1f", entity.getHealth())));
     }
 
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (EffectMapping.HEART.hasEffect(player)) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
             ItemStack item = event.getItem();
             if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
@@ -118,11 +118,11 @@ public class Heart implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-            if (maxHealthAttribute != null) {
+            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttribute.getBaseValue() < 40) {
                 maxHealthAttribute.setBaseValue(40);
+                player.setHealth(40);
             }
-            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
             
             // Applying cooldowns and durations for the effect
             long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);

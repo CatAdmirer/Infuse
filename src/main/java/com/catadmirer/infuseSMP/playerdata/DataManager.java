@@ -93,6 +93,20 @@ public interface DataManager {
     @Nullable
     public EffectMapping getEffect(@NotNull UUID playerUUID, @NotNull String slot);
 
+    public default boolean hasEffect(OfflinePlayer player, EffectMapping effect) {
+        return hasEffect(player, effect, false);
+    }
+
+    public default boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented) {
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");        
+    }
+
+    public default boolean hasEffect(OfflinePlayer player, EffectMapping effect, String slot) {
+        return hasEffect(player, effect, false, slot);
+    }
+
+    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot);
+
     /**
      * Removes an infuse effect from a specific slot for a player.
      * 

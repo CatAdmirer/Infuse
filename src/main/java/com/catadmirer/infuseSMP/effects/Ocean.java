@@ -28,11 +28,10 @@ public class Ocean implements Listener {
     public Ocean(Infuse plugin, DataManager dataManager) {
         Ocean.plugin = plugin;
         this.dataManager = dataManager;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (EffectMapping.OCEAN.hasEffect(p)) {
+                    if (plugin.getDataManager().hasEffect(p, EffectMapping.OCEAN)) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
                     }
@@ -43,7 +42,7 @@ public class Ocean implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 for (Player effectHolder : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, EffectMapping.OCEAN)) continue;
 
                     for (Player p : effectHolder.getWorld().getPlayers()) {
                         if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5 && p.getLocation().getBlock().isLiquid()) {
@@ -65,7 +64,7 @@ public class Ocean implements Listener {
                     if (!CooldownManager.isEffectActive(effectHolder.getUniqueId(), "ocean")) {
                         continue;
                     }
-                    if (!EffectMapping.OCEAN.hasEffect(effectHolder)) continue;
+                    if (!plugin.getDataManager().hasEffect(effectHolder, EffectMapping.OCEAN)) continue;
                     World world = effectHolder.getWorld();
                     Location holderLoc = effectHolder.getLocation();
                     double radius = plugin.getConfigFile().oceanPullRadius();

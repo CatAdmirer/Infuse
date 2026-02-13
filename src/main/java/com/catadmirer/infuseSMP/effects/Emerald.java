@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,11 +41,10 @@ public class Emerald implements Listener {
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
 
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.EMERALD.hasEffect(player)) continue;
+                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) continue;
 
                     applyPassiveEffects(player);
                 }
@@ -58,22 +57,16 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
         ItemStack mainHand = player.getInventory().getItemInMainHand();
-        if (isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
             mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
         }
-    }
-
-    private boolean isSword(ItemStack item) {
-        if (item == null) return false;
-
-        return MaterialSetTag.ITEMS_SWORDS.isTagged(item.getType());
     }
 
     @EventHandler
     public void emeraldExpMultiplier(PlayerPickupExperienceEvent event) {
         Player player = event.getPlayer();
 
-        if (!EffectMapping.EMERALD.hasEffect(player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
@@ -89,7 +82,7 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void emeraldEnchantBonus(PrepareItemEnchantEvent event) {
-        if (!EffectMapping.EMERALD.hasEffect(event.getEnchanter())) return;
+        if (!plugin.getDataManager().hasEffect(event.getEnchanter(), EffectMapping.EMERALD)) return;
 
         // Getting the world seed of the player
         long worldSeed = event.getEnchanter().getWorld().getSeed();
@@ -145,7 +138,7 @@ public class Emerald implements Listener {
         Player player = event.getPlayer();
 
         // Making sure the player has the emerald effect
-        if (!(EffectMapping.EMERALD.hasEffect(player))) return;
+        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD))) return;
 
         ItemStack consumedItem = event.getItem();
 

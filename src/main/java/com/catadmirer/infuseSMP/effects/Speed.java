@@ -32,11 +32,10 @@ public class Speed implements Listener {
 
     public Speed(Infuse plugin) {
         Speed.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         (new BukkitRunnable() {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!EffectMapping.SPEED.hasEffect(p)) continue;
+                    if (!plugin.getDataManager().hasEffect(p, EffectMapping.SPEED)) continue;
 
                     UUID uuid = p.getUniqueId();
                     long lastHit = Speed.this.lastHitTime.getOrDefault(uuid, 0L);
@@ -54,7 +53,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (EffectMapping.SPEED.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, EffectMapping.SPEED)) {
                 long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
                 double adjustedPullTimeMs = pullTimeMs * 1.8;
@@ -68,7 +67,7 @@ public class Speed implements Listener {
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (EffectMapping.SPEED.hasEffect(player)) {
+            if (plugin.getDataManager().hasEffect(player, EffectMapping.SPEED)) {
                 UUID uuid = player.getUniqueId();
                 long currentTime = System.currentTimeMillis();
                 long lastHit = this.lastHitTime.getOrDefault(uuid, 0L);

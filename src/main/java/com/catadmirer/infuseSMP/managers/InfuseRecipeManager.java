@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -37,7 +37,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -55,105 +57,51 @@ public class InfuseRecipeManager implements Listener {
     private final Infuse plugin;
     private final Map<String, ItemStack> firstTimeRewards;
     private final Map<String, ItemStack> standardResults;
+    private final FileConfiguration recipesConfig;
 
-    private net.kyori.adventure.bossbar.BossBar activeBossBar;
-
-    FileConfiguration recipesConfig;
-
-    LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
-    PlainTextComponentSerializer plaintext = PlainTextComponentSerializer.plainText();
+    private BossBar ritualBossBar;
+    private Location brewingStandLocation;
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
         this.firstTimeRewards = new HashMap<>();
         this.standardResults = new HashMap<>();
-        try {
-            File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
-            if (!recipesFile.exists()) {
-                plugin.saveResource("recipes.yml", false);
-            }
-            recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
-        } catch (Exception e) {
-            plugin.getLogger().severe("Could not load recipes.yml!");
-            e.printStackTrace();
-            recipesConfig = null;
+
+        File recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
+        if (!recipesFile.exists()) {
+            plugin.saveResource("recipes.yml", false);
         }
 
-        if (recipesConfig != null) {
-            loadRecipes();
-        } else {
-            plugin.getLogger().warning("Recipes config is null.");
-        }
+        recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
 
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    private void loadRecipes() {
         ConfigurationSection recipesSection = recipesConfig.getConfigurationSection("recipes");
         if (recipesSection == null) {
             return;
         }
 
+        // Loading the recipes from the config.
         for (String recipeKey : recipesSection.getKeys(false)) {
-            boolean enabled = recipesSection.getBoolean(recipeKey + ".enabled", false);
+            // Making sure the recipe is enabled
+            boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
                 continue;
             }
 
-            switch (recipeKey.toLowerCase()) {
-                case "emerald":
-                    this.Emerald();
-                    break;
-                case "feather":
-                    this.Feather();
-                    break;
-                case "fire":
-                    this.Fire();
-                    break;
-                case "frost":
-                    this.Frost();
-                    break;
-                case "haste":
-                    this.Haste();
-                    break;
-                case "heart":
-                    this.Heart();
-                    break;
-                case "invis":
-                    this.Invis();
-                    break;
-                case "ocean":
-                    this.Ocean();
-                    break;
-                case "regen":
-                    this.Regen();
-                    break;
-                case "speed":
-                    this.Speed();
-                    break;
-                case "strength":
-                    this.Strength();
-                    break;
-                case "thunder":
-                    this.Thunder();
-                    break;
-                case "aug_ender":
-                    this.Ender();
-                    break;
-                case "ender":
-                    break;
-                case "apophis":
-                    this.Apophis();
-                    break;
-                case "thief":
-                    this.Thief();
-                    break;
-                default:
-                    plugin.getLogger().warning("Unknown recipe key: " + recipeKey);
-                    break;
+            EffectMapping mapping = EffectMapping.fromEffectKey(recipeKey);
+
+            // Handling the augmented ender effect
+            if (mapping.isAugmented()) {
+                registerRecipeFromConfig("aug_ender", EffectMapping.AUG_ENDER.createItem());
+                continue;
             }
+
+            firstTimeRewards.put(recipeKey, mapping.augmented().createItem());
+            standardResults.put(recipeKey, mapping.createItem());
+            registerRecipeFromConfig(recipeKey, mapping.createItem());
         }
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
@@ -197,8 +145,8 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.activeBossBar == null) return;
-        event.getPlayer().showBossBar(activeBossBar);
+        if (this.ritualBossBar == null) return;
+        event.getPlayer().showBossBar(ritualBossBar);
     }
 
     private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
@@ -206,7 +154,7 @@ public class InfuseRecipeManager implements Listener {
             player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
             return;
         }
-        final Location brewingStandLocation = this.findNearestBrewingStand(playerLocation);
+        brewingStandLocation = this.findNearestBrewingStand(playerLocation);
         if (brewingStandLocation == null) {
             player.sendMessage(Messages.EFFECT_NOBREWING.toComponent());
             return;
@@ -219,10 +167,10 @@ public class InfuseRecipeManager implements Listener {
         Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
 
         BossBar.Color barColor = EffectMapping.fromEffectKey(recipeKey).getRitualColor();
-        this.activeBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
+        this.ritualBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.showBossBar(activeBossBar);
+            p.showBossBar(ritualBossBar);
         }
 
         String worldName = brewingStandLocation.getWorld().getName();
@@ -246,7 +194,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedMessage = messageTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", legacySection.serialize(itemName))
+                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -254,7 +202,7 @@ public class InfuseRecipeManager implements Listener {
 
         String formattedDiscordMessage = discordTemplate
                 .replace("%player%", player.getName())
-                .replace("%item%", plaintext.serialize(itemName))
+                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
                 .replace("%x%", x)
                 .replace("%y%", y)
                 .replace("%z%", z)
@@ -278,7 +226,6 @@ public class InfuseRecipeManager implements Listener {
             ritualDuration = plugin.getConfigFile().ritualDuration();
         }
 
-
         new BukkitRunnable() {
 
             float progress = 1.0F;
@@ -286,21 +233,20 @@ public class InfuseRecipeManager implements Listener {
 
             @Override
             public void run() {
-                if (activeBossBar == null) { cancel(); return; }
+                if (ritualBossBar == null) { cancel(); return; }
                 progress -= progressDecrement;
-                progress = Math.max(0.0F, Math.min(1.0F, progress));
-                activeBossBar = activeBossBar.progress(progress);
+                ritualBossBar = ritualBossBar.progress(progress);
 
-                if (progress <= 0.0) {
+                if (progress == 0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.hideBossBar(activeBossBar);
+                        p.hideBossBar(ritualBossBar);
                     }
                     String msg = Messages.EFFECT_FINISHED.getMessage();
-                    msg = msg.replace("%item%", legacySection.serialize(itemName));
+                    msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
                     Bukkit.broadcast(Messages.toComponent(msg));
                     brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
                     isRitualActive = false;
-                    activeBossBar = null;
+                    ritualBossBar = null;
                     cancel();
                 }
             }
@@ -345,7 +291,7 @@ public class InfuseRecipeManager implements Listener {
                         double checkDist = checkLocation.distance(playerLocation);
                         if (checkDist < nearestDist) {
                             nearestDist = checkDist;
-                            nearestLocation = checkLocation;
+                            nearestLocation = checkLocation.setRotation(0, 0).toBlockLocation();
                         }
                     }
                 }
@@ -439,7 +385,6 @@ public class InfuseRecipeManager implements Listener {
             }
         }
     }
-
 
     private void registerRecipeFromConfig(String recipeKey, ItemStack result) {
         FileConfiguration config = recipesConfig;
@@ -551,8 +496,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
-                && event.getClickedBlock().getType() == Material.BREWING_STAND) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.BREWING_STAND) {
             event.setCancelled(true);
             Player player = event.getPlayer();
             if (plugin.getConfigFile().brewingGui()) {
@@ -569,7 +513,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
@@ -586,125 +530,20 @@ public class InfuseRecipeManager implements Listener {
         }
     }
 
-    private void Emerald() {
-        ItemStack firstTime = EffectMapping.AUG_EMERALD.createItem();
-        ItemStack standard = EffectMapping.EMERALD.createItem();
-        this.firstTimeRewards.put("emerald", firstTime);
-        this.standardResults.put("emerald", standard);
-        registerRecipeFromConfig("emerald", standard);
+    @EventHandler
+    public void onBrewingStandBreak(BlockBreakEvent event) {
+        if (event.getBlock().getLocation().equals(brewingStandLocation)){
+            event.setCancelled(true);
+        }
     }
 
-    private void Feather() {
-        ItemStack firstTime = EffectMapping.AUG_FEATHER.createItem();
-        ItemStack standard = EffectMapping.FEATHER.createItem();
-        this.firstTimeRewards.put("feather", firstTime);
-        this.standardResults.put("feather", standard);
-        registerRecipeFromConfig("feather", standard);
-    }
-
-    private void Fire() {
-        ItemStack firstTime = EffectMapping.AUG_FIRE.createItem();
-        ItemStack standard = EffectMapping.FIRE.createItem();
-        this.firstTimeRewards.put("fire", firstTime);
-        this.standardResults.put("fire", standard);
-        registerRecipeFromConfig("fire", standard);
-    }
-
-    private void Ender() {
-        ItemStack firstTime = EffectMapping.AUG_ENDER.createItem();
-        ItemStack standard = EffectMapping.ENDER.createItem();
-        this.firstTimeRewards.put("aug_ender", firstTime);
-        this.standardResults.put("ender", standard);
-
-        registerRecipeFromConfig("aug_ender", firstTime);
-        registerRecipeFromConfig("ender", standard);
-    }
-
-    private void Frost() {
-        ItemStack firstTime = EffectMapping.AUG_FROST.createItem();
-        ItemStack standard = EffectMapping.FROST.createItem();
-        this.firstTimeRewards.put("frost", firstTime);
-        this.standardResults.put("frost", standard);
-        registerRecipeFromConfig("frost", standard);
-    }
-
-    private void Haste() {
-        ItemStack firstTime = EffectMapping.AUG_HASTE.createItem();
-        ItemStack standard = EffectMapping.HASTE.createItem();
-        this.firstTimeRewards.put("haste", firstTime);
-        this.standardResults.put("haste", standard);
-        registerRecipeFromConfig("haste", standard);
-    }
-
-    private void Heart() {
-        ItemStack firstTime = EffectMapping.AUG_HEART.createItem();
-        ItemStack standard = EffectMapping.HEART.createItem();
-        this.firstTimeRewards.put("heart", firstTime);
-        this.standardResults.put("heart", standard);
-        registerRecipeFromConfig("heart", standard);
-    }
-
-    private void Invis() {
-        ItemStack firstTime = EffectMapping.AUG_INVIS.createItem();
-        ItemStack standard = EffectMapping.INVIS.createItem();
-        this.firstTimeRewards.put("invis", firstTime);
-        this.standardResults.put("invis", standard);
-        registerRecipeFromConfig("invis", standard);
-    }
-
-    private void Ocean() {
-        ItemStack firstTime = EffectMapping.AUG_OCEAN.createItem();
-        ItemStack standard = EffectMapping.OCEAN.createItem();
-        this.firstTimeRewards.put("ocean", firstTime);
-        this.standardResults.put("ocean", standard);
-        registerRecipeFromConfig("ocean", standard);
-    }
-
-    private void Regen() {
-        ItemStack firstTime = EffectMapping.AUG_REGEN.createItem();
-        ItemStack standard = EffectMapping.REGEN.createItem();
-        this.firstTimeRewards.put("regen", firstTime);
-        this.standardResults.put("regen", standard);
-        registerRecipeFromConfig("regen", standard);
-    }
-
-    private void Speed() {
-        ItemStack firstTime = EffectMapping.AUG_SPEED.createItem();
-        ItemStack standard = EffectMapping.SPEED.createItem();
-        this.firstTimeRewards.put("speed", firstTime);
-        this.standardResults.put("speed", standard);
-        registerRecipeFromConfig("speed", standard);
-    }
-
-    private void Strength() {
-        ItemStack firstTime = EffectMapping.AUG_STRENGTH.createItem();
-        ItemStack standard = EffectMapping.STRENGTH.createItem();
-        this.firstTimeRewards.put("strength", firstTime);
-        this.standardResults.put("strength", standard);
-        registerRecipeFromConfig("strength", standard);
-    }
-
-    private void Thunder() {
-        ItemStack firstTime = EffectMapping.AUG_THUNDER.createItem();
-        ItemStack standard = EffectMapping.THUNDER.createItem();
-        this.firstTimeRewards.put("thunder", firstTime);
-        this.standardResults.put("thunder", standard);
-        registerRecipeFromConfig("thunder", standard);
-    }
-
-    private void Apophis() {
-        ItemStack firstTime = EffectMapping.AUG_APOPHIS.createItem();
-        ItemStack standard = EffectMapping.APOPHIS.createItem();
-        this.firstTimeRewards.put("apophis", firstTime);
-        this.standardResults.put("apophis", standard);
-        registerRecipeFromConfig("apophis", standard);
-    }
-
-    private void Thief() {
-        ItemStack firstTime = EffectMapping.AUG_THIEF.createItem();
-        ItemStack standard = EffectMapping.THIEF.createItem();
-        this.firstTimeRewards.put("thief", firstTime);
-        this.standardResults.put("thief", standard);
-        registerRecipeFromConfig("thief", standard);
+    @EventHandler
+    public void onBrewingStandExplode(EntityExplodeEvent event) {
+        List<Block> blocks = event.blockList();
+        for (Block block : blocks) {
+            if (block.getLocation().equals(brewingStandLocation)) {
+                blocks.remove(block);
+            }
+        }
     }
 }

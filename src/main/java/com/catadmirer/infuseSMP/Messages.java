@@ -19,7 +19,7 @@ import org.bukkit.plugin.Plugin;
  */
 
 public enum Messages {
-    EFFECT_BROADCAST("effect_broadcast", "🧪 %player% is cooking up the %item% at %x%, %y%, %z%... %dimension%"),
+    EFFECT_BROADCAST("effect_broadcast", "🧪 %player% is cooking up the %item%<reset> at %x%, %y%, %z%... %dimension%"),
     DISCORD_BROADCAST("discord_broadcast", "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
     EFFECT_FINISHED("effect_finished", "%item% has been brewed!"),
 

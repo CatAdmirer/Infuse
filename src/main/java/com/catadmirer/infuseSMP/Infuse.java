@@ -75,9 +75,6 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the data manager
         dataManager.load();
 
-        // Giving the mapping class an instance of the data manager
-        EffectMapping.init(dataManager);
-
         // Registering infuse commands
         this.registerCommands();
 
@@ -239,7 +236,6 @@ public class Infuse extends JavaPlugin implements Listener {
         return getPluginMeta().getVersion();
     }
 
-    // TODO: Fix this.  We are on BuiltByBit now.
     /** Checks the modrinth api for any updates to the plugin. */
     private String getLatestVersion() {
         HttpRequest request = HttpRequest.newBuilder()

@@ -37,24 +37,20 @@ public class MainConfig {
             return false;
         }
 
-        // Creating the file if it doesn't exist.
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                return false;
-            }
-        }
+        // load config
 
-        // Loading the config
         try {
+            if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
+            if (!file.exists()) plugin.saveResource("config.yml", false);
             config.load(file);
-            plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", file.getName());
+            plugin.getLogger().info("Successfully loaded config.yml");
             return true;
-        } catch (InvalidConfigurationException err) {
-            plugin.getLogger().log(Level.WARNING, "{0} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
-        } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", file.getName());
+
+        } catch (InvalidConfigurationException e) {
+            plugin.getLogger().warning(file.getName() + "is broken :wilted_rose:");
+        } catch (IOException e) {
+            plugin.getLogger().severe("uh broken as well :wilted_rose: " + file.getName());
+            e.printStackTrace();
         }
 
         return false;
