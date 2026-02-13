@@ -24,10 +24,6 @@ public class GUI implements Listener, CommandExecutor {
         this.plugin = plugin;
     }
 
-    private void augmentedOrRegular(HumanEntity player, ItemStack augmented, ItemStack regular, Material backgroundColor) {
-        player.openInventory(new AugOrRegChooser(augmented, regular, backgroundColor).getInventory());
-    }
-
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         HumanEntity player = event.getWhoClicked();
@@ -42,25 +38,12 @@ public class GUI implements Listener, CommandExecutor {
             // Cancelling the click event to prevent the player from getting the item.
             event.setCancelled(true);
 
-            // Determining the next menu to open
-            switch (EffectMapping.fromItem(clicked)) {
-                case AUG_APOPHIS -> augmentedOrRegular(player, EffectMapping.AUG_APOPHIS.createItem(), EffectMapping.APOPHIS.createItem(), Material.MAGENTA_STAINED_GLASS_PANE);
-                case AUG_EMERALD -> augmentedOrRegular(player, EffectMapping.AUG_EMERALD.createItem(), EffectMapping.EMERALD.createItem(), Material.LIME_STAINED_GLASS_PANE);
-                case AUG_ENDER -> augmentedOrRegular(player, EffectMapping.AUG_ENDER.createItem(), EffectMapping.ENDER.createItem(), Material.PURPLE_STAINED_GLASS_PANE);
-                case AUG_FEATHER -> augmentedOrRegular(player, EffectMapping.AUG_FEATHER.createItem(), EffectMapping.FEATHER.createItem(), Material.WHITE_STAINED_GLASS_PANE);
-                case AUG_FIRE -> augmentedOrRegular(player, EffectMapping.AUG_FIRE.createItem(), EffectMapping.FIRE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
-                case AUG_FROST -> augmentedOrRegular(player, EffectMapping.AUG_FROST.createItem(), EffectMapping.FROST.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-                case AUG_HASTE -> augmentedOrRegular(player, EffectMapping.AUG_HASTE.createItem(), EffectMapping.HASTE.createItem(), Material.ORANGE_STAINED_GLASS_PANE);
-                case AUG_HEART -> augmentedOrRegular(player, EffectMapping.AUG_HEART.createItem(), EffectMapping.HEART.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_INVIS -> augmentedOrRegular(player, EffectMapping.AUG_INVIS.createItem(), EffectMapping.INVIS.createItem(), Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-                case AUG_OCEAN -> augmentedOrRegular(player, EffectMapping.AUG_OCEAN.createItem(), EffectMapping.OCEAN.createItem(), Material.BLUE_STAINED_GLASS_PANE);
-                case AUG_REGEN -> augmentedOrRegular(player, EffectMapping.AUG_REGEN.createItem(), EffectMapping.REGEN.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_SPEED -> augmentedOrRegular(player, EffectMapping.AUG_SPEED.createItem(), EffectMapping.SPEED.createItem(), Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-                case AUG_STRENGTH -> augmentedOrRegular(player, EffectMapping.AUG_STRENGTH.createItem(), EffectMapping.STRENGTH.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_THIEF -> augmentedOrRegular(player, EffectMapping.AUG_THIEF.createItem(), EffectMapping.THIEF.createItem(), Material.RED_STAINED_GLASS_PANE);
-                case AUG_THUNDER -> augmentedOrRegular(player, EffectMapping.AUG_THUNDER.createItem(), EffectMapping.THUNDER.createItem(), Material.YELLOW_STAINED_GLASS_PANE);
-                default -> {}
-            }
+            EffectMapping effect = EffectMapping.fromItem(clicked);
+
+            // Ignoring if the player clicked on something other than an effect.
+            if (effect == null) return;
+
+            player.openInventory(new AugOrRegChooser(effect).getInventory());
         }
 
         if (clickedInventory instanceof AugOrRegChooser) {
