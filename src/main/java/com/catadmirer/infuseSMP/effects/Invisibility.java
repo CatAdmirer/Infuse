@@ -33,16 +33,10 @@ public class Invisibility implements Listener {
 
     public Invisibility(Infuse plugin) {
         Invisibility.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(p, EffectMapping.INVIS)) {
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
-                    }
-                }
+    }
 
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
+    public static void applyPassiveEffects(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
     }
 
     @EventHandler
@@ -99,7 +93,6 @@ public class Invisibility implements Listener {
                 event.setCancelled(true);
             }
         }
-
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {

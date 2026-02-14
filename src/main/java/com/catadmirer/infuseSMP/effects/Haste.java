@@ -16,33 +16,20 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Haste implements Listener {
     private static Infuse plugin;
 
     public Haste(Infuse plugin) {
         Haste.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(player, EffectMapping.HASTE)) {
-                        Haste.this.enchantItemIfApplicable(player);
-                    }
-                }
-
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    private void enchantItemIfApplicable(Player player) {
+    public static void applyPassiveEffects(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item != null && item.getType() != Material.AIR) {
-            if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-                item.addUnsafeEnchantment(Enchantment.FORTUNE, 5);
-                item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
-                item.addUnsafeEnchantment(Enchantment.UNBREAKING, 5);
-            }
+        if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
+            item.addUnsafeEnchantment(Enchantment.FORTUNE, 5);
+            item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, 5);
         }
     }
 

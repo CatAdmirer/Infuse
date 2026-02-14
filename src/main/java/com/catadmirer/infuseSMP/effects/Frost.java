@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.EnumSet;
+import com.destroystokyo.paper.MaterialSetTag;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,43 +35,34 @@ public class Frost implements Listener {
     private final static Set<UUID> frozenAttackers = new HashSet<>();
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
-    private static final Set<Material> ICE_BLOCKS;
 
     private static Infuse plugin;
 
     public Frost(DataManager dataManager, Infuse plugin) {
         Frost.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (plugin.getDataManager().hasEffect(player, EffectMapping.FROST) && !(player.getVelocity().lengthSquared() < 0.01)) {
-                        Frost.this.handleSwim(player);
-                        Material blockType = player.getLocation().subtract(0, 1, 0).getBlock().getType();
-                        if (Frost.ICE_BLOCKS.contains(blockType)) {
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30, 2, false, false));
-                        }
-
-                    }
-                });
-            }
-        }).runTaskTimer(plugin, 0L, 10L);
     }
 
-    public void handleSwim(Player player) {
-        boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
-        if (inFrost) {
-            player.setGliding(true);
+    public static void applyPassiveEffects(Player player) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.FROST) && !(player.getVelocity().lengthSquared() < 0.01)) {
+            if (player.isInPowderedSnow()) {
+                player.setGliding(true);
+            }
+
+            Material blockType = player.getLocation().subtract(0, 1, 0).getBlock().getType();
+            if (MaterialSetTag.ICE.isTagged(blockType)) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30, 2, false, false));
+            }
         }
     }
 
     @EventHandler
     public void onCancelSwim(EntityToggleGlideEvent event) {
+        if (event.isGliding()) return;
         if (!(event.getEntity() instanceof Player player)) return;
-        boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
-        if (!event.isGliding()) {
-            if (inFrost && plugin.getDataManager().hasEffect(player, EffectMapping.FROST)) {
-                event.setCancelled(true);
-            }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FROST)) return;
+
+        if (player.isInPowderedSnow()) {
+            event.setCancelled(true);
         }
     }
 
@@ -203,9 +194,5 @@ public class Frost implements Listener {
             }
 
         }
-    }
-
-    static {
-        ICE_BLOCKS = EnumSet.of(Material.ICE, Material.PACKED_ICE, Material.BLUE_ICE);
     }
 }

@@ -3,9 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -23,73 +21,34 @@ import org.bukkit.util.Vector;
 public class Ocean implements Listener {
     private static Infuse plugin;
 
-    private final DataManager dataManager;
-
-    public Ocean(Infuse plugin, DataManager dataManager) {
+    public Ocean(Infuse plugin) {
         Ocean.plugin = plugin;
-        this.dataManager = dataManager;
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(p, EffectMapping.OCEAN)) {
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
-                    }
-                }
-
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player effectHolder : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(effectHolder, EffectMapping.OCEAN)) continue;
-
-                    for (Player p : effectHolder.getWorld().getPlayers()) {
-                        if (!p.equals(effectHolder) && p.getLocation().distance(effectHolder.getLocation()) <= 5 && p.getLocation().getBlock().isLiquid()) {
-                            int currentAir = p.getRemainingAir();
-                            int newAir = Math.max(currentAir - 5, -20);
-                            p.setRemainingAir(newAir);
-                            if (newAir <= 0) {
-                                p.damage(1);
-                            }
-                        }
-                    }
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player effectHolder : Bukkit.getOnlinePlayers()) {
-                    if (!CooldownManager.isEffectActive(effectHolder.getUniqueId(), "ocean")) {
-                        continue;
-                    }
-                    if (!plugin.getDataManager().hasEffect(effectHolder, EffectMapping.OCEAN)) continue;
-                    World world = effectHolder.getWorld();
-                    Location holderLoc = effectHolder.getLocation();
-                    double radius = plugin.getConfigFile().oceanPullRadius();
-                    double strength = plugin.getConfigFile().oceanPullStrength();
-
-                    for (Player p : world.getPlayers()) {
-                        if (p.equals(effectHolder)) continue;
-                        if (isTrusted(effectHolder, p)) continue;
-                        if (p.getLocation().distance(holderLoc) <= radius) {
-                            Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
-                            if (direction.lengthSquared() > 0.0001) {
-                                Vector pullVector = direction.normalize().multiply(strength);
-                                if (Double.isFinite(pullVector.getX()) && Double.isFinite(pullVector.getY()) && Double.isFinite(pullVector.getZ())) {
-                                    p.setVelocity(pullVector);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }.runTaskTimer(plugin, 0L, plugin.getConfigFile().oceanPullInterval());
     }
 
-    private boolean isTrusted(Player player, Player caster) {
-        return dataManager.isTrusted(caster, player);
+    public static void applyPassiveEffects(Player player) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.OCEAN)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
+        }
+
+        // Boosting the strength and damage of the passive drowning if the spark is active
+        int drownStrength = 5;
+        int drownDamage = 1;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "ocean"))  {
+            drownStrength = 20;
+            drownDamage = 2;
+        }
+        
+        for (Player otherPlayer : player.getWorld().getPlayers()) {
+            if (otherPlayer.equals(player)) continue;
+            if (otherPlayer.getLocation().distance(player.getLocation()) <= 5 && otherPlayer.getLocation().getBlock().isLiquid()) {
+                int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
+                otherPlayer.setRemainingAir(newAir);
+                if (newAir <= 0) {
+                    otherPlayer.damage(drownDamage);
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -148,27 +107,40 @@ public class Ocean implements Listener {
                         world.spawnParticle(Particle.FALLING_WATER, particleLoc, 1);
                     }
 
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (!p.equals(caster) &&
-                                p.getWorld().equals(world) &&
-                                p.getLocation().distance(caster.getLocation()) <= radius) {
-
-                            Vector direction = caster.getLocation().toVector().subtract(p.getLocation().toVector()).normalize();
-                            p.setVelocity(direction.multiply(0.5));
-
-                            if (p.getLocation().getBlock().isLiquid()) {
-                                int newOxygen = Math.max(p.getRemainingAir() - 20, -20);
-                                p.setRemainingAir(newOxygen);
-                                if (newOxygen <= 0) {
-                                    p.damage(2);
-                                }
-                            }
-                        }
-                    }
-
                     this.ticksElapsed += 10L;
                 }
             }.runTaskTimer(plugin, 0L, 10L);
+ 
+            // Ocean pull runnable
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Stopping when the spark has run out
+                    if (!CooldownManager.isEffectActive(caster.getUniqueId(), "ocean")) {
+                        cancel();
+                        return;
+                    }
+
+                    World world = caster.getWorld();
+                    Location holderLoc = caster.getLocation();
+                    double radius = plugin.getConfigFile().oceanPullRadius();
+                    double strength = plugin.getConfigFile().oceanPullStrength();
+
+                    for (Player p : world.getPlayers()) {
+                        if (p.equals(caster)) continue;
+                        if (plugin.getDataManager().isTrusted(caster, p)) continue;
+                        if (p.getLocation().distance(holderLoc) <= radius) continue;
+
+                        Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
+                        if (direction.lengthSquared() > 0.0001) {
+                            Vector pullVector = direction.normalize().multiply(strength);
+                            if (Double.isFinite(pullVector.getX()) && Double.isFinite(pullVector.getY()) && Double.isFinite(pullVector.getZ())) {
+                                p.setVelocity(pullVector);
+                            }
+                        }
+                    }
+                }
+            }.runTaskTimer(plugin, 0, plugin.getConfigFile().oceanPullInterval());
         }
     }
 }

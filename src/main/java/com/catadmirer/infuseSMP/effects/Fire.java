@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -32,39 +31,27 @@ public class Fire implements Listener {
 
     public Fire(Infuse plugin) {
         Fire.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                Bukkit.getOnlinePlayers().forEach((player) -> {
-                    if (plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
-                        applyFireResistance(player);
-                        handleSwim(player);
-                    }
-                });
+    }
+
+    public static void applyPassiveEffects(Player player) {
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
+            if (player.isInLava()) {
+                player.setGliding(true);
+            } else if (player.isInPowderedSnow()) {
+                player.setGliding(true);
             }
-        }).runTaskTimer(plugin, 0L, 10L);
-    }
-
-    private void applyFireResistance(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
-    }
-
-    public void handleSwim(Player player) {
-        boolean inLava = player.isInLava();
-        if (inLava) {
-            player.setGliding(true);
-        } else if (player.getLocation().getBlock().getType() == Material.POWDER_SNOW) {
-            player.setGliding(true);
         }
     }
 
     @EventHandler
     public void onCancelSwim(EntityToggleGlideEvent event) {
+        if (event.isGliding()) return;
         if (!(event.getEntity() instanceof Player player)) return;
-        boolean inLava = player.isInLava();
-        if (!event.isGliding()) {
-            if (inLava && plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
-                event.setCancelled(true);
-            }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) return;
+        
+        if (player.isInLava() || player.isInPowderedSnow()) {
+            event.setCancelled(true);
         }
     }
 
