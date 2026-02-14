@@ -1,6 +1,6 @@
 package com.catadmirer.infuseSMP.util;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import com.destroystokyo.paper.MaterialSetTag;
 
@@ -35,7 +35,7 @@ public class ItemUtil {
         return MaterialSetTag.ITEMS_HOES.isTagged(item.getType());
     }
 
-    public static void giveOrDropItem(Player player, ItemStack... items) {
+    public static void giveOrDropItem(HumanEntity player, ItemStack... items) {
         player.getInventory().addItem(items).forEach((i, extra) -> player.getWorld().dropItem(player.getLocation(), extra));
     }
 }
