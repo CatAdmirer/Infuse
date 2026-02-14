@@ -10,6 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpRequest.BodyPublishers;
+import com.catadmirer.infuseSMP.inventories.EffectCrafting;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
@@ -492,40 +493,47 @@ public class InfuseRecipeManager implements Listener {
         return false;
     }
 
-    private final Map<UUID, BrewingStand> brewingStandCache = new HashMap<>();
-
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.BREWING_STAND) {
-            event.setCancelled(true);
-            Player player = event.getPlayer();
-            if (plugin.getConfigFile().brewingGui()) {
-                Block block = event.getClickedBlock();
-                BrewingStand stand = (BrewingStand) block.getState();
-                brewingStandCache.put(player.getUniqueId(), stand);
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-                player.openInventory(new StationSelectionMenu().getInventory());
-            } else {
-                MenuType.CRAFTING.create(player).open();
-            }
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+        if (block.getType() != Material.BREWING_STAND) return;
+
+        event.setCancelled(true);
+        Player player = event.getPlayer();
+        if (plugin.getConfigFile().brewingGui()) {
+            player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
+        } else {
+            // Opening the menu for crafting effects
+            player.openInventory(new EffectCrafting(plugin).getInventory());
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu menu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
+            // Making sure the block is still a brewing stand
+            Block block = menu.getStandLocation().getBlock();
+            if (block.getType() != Material.BREWING_STAND) return;
+
             if (event.getSlot() == 11) {
+                // Closing the StationSelectionMenu
                 player.closeInventory();
-                MenuType.CRAFTING.create(player).open();
+
+                // Opening the menu for crafting effects
+                player.openInventory(new EffectCrafting(plugin).getInventory());
             } else if (event.getSlot() == 15) {
+                // Closing the StationSelectionMenu
                 player.closeInventory();
-                BrewingStand stand = brewingStandCache.get(player.getUniqueId());
-                if (stand != null) {
-                    player.openInventory(stand.getInventory());
-                }
+                
+                // Opening the brewing stand
+                BrewingStand data = (BrewingStand) block.getBlockData();
+                player.openInventory(data.getInventory());
             }
         }
     }
