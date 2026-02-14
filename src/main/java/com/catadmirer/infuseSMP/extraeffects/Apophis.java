@@ -7,8 +7,8 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.List;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,6 +28,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Apophis extends InfuseEffect {
+    public static NamespacedKey apophisBoost = new NamespacedKey("infuse", "apophis_boost");
+    public static NamespacedKey apophisSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
+
     public Apophis() {
         super(EffectIds.APOPHIS, "apophis", false);
     }
@@ -59,10 +62,13 @@ public class Apophis extends InfuseEffect {
     @Override
     public void equip(Player player) {
         // Setting the player's max health
-        AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
-        maxHealth.setBaseValue(30);
-        player.setHealth(30);
-        player.sendHealthUpdate();
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(apophisBoost) == null) {
+            AttributeModifier modifier = new AttributeModifier(apophisBoost, 10, Operation.ADD_NUMBER);
+            attribute.addModifier(modifier);
+            player.setHealth(attribute.getBaseValue());
+            player.sendHealthUpdate();
+        }
 
         // Adding potion effects to the player
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
@@ -95,10 +101,11 @@ public class Apophis extends InfuseEffect {
         new ApophisParticles(plugin, player).start();
 
         // Increasing the player's max health
-        AttributeModifier sparkModifier = new AttributeModifier(new NamespacedKey(plugin, "apophis_spark"), 10, Operation.ADD_NUMBER);
-        AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-        maxHealthAttribute.addModifier(sparkModifier);
-        player.setHealth(maxHealthAttribute.getBaseValue());
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(apophisSparkBoost) == null) {
+            attribute.addModifier(new AttributeModifier(apophisSparkBoost, 10, Operation.ADD_NUMBER));
+            player.setHealth(attribute.getBaseValue());
+        }
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getConfigFile().cooldown(this);
@@ -108,9 +115,7 @@ public class Apophis extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
 
         // Setting up a task to reset the player's health when the spark deactivates.
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            maxHealthAttribute.removeModifier(sparkModifier);
-        }, duration * 20);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(apophisSparkBoost), duration * 20);
     }
 
     public static class ApophisParticles {

@@ -45,10 +45,23 @@ public class Thief extends InfuseEffect {
 
     // Hiding a thief user from the rest of the players online
     @Override
-    public void equip(Player thiefUser) {
+    public void equip(Infuse plugin, Player thiefUser) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.unlistPlayer(thiefUser.getPlayer());
+            player.unlistPlayer(thiefUser);
+            player.hidePlayer(plugin, thiefUser);
         }
+
+        owner = thiefUser;
+    }
+    
+    @Override
+    public void unequip(Infuse plugin, Player thiefUser) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.listPlayer(thiefUser);
+            player.showPlayer(plugin, thiefUser);
+        }
+
+        owner = thiefUser;
     }
 
     @Override
@@ -60,9 +73,6 @@ public class Thief extends InfuseEffect {
     public InfuseEffect getRegularForm() {
         return new Thief(false);
     }
-
-    @Override
-    public void unequip(Player player) {}
 
     @Override
     public void activateSpark(Infuse plugin, Player player) {
@@ -121,13 +131,14 @@ public class Thief extends InfuseEffect {
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             long timeLeft = disguiseEndTime - System.currentTimeMillis();
 
-            bar.progress(timeLeft / 3600.0f);
-
-            if (timeLeft < 0) {
+            if (timeLeft < 0 || timeLeft / 3600.0 < 0) {
                 removeDisguise();
                 bar.removeViewer(thiefUser);
                 task.cancel();
+                return;
             }
+
+            bar.progress(timeLeft / 3600.0f);
         }, 0, 20);
     }
 

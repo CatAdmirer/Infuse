@@ -14,24 +14,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpRequest.BodyPublishers;
+import com.catadmirer.infuseSMP.inventories.EffectCrafting;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.configuration.ConfigurationSection;
@@ -39,6 +36,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -46,14 +44,11 @@ import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -64,7 +59,6 @@ public class InfuseRecipeManager implements Listener {
     private final FileConfiguration recipesConfig;
 
     private BossBar ritualBossBar;
-    private Location brewingStandLocation;
 
     public InfuseRecipeManager(Infuse plugin) {
         this.plugin = plugin;
@@ -108,161 +102,19 @@ public class InfuseRecipeManager implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    private void spawnCustomBeam(Location brewingStandLocation, String recipeKey) {
-        if (plugin.getConfigFile().brewingParticles()) {
-            World world = brewingStandLocation.getWorld();
-            Location crystalLoc = new Location(world, brewingStandLocation.getX(), -5000, brewingStandLocation.getZ());
-            final EnderCrystal crystal = (EnderCrystal) world.spawnEntity(crystalLoc, EntityType.END_CRYSTAL);
-            crystal.setShowingBottom(false);
-            crystal.setInvulnerable(true);
-            crystal.setInvisible(true);
-            Location targetLoc = brewingStandLocation.clone().add(0, 600, 0);
-            final ArmorStand marker = (ArmorStand) world.spawnEntity(targetLoc, EntityType.ARMOR_STAND);
-            marker.setMarker(true);
-            marker.setInvisible(true);
-            marker.setInvulnerable(true);
-            marker.setSilent(true);
-            marker.setCustomNameVisible(false);
-            crystal.setBeamTarget(marker.getLocation().toBlockLocation());
-            int ritualDuration;
-            if (recipeKey.equalsIgnoreCase("aug_ender")) {
-                ritualDuration = plugin.getConfigFile().ritualDurationEnder();
-            } else {
-                ritualDuration = plugin.getConfigFile().ritualDuration();
-            }
-            (new BukkitRunnable() {
-                public void run() {
-                    if (!crystal.isDead()) {
-                        crystal.remove();
-                    }
-
-                    if (!marker.isDead()) {
-                        marker.remove();
-                    }
-
-                }
-            }).runTaskLater(this.plugin, ritualDuration * 20L);
-        }
-    }
-
-    private boolean isRitualActive = false;
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.ritualBossBar == null) return;
+        if (this.ritualBossBar == null)
+            return;
         event.getPlayer().showBossBar(ritualBossBar);
-    }
-
-    private void startRitual(Player player, String recipeKey, Location playerLocation, final ItemStack craftedItem) {
-        if (isRitualActive) {
-            player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
-            return;
-        }
-        brewingStandLocation = this.findNearestBrewingStand(playerLocation);
-        if (brewingStandLocation == null) {
-            player.sendMessage(Messages.EFFECT_NOBREWING.toComponent());
-            return;
-        }
-
-        isRitualActive = true;
-
-        Component itemName = craftedItem.getItemMeta().displayName();
-        TextColor itemColor = itemName.color();
-        Component formattedItemName = Component.text("🧪 ", itemColor, TextDecoration.BOLD).append(itemName).append(Component.text(" 🧪"));
-
-        BossBar.Color barColor = EffectConstants.bossBarColor(InfuseEffect.fromEffectKey(recipeKey).getId());
-        this.ritualBossBar = BossBar.bossBar(formattedItemName, 1.0f, barColor, BossBar.Overlay.PROGRESS);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.showBossBar(ritualBossBar);
-        }
-
-        String worldName = brewingStandLocation.getWorld().getName();
-        String dimensionMessage;
-        if (worldName.equalsIgnoreCase("world")) {
-            dimensionMessage = "<green>Overworld";
-        } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            dimensionMessage = "<dark_purple>End";
-        } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            dimensionMessage = "<dark_red>Nether";
-        } else {
-            dimensionMessage = "<gray>" + worldName;
-        }
-
-        String messageTemplate = Messages.EFFECT_BROADCAST.getMessage();
-        String discordTemplate = Messages.DISCORD_BROADCAST.getMessage();
-
-        String x = String.valueOf(brewingStandLocation.getBlockX());
-        String y = String.valueOf(brewingStandLocation.getBlockY());
-        String z = String.valueOf(brewingStandLocation.getBlockZ());
-
-        String formattedMessage = messageTemplate
-                .replace("%player%", player.getName())
-                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", dimensionMessage);
-
-        String formattedDiscordMessage = discordTemplate
-                .replace("%player%", player.getName())
-                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", ChatColor.stripColor(dimensionMessage));
-
-        Bukkit.broadcast(Messages.toComponent(formattedMessage));
-        if (plugin.getConfigFile().enableDiscordBroadcasts()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast " + formattedDiscordMessage);
-        }
-        String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
-        if (webhookUrl != null && !webhookUrl.isEmpty()) {
-            sendToDiscord(webhookUrl, formattedDiscordMessage);
-        }
-
-        this.spawnCustomBeam(brewingStandLocation, recipeKey);
-        int ritualDuration;
-
-        if (recipeKey.equalsIgnoreCase("aug_ender")) {
-            ritualDuration = plugin.getConfigFile().ritualDurationEnder();
-        } else {
-            ritualDuration = plugin.getConfigFile().ritualDuration();
-        }
-
-        new BukkitRunnable() {
-
-            float progress = 1.0F;
-            final double progressDecrement = 1.0 / (ritualDuration * 20.0);
-
-            @Override
-            public void run() {
-                if (ritualBossBar == null) { cancel(); return; }
-                progress -= progressDecrement;
-                ritualBossBar = ritualBossBar.progress(progress);
-
-                if (progress == 0) {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.hideBossBar(ritualBossBar);
-                    }
-                    String msg = Messages.EFFECT_FINISHED.getMessage();
-                    msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
-                    Bukkit.broadcast(Messages.toComponent(msg));
-                    brewingStandLocation.getWorld().dropItemNaturally(brewingStandLocation, craftedItem);
-                    isRitualActive = false;
-                    ritualBossBar = null;
-                    cancel();
-                }
-            }
-        }.runTaskTimer(this.plugin, 0, 1);
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
         String payload = "{\"content\": \"" + message + "\"}";
 
         HttpRequest request = HttpRequest.newBuilder(URI.create(webhookUrl))
-            .header("Content-Type", "application/json")
-            .POST(BodyPublishers.ofString(payload)).build();
+                .header("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(payload)).build();
 
         HttpClient client = HttpClient.newHttpClient();
         try {
@@ -282,112 +134,196 @@ public class InfuseRecipeManager implements Listener {
         }
     }
 
-    private Location findNearestBrewingStand(Location playerLocation) {
-        Location nearestLocation = null;
-        double nearestDist = Double.MAX_VALUE;
-
-        for (int x = -5; x <= 5; ++x) {
-            for (int y = -5; y <= 5; ++y) {
-                for (int z = -5; z <= 5; ++z) {
-                    Location checkLocation = playerLocation.clone().add(x, y, z);
-
-                    if (checkLocation.getBlock().getType() == Material.BREWING_STAND) {
-                        double checkDist = checkLocation.distance(playerLocation);
-                        if (checkDist < nearestDist) {
-                            nearestDist = checkDist;
-                            nearestLocation = checkLocation.setRotation(0, 0).toBlockLocation();
-                        }
-                    }
-                }
-            }
-        }
-
-        return nearestLocation;
-    }
-
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        if (!(event.getRecipe() instanceof ShapedRecipe shaped)) return;
-        String recipeKey = shaped.getKey().getKey();
-        if (!firstTimeRewards.containsKey(recipeKey) && !standardResults.containsKey(recipeKey)) return;
-        Player player = (Player) event.getWhoClicked();
-        if (recipeKey.equals("aug_ender")) {
-            int endFirstAugLimit = plugin.getConfigFile().augmentedLimit("aug_ender.augmented_limit");
-            if (endFirstAugLimit > 0) {
-                event.setCancelled(true);
-                return;
-            }
+        // Making sure the crafting menu belongs to the infuse plugin
+        if (!(event.getClickedInventory().getHolder() instanceof EffectCrafting menu))
+            return;
+
+        ItemStack craftedItem = event.getInventory().getResult();
+        InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
+
+        // Making sure the item being crafted is an Infuse effect and not crafting it if
+        // it isn't
+        if (effect == null) {
+            event.setCancelled(true);
+            return;
         }
 
+        // Not allowing the player to shift click effects
         if (event.isShiftClick()) {
             event.setCancelled(true);
             return;
         }
 
-        Inventory topInv = event.getView().getTopInventory();
-        if (topInv.getType() != InventoryType.WORKBENCH) {
+        // Making sure the brewing stand is still placed
+        Location brewerLocation = menu.getBrewerLocation();
+        if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
             event.setCancelled(true);
             return;
         }
 
-        if (!isNearBrewingStand(player.getLocation())) {
+        HumanEntity player = event.getWhoClicked();
+
+        // Checking craft limits
+        int craftLimit = plugin.getConfigFile().getCraftLimit(effect);
+        int numCrafted = plugin.getDataManager().getCrafted(effect);
+
+        if (numCrafted == craftLimit) {
             event.setCancelled(true);
             return;
         }
-        int augmentedLimit = plugin.getConfigFile().augmentedLimit(recipeKey);
-        int regularLimit = plugin.getConfigFile().regularLimit(recipeKey);
 
-        ItemStack result = event.getCurrentItem();
-        if (result == null) {
+        // Incrementing the number of effects crafted.
+        plugin.getDataManager().setCrafted(effect, numCrafted + 1);
+
+        // If the effect is not augmented, just let the item be crafted
+        if (!effect.isAugmented()) return;
+
+        // Clearing the ingredients
+        CraftingInventory inv = event.getInventory();
+        inv.clear();
+
+        // Closing the inventory
+        player.closeInventory();
+
+        // Cancelling the event
+        event.setCancelled(true);
+
+        // Starting the ritual for the augmented effect
+        // Making sure there isn't a ritual active already
+        if (ritualBossBar != null) {
+            player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
             event.setCancelled(true);
             return;
         }
 
-        ItemStack augmentedItem = firstTimeRewards.get(recipeKey);
+        // Creating the bossbar
+        Component itemName = Messages.toComponent(effect.getName());
+        this.ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
+                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1.0f,
+                EffectConstants.bossBarColor(effect.getId()), BossBar.Overlay.PROGRESS);
 
-        boolean isAugmented = result.isSimilar(augmentedItem);
+        // Adding every player online to the bossbar
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.showBossBar(ritualBossBar);
+        }
 
-        if (isAugmented) {
-            if (isRitualActive) {
-                player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
-                event.setCancelled(true);
-                return;
-            }
-            if (augmentedLimit <= 0 && !(augmentedLimit == -1)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            CraftingInventory inv = event.getInventory();
-            ItemStack[] matrix = inv.getMatrix();
-            for (int i = 0; i < matrix.length; ++i) {
-                if (matrix[i] != null && matrix[i].getType() != Material.AIR) {
-                    int newAmt = matrix[i].getAmount() - 1;
-                    matrix[i] = newAmt > 0 ? new ItemStack(matrix[i].getType(), newAmt) : null;
-                }
-            }
-
-            inv.setMatrix(matrix);
-            player.updateInventory();
-            player.closeInventory();
-            if (!(augmentedLimit == -1)) {
-                plugin.getConfig().set("craft_limits." + recipeKey + ".augmented_limit", augmentedLimit - 1);
-                plugin.saveConfig();
-            }
-
-            this.startRitual(player, recipeKey, player.getLocation(), augmentedItem);
-            event.setCancelled(true);
-
+        // Getting the duration of the ritual
+        int ritualDuration;
+        if (effect.getKey().equals("aug_ender")) {
+            ritualDuration = plugin.getConfigFile().ritualDurationEnder();
         } else {
-            if (regularLimit <= 0 && !(regularLimit == -1)) {
-                event.setCancelled(true);
-                return;
-            }
-            if (!(regularLimit == -1)) {
-                plugin.getConfig().set("craft_limits." + recipeKey + ".regular_limit", regularLimit - 1);
-                plugin.saveConfig();
+            ritualDuration = plugin.getConfigFile().ritualDuration();
+        }
+
+        // Spawning the ender crystal if the config allows
+        if (plugin.getConfigFile().ritualBeacon()) {
+            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld()
+                    .spawnEntity(brewerLocation.clone().set(0, -100, 0), EntityType.END_CRYSTAL);
+            crystal.setShowingBottom(false);
+            crystal.setInvulnerable(true);
+            crystal.setInvisible(true);
+            crystal.setBeamTarget(brewerLocation.clone().set(0, 500, 0));
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // TODO: Test if i need to remove beam or not
+                crystal.setBeamTarget(null);
+                crystal.remove();
+            }, ritualDuration * 20);
+        }
+
+        String worldName = brewerLocation.getWorld().getName();
+        if (worldName.equalsIgnoreCase("world")) {
+            worldName = "<green>Overworld";
+        } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
+            worldName = "<dark_purple>End";
+        } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
+            worldName = "<dark_red>Nether";
+        } else {
+            worldName = "<gray>" + worldName;
+        }
+
+        String x = String.valueOf(brewerLocation.getBlockX());
+        String y = String.valueOf(brewerLocation.getBlockY());
+        String z = String.valueOf(brewerLocation.getBlockZ());
+
+        String formattedMessage = Messages.EFFECT_BROADCAST.getMessage()
+                .replace("%player%", player.getName())
+                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
+                .replace("%x%", x)
+                .replace("%y%", y)
+                .replace("%z%", z)
+                .replace("%dimension%", worldName);
+
+        String formattedDiscordMessage = Messages.DISCORD_BROADCAST.getMessage()
+                .replace("%player%", player.getName())
+                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
+                .replace("%x%", x)
+                .replace("%y%", y)
+                .replace("%z%", z)
+                .replace("%dimension%", MiniMessage.miniMessage().stripTags(worldName));
+
+        // Broadcasting that the ritual has started
+        Bukkit.broadcast(Messages.toComponent(formattedMessage));
+        if (plugin.getConfigFile().enableDiscordBroadcasts()) {
+            String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
+            if (webhookUrl != null && !webhookUrl.isEmpty()) {
+                sendToDiscord(webhookUrl, formattedDiscordMessage);
             }
         }
+
+        // Preventing the brewing stand from being broken
+        ImmortalBrewerListeners brewerListeners = new ImmortalBrewerListeners(brewerLocation);
+        Bukkit.getPluginManager().registerEvents(brewerListeners, plugin);
+
+        // Starting the ritual progress bar
+        new BukkitRunnable() {
+            float progress = 1;
+            final double progressDecrement = 1.0 / ritualDuration * 20;
+
+            @Override
+            public void run() {
+                // Shouldn't happen.
+                // TODO Remove?
+                if (ritualBossBar == null) {
+                    cancel();
+                    return;
+                }
+
+                progress -= progressDecrement;
+
+                if (progress <= 0) {
+                    cancel();
+                    return;
+                }
+
+                ritualBossBar.progress(progress);
+            }
+        }.runTaskTimer(this.plugin, 0, 1);
+
+        // Scheduling the task that ends and cleans up the ritual
+        Bukkit.getScheduler().runTaskLater(plugin, task -> {
+            // Removing the bossbar from view
+            ritualBossBar.viewers().forEach(viewer -> {
+                if (viewer instanceof Audience audience) {
+                    audience.hideBossBar(ritualBossBar);
+                }
+            });
+
+            // Allowing the brewing stand to be broken
+            HandlerList.unregisterAll(brewerListeners);
+
+            // Broadcasting that the effect has been brewed
+            String msg = Messages.EFFECT_FINISHED.getMessage();
+            msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
+            Bukkit.broadcast(Messages.toComponent(msg));
+
+            // Dropping the item
+            brewerLocation.getWorld().dropItemNaturally(brewerLocation, effect.createItem());
+            ritualBossBar = null;
+            task.cancel();
+        }, ritualDuration * 20);
     }
 
     private void registerRecipeFromConfig(String recipeKey, ItemStack result) {
@@ -431,122 +367,118 @@ public class InfuseRecipeManager implements Listener {
         plugin.getLogger().info("Registered recipe: " + recipeKey);
     }
 
-
-
     @EventHandler
     public void onCrafter(CrafterCraftEvent event) {
         ItemStack result = event.getResult();
-        if (result != null && result.getType() == Material.POTION) {
+        if (result.getType() == Material.POTION) {
             event.setCancelled(true);
         }
     }
 
+    // TODO: fix this
     @EventHandler
     public void onPrepareCraft(PrepareItemCraftEvent event) {
-        if (!(event.getRecipe() instanceof ShapedRecipe shaped)) return;
-        String recipeKey = shaped.getKey().getKey();
+        // Ignoring non-infuse items
+        ItemStack item = event.getRecipe().getResult();
+        InfuseEffect effect = InfuseEffect.fromItem(item);
+        if (effect == null) return;
 
-        if (!firstTimeRewards.containsKey(recipeKey) || !standardResults.containsKey(recipeKey)) return;
-
-        Inventory topInv = event.getView().getTopInventory();
-        Player player = (Player) event.getView().getPlayer();
-
-        if (topInv.getType() != InventoryType.WORKBENCH) {
+        // Making sure the items are being crafted in the EffectCrafting menu
+        if (!(event.getInventory() instanceof EffectCrafting)) {
             event.getInventory().setResult(null);
             return;
         }
 
-        if (!isNearBrewingStand(player.getLocation())) {
-            event.getInventory().setResult(null);
-            return;
+        // Checking the limits for the effect
+        InfuseEffect augForm = effect.getAugmentedForm();
+        int augLimit = plugin.getConfigFile().getCraftLimit(augForm);
+        int augCrafted = plugin.getDataManager().getCrafted(augForm);
+        if (augLimit > augCrafted) {
+            event.getInventory().setResult(effect.getAugmentedForm().createItem());
         }
 
-        Number augmentedLimitNumber = plugin.getConfigFile().augmentedLimit(recipeKey);
-        Number regularLimitNumber = plugin.getConfigFile().regularLimit(recipeKey);
-
-        if (augmentedLimitNumber == null || regularLimitNumber == null) {
-            event.getInventory().setResult(null);
-            return;
+        InfuseEffect regForm = effect.getRegularForm();
+        int regLimit = plugin.getConfigFile().getCraftLimit(regForm);
+        int regCrafted = plugin.getDataManager().getCrafted(regForm);
+        if (regLimit > regCrafted) {
+            event.getInventory().setResult(effect.getRegularForm().createItem());
         }
-
-        int augmentedLimit = augmentedLimitNumber.intValue();
-        int regularLimit = regularLimitNumber.intValue();
-
-        if (augmentedLimit > 0 || augmentedLimit == -1) {
-            event.getInventory().setResult(firstTimeRewards.get(recipeKey));
-        } else if (regularLimit > 0 || regularLimit == -1) {
-            event.getInventory().setResult(standardResults.get(recipeKey));
-        } else {
-            event.getInventory().setResult(null);
-        }
+        
+        event.getInventory().setResult(null);
     }
-
-
-    private boolean isNearBrewingStand(Location loc) {
-        World world = loc.getWorld();
-        for (int x = -5; x <= 5; x++) {
-            for (int y = -5; y <= 5; y++) {
-                for (int z = -5; z <= 5; z++) {
-                    if (world.getBlockAt(loc.clone().add(x, y, z)).getType() == Material.BREWING_STAND) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private final Map<UUID, BrewingStand> brewingStandCache = new HashMap<>();
 
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.BREWING_STAND) {
-            event.setCancelled(true);
-            Player player = event.getPlayer();
-            if (plugin.getConfigFile().brewingGui()) {
-                Block block = event.getClickedBlock();
-                BrewingStand stand = (BrewingStand) block.getState();
-                brewingStandCache.put(player.getUniqueId(), stand);
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
 
-                player.openInventory(new StationSelectionMenu().getInventory());
-            } else {
-                MenuType.CRAFTING.create(player).open();
-            }
+        Block block = event.getClickedBlock();
+        if (block == null)
+            return;
+        if (block.getType() != Material.BREWING_STAND)
+            return;
+
+        event.setCancelled(true);
+        Player player = event.getPlayer();
+        Bukkit.getPluginManager().registerEvents(plugin, plugin);
+        HandlerList.unregisterAll();
+        if (plugin.getConfigFile().brewingGui()) {
+            player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
+        } else {
+            // Opening the menu for crafting effects
+            player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu) {
+        if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu menu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
 
+            // Making sure the block is still a brewing stand
+            Block block = menu.getStandLocation().getBlock();
+            if (block.getType() != Material.BREWING_STAND)
+                return;
+
             if (event.getSlot() == 11) {
+                // Closing the StationSelectionMenu
                 player.closeInventory();
-                MenuType.CRAFTING.create(player).open();
+
+                // Opening the menu for crafting effects
+                player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
             } else if (event.getSlot() == 15) {
+                // Closing the StationSelectionMenu
                 player.closeInventory();
-                BrewingStand stand = brewingStandCache.get(player.getUniqueId());
-                if (stand != null) {
-                    player.openInventory(stand.getInventory());
-                }
+
+                // Opening the brewing stand
+                BrewingStand data = (BrewingStand) block.getBlockData();
+                player.openInventory(data.getInventory());
             }
         }
     }
 
-    @EventHandler
-    public void onBrewingStandBreak(BlockBreakEvent event) {
-        if (event.getBlock().getLocation().equals(brewingStandLocation)){
-            event.setCancelled(true);
-        }
-    }
+    public static class ImmortalBrewerListeners implements Listener {
+        private final Location brewerLocation;
 
-    @EventHandler
-    public void onBrewingStandExplode(EntityExplodeEvent event) {
-        List<Block> blocks = event.blockList();
-        for (Block block : blocks) {
-            if (block.getLocation().equals(brewingStandLocation)) {
-                blocks.remove(block);
+        public ImmortalBrewerListeners(Location brewerLocation) {
+            this.brewerLocation = brewerLocation;
+        }
+
+        @EventHandler
+        public void onBrewingStandBreak(BlockBreakEvent event) {
+            if (event.getBlock().getLocation().equals(brewerLocation)) {
+                event.setCancelled(true);
+            }
+        }
+
+        @EventHandler
+        public void onBrewingStandExplode(EntityExplodeEvent event) {
+            List<Block> blocks = event.blockList();
+            for (Block block : blocks) {
+                if (block.getLocation().equals(brewerLocation)) {
+                    blocks.remove(block);
+                }
             }
         }
     }

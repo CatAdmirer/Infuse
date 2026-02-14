@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class MainConfig {
@@ -101,8 +99,8 @@ public class MainConfig {
         return config.getInt("ritual_duration_ender");
     }
 
-    public boolean brewingParticles() {
-        return config.getBoolean("brewing_particles");
+    public boolean ritualBeacon() {
+        return config.getBoolean("ritual_beacon");
     }
 
     public boolean emptyEffectIcon() {
@@ -149,12 +147,24 @@ public class MainConfig {
         return config.getBoolean("extra_effects.Thief");
     }
 
-    public int augmentedLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".augmented_limit");
-    }
+    /**
+     * Gets the amount of each effect that can be crafted
+     * 
+     * @param effect The effect to check
+     * 
+     * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
+     */
+    public int getCraftLimit(InfuseEffect effect) {
+        List<Integer> craftLimits = config.getIntegerList("craft-limits." + effect.getKey());
 
-    public int regularLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".regular_limit");
+        if (craftLimits.size() != 2) {
+            plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});
+            plugin.getLogger().log(Level.SEVERE, "Returning default limits");
+
+            return effect.isAugmented() ? 1 : 3;
+        }
+
+        return craftLimits.get(effect.isAugmented() ? 0 : 1);
     }
 
     public long cooldown(InfuseEffect effect) {

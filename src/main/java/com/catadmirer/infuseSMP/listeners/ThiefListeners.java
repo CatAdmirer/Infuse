@@ -30,10 +30,11 @@ public class ThiefListeners implements Listener {
     // Hiding thief effect users from players who recently joined
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
-        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            if (!plugin.getDataManager().hasEffect(otherPlayer, new Thief())) continue;
+        for (Player thiefUser : Bukkit.getOnlinePlayers()) {
+            if (!plugin.getDataManager().hasEffect(thiefUser, new Thief())) continue;
             
-            event.getPlayer().unlistPlayer(otherPlayer);
+            event.getPlayer().unlistPlayer(thiefUser);
+            event.getPlayer().hidePlayer(plugin, thiefUser);
         }
     }
 

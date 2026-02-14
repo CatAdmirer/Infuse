@@ -44,11 +44,9 @@ public class Feather extends InfuseEffect {
     private static final Set<UUID> spark = new HashSet<>();
 
     private static Infuse plugin;
-    private final DataManager dataManager;
 
-    public Feather(Infuse plugin, DataManager dataManager) {
+    public Feather(Infuse plugin) {
         Feather.plugin = plugin;
-        this.dataManager = dataManager;
     }
 
     @EventHandler
@@ -64,7 +62,7 @@ public class Feather extends InfuseEffect {
             for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
 
                 if (!(entity instanceof LivingEntity target)) continue;
-                if (target instanceof Player targetPlayer && isTeammate(player, targetPlayer)) continue;
+                if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
                 int damage = 8;
                 target.damage(damage);
@@ -88,10 +86,6 @@ public class Feather extends InfuseEffect {
                 }
             }, 1L);
         }
-    }
-
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(caster, player);
     }
 
     @EventHandler

@@ -69,7 +69,7 @@ public class EquipEffect implements Listener {
         msg = msg.replace("%effect_name%", effect.getName());
         player.sendMessage(Messages.toComponent(msg));
 
-        effect.equip(player);
+        effect.equip(plugin, player);
 
         return true;
     }
@@ -82,7 +82,7 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        ItemStack mainHandItem = event.getItem();
 
         // Getting the effect from the item
         InfuseEffect effect = InfuseEffect.fromItem(mainHandItem);

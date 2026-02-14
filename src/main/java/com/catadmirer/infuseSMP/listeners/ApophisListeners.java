@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.listeners;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import org.bukkit.enchantments.Enchantment;
@@ -44,7 +45,7 @@ public class ApophisListeners implements Listener {
 
         if (event.getEntity() instanceof Player target) {
             if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
-                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), 0, 60, 0));
+                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
             }
         }
     }

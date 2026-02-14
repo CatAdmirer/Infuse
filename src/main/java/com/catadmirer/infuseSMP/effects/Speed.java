@@ -20,46 +20,41 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Speed extends InfuseEffect {
     private static Infuse plugin;
 
-    private final Map<UUID, Integer> speedLevels = new HashMap<>();
-    private final Map<UUID, Long> lastHitTime = new HashMap<>();
-    private final Map<UUID, Long> bowPullStartTime = new HashMap<>();
+    private static final Map<UUID, Integer> speedLevels = new HashMap<>();
+    private static final Map<UUID, Long> lastHitTime = new HashMap<>();
+    private static final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
     public Speed(Infuse plugin) {
         Speed.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(p, new Speed())) continue;
-
-                    UUID uuid = p.getUniqueId();
-                    long lastHit = Speed.this.lastHitTime.getOrDefault(uuid, 0L);
-                    if (System.currentTimeMillis() - lastHit > 1000L) {
-                        Speed.this.speedLevels.put(uuid, 1);
-                    }
-
-                    int currentLevel = Speed.this.speedLevels.getOrDefault(uuid, 1);
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, Math.max(0, currentLevel - 1), false, false, false));
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
     }
 
+    public static void applyPassiveEffects(Player player) {
+        if (!plugin.getDataManager().hasEffect(player, new Speed())) return;
+
+        UUID uuid = player.getUniqueId();
+        long lastHit = lastHitTime.getOrDefault(uuid, 0L);
+        if (System.currentTimeMillis() - lastHit > 1000L) {
+            speedLevels.put(uuid, 1);
+        }
+
+        int currentLevel = speedLevels.getOrDefault(uuid, 1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, Math.max(0, currentLevel - 1), false, false, false));
+    }
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (plugin.getDataManager().hasEffect(player, new Speed())) {
-                long startTime = this.bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
+                long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
                 long pullTimeMs = System.currentTimeMillis() - startTime;
                 double adjustedPullTimeMs = pullTimeMs * 1.8;
                 float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000, 1);
                 event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
-                this.bowPullStartTime.remove(player.getUniqueId());
+                bowPullStartTime.remove(player.getUniqueId());
             }
         }
     }
@@ -70,10 +65,10 @@ public class Speed extends InfuseEffect {
             if (plugin.getDataManager().hasEffect(player, new Speed())) {
                 UUID uuid = player.getUniqueId();
                 long currentTime = System.currentTimeMillis();
-                long lastHit = this.lastHitTime.getOrDefault(uuid, 0L);
+                long lastHit = lastHitTime.getOrDefault(uuid, 0L);
                 if (currentTime - lastHit >= 50L) {
-                    this.lastHitTime.put(uuid, currentTime);
-                    this.speedLevels.put(uuid, this.speedLevels.getOrDefault(uuid, 1) + 1);
+                    lastHitTime.put(uuid, currentTime);
+                    speedLevels.put(uuid, speedLevels.getOrDefault(uuid, 1) + 1);
                     if (event.getEntity() instanceof LivingEntity target) {
                         int currentNoDamageTicks = target.getNoDamageTicks();
                         target.setNoDamageTicks(currentNoDamageTicks / 2);

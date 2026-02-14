@@ -32,18 +32,12 @@ public class Invis extends InfuseEffect {
 
     private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
-    public Invis(Infuse plugin) {
-        Invis.plugin = plugin;
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(p, new Invis())) {
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
-                    }
-                }
+    public Invisibility(Infuse plugin) {
+        Invisibility.plugin = plugin;
+    }
 
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
+    public static void applyPassiveEffects(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
     }
 
     @EventHandler
@@ -98,28 +92,6 @@ public class Invis extends InfuseEffect {
         if (event.getTarget() instanceof Player target) {
             if (plugin.getDataManager().hasEffect(target, new Invis())) {
                 event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
-        Player killer = victim.getKiller();
-
-        if (plugin.getConfigFile().invisDeaths()) {
-            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Messages.INVIS_KILL.getMessage();
-                msg = msg.replace("%victim%", victim.getName());
-                msg = msg.replace("%killer%", "<gray><obf>Someone");
-                event.deathMessage(Messages.toComponent(msg));
-            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                if (killer != null) {
-                    String msg = Messages.INVIS_DEATH.getMessage();
-                    msg = msg.replace("%victim%", "<gray><obf>Someone");
-                    msg = msg.replace("%killer%", killer.getName());
-                    event.deathMessage(Messages.toComponent(msg));
-                }
             }
         }
     }

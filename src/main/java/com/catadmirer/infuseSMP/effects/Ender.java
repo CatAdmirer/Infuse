@@ -4,8 +4,6 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import net.kyori.adventure.text.Component;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,24 +14,13 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.slf4j.LoggerFactory;
 
 public class Ender extends InfuseEffect {
     public static final Component fireballName = Component.text("Cursing Projectile");
@@ -47,20 +34,11 @@ public class Ender extends InfuseEffect {
         super(EffectIds.ENDER, "ender", augmented);
     }
 
-    public Ender(DataManager dataManager, Infuse plugin) {
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (plugin.getDataManager().hasEffect(player, new Ender())) {
-                    applyGlowingToUntrusted(player);
-                }
+    @Override
+    public void equip(Player player) {}
 
-                // Spawning particles on cursed players
-                if (cursedPlayers.contains(player.getUniqueId())) {
-                    player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.01);
-                }
-            }
-        }, 0L, 20L);
-    }
+    @Override
+    public void unequip(Player player) {}
 
     @Override
     public Component getItemName() {
@@ -121,19 +99,28 @@ public class Ender extends InfuseEffect {
         }
     }
 
-    private static boolean isSafeTeleportLocation(Location loc) {
+    private boolean isSafeTeleportLocation(Location loc) {
         return loc.getBlock().getType().isAir() && loc.clone().add(0, 1, 0).getBlock().getType().isAir();
     }
 
-    public void cursePlayer(Player toCurse) {
+    public void cursePlayer(Plugin plugin, Player toCurse, long durationTicks) {
+        cursedPlayers.add(toCurse.getUniqueId());
 
+        Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(toCurse.getUniqueId()), durationTicks);
     }
 
-    
+    public void shootCursingFireball(Infuse plugin) {
+        if (owner == null) {
+            plugin.getLogger().log(Level.SEVERE, "Cannot use Ender#applyGlowingToUntrusted without setting an owner for the effect.", new IllegalStateException());
+            return;
+        }
 
-    public void shootCursingFireball(Player player) {
-        UUID uuid = player.getUniqueId();
+        if (!owner.isOnline()) {
+            plugin.getLogger().log(Level.SEVERE, "Cannot use Ender#applyGlowingToUntrusted with effects whose owner is offline.", new IllegalStateException());
+            return;
+        }
 
+        Player player = owner.getPlayer();
         if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -147,17 +134,11 @@ public class Ender extends InfuseEffect {
         fireball.setIsIncendiary(false);
         fireball.customName(fireballName);
 
-        CooldownManager.setCooldown(uuid, "ender_fireball", 30);
+        CooldownManager.setCooldown(player.getUniqueId(), "ender_fireball", 30);
 
         Vector velocity = fireball.getVelocity();
         velocity.multiply(2.0);
         fireball.setVelocity(velocity);
-    }
-
-    public static void cursePlayer(Infuse plugin, UUID playerUUID, long durationTicks) {
-        cursedPlayers.add(playerUUID);
-
-        Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), durationTicks);
     }
 
     public void applyGlowingToUntrusted(Infuse plugin) {
