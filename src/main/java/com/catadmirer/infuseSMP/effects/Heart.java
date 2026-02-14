@@ -3,15 +3,18 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,23 +33,17 @@ public class Heart implements Listener {
 
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
-        healthMonitor();
     }
 
-    private void healthMonitor() {
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
-                        AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                        if (maxHealthAttribute.getBaseValue() < 30) {
-                            maxHealthAttribute.setBaseValue(30);
-                            player.setHealth(30);
-                        }
-                    }
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
+    public static NamespacedKey heartBoost = new NamespacedKey("infuse", "apophis_boost");
+    public static NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
+
+    public static void applyPassiveEffects(Player player) {
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(heartBoost) == null) {
+            AttributeModifier modifier = new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER);
+            attribute.addModifier(modifier);
+        }
     }
 
     @EventHandler
@@ -118,10 +115,10 @@ public class Heart implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-            if (maxHealthAttribute.getBaseValue() < 40) {
-                maxHealthAttribute.setBaseValue(40);
-                player.setHealth(40);
+            AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+            if (attribute.getModifier(heartSparkBoost) == null) {
+                AttributeModifier modifier = new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER);
+                attribute.addModifier(modifier);
             }
             
             // Applying cooldowns and durations for the effect
@@ -130,14 +127,8 @@ public class Heart implements Listener {
 
             CooldownManager.setDuration(playerUUID, "heart", duration);
             CooldownManager.setCooldown(playerUUID, "heart", cooldown);
-
-            new BukkitRunnable() {
-                public void run() {
-                    if (maxHealthAttribute != null) {
-                        maxHealthAttribute.setBaseValue(20);
-                    }
-                }
-            }.runTaskLater(plugin, duration * 20L);
+            
+            Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
         }
     }
 }
