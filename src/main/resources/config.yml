@@ -45,57 +45,26 @@ join_effects: # Same Names from messages.yml
   - fire
   - speed
 
+# First number is the augmented limit, the second is the regular limit
 craft_limits:
-  emerald:
-    augmented_limit: 1
-    regular_limit: 3
-  feather:
-    augmented_limit: 1
-    regular_limit: 3
-  fire:
-    augmented_limit: 1
-    regular_limit: 3
-  aug_ender:
-    augmented_limit: 1 # Augmented End Recipe
-    regular_limit: 0
-  ender:
-    augmented_limit: 0
-    regular_limit: 3 # Regular End Recipe
-  frost:
-    augmented_limit: 1
-    regular_limit: 3
-  haste:
-    augmented_limit: 1
-    regular_limit: 3
-  heart:
-    augmented_limit: 1
-    regular_limit: 3
-  invis:
-    augmented_limit: 1
-    regular_limit: 3
-  ocean:
-    augmented_limit: 1
-    regular_limit: 3
-  regen:
-    augmented_limit: 1
-    regular_limit: 3
-  speed:
-    augmented_limit: 1
-    regular_limit: 3
-  strength:
-    augmented_limit: 1
-    regular_limit: 3
-  thunder:
-    augmented_limit: 1
-    regular_limit: 3
-  apophis:
-    augmented_limit: 1
-    regular_limit: 3
-  thief:
-    augmented_limit: 1
-    regular_limit: 3
-# Cooldown is Duration + Cooldown
+  emerald:  [1, 3]
+  ender:    [1, 3]
+  feather:  [1, 3]
+  fire:     [1, 3]
+  frost:    [1, 3]
+  haste:    [1, 3]
+  heart:    [1, 3]
+  invis:    [1, 3]
+  ocean:    [1, 3]
+  regen:    [1, 3]
+  speed:    [1, 3]
+  strength: [1, 3]
+  thunder:  [1, 3]
+  apophis:  [1, 3]
+  thief:    [1, 3]
 
+
+# Full cooldown is duration + cooldown
 invis:
   cooldown:
     default: 121

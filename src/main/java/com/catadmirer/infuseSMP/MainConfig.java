@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import javax.naming.ConfigurationException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -149,18 +151,23 @@ public class MainConfig {
         return config.getBoolean("extra_effects.Thief");
     }
 
-    public int augmentedLimit(EffectMapping effect) {
-        // Handling the effects
-        if (effect != EffectMapping.ENDER) effect = effect.regular();
-        
-        return config.getInt("craft_limits." + effect.getKey() + ".augmented_limit");
-    }
+    /**
+     * Gets the amount of each effect that can be crafted
+     * 
+     * @param effect The effect to check
+     * 
+     * @return The number of effects that can be crafted of the specified {@link EffectMapping}.
+     * 
+     * @throws ConfigurationException Thrown when the craft limits cannot be found for the provided effect.
+     */
+    public int getCraftLimit(EffectMapping effect) throws ConfigurationException {
+        List<Integer> craftLimits = config.getIntegerList("craft-limits." + effect.getKey());
 
-    public int regularLimit(EffectMapping effect) {
-        // Handling the effects
-        if (effect != EffectMapping.ENDER) effect = effect.regular();
-        
-        return config.getInt("craft_limits." + effect.getKey() + ".regular_limit");
+        if (craftLimits.size() != 2) {
+            throw new ConfigurationException("Craft limits are required to be a list of 2 integers.  Found " + craftLimits.size() + " for effect " + effect.getKey());
+        }
+
+        return craftLimits.get(effect.isAugmented() ? 0 : 1);
     }
 
     public long cooldown(EffectMapping effect) {
