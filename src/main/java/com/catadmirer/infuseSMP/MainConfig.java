@@ -1,20 +1,16 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-
-import javax.naming.ConfigurationException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 public class MainConfig {
     public final File file;
@@ -157,14 +153,15 @@ public class MainConfig {
      * @param effect The effect to check
      * 
      * @return The number of effects that can be crafted of the specified {@link EffectMapping}.
-     * 
-     * @throws ConfigurationException Thrown when the craft limits cannot be found for the provided effect.
      */
-    public int getCraftLimit(EffectMapping effect) throws ConfigurationException {
+    public int getCraftLimit(EffectMapping effect) {
         List<Integer> craftLimits = config.getIntegerList("craft-limits." + effect.getKey());
 
         if (craftLimits.size() != 2) {
-            throw new ConfigurationException("Craft limits are required to be a list of 2 integers.  Found " + craftLimits.size() + " for effect " + effect.getKey());
+            plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});
+            plugin.getLogger().log(Level.SEVERE, "Returning default limits");
+
+            return effect.isAugmented() ? 1 : 3;
         }
 
         return craftLimits.get(effect.isAugmented() ? 0 : 1);
