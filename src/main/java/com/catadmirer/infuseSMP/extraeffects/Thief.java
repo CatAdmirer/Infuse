@@ -124,13 +124,14 @@ public class Thief implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             long timeLeft = disguiseEndTime - System.currentTimeMillis();
 
-            bossBar.setProgress(timeLeft / 3600);
-
-            if (timeLeft < 0) {
+            if (timeLeft < 0 || timeLeft / 3600.0 < 0) {
                 removeDisguise(thiefUser);
                 bossBar.removePlayer(thiefUser);
                 task.cancel();
+                return;
             }
+
+            bossBar.setProgress(timeLeft / 3600.0);
         }, 0, 20);
     }
 
