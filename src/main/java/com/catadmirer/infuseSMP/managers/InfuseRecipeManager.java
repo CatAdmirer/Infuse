@@ -507,7 +507,7 @@ public class InfuseRecipeManager implements Listener {
             player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
         } else {
             // Opening the menu for crafting effects
-            player.openInventory(new EffectCrafting(plugin).getInventory());
+            player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
         }
     }
 
@@ -526,7 +526,7 @@ public class InfuseRecipeManager implements Listener {
                 player.closeInventory();
 
                 // Opening the menu for crafting effects
-                player.openInventory(new EffectCrafting(plugin).getInventory());
+                player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
             } else if (event.getSlot() == 15) {
                 // Closing the StationSelectionMenu
                 player.closeInventory();
