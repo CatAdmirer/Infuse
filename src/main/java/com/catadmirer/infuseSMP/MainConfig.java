@@ -149,12 +149,18 @@ public class MainConfig {
         return config.getBoolean("extra_effects.Thief");
     }
 
-    public int augmentedLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".augmented_limit");
+    public int augmentedLimit(EffectMapping effect) {
+        // Handling the effects
+        if (effect != EffectMapping.ENDER) effect = effect.regular();
+        
+        return config.getInt("craft_limits." + effect.getKey() + ".augmented_limit");
     }
 
-    public int regularLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".regular_limit");
+    public int regularLimit(EffectMapping effect) {
+        // Handling the effects
+        if (effect != EffectMapping.ENDER) effect = effect.regular();
+        
+        return config.getInt("craft_limits." + effect.getKey() + ".regular_limit");
     }
 
     public long cooldown(EffectMapping effect) {
