@@ -113,6 +113,14 @@ public class DataManager {
         return true;
     }
 
+    public int getCrafted(EffectMapping effect) {
+        return config.getInt("effects-crafted." + effect.getKey(), 0);
+    }
+
+    public void setCrafted(EffectMapping effect, int crafted) {
+        config.set("effects-crafted." + effect.getKey(), crafted);
+    }
+
     public List<Player> getTrusted(Player truster) {
         return config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList();
     }
