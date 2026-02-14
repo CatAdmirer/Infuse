@@ -2,11 +2,10 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.EnumSet;
-import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -39,13 +38,11 @@ public class Haste implements Listener {
     private void enchantItemIfApplicable(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item != null && item.getType() != Material.AIR) {
-            Set<Material> validTools = EnumSet.of(Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE, Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE, Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE, Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL, Material.NETHERITE_SHOVEL);
-            if (validTools.contains(item.getType())) {
+            if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
                 item.addUnsafeEnchantment(Enchantment.FORTUNE, 5);
                 item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
                 item.addUnsafeEnchantment(Enchantment.UNBREAKING, 5);
             }
-
         }
     }
 
