@@ -99,8 +99,8 @@ public class MainConfig {
         return config.getInt("ritual_duration_ender");
     }
 
-    public boolean brewingParticles() {
-        return config.getBoolean("brewing_particles");
+    public boolean ritualBeacon() {
+        return config.getBoolean("ritual_beacon");
     }
 
     public boolean emptyEffectIcon() {

@@ -17,7 +17,7 @@ allow_infinite_effects: false
 ritual_duration: 600  # Duration in seconds (10 minutes)
 ritual_duration_ender: 3600 # Duration in seconds (1hr)
 
-brewing_particles: true
+ritual_beacon: true
 
 empty_effect_icon: true
 
