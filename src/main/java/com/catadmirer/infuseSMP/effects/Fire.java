@@ -100,7 +100,7 @@ public class Fire implements Listener {
             if (plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
                 UUID uuid = player.getUniqueId();
                 int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
-                if (count >= 20) {
+                if (count >= 10) {
                     event.getEntity().setFireTicks(100);
                     count = 0;
                 }
