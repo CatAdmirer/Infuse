@@ -138,7 +138,7 @@ public class Recipes implements CommandExecutor, Listener {
 
             Map<String, Integer> limits = new HashMap<>();
             limits.put("augmented_limit", ((Number) augObj).intValue());
-            limits.put("regular_limit", ((Number) regObj).intValue());
+            limits.put("regular_limit",   ((Number) regObj).intValue());
 
             result.put(itemName, limits);
         }
@@ -170,7 +170,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeGUIHandler(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null || event.getClickedInventory().getHolder() == null) return;
+        if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);
         }
@@ -183,7 +183,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeListGUIHandler(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null || event.getClickedInventory().getHolder() == null) return;
+        if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeListGUI
                 && event.getCurrentItem() != null) {
             event.setCancelled(true);
@@ -194,7 +194,6 @@ public class Recipes implements CommandExecutor, Listener {
                 openRecipeGUI(event.getWhoClicked(), clickedItem);
             }
         }
-
     }
 
     /**

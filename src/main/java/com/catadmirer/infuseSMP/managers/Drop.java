@@ -27,7 +27,6 @@ public class Drop implements Listener {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();
     }
 
-    @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
         if (this.isInfuseEffect(item)) {
@@ -45,13 +44,11 @@ public class Drop implements Listener {
         }
     }
 
-    private void playDustEffect(boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
+    private void playDustEffect(final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
         final Location base = location.add(0, 0.1, 0);
         final World world = location.getWorld();
-
-        final Color color = Color.fromRGB(effect.getColor().getRed(), effect.getColor().getGreen(), effect.getColor().getBlue());
+        Color color = Color.fromRGB(effect.getColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
-
         final int points = 16;
         final double radius = 0.6;
         (new BukkitRunnable() {
@@ -77,7 +74,7 @@ public class Drop implements Listener {
         world.playSound(base, Sound.ENTITY_TURTLE_EGG_BREAK, 1.3F, 1.2F);
     }
 
-    private void playDustEffectDrop(boolean bottomToTop, EffectMapping effect, Location location) {
+    private void playDustEffectDrop(final boolean bottomToTop, EffectMapping effect, Location location) {
         final Location base = location.add(0, -1.5, 0);
         final World world = location.getWorld();
         Color color = Color.fromRGB(effect.getColor().getRGB());
