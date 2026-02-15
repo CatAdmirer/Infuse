@@ -7,16 +7,13 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
+
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -58,7 +55,7 @@ public class Heart implements Listener {
                     int hitCount = playerHits.getOrDefault(targetUUID, 0) + 1;
                     playerHits.put(targetUUID, hitCount);
                     if (hitCount == 10) {
-                        this.showAndUpdateHealthAboveEntity(target, player);
+                        this.showAndUpdateHealthAboveEntity(target);
                         playerHits.put(targetUUID, 0);
                     }
 
@@ -67,17 +64,24 @@ public class Heart implements Listener {
         }
     }
 
-    private void showAndUpdateHealthAboveEntity(final LivingEntity entity, Player player) {
-        this.updateHealthDisplay(entity);
-        entity.setCustomNameVisible(true);
+    private void showAndUpdateHealthAboveEntity(Entity player) {
+        Location ploc = player.getLocation().add(0, 2.5, 0);
+
+        TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
+
+        as.setGravity(false);
+        as.setCustomNameVisible(true);
+        as.customName();
+        updateHealthDisplay(as, (LivingEntity) player);
+        player.addPassenger(as);
         final BukkitRunnable updateTask = new BukkitRunnable() {
             public void run() {
-                if (!entity.isDead() && entity.isValid()) {
-                    Heart.this.updateHealthDisplay(entity);
+                if (!player.isDead() && player.isValid()) {
+                    Heart.this.updateHealthDisplay(as, (LivingEntity) player);
                 } else {
                     this.cancel();
-                    entity.setCustomNameVisible(false);
-                    entity.customName(null);
+                    as.setCustomNameVisible(false);
+                    as.customName(null);
                 }
             }
         };
@@ -85,14 +89,20 @@ public class Heart implements Listener {
         (new BukkitRunnable() {
             public void run() {
                 updateTask.cancel();
-                entity.setCustomNameVisible(false);
-                entity.customName(null);
+                as.setCustomNameVisible(false);
+                as.customName(null);
+                player.removePassenger(as);
             }
         }).runTaskLater(plugin, 200L);
     }
 
-    private void updateHealthDisplay(LivingEntity entity) {
-        entity.customName(Messages.toComponent(String.format("<red><b>%.1f", entity.getHealth())));
+    private void updateHealthDisplay(TextDisplay entity, LivingEntity player) {
+        if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
+            entity.customName(Messages.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
+        } else {
+            entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
+        }
+
     }
 
     @EventHandler
