@@ -77,7 +77,7 @@ public class InfuseRecipeManager implements Listener {
             // Making sure the recipe is enabled
             boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
                 continue;
             }
 
