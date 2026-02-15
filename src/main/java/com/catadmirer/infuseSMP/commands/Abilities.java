@@ -22,7 +22,7 @@ public class Abilities implements CommandExecutor {
             return true;
         }
 
-        UUID playerUUID = player.getUniqueId();
+        final UUID playerUUID = player.getUniqueId();
 
         // Finding which slot to activate the spark for.
         String slot;
