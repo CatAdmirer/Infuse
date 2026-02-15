@@ -136,10 +136,7 @@ public class InfuseRecipeManager implements Listener {
 
         // Making sure the item being crafted is an Infuse effect and not crafting it if
         // it isn't
-        if (effect == null) {
-            event.setCancelled(true);
-            return;
-        }
+        if (effect == null) return;
 
         // Not allowing the player to shift click effects
         if (event.isShiftClick()) {
@@ -164,6 +161,8 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        player.closeInventory();
 
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setCrafted(effect, numCrafted + 1);
@@ -375,12 +374,10 @@ public class InfuseRecipeManager implements Listener {
             event.getInventory().setResult(effect.augmented().createItem());
             return;
         }
-
-        EffectMapping regForm = effect.augmented();
-        int regLimit = plugin.getConfigFile().getCraftLimit(regForm);
-        int regCrafted = plugin.getDataManager().getCrafted(regForm);
+        int regLimit = plugin.getConfigFile().getCraftLimit(effect);
+        int regCrafted = plugin.getDataManager().getCrafted(effect);
         if (regLimit > regCrafted) {
-            event.getInventory().setResult(effect.augmented().createItem());
+            event.getInventory().setResult(effect.createItem());
             return;
         }
         

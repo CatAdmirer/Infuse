@@ -64,7 +64,7 @@ public class Recipes implements CommandExecutor, Listener {
         ItemStack potionItem = createPotion(potionName);
         if (potionItem == null) return null;
 
-        Map<String,Integer> limits = loadCraftLimitsFromConfig().get(potionName);
+        Map<String,Integer> limits = loadCraftLimitsFromConfig().get(EffectMapping.fromEffectKey(potionName));
 
         if (limits == null) {
             return new ItemStack(Material.RED_STAINED_GLASS_PANE);
@@ -119,24 +119,18 @@ public class Recipes implements CommandExecutor, Listener {
      */
     public static void openGUI(Player player) {
         Inventory gui = new RecipeListGUI().getInventory();
-
-        fillRemainingSlots(gui);
         player.openInventory(gui);
     }
 
-    private static Map<String, Map<String, Integer>> loadCraftLimitsFromConfig() {
-        Map<String, Map<String, Integer>> result = new HashMap<>();
+    private static Map<EffectMapping, Map<String, Integer>> loadCraftLimitsFromConfig() {
+        Map<EffectMapping, Map<String, Integer>> result = new HashMap<>();
 
-        for (String itemName : Arrays.asList(
-                "emerald","feather","fire","aug_ender","ender","frost",
-                "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
-        )) {
+        for (EffectMapping itemName : Arrays.asList(EffectMapping.EMERALD,EffectMapping.FEATHER,EffectMapping.FIRE,EffectMapping.AUG_ENDER,EffectMapping.ENDER,EffectMapping.FROST, EffectMapping.HASTE,EffectMapping.HEART,EffectMapping.INVIS,EffectMapping.OCEAN,EffectMapping.REGEN,EffectMapping.SPEED,EffectMapping.STRENGTH,EffectMapping.THUNDER,EffectMapping.APOPHIS,EffectMapping.THIEF)) {
             if (!plugin.getConfigFile().enableApophis() && itemName.equals("apophis")) continue;
             if (!plugin.getConfigFile().enableThief()  && itemName.equals("thief"))   continue;
 
-            Object augObj = plugin.getConfig().get("craft_limits." + itemName + ".augmented_limit");
-            Object regObj = plugin.getConfig().get("craft_limits." + itemName + ".regular_limit");
-
+            Object augObj = plugin.getConfigFile().getCraftLimit(itemName.augmented()) - plugin.getDataManager().getCrafted(itemName.augmented());
+            Object regObj = plugin.getConfigFile().getCraftLimit(itemName) - plugin.getDataManager().getCrafted(itemName);
             if (!(augObj instanceof Number) || !(regObj instanceof Number)) {
                 plugin.getLogger().warning("bug: " + itemName);
                 continue;
