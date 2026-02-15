@@ -248,6 +248,12 @@ public enum Messages {
     public static String getMessage(Messages key) {
         if (!config.contains(key.configKey)) {
             Bukkit.getLogger().severe("Could not find \"" + key.configKey + "\" in the config.");
+            config.set(key.configKey, key.defaultValue);
+            try {
+                config.save(file);
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
             return key.defaultValue;
         }
 
