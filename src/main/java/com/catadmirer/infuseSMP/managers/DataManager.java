@@ -127,7 +127,7 @@ public class DataManager {
     }
 
     public void setTrusted(Player truster, List<Player> trusted) {
-        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).toList());
+        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).map(UUID::toString).toList());
 
         save();
     }
