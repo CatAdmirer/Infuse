@@ -41,13 +41,13 @@ public class Emerald extends InfuseEffect {
     }
 
     @Override
-    public void equip(Player player) {
+    public void equip(Infuse plugin, Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
     }
 
     @Override
-    public void unequip(Player player) {
+    public void unequip(Infuse plugin, Player player) {
         player.removePotionEffect(PotionEffectType.LUCK);
         player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
     }

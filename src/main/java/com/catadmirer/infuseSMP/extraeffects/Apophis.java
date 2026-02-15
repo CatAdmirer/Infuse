@@ -60,7 +60,7 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
-    public void equip(Player player) {
+    public void equip(Infuse plugin, Player player) {
         // Setting the player's max health
         AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute.getModifier(apophisBoost) == null) {
@@ -77,7 +77,7 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
-    public void unequip(Player player) {
+    public void unequip(Infuse plugin, Player player) {
         // Resetting the player's max health
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         maxHealth.setBaseValue(20);

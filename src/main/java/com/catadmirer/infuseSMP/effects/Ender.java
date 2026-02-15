@@ -35,10 +35,10 @@ public class Ender extends InfuseEffect {
     }
 
     @Override
-    public void equip(Player player) {}
+    public void equip(Infuse plugin, Player player) {}
 
     @Override
-    public void unequip(Player player) {}
+    public void unequip(Infuse plugin, Player player) {}
 
     @Override
     public Component getItemName() {
