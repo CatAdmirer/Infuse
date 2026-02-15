@@ -98,7 +98,7 @@ public class Frost implements Listener {
                 if (plugin.getDataManager().hasEffect(attacker, EffectMapping.FROST)) {
                     int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
                     this.meleeHitCounter.put(attacker.getUniqueId(), count);
-                    if (count >= 20) {
+                    if (count >= 10) {
                         this.meleeHitCounter.put(attacker.getUniqueId(), 0);
                         (new BukkitRunnable() {
                             int ticksElapsed = 0;
