@@ -85,7 +85,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(mapping.createItem());
 
                 String msg = Messages.INFUSE_GIVEEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB()) + ">");
+                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
                 msg = msg.replace("%effect_name%", mapping.getName());
                 target.sendMessage(Messages.toComponent(msg));
                 break;
