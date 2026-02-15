@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
@@ -273,6 +274,7 @@ public enum EffectMapping {
             meta.lore(getLore().stream().map(Messages::toComponent).toList());
             meta.setColor(org.bukkit.Color.fromARGB(color.getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
+            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
             // Applying the custom model if the key has the "aug_" prefix
             if (this == augmented) {

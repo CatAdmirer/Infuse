@@ -77,7 +77,7 @@ public class InfuseRecipeManager implements Listener {
             // Making sure the recipe is enabled
             boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
                 continue;
             }
 
@@ -210,12 +210,16 @@ public class InfuseRecipeManager implements Listener {
 
         // Spawning the ender crystal if the config allows
         if (plugin.getConfigFile().ritualBeacon()) {
-            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld()
-                    .spawnEntity(brewerLocation.clone().set(0, -100, 0), EntityType.END_CRYSTAL);
+            Location startLoc = brewerLocation.clone();
+            startLoc.setY(-100);
+            Location targetLoc = brewerLocation.clone();
+            targetLoc.setY(500);
+            
+            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
             crystal.setShowingBottom(false);
             crystal.setInvulnerable(true);
             crystal.setInvisible(true);
-            crystal.setBeamTarget(brewerLocation.clone().set(0, 500, 0));
+            crystal.setBeamTarget(targetLoc);
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // TODO: Test if i need to remove beam or not

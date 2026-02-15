@@ -33,7 +33,9 @@ public enum Messages {
     TRUST_NOPLAYER("trust_noplayer", "<red>Player not found."),
     TRUST_SELF("trust_self", "<red>You always trust yourself. Surely..."),
     TRUST_ADDED("trust_added", "<green>You now trust %target%."),
+    TRUST_ALREADYTRUSTED("trust_alreadytrusted", "<green>You already trust %target%."),
     TRUST_REMOVED("trust_removed", "<green>You no longer trust %target%."),
+    TRUST_NOTTRUSTED("trust_nottrusted", "<green>You already didn't trust %target%."),
 
     EFFECT_NOBREWING("effect_nobrewing", "<red>You need to craft this in a brewing stand!"),
 
@@ -246,6 +248,12 @@ public enum Messages {
     public static String getMessage(Messages key) {
         if (!config.contains(key.configKey)) {
             Bukkit.getLogger().severe("Could not find \"" + key.configKey + "\" in the config.");
+            config.set(key.configKey, key.defaultValue);
+            try {
+                config.save(file);
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
             return key.defaultValue;
         }
 

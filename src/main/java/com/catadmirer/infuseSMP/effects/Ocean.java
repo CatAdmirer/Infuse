@@ -129,7 +129,7 @@ public class Ocean implements Listener {
                     for (Player p : world.getPlayers()) {
                         if (p.equals(caster)) continue;
                         if (plugin.getDataManager().isTrusted(caster, p)) continue;
-                        if (p.getLocation().distance(holderLoc) <= radius) continue;
+                        if (p.getLocation().distance(holderLoc) > radius) continue;
 
                         Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
                         if (direction.lengthSquared() > 0.0001) {
