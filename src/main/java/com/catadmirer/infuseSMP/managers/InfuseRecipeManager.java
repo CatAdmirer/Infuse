@@ -161,13 +161,15 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
             return;
         }
-
-        player.closeInventory();
-
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setCrafted(effect, numCrafted + 1);
         // If the effect is not augmented, just let the item be crafted
-        if (!effect.isAugmented()) return;
+        if (!effect.isAugmented())  {
+            CraftingInventory inv = event.getInventory();
+            inv.clear();
+            player.closeInventory();
+            return;
+        }
 
         // Clearing the ingredients
         CraftingInventory inv = event.getInventory();
