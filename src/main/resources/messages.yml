@@ -25,6 +25,8 @@ trust_noplayer: "<red>Player not found."
 trust_self: "<red>You always trust yourself. Surely..."
 trust_added: "<green>You now trust %target%."
 trust_removed: "<yellow>You no longer trust %target%."
+trust_alreadytrusted: "<green>You already trust %target%."
+trust_nottrusted: "<green>You already didn't trust %target%."
 
 effect_nobrewing: "<red>You need to craft this in a brewing stand!"
 
