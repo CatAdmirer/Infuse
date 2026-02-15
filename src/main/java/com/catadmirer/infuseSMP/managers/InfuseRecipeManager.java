@@ -10,7 +10,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpRequest.BodyPublishers;
-import com.catadmirer.infuseSMP.inventories.EffectCrafting;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -132,10 +131,6 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        // Making sure the crafting menu belongs to the infuse plugin
-        if (!(event.getClickedInventory().getHolder() instanceof EffectCrafting menu))
-            return;
-
         ItemStack craftedItem = event.getInventory().getResult();
         EffectMapping effect = EffectMapping.fromItem(craftedItem);
 
@@ -153,7 +148,7 @@ public class InfuseRecipeManager implements Listener {
         }
 
         // Making sure the brewing stand is still placed
-        Location brewerLocation = menu.getBrewerLocation();
+        Location brewerLocation = event.getInventory().getLocation();
         if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
             event.setCancelled(true);
             return;
@@ -172,7 +167,6 @@ public class InfuseRecipeManager implements Listener {
 
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setCrafted(effect, numCrafted + 1);
-
         // If the effect is not augmented, just let the item be crafted
         if (!effect.isAugmented()) return;
 
@@ -272,32 +266,26 @@ public class InfuseRecipeManager implements Listener {
         // Preventing the brewing stand from being broken
         ImmortalBrewerListeners brewerListeners = new ImmortalBrewerListeners(brewerLocation);
         Bukkit.getPluginManager().registerEvents(brewerListeners, plugin);
-
         // Starting the ritual progress bar
         new BukkitRunnable() {
-            float progress = 1;
-            final double progressDecrement = 1.0 / ritualDuration * 20;
-
+            float progress = 1.0f;
+            final double progressDecrement = 1.0 / (ritualDuration * 20.0);
             @Override
             public void run() {
-                // Shouldn't happen.
-                // TODO Remove?
                 if (ritualBossBar == null) {
                     cancel();
                     return;
                 }
-
                 progress -= progressDecrement;
-
                 if (progress <= 0) {
+                    ritualBossBar.progress(0);
                     cancel();
                     return;
                 }
-
                 ritualBossBar.progress(progress);
             }
-        }.runTaskTimer(this.plugin, 0, 1);
 
+        }.runTaskTimer(this.plugin, 0, 1);
         // Scheduling the task that ends and cleans up the ritual
         Bukkit.getScheduler().runTaskLater(plugin, task -> {
             // Removing the bossbar from view
@@ -375,22 +363,17 @@ public class InfuseRecipeManager implements Listener {
     @EventHandler
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         // Ignoring non-infuse items
+        if (event.getRecipe() == null) return;
         ItemStack item = event.getRecipe().getResult();
         EffectMapping effect = EffectMapping.fromItem(item);
-        if (effect == null) return;
-
-        // Making sure the items are being crafted in the EffectCrafting menu
-        if (!(event.getInventory() instanceof EffectCrafting)) {
-            event.getInventory().setResult(null);
-            return;
-        }
-
+        if (effect == null) return;;
         // Checking the limits for the effect
         EffectMapping augForm = effect.augmented();
         int augLimit = plugin.getConfigFile().getCraftLimit(augForm);
         int augCrafted = plugin.getDataManager().getCrafted(augForm);
         if (augLimit > augCrafted) {
             event.getInventory().setResult(effect.augmented().createItem());
+            return;
         }
 
         EffectMapping regForm = effect.augmented();
@@ -398,6 +381,7 @@ public class InfuseRecipeManager implements Listener {
         int regCrafted = plugin.getDataManager().getCrafted(regForm);
         if (regLimit > regCrafted) {
             event.getInventory().setResult(effect.augmented().createItem());
+            return;
         }
         
         event.getInventory().setResult(null);
@@ -416,18 +400,17 @@ public class InfuseRecipeManager implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        Bukkit.getPluginManager().registerEvents(plugin, plugin);
-        HandlerList.unregisterAll();
         if (plugin.getConfigFile().brewingGui()) {
             player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
         } else {
             // Opening the menu for crafting effects
-            player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
+            player.openWorkbench(event.getClickedBlock().getLocation(), true);
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu menu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
@@ -442,13 +425,13 @@ public class InfuseRecipeManager implements Listener {
                 player.closeInventory();
 
                 // Opening the menu for crafting effects
-                player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
+                player.openWorkbench(block.getLocation(), true);
             } else if (event.getSlot() == 15) {
                 // Closing the StationSelectionMenu
                 player.closeInventory();
 
                 // Opening the brewing stand
-                BrewingStand data = (BrewingStand) block.getBlockData();
+                BrewingStand data = (BrewingStand) block.getState();
                 player.openInventory(data.getInventory());
             }
         }

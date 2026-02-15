@@ -136,7 +136,7 @@ public class MainConfig {
     }
 
     public List<EffectMapping> joinEffects() {
-        return config.getStringList("join_effects").stream().map(EffectMapping::fromEffectKey).filter(Objects::isNull).toList();
+        return config.getStringList("join_effects").stream().map(EffectMapping::fromEffectKey).filter(Objects::nonNull).toList();
     }
 
     public boolean enableApophis() {
@@ -155,7 +155,7 @@ public class MainConfig {
      * @return The number of effects that can be crafted of the specified {@link EffectMapping}.
      */
     public int getCraftLimit(EffectMapping effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft-limits." + effect.getKey());
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.regular().getKey());
 
         if (craftLimits.size() != 2) {
             plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});

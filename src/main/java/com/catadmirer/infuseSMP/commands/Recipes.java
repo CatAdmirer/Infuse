@@ -176,6 +176,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeGUIHandler(InventoryClickEvent event) {
+        if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);
         }
@@ -188,6 +189,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeListGUIHandler(InventoryClickEvent event) {
+        if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeListGUI
                 && event.getCurrentItem() != null) {
             event.setCancelled(true);
