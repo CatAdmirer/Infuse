@@ -23,6 +23,10 @@ public class GlobalLoop extends BukkitRunnable {
         this.runTaskTimer(plugin, 0, 20);
     }
 
+    public void stop() {
+        this.cancel();
+    }
+
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
