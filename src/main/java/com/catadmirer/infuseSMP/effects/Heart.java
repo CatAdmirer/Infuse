@@ -57,7 +57,7 @@ public class Heart implements Listener {
                     Map<UUID, Integer> playerHits = this.hitCounts.get(playerUUID);
                     int hitCount = playerHits.getOrDefault(targetUUID, 0) + 1;
                     playerHits.put(targetUUID, hitCount);
-                    if (hitCount == 20) {
+                    if (hitCount == 10) {
                         this.showAndUpdateHealthAboveEntity(target, player);
                         playerHits.put(targetUUID, 0);
                     }
