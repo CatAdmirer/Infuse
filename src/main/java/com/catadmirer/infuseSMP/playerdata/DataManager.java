@@ -27,7 +27,7 @@ public interface DataManager {
      * 
      * @return True if the file was created successfully, false otherwise.
      */
-    public boolean createFile();
+    public boolean runSetup();
 
     /**
      * Gets a list of the players that the truster trusts.
