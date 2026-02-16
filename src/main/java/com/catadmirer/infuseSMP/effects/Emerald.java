@@ -62,11 +62,7 @@ public class Emerald implements Listener {
         if (!(plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD))) return;
         if (!(event.isCritical())) return;
 
-        if (hits.get(attacker) != null) {
-            hits.replace(attacker, hits.get(attacker) + 1);
-        } else {
-            hits.put(attacker, 1);
-        }
+        hits.put(attacker, hits.getOrDefault(attacker, 0) + 1);
 
         if (hits.get(attacker) >= 10) {
             hits.remove(attacker);
