@@ -167,6 +167,10 @@ public class MainConfig {
         return craftLimits.get(effect.isAugmented() ? 0 : 1);
     }
 
+    public double emeraldLockDurationSeconds() {
+        return config.getDouble("emerald.lock_duration_seconds", 10);
+    }
+
     public long cooldown(EffectMapping effect) {
         return config.getLong(effect.regular().getKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
     }

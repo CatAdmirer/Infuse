@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -11,11 +13,8 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
-
 import java.util.*;
-
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.util.ItemUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -23,12 +22,14 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -56,24 +57,43 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof final Player attacker)) return;
-        if (!(event.getEntity() instanceof final LivingEntity entity)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(plugin.getDataManager().hasEffect(target, EffectMapping.EMERALD))) return;
 
-        if (!(plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD))) return;
-        if (!(event.isCritical())) return;
+        hits.put(target, hits.getOrDefault(target, 0) + 1);
 
-        hits.put(attacker, hits.getOrDefault(attacker, 0) + 1);
+        if (hits.get(target) >= 10) {
+            hits.remove(target);
 
-        if (hits.get(attacker) >= 10) {
-            hits.remove(attacker);
+            new LockFoodAndXP(attacker, plugin.getConfigFile().emeraldLockDurationSeconds());
+        }
+    }
 
-            for (ItemStack item : attacker.getInventory().getContents()) {
-                if (item != ItemStack.of(Material.ENCHANTED_GOLDEN_APPLE) || item != ItemStack.of(Material.GOLDEN_APPLE) || item != ItemStack.of(Material.EXPERIENCE_BOTTLE)) continue;
-                if (attacker.hasCooldown(item)) continue; // make sure it doesn't override any other plugin cooldown item stuff...
+    public static class LockFoodAndXP implements Listener {
+        private final Player player;
 
-                attacker.setCooldown(item, 100);
+        public LockFoodAndXP(Player player, double durationSeconds) {
+            this.player = player;
+            
+            Bukkit.getPluginManager().registerEvents(this, plugin);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                HandlerList.unregisterAll(this);
+            }, (long) (durationSeconds * 20));
+        }
+
+        /** Preventing the player's food level from changing. */
+        public void onFoodChange(FoodLevelChangeEvent event) {
+            if (event.getEntity().getUniqueId().equals(player.getUniqueId())) {
+                event.setCancelled(true);
             }
+        }
 
+        /** Preventing the player's xp level from changing. */
+        public void onXPChange(PlayerExpChangeEvent event) {
+            if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                event.setAmount(0);
+            }
         }
     }
 
