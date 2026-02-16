@@ -11,12 +11,11 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+
+import java.util.*;
+
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
-import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -24,17 +23,22 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald implements Listener {
     private static Infuse plugin;
+
+    private final Map<Player, Integer> hits = new HashMap<>();
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
@@ -48,6 +52,37 @@ public class Emerald implements Listener {
         if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
             mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
         }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof final Player attacker)) return;
+        if (!(event.getEntity() instanceof final LivingEntity entity)) return;
+
+        if (!(plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD))) return;
+        if (!(event.isCritical())) return;
+
+        if (hits.get(attacker) != null) {
+            hits.replace(attacker, hits.get(attacker) + 1);
+        } else {
+            hits.put(attacker, 1);
+        }
+
+        if (hits.get(attacker) >= 10) {
+            hits.remove(attacker);
+
+            for (ItemStack item : attacker.getInventory().getContents()) {
+                if (item != ItemStack.of(Material.ENCHANTED_GOLDEN_APPLE) || item != ItemStack.of(Material.GOLDEN_APPLE) || item != ItemStack.of(Material.EXPERIENCE_BOTTLE)) continue;
+                if (attacker.hasCooldown(item)) continue; // make sure it doesn't override any other plugin cooldown item stuff...
+
+                attacker.setCooldown(item, 100);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        if (hits.containsKey(event.getPlayer())) hits.remove(event.getPlayer());
     }
 
     @EventHandler

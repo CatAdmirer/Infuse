@@ -32,6 +32,7 @@ public class GUI implements Listener, CommandExecutor {
         // Ignoring if the player clicked on an empty slot.
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
+        if (clickedInventory == null) return;
 
         // Only running if the inventory is an EffectInventory
         if (clickedInventory.getHolder() instanceof EffectChooser) {
