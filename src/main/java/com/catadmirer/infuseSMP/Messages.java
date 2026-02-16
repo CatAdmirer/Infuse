@@ -121,9 +121,9 @@ public enum Messages {
     AUG_HEART_NAME("aug_heart.effect_name", "<red>Augmented Heart Effect"),
     AUG_HEART_LORE("aug_heart.effect_lore", "<red><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <dark_gray>+5 Hearts", "<red>❤ <dark_gray>All food gives absorption", "<red>❤ <dark_gray>Egaps gives +10 absorption hearts", "<red>❤ <dark_gray>See player's health every 10 hits", "<dark_gray>", "<red><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<red>❤ <dark_gray>Heal players to 20 hearts instantly", "<dark_gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 60s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 60s"),
 
-    INVIS_NAME("invisibility.effect_name", "<#2B0078>Invisibility Effect"),
+    INVIS_NAME("invisibility.effect_name", "<#2B0078>Invis Effect"),
     INVIS_LORE("invisibility.effect_lore", "<#2B0078><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<#2B0078>\ud83d\udc41 <dark_gray>Permanent Invisibility", "<#2B0078>\ud83d\udc41 <dark_gray>Full bow shot blinds the target for 5s and gives blindness for 2s", "<#2B0078>\ud83d\udc41 <dark_gray>Mobs cannot target you", "<dark_gray>", "<#2B0078><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<#2B0078>\ud83d\udc41 <dark_gray>Creates a 5×5 hollow circle of black dust particles", "<#2B0078>\ud83d\udc41 <dark_gray>Inside: allies become fully invisible; enemies get blindness", "<dark_gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 90s"),
-    AUG_INVIS_NAME("aug_invisibility.effect_name", "<#2B0078>Augmented Invisibility Effect"),
+    AUG_INVIS_NAME("aug_invisibility.effect_name", "<#2B0078>Augmented Invis Effect"),
     AUG_INVIS_LORE("aug_invisibility.effect_lore", "<#2B0078><b>ᴘᴀꜱꜱɪᴠᴇ ᴇꜰꜰᴇᴄᴛꜱ:", "<#2B0078>\ud83d\udc41 <dark_gray>Permanent Invisibility", "<#2B0078>\ud83d\udc41 <dark_gray>Full bow shot blinds the target for 5s and gives blindness for 2s", "<#2B0078>\ud83d\udc41 <dark_gray>Mobs cannot target you", "<dark_gray>", "<#2B0078><b>ꜱᴘᴀʀᴋ ᴇꜰꜰᴇᴄᴛꜱ:", "<#2B0078>\ud83d\udc41 <dark_gray>Creates a 5×5 hollow circle of black dust particles", "<#2B0078>\ud83d\udc41 <dark_gray>Inside: allies become fully invisible; enemies get blindness", "<dark_gray>", "<dark_aqua>ᴅᴜʀᴀᴛɪᴏɴ: 30s", "<dark_aqua>ᴄᴏᴏʟᴅᴏᴡɴ: 45s"),
 
     OCEAN_NAME("ocean.effect_name", "<blue>Ocean Effect"),
