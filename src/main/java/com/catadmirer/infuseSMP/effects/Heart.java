@@ -102,6 +102,7 @@ public class Heart implements Listener {
         } else {
             entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
         }
+
     }
 
     @EventHandler

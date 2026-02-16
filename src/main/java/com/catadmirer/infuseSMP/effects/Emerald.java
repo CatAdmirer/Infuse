@@ -77,6 +77,7 @@ public class Emerald implements Listener {
 
                 attacker.setCooldown(item, 100);
             }
+
         }
     }
 
