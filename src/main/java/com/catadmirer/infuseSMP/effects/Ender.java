@@ -174,6 +174,16 @@ public class Ender implements Listener {
     }
 
     @EventHandler
+    public void enderCurseHit(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
+
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.ENDER)) return;
+
+        cursePlayer(target.getUniqueId(), 1200);
+    }
+
+    @EventHandler
     public void onFireballDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof DragonFireball fireball)) return;
         if (!fireballName.equals(fireball.customName())) return;
