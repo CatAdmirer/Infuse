@@ -4,6 +4,9 @@ main: com.catadmirer.infuseSMP.Infuse
 api-version: '1.21.4'
 authors: [CatAdmirer, TurboJax]
 softdepend: [PlaceholderAPI]
+libraries:
+- com.h2database:h2:$h2Version
+
 commands:
   infuse:
     description: Base command for Infuse
