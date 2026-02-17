@@ -16,20 +16,6 @@ public interface DataManager {
     public boolean load();
 
     /**
-     * Writes the player data to disk.
-     * 
-     * @return Whether or not the data was successfully written.
-     */
-    public boolean save();
-
-    /**
-     * Creating the data file. If it doesn't exist, it just makes an empty file.
-     * 
-     * @return True if the file was created successfully, false otherwise.
-     */
-    public boolean runSetup();
-
-    /**
      * Gets a list of the players that the truster trusts.
      * 
      * @param truster

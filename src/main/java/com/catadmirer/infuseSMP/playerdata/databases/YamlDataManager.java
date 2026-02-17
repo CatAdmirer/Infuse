@@ -41,7 +41,7 @@ public class YamlDataManager implements DataManager {
         }
 
         // Creating the file if it doesn't exist.
-        runSetup();
+        createFile();
 
         // Loading the config
         try {
@@ -62,7 +62,6 @@ public class YamlDataManager implements DataManager {
      * 
      * @return Whether or not the data was successfully written.
      */
-    @Override
     public boolean save() {
         // Getting a plugin instance to use
         if (plugin == null) {
@@ -71,7 +70,7 @@ public class YamlDataManager implements DataManager {
         }
 
         // Creating the file if it doesn't exist.
-        runSetup();
+        createFile();
 
         // Saving the config
         try {
@@ -90,8 +89,7 @@ public class YamlDataManager implements DataManager {
      * 
      * @return True if the file was created successfully, false otherwise.
      */
-    @Override
-    public boolean runSetup() {
+    public boolean createFile() {
         // Getting a plugin instance to use
         if (plugin == null) {
             Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot create default {1}.", new String[]{plugin.getName(), dataFile.getName()});
