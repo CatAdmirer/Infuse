@@ -57,7 +57,7 @@ public class H2Database implements DataManager {
             } catch (SQLException err) {
                 plugin.getLogger().log(Level.WARNING, "Could not create the trusts table.", err);
             }
-            
+
             conn.commit();
             return true;
         } catch (SQLException err) {
@@ -65,11 +65,6 @@ public class H2Database implements DataManager {
         }
 
         return false;
-    }
-
-    public boolean save() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
     }
 
     @Override
