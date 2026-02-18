@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.playerdata.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.particles.Particles;
 import java.util.HashMap;
@@ -44,11 +43,9 @@ public class Feather implements Listener {
     private static final Set<UUID> spark = new HashSet<>();
 
     private static Infuse plugin;
-    private final DataManager dataManager;
 
-    public Feather(Infuse plugin, DataManager dataManager) {
+    public Feather(Infuse plugin) {
         Feather.plugin = plugin;
-        this.dataManager = dataManager;
     }
 
     @EventHandler
@@ -64,7 +61,7 @@ public class Feather implements Listener {
             for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
 
                 if (!(entity instanceof LivingEntity target)) continue;
-                if (target instanceof Player targetPlayer && isTeammate(player, targetPlayer)) continue;
+                if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
                 int damage = 8;
                 target.damage(damage);
@@ -88,10 +85,6 @@ public class Feather implements Listener {
                 }
             }, 1L);
         }
-    }
-
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(caster, player);
     }
 
     @EventHandler

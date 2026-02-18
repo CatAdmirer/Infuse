@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -45,15 +46,14 @@ public class H2Database implements DataManager {
     public boolean load() {
         final String createPlayerDataDb = "CREATE TABLE IF NOT EXISTS player_data(player UUID PRIMARY KEY, slot_1 INTEGER NOT NULL, slot_2 INTEGER NOT NULL, offhand_control BOOLEAN NOT NULL);";
         final String createTrustDb = "CREATE TABLE IF NOT EXISTS trusts(truster UUID NOT NULL, trusted UUID NOT NULL);";
+        final String createCraftedDb = "CREATE TABLE IF NOT EXISTS crafted_effects(effect INTEGER NOT NULL, count INTEGER NOT NULL);";
 
         try (Connection conn = dataSource.getConnection()) {
             // Creating the tables if they dont exist
-            PreparedStatement stmt = conn.prepareStatement(createPlayerDataDb);
-            stmt.execute();
-            stmt.close();
-
-            stmt = conn.prepareStatement(createTrustDb);
-            stmt.execute();
+            Statement stmt = conn.createStatement();
+            stmt.execute(createPlayerDataDb);
+            stmt.execute(createTrustDb);
+            stmt.execute(createCraftedDb);
             stmt.close();
 
             // Commiting any changes
@@ -65,6 +65,15 @@ public class H2Database implements DataManager {
 
         return false;
     }
+
+
+    @Override
+    public int getCrafted(EffectMapping effect) {
+        return 0;
+    }
+
+    @Override
+    public void setCrafted(EffectMapping effect, int crafted) {}
 
     @Override
     public @NotNull Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {

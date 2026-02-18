@@ -1,18 +1,16 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 public class MainConfig {
     public final File file;
@@ -101,8 +99,8 @@ public class MainConfig {
         return config.getInt("ritual_duration_ender");
     }
 
-    public boolean brewingParticles() {
-        return config.getBoolean("brewing_particles");
+    public boolean ritualBeacon() {
+        return config.getBoolean("ritual_beacon");
     }
 
     public boolean emptyEffectIcon() {
@@ -138,7 +136,7 @@ public class MainConfig {
     }
 
     public List<EffectMapping> joinEffects() {
-        return config.getStringList("join_effects").stream().map(EffectMapping::fromEffectKey).filter(Objects::isNull).toList();
+        return config.getStringList("join_effects").stream().map(EffectMapping::fromEffectKey).filter(Objects::nonNull).toList();
     }
 
     public boolean enableApophis() {
@@ -149,12 +147,28 @@ public class MainConfig {
         return config.getBoolean("extra_effects.Thief");
     }
 
-    public int augmentedLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".augmented_limit");
+    /**
+     * Gets the amount of each effect that can be crafted
+     * 
+     * @param effect The effect to check
+     * 
+     * @return The number of effects that can be crafted of the specified {@link EffectMapping}.
+     */
+    public int getCraftLimit(EffectMapping effect) {
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.regular().getKey());
+
+        if (craftLimits.size() != 2) {
+            plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});
+            plugin.getLogger().log(Level.SEVERE, "Returning default limits");
+
+            return effect.isAugmented() ? 1 : 3;
+        }
+
+        return craftLimits.get(effect.isAugmented() ? 0 : 1);
     }
 
-    public int regularLimit(String recipeKey) {
-        return config.getInt("craft_limits." + recipeKey + ".regular_limit");
+    public double emeraldLockDurationSeconds() {
+        return config.getDouble("emerald.lock_duration_seconds", 10);
     }
 
     public long cooldown(EffectMapping effect) {

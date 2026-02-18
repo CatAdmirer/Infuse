@@ -8,9 +8,12 @@ import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
@@ -20,21 +23,21 @@ import org.jetbrains.annotations.Nullable;
 
 public enum EffectMapping {
     // Defining regular effects
-    EMERALD  ("emerald",   1, Color.GREEN,         BossBar.Color.GREEN,  Emerald::activateSpark),
-    ENDER    ("ender",     2, new Color(0x800080), BossBar.Color.PURPLE, Ender::activateSpark),
-    FEATHER  ("feather",   3, new Color(0xBEA3CA), BossBar.Color.WHITE,  Feather::activateSpark),
-    FIRE     ("fire",      4, new Color(0xEE5522), BossBar.Color.RED,    Fire::activateSpark),
-    FROST    ("frost",     5, new Color(0x55FFFF), BossBar.Color.BLUE,   Frost::activateSpark),
-    HASTE    ("haste",     6, new Color(0xFFCC33), BossBar.Color.YELLOW, Haste::activateSpark),
-    HEART    ("heart",     7, Color.RED,           BossBar.Color.RED,    Heart::activateSpark),
-    INVIS    ("invis",     8, new Color(0xAA00AA), BossBar.Color.PURPLE, Invisibility::activateSpark),
-    OCEAN    ("ocean",     9, new Color(0x0066FF), BossBar.Color.BLUE,   Ocean::activateSpark),
-    REGEN    ("regen",    10, new Color(0xFF5555), BossBar.Color.PINK,   Regen::activateSpark),
-    SPEED    ("speed",    11, new Color(0xEEBB77), BossBar.Color.YELLOW, Speed::activateSpark),
-    STRENGTH ("strength", 12, new Color(0x800000), BossBar.Color.RED,    Strength::activateSpark),
-    THUNDER  ("thunder",  13, Color.YELLOW,        BossBar.Color.YELLOW, Thunder::activateSpark),
-    APOPHIS  ("apophis",  14, new Color(0x440044), BossBar.Color.PURPLE, Apophis::activateSpark),
-    THIEF    ("thief",    15, new Color(0xAA0000), BossBar.Color.RED,    Thief::activateSpark),
+    EMERALD  ("emerald",   1, Color.GREEN,         BossBar.Color.GREEN,  Emerald::applyPassiveEffects,      Emerald::activateSpark),
+    ENDER    ("ender",     2, new Color(0x800080), BossBar.Color.PURPLE, Ender::applyPassiveEffects,        Ender::activateSpark),
+    FEATHER  ("feather",   3, new Color(0xBEA3CA), BossBar.Color.WHITE,  p -> {},        Feather::activateSpark),
+    FIRE     ("fire",      4, new Color(0xEE5522), BossBar.Color.RED,    Fire::applyPassiveEffects,         Fire::activateSpark),
+    FROST    ("frost",     5, new Color(0x55FFFF), BossBar.Color.BLUE,   Frost::applyPassiveEffects,        Frost::activateSpark),
+    HASTE    ("haste",     6, new Color(0xFFCC33), BossBar.Color.YELLOW, Haste::applyPassiveEffects,        Haste::activateSpark),
+    HEART    ("heart",     7, Color.RED,           BossBar.Color.RED,    Heart::applyPassiveEffects,        Heart::activateSpark),
+    INVIS    ("invis",     8, new Color(0xAA00AA), BossBar.Color.PURPLE, Invisibility::applyPassiveEffects, Invisibility::activateSpark),
+    OCEAN    ("ocean",     9, new Color(0x0066FF), BossBar.Color.BLUE,   Ocean::applyPassiveEffects,        Ocean::activateSpark),
+    REGEN    ("regen",    10, new Color(0xFF5555), BossBar.Color.PINK,   p -> {},        Regen::activateSpark),
+    SPEED    ("speed",    11, new Color(0xEEBB77), BossBar.Color.YELLOW, Speed::applyPassiveEffects,        Speed::activateSpark),
+    STRENGTH ("strength", 12, new Color(0x800000), BossBar.Color.RED,    p -> {},     Strength::activateSpark),
+    THUNDER  ("thunder",  13, Color.YELLOW,        BossBar.Color.YELLOW, p -> {},      Thunder::activateSpark),
+    APOPHIS  ("apophis",  14, new Color(0x440044), BossBar.Color.PURPLE, Apophis::applyPassiveEffects,      Apophis::activateSpark),
+    THIEF    ("thief",    15, new Color(0xAA0000), BossBar.Color.RED,    Thief::applyPassiveEffects,        Thief::activateSpark),
 
     // Defining augmented effects
     AUG_EMERALD(EMERALD),
@@ -57,6 +60,7 @@ public enum EffectMapping {
     private final int id;
     private final Color color;
     private final BossBar.Color ritualColor;
+    private final Consumer<Player> passiveFunction;
     private final BiConsumer<Boolean,Player> sparkFunction;
 
     private EffectMapping regular;
@@ -70,11 +74,12 @@ public enum EffectMapping {
      * @param potionColor The color for the potion and related chat messages.
      * @param ritualColor The bossbar color to use during rituals.
      */
-    private EffectMapping(String key, int id, Color potionColor, BossBar.Color ritualColor, BiConsumer<Boolean,Player> sparkFunction) {
+    private EffectMapping(String key, int id, Color potionColor, BossBar.Color ritualColor, Consumer<Player> passiveFunction, BiConsumer<Boolean,Player> sparkFunction) {
         this.key = key;
         this.id = id;
         this.color = potionColor;
         this.ritualColor = ritualColor;
+        this.passiveFunction = passiveFunction;
         this.sparkFunction = sparkFunction;
 
         regular = this;
@@ -91,6 +96,7 @@ public enum EffectMapping {
         this.id = base.id;
         this.color = base.color;
         this.ritualColor = base.ritualColor;
+        this.passiveFunction = base.passiveFunction;
         this.sparkFunction = base.sparkFunction;
 
         regular = base;
@@ -269,6 +275,7 @@ public enum EffectMapping {
             meta.lore(getLore().stream().map(Messages::toComponent).toList());
             meta.setColor(org.bukkit.Color.fromARGB(color.getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
+            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
             // Applying the custom model if the key has the "aug_" prefix
             if (this == augmented) {
@@ -281,6 +288,10 @@ public enum EffectMapping {
         }
 
         return effectItem;
+    }
+
+    public void applyPassiveEffects(Player player) {
+        passiveFunction.accept(player);
     }
 
     /**

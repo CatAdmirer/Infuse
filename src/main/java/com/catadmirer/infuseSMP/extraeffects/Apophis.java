@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.extraeffects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -12,11 +13,14 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -36,36 +40,26 @@ public class Apophis implements Listener {
 
     public Apophis(Infuse plugin) {
         Apophis.plugin = plugin;
-
-        this.startHealthCheckTask();
-        (new BukkitRunnable() {
-            public void run() {
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(onlinePlayer, EffectMapping.APOPHIS)) continue;
-
-                    ItemStack mainHand = onlinePlayer.getInventory().getItemInMainHand();
-                    Apophis.this.applyPassiveEffects(onlinePlayer);
-                    if (Apophis.this.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
-                        mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
-                    }
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 20L);
     }
 
-    private void applyPassiveEffects(Player player) {
+    public static NamespacedKey apophisBoost = new NamespacedKey("infuse", "apophis_boost");
+    public static NamespacedKey apophisSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
+
+    public static void applyPassiveEffects(Player player) {
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(apophisBoost) == null) {
+            AttributeModifier modifier = new AttributeModifier(apophisBoost, 10, Operation.ADD_NUMBER);
+            attribute.addModifier(modifier);
+        }
+
+        ItemStack mainHand = player.getInventory().getItemInMainHand();
+        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
+        }
+
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 2, false, false));
-    }
-
-    private boolean isSword(ItemStack item) {
-        if (item == null) {
-            return false;
-        } else {
-            Material type = item.getType();
-            return type == Material.WOODEN_SWORD || type == Material.STONE_SWORD || type == Material.IRON_SWORD || type == Material.GOLDEN_SWORD || type == Material.DIAMOND_SWORD || type == Material.NETHERITE_SWORD;
-        }
     }
 
     @EventHandler
@@ -77,20 +71,6 @@ public class Apophis implements Listener {
                 maxHealthAttribute.setBaseValue(20);
             }
         }, 15);
-    }
-
-    private void startHealthCheckTask() {
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (plugin.getDataManager().hasEffect(player, EffectMapping.APOPHIS)) {
-                    AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-                    if (maxHealthAttribute.getBaseValue() < 30) {
-                        maxHealthAttribute.setBaseValue(30);
-                        player.setHealth(30);
-                    }
-                }
-            }
-        }, 0, 20);
     }
 
     @EventHandler
@@ -110,7 +90,6 @@ public class Apophis implements Listener {
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     entity.setFireTicks(100);
@@ -124,9 +103,9 @@ public class Apophis implements Listener {
                 }
             }).runTaskLater(plugin, 20L);
 
-            if (maxHealthAttribute.getBaseValue() < 40) {
-                maxHealthAttribute.setBaseValue(40);
-                player.setHealth(40);
+            AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+            if (attribute.getModifier(apophisSparkBoost) == null) {
+                attribute.addModifier(new AttributeModifier(apophisSparkBoost, 10, Operation.ADD_NUMBER));
             }
             
             // Applying cooldowns and durations for the effect
@@ -136,11 +115,7 @@ public class Apophis implements Listener {
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
 
-            (new BukkitRunnable() {
-                public void run() {
-                    maxHealthAttribute.setBaseValue(30);
-                }
-            }).runTaskLater(plugin, 1200L);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(apophisSparkBoost), duration * 20);
         }
     }
 

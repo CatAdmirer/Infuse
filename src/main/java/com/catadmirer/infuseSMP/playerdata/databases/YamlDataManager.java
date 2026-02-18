@@ -109,6 +109,16 @@ public class YamlDataManager implements DataManager {
         return true;
     }
 
+    @Override
+    public int getCrafted(EffectMapping effect) {
+        return config.getInt("effects-crafted." + effect.getKey(), 0);
+    }
+
+    @Override
+    public void setCrafted(EffectMapping effect, int crafted) {
+        config.set("effects-crafted." + effect.getKey(), crafted);
+    }
+
     /**
      * Gets a list of the players that the truster trusts.
      * 

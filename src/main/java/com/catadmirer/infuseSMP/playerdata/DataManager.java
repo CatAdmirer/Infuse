@@ -16,11 +16,26 @@ public interface DataManager {
     public boolean load();
 
     /**
-     * Gets a list of the players that the truster trusts.
+     * Gets the amount of times an effect has been crafted.
+     * 
+     * @param effect The effect
+     */
+    public int getCrafted(EffectMapping effect);
+
+    /**
+     * Sets the amount of times an effect has been crafted.
+     * 
+     * @param effect The effect to adjust the crafted count for
+     * @param crafted The number of this effect that has been crafted
+     */
+    public void setCrafted(EffectMapping effect, int crafted);
+
+    /**
+     * Gets a set of the players that the truster trusts.
      * 
      * @param truster
      * 
-     * @return The list of players trusted by the truster.
+     * @return The set of players trusted by the truster.
      */
     @NotNull
     public Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster);

@@ -61,7 +61,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         // Building the result
         if (time.equals(Component.empty())) return Component.text(emoji);
 
-        return time.append(Messages.toComponent("  <white>" + emoji));
+        return time.append(Messages.toComponent("  <white>" + emoji).color(NamedTextColor.WHITE));
     }
 
     private Component getPart2(UUID uuid, String slot) {
@@ -90,6 +90,6 @@ public class ActionBarUpdater extends BukkitRunnable {
 
         // Building the result
         if (time.equals(Component.empty())) return Component.text(emoji);
-        return Messages.toComponent("<white>" + emoji + "  ").append(time);
+        return Messages.toComponent("<white>" + emoji + "  ").color(NamedTextColor.WHITE).append(time).color(NamedTextColor.WHITE);
     }
 }
