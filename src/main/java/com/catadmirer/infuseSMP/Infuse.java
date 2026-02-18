@@ -57,6 +57,26 @@ public class Infuse extends JavaPlugin implements Listener {
         this.loop = new GlobalLoop(this);
     }
 
+    public static void debug(String msg) {
+        DEBUG.debug(msg);
+    }
+
+    public static void debug(String format, Object arg) {
+        DEBUG.debug(format, arg);
+    }
+
+    public static void debug(String format, Object arg1, Object arg2) {
+        DEBUG.debug(format, arg1, arg2);
+    }
+
+    public static void debug(String format, Object... arguments) {
+        DEBUG.debug(format, arguments);
+    }
+
+    public static void debug(String msg, Throwable t) {
+        DEBUG.debug(msg, t);
+    }
+
     public void onEnable() {
         // Making sure the plugin hasn't been initialized twice
         if (instance != null) {
