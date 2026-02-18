@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.playerdata.DataManager;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import java.awt.Color;
@@ -227,6 +226,46 @@ public enum EffectMapping {
 
     public char getActiveIcon() {
         return (char) Integer.parseInt("E" + (isAugmented() ? 3 : 1) + String.format("%02d", getId()), 16);
+    }
+
+    public int serialize() {
+        return (isAugmented() ? 100 : 0) + getId();
+    }
+
+    public EffectMapping deserialize(int serialized) {
+        return switch (serialized) {
+            case   1 -> EMERALD;
+            case 101 -> AUG_EMERALD;
+            case   2 -> ENDER;
+            case 102 -> AUG_ENDER;
+            case   3 -> FEATHER;
+            case 103 -> AUG_FEATHER;
+            case   4 -> FIRE;
+            case 104 -> AUG_FIRE;
+            case   5 -> FROST;
+            case 105 -> AUG_FROST;
+            case   6 -> HASTE;
+            case 106 -> AUG_HASTE;
+            case   7 -> HEART;
+            case 107 -> AUG_HEART;
+            case   8 -> INVIS;
+            case 108 -> AUG_INVIS;
+            case   9 -> OCEAN;
+            case 109 -> AUG_OCEAN;
+            case  10 -> REGEN;
+            case 110 -> AUG_REGEN;
+            case  11 -> SPEED;
+            case 111 -> AUG_SPEED;
+            case  12 -> STRENGTH;
+            case 112 -> AUG_STRENGTH;
+            case  13 -> THUNDER;
+            case 113 -> AUG_THUNDER;
+            case  14 -> APOPHIS;
+            case 114 -> AUG_APOPHIS;
+            case  15 -> THIEF;
+            case 115 -> AUG_THIEF;
+            default -> null;
+        };
     }
 
     /**
