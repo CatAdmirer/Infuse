@@ -1,13 +1,13 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.InfuseDebug;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.destroystokyo.paper.MaterialSetTag;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -33,8 +33,6 @@ import org.bukkit.util.Vector;
 
 public class Frost implements Listener {
     private final static Set<UUID> frozenAttackers = new HashSet<>();
-
-    private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
     private static Infuse plugin;
 
@@ -92,35 +90,32 @@ public class Frost implements Listener {
     }
 
     @EventHandler
-    public void onMeleeHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player attacker) {
-            if (event.getEntity() instanceof Player target) {
-                if (plugin.getDataManager().hasEffect(attacker, EffectMapping.FROST)) {
-                    int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
-                    this.meleeHitCounter.put(attacker.getUniqueId(), count);
-                    if (count >= 10) {
-                        this.meleeHitCounter.put(attacker.getUniqueId(), 0);
-                        (new BukkitRunnable() {
-                            int ticksElapsed = 0;
-                            final int freezeDuration = 200;
+    public void onTenthAttack(TenHitEvent event) {
+        InfuseDebug.log("[Frost] Recieved TenHitEvent");
+        InfuseDebug.log("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
+        InfuseDebug.log("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
+        
+        if (!plugin.getDataManager().hasEffect(event.getAttacker(), EffectMapping.FROST)) return;
 
-                            public void run() {
-                                if (this.ticksElapsed >= freezeDuration) {
-                                    target.setFreezeTicks(0);
-                                    this.cancel();
-                                } else {
-                                    int currentFreezeTicks = target.getFreezeTicks();
-                                    target.setFreezeTicks(currentFreezeTicks + 2);
-                                    this.ticksElapsed += 2;
-                                }
-                            }
-                        }).runTaskTimer(plugin, 0L, 2L);
-                    }
+        InfuseDebug.log("[Frost] Attacker has frost effect");
 
+        (new BukkitRunnable() {
+            int ticksElapsed = 0;
+            final int freezeDuration = 200;
+
+            public void run() {
+                if (this.ticksElapsed >= freezeDuration) {
+                    event.getTarget().setFreezeTicks(0);
+                    this.cancel();
+                } else {
+                    int currentFreezeTicks = event.getTarget().getFreezeTicks();
+                    event.getTarget().setFreezeTicks(currentFreezeTicks + 2);
+                    this.ticksElapsed += 2;
                 }
             }
-        }
+        }).runTaskTimer(plugin, 0L, 2L);
     }
+
     public static void activateSpark(Boolean isAugmented, Player caster) {
         UUID playerUUID = caster.getUniqueId();
 

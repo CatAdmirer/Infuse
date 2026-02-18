@@ -170,7 +170,6 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeGUIHandler(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null) return;
         if (event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);

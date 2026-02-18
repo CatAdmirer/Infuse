@@ -10,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +27,6 @@ public class Drop implements Listener {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();
     }
 
-    @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
         if (this.isInfuseEffect(item)) {
@@ -49,7 +47,7 @@ public class Drop implements Listener {
     private void playDustEffect(final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
         final Location base = location.add(0, 0.1, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getColor().getRed(), effect.getColor().getGreen(), effect.getColor().getBlue());
+        Color color = Color.fromRGB(effect.getColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;

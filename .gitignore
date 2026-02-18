@@ -12,4 +12,5 @@ build/
 
 # Preserves eula and any dependencies
 !run/eula.txt
+!run/log4j2.xml
 !run/plugins/*.jar

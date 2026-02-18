@@ -371,7 +371,7 @@ public class InfuseRecipeManager implements Listener {
         if (event.getRecipe() == null) return;
         ItemStack item = event.getRecipe().getResult();
         EffectMapping effect = EffectMapping.fromItem(item);
-        if (effect == null) return;;
+        if (effect == null) return;
         // Checking the limits for the effect
         EffectMapping augForm = effect.augmented();
         int augLimit = plugin.getConfigFile().getCraftLimit(augForm);
@@ -413,7 +413,7 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory().getHolder() == null) return;
+        if (event.getClickedInventory() == null || event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu menu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();

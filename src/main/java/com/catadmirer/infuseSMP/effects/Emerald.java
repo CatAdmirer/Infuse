@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -11,12 +13,8 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.util.ItemUtil;
-import java.util.UUID;
+import java.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -26,15 +24,22 @@ import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald implements Listener {
     private static Infuse plugin;
+
+    private final Map<Player, Integer> hits = new HashMap<>();
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
@@ -48,6 +53,53 @@ public class Emerald implements Listener {
         if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
             mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
         }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(plugin.getDataManager().hasEffect(target, EffectMapping.EMERALD))) return;
+
+        hits.put(target, hits.getOrDefault(target, 0) + 1);
+
+        if (hits.get(target) >= 10) {
+            hits.remove(target);
+
+            new LockFoodAndXP(attacker, plugin.getConfigFile().emeraldLockDurationSeconds());
+        }
+    }
+
+    public static class LockFoodAndXP implements Listener {
+        private final Player player;
+
+        public LockFoodAndXP(Player player, double durationSeconds) {
+            this.player = player;
+            
+            Bukkit.getPluginManager().registerEvents(this, plugin);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                HandlerList.unregisterAll(this);
+            }, (long) (durationSeconds * 20));
+        }
+
+        /** Preventing the player's food level from changing. */
+        public void onFoodChange(FoodLevelChangeEvent event) {
+            if (event.getEntity().getUniqueId().equals(player.getUniqueId())) {
+                event.setCancelled(true);
+            }
+        }
+
+        /** Preventing the player's xp level from changing. */
+        public void onXPChange(PlayerExpChangeEvent event) {
+            if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                event.setAmount(0);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        if (hits.containsKey(event.getPlayer())) hits.remove(event.getPlayer());
     }
 
     @EventHandler
