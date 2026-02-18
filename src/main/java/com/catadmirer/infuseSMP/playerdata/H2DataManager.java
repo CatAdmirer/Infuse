@@ -69,6 +69,7 @@ public class H2DataManager implements DataManager {
 
     @Override
     public int getCrafted(EffectMapping effect) {
+
         return 0;
     }
 
@@ -77,10 +78,11 @@ public class H2DataManager implements DataManager {
 
     @Override
     public @NotNull Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
+        String selectStr = "SELECT trusted FROM trusts WHERE truster = ?";
         UUID trusterUUID = truster.getUniqueId();
 
         try (Connection conn = dataSource.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT trusted FROM trusts WHERE truster = ?");
+            PreparedStatement stmt = conn.prepareStatement(selectStr);
             stmt.setObject(1, trusterUUID);
 
             Set<UUID> trustedUUIDs = new HashSet<>();
@@ -95,33 +97,81 @@ public class H2DataManager implements DataManager {
 
             return trustedUUIDs.stream().map(Bukkit::getOfflinePlayer).collect(Collectors.toSet());
         } catch (SQLException err) {
-
+            LOGGER.info("Failed to connect to database.", err);
         }
         return null;
     }
 
     @Override
     public void setTrusted(@NotNull OfflinePlayer truster, @NotNull Set<OfflinePlayer> trusted) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setTrusted'");
     }
 
     @Override
     public void addTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toTrust) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addTrust'");
+        String insertElem = """
+                            INSERT INTO trusts (truster, trusted)
+                            SELECT ?, ?
+                            WHERE NOT EXISTS (
+                                SELECT * FROM trusts WHERE truster = ? AND trusted = ?
+                            );""";
+        
+        UUID trusterUUID = truster.getUniqueId();
+        UUID toTrustUUID = toTrust.getUniqueId();
+
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(insertElem)) {
+                stmt.setObject(1, trusterUUID);
+                stmt.setObject(2, toTrustUUID);
+                stmt.setObject(3, trusterUUID);
+                stmt.setObject(4, toTrustUUID);
+                stmt.execute();
+            } catch (SQLException err) {
+                LOGGER.error("Failed to insert data into database", err);
+            }
+        } catch (SQLException err) {
+            LOGGER.info("Failed to connect to database.", err);
+        }
     }
 
     @Override
     public void removeTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toRemove) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeTrust'");
+        String deleteElem = "DELETE FROM trusts WHERE truster = ? AND trusted = ?";
+        
+        UUID trusterUUID = truster.getUniqueId();
+        UUID trustedUUID = toRemove.getUniqueId();
+
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(deleteElem)) {
+                stmt.setObject(1, trusterUUID);
+                stmt.setObject(2, trustedUUID);
+                stmt.execute();
+            } catch (SQLException err) {
+                LOGGER.error("Failed to remove data from the database", err);
+            }
+        } catch (SQLException err) {
+            LOGGER.info("Failed to connect to database.", err);
+        }
     }
 
     @Override
     public boolean isTrusted(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toCheck) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isTrusted'");
+        String selectStr = "SELECT trusted FROM trusts WHERE truster = ? AND trusted = ?";
+
+        UUID trusterUUID = truster.getUniqueId();
+        UUID trustedUUID = toCheck.getUniqueId();
+
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(selectStr);
+            stmt.setObject(1, trusterUUID);
+            stmt.setObject(2, trustedUUID);
+
+            return stmt.executeQuery().next();
+        } catch (SQLException err) {
+            LOGGER.info("Failed to connect to database.", err);
+        }
+
+        return false;
     }
 
     @Override
