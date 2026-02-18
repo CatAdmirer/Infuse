@@ -6,8 +6,8 @@ import com.catadmirer.infuseSMP.playerdata.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import javax.sql.DataSource;
@@ -15,22 +15,21 @@ import org.bukkit.OfflinePlayer;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class H2Database implements DataManager {
-    private final Infuse plugin;
+    private static final Logger LOGGER = LoggerFactory.getLogger("Infuse_Storage");
     private final DataSource dataSource;
 
     public H2Database(Infuse plugin) {
-        this.plugin = plugin;
-
         try {
             Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (ClassNotFoundException err) {
+            LOGGER.error("Could not load the H2 driver", err);
         }
 
-        // Creating the JDBC DataSource object
+        // Creating the JDBC DataSource
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setUrl("jdbc:h2:./" + plugin.getDataFolder().getPath() + "/data/playerdata");
         dataSource.setUser("infuse");
@@ -45,24 +44,21 @@ public class H2Database implements DataManager {
         final String createPlayerDataDb = "CREATE TABLE IF NOT EXISTS player_data(player UUID PRIMARY KEY, slot_1 INTEGER NOT NULL, slot_2 INTEGER NOT NULL, offhand_control BOOLEAN NOT NULL);";
         final String createTrustDb = "CREATE TABLE IF NOT EXISTS trusts(truster UUID NOT NULL, trusted UUID NOT NULL);";
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             // Creating the tables if they dont exist
-            try (PreparedStatement stmt = conn.prepareStatement(createPlayerDataDb)) {
-                stmt.execute();
-            } catch (SQLException err) {
-                plugin.getLogger().log(Level.WARNING, "Could not create the player_data table.", err);
-            }
+            PreparedStatement stmt = conn.prepareStatement(createPlayerDataDb);
+            stmt.execute();
+            stmt.close();
 
-            try (PreparedStatement stmt = conn.prepareStatement(createTrustDb)) {
-                stmt.execute();
-            } catch (SQLException err) {
-                plugin.getLogger().log(Level.WARNING, "Could not create the trusts table.", err);
-            }
+            stmt = conn.prepareStatement(createTrustDb);
+            stmt.execute();
+            stmt.close();
 
+            // Commiting any changes
             conn.commit();
             return true;
         } catch (SQLException err) {
-            plugin.getLogger().log(Level.SEVERE, "Could not open connection to H2 database", err);
+            LOGGER.error("Could not open connection to H2 database", err);
         }
 
         return false;
