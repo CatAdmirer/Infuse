@@ -36,8 +36,11 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Infuse extends JavaPlugin implements Listener {
+    public static final Logger DEBUG = LoggerFactory.getLogger("InfuseDebug");
     private static Infuse instance;
 
     private final ApophisManager apophisManager;
