@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.playerdata.databases;
+package com.catadmirer.infuseSMP.playerdata;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.playerdata.DataManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;

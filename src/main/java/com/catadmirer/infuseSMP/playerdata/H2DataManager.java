@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.playerdata.databases;
+package com.catadmirer.infuseSMP.playerdata;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.playerdata.DataManager;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class H2Database implements DataManager {
+public class H2DataManager implements DataManager {
     private static final Logger LOGGER = LoggerFactory.getLogger("Infuse_Storage");
     private final DataSource dataSource;
 
-    public H2Database(Infuse plugin) {
+    public H2DataManager(Infuse plugin) {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException err) {
