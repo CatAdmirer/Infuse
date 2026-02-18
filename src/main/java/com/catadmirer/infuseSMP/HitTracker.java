@@ -33,24 +33,24 @@ public class HitTracker implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof Player target)) return;
 
-        Infuse.debug(attacker.getName() + " has hit " + target.getName());
+        InfuseDebug.log("{} has hit {}", attacker.getName(), target.getName());
 
         // Making sure it counts as a normal hit
         // Vanilla attack cooldown needs to be at 84.8% to be a normal hit.
         if (attacker.getAttackCooldown() < 0.85) {
-            Infuse.debug("Hit ignored due to being under attack cooldown threshold.");
+            InfuseDebug.log("Hit ignored due to being under attack cooldown threshold.");
             return;
         }
 
         // Incrementing the hit counter
         int hits = hitTracker.getOrDefault(attacker.getUniqueId(), 0) + 1;
-        Infuse.debug(attacker.getName() + "'s hit counter is " + hits + ".");
+        InfuseDebug.log("{}'s hit counter is {}.", attacker.getName(), hits);
 
         if (hits == 10) {
             // Calling the TenHitEvent
             TenHitEvent tenHit = new TenHitEvent(attacker, target);
             tenHit.callEvent();
-            Infuse.debug("Called TenHitEvent");
+            InfuseDebug.log("Called TenHitEvent");
 
             hits -= 10;
 
@@ -59,7 +59,7 @@ public class HitTracker implements Listener {
                 if (decayQueue.isEmpty()) continue;
                 decayQueue.remove();
             }
-            Infuse.debug("Removed items from queue.");
+            InfuseDebug.log("Removed items from queue.");
         }
 
         // Saving the hit count
@@ -70,15 +70,15 @@ public class HitTracker implements Listener {
         int hitCounterDecaySeconds = 10;
         if (hitCounterDecaySeconds < 1) return;
 
-        Infuse.debug("Adding item to decay queue");
+        InfuseDebug.log("Adding item to decay queue");
         decayQueue.add(() -> {
             // Skipping if the attacker has left the game
             if (!attacker.isConnected()) return;
 
-            Infuse.debug("Decrementing hit counter");
+            InfuseDebug.log("Decrementing hit counter");
             int curHits = hitTracker.get(attacker.getUniqueId());
 
-            Infuse.debug(attacker.getName() + "'s hit counter is " + (curHits - 1) + ".");
+            InfuseDebug.log("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
         
