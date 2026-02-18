@@ -1,21 +1,20 @@
 package com.catadmirer.infuseSMP.playerdata.databases;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.playerdata.DataManager;
 
 public class YamlDataManager implements DataManager {
     private final Infuse plugin;
@@ -119,8 +118,8 @@ public class YamlDataManager implements DataManager {
      */
     @Override
     @NotNull
-    public List<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
-        return config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getOfflinePlayer).toList();
+    public Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
+        return config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getOfflinePlayer).collect(Collectors.toSet());
     }
 
     /**
@@ -130,7 +129,7 @@ public class YamlDataManager implements DataManager {
      * @param trusted The list of players the truster now trusts
      */
     @Override
-    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull List<OfflinePlayer> trusted) {
+    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull Set<OfflinePlayer> trusted) {
         config.set(truster.getUniqueId() + ".trust", trusted.stream().map(OfflinePlayer::getUniqueId).toList());
 
         save();
@@ -144,7 +143,7 @@ public class YamlDataManager implements DataManager {
      */
     @Override
     public void addTrust(@NotNull OfflinePlayer caster, @NotNull OfflinePlayer toTrust) {
-        List<OfflinePlayer> trustedPlayers = getTrusted(caster);
+        Set<OfflinePlayer> trustedPlayers = getTrusted(caster);
         trustedPlayers.add(toTrust);
 
         setTrusted(caster, trustedPlayers);
@@ -158,7 +157,7 @@ public class YamlDataManager implements DataManager {
      */
     @Override
     public void removeTrust(@NotNull OfflinePlayer caster, @NotNull OfflinePlayer trusted) {
-        List<OfflinePlayer> trustedSet = getTrusted(caster);
+        Set<OfflinePlayer> trustedSet = getTrusted(caster);
         trustedSet.remove(trusted);
 
         setTrusted(caster, trustedSet);

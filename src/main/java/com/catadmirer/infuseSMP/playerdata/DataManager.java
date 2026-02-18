@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.playerdata;
 
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +23,15 @@ public interface DataManager {
      * @return The list of players trusted by the truster.
      */
     @NotNull
-    public List<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster);
+    public Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster);
 
     /**
      * Sets the players that the truster trusts.
      * 
      * @param truster The player to modify
-     * @param trusted The list of players the truster now trusts
+     * @param trusted The set of players the truster now trusts
      */
-    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull List<OfflinePlayer> trusted);
+    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull Set<OfflinePlayer> trusted);
 
     /**
      * Adds a player to the list of trusted people.

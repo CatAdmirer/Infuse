@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.logging.Level;
 import javax.sql.DataSource;
@@ -68,13 +69,13 @@ public class H2Database implements DataManager {
     }
 
     @Override
-    public @NotNull List<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
+    public @NotNull Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTrusted'");
     }
 
     @Override
-    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull List<OfflinePlayer> trusted) {
+    public void setTrusted(@NotNull OfflinePlayer truster, @NotNull Set<OfflinePlayer> trusted) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setTrusted'");
     }
