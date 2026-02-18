@@ -146,34 +146,6 @@ public class YamlDataManager implements DataManager {
     }
 
     /**
-     * Adds a player to the list of trusted people.
-     * 
-     * @param truster The person whose trusted list to modify.
-     * @param toTrust The person the truster now trusts.
-     */
-    @Override
-    public void addTrust(@NotNull OfflinePlayer caster, @NotNull OfflinePlayer toTrust) {
-        Set<OfflinePlayer> trustedPlayers = getTrusted(caster);
-        trustedPlayers.add(toTrust);
-
-        setTrusted(caster, trustedPlayers);
-    }
-
-    /**
-     * Removes a player from another player's list of trusted people.
-     * 
-     * @param truster The player whose trusted list to modify.
-     * @param toRemove The person to remove from the truster's trust.
-     */
-    @Override
-    public void removeTrust(@NotNull OfflinePlayer caster, @NotNull OfflinePlayer trusted) {
-        Set<OfflinePlayer> trustedSet = getTrusted(caster);
-        trustedSet.remove(trusted);
-
-        setTrusted(caster, trustedSet);
-    }
-
-    /**
      * Checks if a player is trusted by another player.
      * 
      * @param truster The player whose trusted list to check.

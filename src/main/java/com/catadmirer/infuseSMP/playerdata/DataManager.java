@@ -54,7 +54,11 @@ public interface DataManager {
      * @param truster The person whose trusted list to modify.
      * @param toTrust The person the truster now trusts.
      */
-    public void addTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toTrust);
+    public default void addTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toTrust) {
+        Set<OfflinePlayer> trusted = getTrusted(truster);
+        trusted.add(toTrust);
+        setTrusted(truster, trusted);
+    }
 
     /**
      * Removes a player from another player's list of trusted people.
@@ -62,7 +66,11 @@ public interface DataManager {
      * @param truster The player whose trusted list to modify.
      * @param toRemove The person to remove from the truster's trust.
      */
-    public void removeTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toRemove);
+    public default void removeTrust(@NotNull OfflinePlayer truster, @NotNull OfflinePlayer toRemove) {
+        Set<OfflinePlayer> trusted = getTrusted(truster);
+        trusted.remove(toRemove);
+        setTrusted(truster, trusted);
+    }
 
     /**
      * Checks if a player is trusted by another player.
