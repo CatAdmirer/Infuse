@@ -5,12 +5,14 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.playerdata.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +68,27 @@ public class H2Database implements DataManager {
 
     @Override
     public @NotNull Set<OfflinePlayer> getTrusted(@NotNull OfflinePlayer truster) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTrusted'");
+        UUID trusterUUID = truster.getUniqueId();
+
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT trusted FROM trusts WHERE truster = ?");
+            stmt.setObject(1, trusterUUID);
+
+            Set<UUID> trustedUUIDs = new HashSet<>();
+            ResultSet result = stmt.executeQuery();
+            while (result.next()) {
+                try {
+                    trustedUUIDs.add(result.getObject(1, UUID.class));
+                } catch (SQLException err) {
+                    LOGGER.warn("Invalid UUID in SQL results.  Skipping value.");
+                }
+            }
+
+            return trustedUUIDs.stream().map(Bukkit::getOfflinePlayer).collect(Collectors.toSet());
+        } catch (SQLException err) {
+
+        }
+        return null;
     }
 
     @Override
