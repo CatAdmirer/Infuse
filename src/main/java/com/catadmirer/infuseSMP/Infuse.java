@@ -215,6 +215,9 @@ public class Infuse extends JavaPlugin implements Listener {
         // Initializing the particle manager
         new Particles(this).startTask();
 
+        // Initializing the hit tracker
+        Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
+
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
