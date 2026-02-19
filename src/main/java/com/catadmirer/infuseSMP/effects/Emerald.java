@@ -1,7 +1,9 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.WeightedRandom;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
@@ -13,7 +15,12 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
-import java.util.*;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -27,19 +34,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald implements Listener {
     private static Infuse plugin;
-
-    private final Map<Player, Integer> hits = new HashMap<>();
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
@@ -56,24 +59,23 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player attacker)) return;
-        if (!(event.getEntity() instanceof Player target)) return;
-        if (!(plugin.getDataManager().hasEffect(target, EffectMapping.EMERALD))) return;
+    public void tenHitEvent(TenHitEvent event) {
+        InfuseDebug.log("[Emerald] Recieved TenHitEvent");
+        InfuseDebug.log("[Emerald] Attacker: {}", event.getAttacker().getName());
+        InfuseDebug.log("[Emerald] Target: {}", event.getTarget().getName());
 
-        hits.put(target, hits.getOrDefault(target, 0) + 1);
+        if (!plugin.getDataManager().hasEffect(event.getTarget(), EffectMapping.EMERALD)) return;
 
-        if (hits.get(target) >= 10) {
-            hits.remove(target);
+        InfuseDebug.log("[Emerald] Target has emerald effect");
+        InfuseDebug.log("[Emerald] Locking attacker's food and XP");
 
-            new LockFoodAndXP(attacker, plugin.getConfigFile().emeraldLockDurationSeconds());
-        }
+        new FoodAndXPLock(event.getAttacker(), plugin.getConfigFile().emeraldLockDurationSeconds());
     }
 
-    public static class LockFoodAndXP implements Listener {
+    public static class FoodAndXPLock implements Listener {
         private final Player player;
 
-        public LockFoodAndXP(Player player, double durationSeconds) {
+        public FoodAndXPLock(Player player, double durationSeconds) {
             this.player = player;
             
             Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -83,6 +85,7 @@ public class Emerald implements Listener {
         }
 
         /** Preventing the player's food level from changing. */
+        @EventHandler
         public void onFoodChange(FoodLevelChangeEvent event) {
             if (event.getEntity().getUniqueId().equals(player.getUniqueId())) {
                 event.setCancelled(true);
@@ -90,16 +93,12 @@ public class Emerald implements Listener {
         }
 
         /** Preventing the player's xp level from changing. */
+        @EventHandler
         public void onXPChange(PlayerExpChangeEvent event) {
             if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 event.setAmount(0);
             }
         }
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
-        if (hits.containsKey(event.getPlayer())) hits.remove(event.getPlayer());
     }
 
     @EventHandler
