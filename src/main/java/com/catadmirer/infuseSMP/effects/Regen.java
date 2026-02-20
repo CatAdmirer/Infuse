@@ -1,22 +1,14 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.destroystokyo.paper.MaterialSetTag;
-import io.papermc.paper.datacomponent.item.FoodProperties;
-import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,11 +16,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Regen implements Listener {
     private static Infuse plugin;
@@ -61,21 +51,22 @@ public class Regen implements Listener {
         }
     }
 
+
     @EventHandler
-    public void rclickfood(PlayerInteractEvent event) {
+    public void regenCanAlwaysEat(PlayerInteractEvent event) {
         if (!(event.getAction().isRightClick())) return;
         Player player = event.getPlayer();
-        if (event.getItem().getType().isEdible()) {
-            if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
-                event.getItem().editMeta(meta -> {
-                    meta.getFood().setCanAlwaysEat(true);
-                });
-            } else {
-                event.getItem().editMeta(meta -> {
-                    meta.getFood().setCanAlwaysEat(false);
-                });
-            }
-        }
+
+        // Filtering inedible items
+        if (!event.getItem().getType().isEdible()) return;
+        
+        // Filtering always edible items
+        if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
+
+        // Making the food always edible if the player has the regen effect
+        event.getItem().editMeta(meta -> {
+            meta.getFood().setCanAlwaysEat(plugin.getDataManager().hasEffect(player, EffectMapping.REGEN));
+        });
     }
 
     @EventHandler
