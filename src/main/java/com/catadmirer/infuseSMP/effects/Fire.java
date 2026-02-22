@@ -1,10 +1,9 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +26,6 @@ import org.bukkit.util.Vector;
 
 public class Fire implements Listener {
     private static Infuse plugin;
-    private final Map<UUID, Integer> hitCounter = new HashMap<>();
 
     public Fire(Infuse plugin) {
         Fire.plugin = plugin;
@@ -95,19 +93,11 @@ public class Fire implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player player) {
-            if (plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
-                UUID uuid = player.getUniqueId();
-                int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
-                if (count >= 10) {
-                    event.getEntity().setFireTicks(100);
-                    count = 0;
-                }
+    public void fireCombustTarget(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.FIRE)) return;
 
-                this.hitCounter.put(uuid, count);
-            }
-        }
+        event.getTarget().setFireTicks(100);
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

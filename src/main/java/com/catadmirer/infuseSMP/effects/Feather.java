@@ -1,12 +1,11 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.particles.Particles;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -38,8 +37,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
-    private final Map<UUID, Integer> hitCounter = new HashMap<>();
-
     private static final Set<UUID> spark = new HashSet<>();
 
     private static Infuse plugin;
@@ -88,29 +85,20 @@ public class Feather implements Listener {
     }
 
     @EventHandler
-    public void onPlayerHit(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
-                if (!(damageByEntityEvent.getDamager() instanceof Player target)) return;
-                if (!plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) return;
-                if (event.getCause() == DamageCause.FALL) return;
+    public void onTenthHit(TenHitEvent event) {
+        Player player = event.getTarget();
+        Player target = event.getAttacker();
 
-                UUID uuid = player.getUniqueId();
-                int count = this.hitCounter.getOrDefault(uuid, 0) + 1;
-                this.hitCounter.put(uuid, count);
-                if (count >= 10) {
-                    this.hitCounter.put(uuid, 0);
-                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
-                    Location chargeLocation = player.getLocation().add(0, 1, 0);
-                    WindCharge windCharge = player.getWorld().spawn(chargeLocation, WindCharge.class);
-                    Location targetLocation = player.getLocation().subtract(0, 1, 0);
-                    Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
-                    windCharge.setVelocity(direction.multiply(1));
-                    windCharge.setShooter(player);
-                    player.setVelocity(new Vector(0, 0.5, 0));
-                }
-            }
-        }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) return;
+
+        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
+        Location chargeLocation = player.getLocation().add(0, 1, 0);
+        WindCharge windCharge = player.getWorld().spawn(chargeLocation, WindCharge.class);
+        Location targetLocation = player.getLocation().subtract(0, 1, 0);
+        Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
+        windCharge.setVelocity(direction.multiply(1));
+        windCharge.setShooter(player);
+        player.setVelocity(new Vector(0, 0.5, 0));
     }
 
     @EventHandler

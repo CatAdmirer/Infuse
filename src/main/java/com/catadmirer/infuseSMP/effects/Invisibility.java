@@ -1,11 +1,10 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -19,7 +18,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
@@ -28,8 +26,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invisibility implements Listener {
     private static Infuse plugin;
-
-    private final Map<UUID, Integer> meleeHitCounter = new HashMap<>();
 
     public Invisibility(Infuse plugin) {
         Invisibility.plugin = plugin;
@@ -54,20 +50,13 @@ public class Invisibility implements Listener {
     }
 
     @EventHandler
-    public void onMeleeHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player attacker) {
-            if (event.getEntity() instanceof Player target) {
-                if (plugin.getDataManager().hasEffect(attacker, EffectMapping.INVIS)) {
-                    int count = this.meleeHitCounter.getOrDefault(attacker.getUniqueId(), 0) + 1;
-                    this.meleeHitCounter.put(attacker.getUniqueId(), count);
-                    if (count >= 20) {
-                        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-                        this.spawnBlackParticles(target, 4);
-                        this.meleeHitCounter.put(attacker.getUniqueId(), 0);
-                    }
-                }
-            }
-        }
+    public void onTenHits(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.INVIS)) return;
+
+        Player target = event.getTarget();
+        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
+        this.spawnBlackParticles(target, 4);
     }
 
     private void spawnBlackParticles(final Player target, final int durationInSeconds) {

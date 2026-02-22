@@ -2,12 +2,10 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -16,7 +14,6 @@ import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -25,8 +22,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Heart implements Listener {
     private static Infuse plugin;
-
-    private final Map<UUID, Map<UUID, Integer>> hitCounts = new HashMap<>();
 
     public Heart(Infuse plugin) {
         Heart.plugin = plugin;
@@ -44,24 +39,11 @@ public class Heart implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player player) {
-            if (event.getEntity() instanceof LivingEntity target) {
-                if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
-                    UUID playerUUID = player.getUniqueId();
-                    UUID targetUUID = target.getUniqueId();
-                    this.hitCounts.putIfAbsent(playerUUID, new HashMap<>());
-                    Map<UUID, Integer> playerHits = this.hitCounts.get(playerUUID);
-                    int hitCount = playerHits.getOrDefault(targetUUID, 0) + 1;
-                    playerHits.put(targetUUID, hitCount);
-                    if (hitCount == 10) {
-                        this.showAndUpdateHealthAboveEntity(target);
-                        playerHits.put(targetUUID, 0);
-                    }
+    public void heartShowTargetHealth(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.HEART)) return;
 
-                }
-            }
-        }
+        this.showAndUpdateHealthAboveEntity(event.getTarget());
     }
 
     private void showAndUpdateHealthAboveEntity(Entity player) {
