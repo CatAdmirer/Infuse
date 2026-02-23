@@ -206,27 +206,27 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Registering events for all the effects
         Bukkit.getPluginManager().registerEvents(new Emerald.Listeners(this, new Emerald()), this);
-        Bukkit.getPluginManager().registerEvents(new EnderListeners(this), this);
-        Bukkit.getPluginManager().registerEvents(new Feather(this), this);
-        Bukkit.getPluginManager().registerEvents(new Fire(this), this);
-        Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new Haste(this), this);
-        Bukkit.getPluginManager().registerEvents(new Heart(this), this);
-        Bukkit.getPluginManager().registerEvents(new Invis(this), this);
-        Bukkit.getPluginManager().registerEvents(new Ocean(this), this);
-        Bukkit.getPluginManager().registerEvents(new Regen(this), this);
-        Bukkit.getPluginManager().registerEvents(new Speed(this), this);
-        Bukkit.getPluginManager().registerEvents(new Strength(this), this);
-        Bukkit.getPluginManager().registerEvents(new Thunder(this), this);
+        Bukkit.getPluginManager().registerEvents(new Ender.Listeners(this, new Ender()), this);
+        Bukkit.getPluginManager().registerEvents(new Feather.Listeners(this, new Feather()), this);
+        Bukkit.getPluginManager().registerEvents(new Fire.Listeners(this, new Fire()), this);
+        Bukkit.getPluginManager().registerEvents(new Frost.Listeners(this, new Frost()), this);
+        Bukkit.getPluginManager().registerEvents(new Haste.Listeners(this, new Haste()), this);
+        Bukkit.getPluginManager().registerEvents(new Heart.Listeners(this, new Heart()), this);
+        Bukkit.getPluginManager().registerEvents(new Invis.Listeners(this, new Invis()), this);
+        Bukkit.getPluginManager().registerEvents(new Ocean.Listeners(this, new Ocean()), this);
+        Bukkit.getPluginManager().registerEvents(new Regen.Listeners(this, new Regen()), this);
+        Bukkit.getPluginManager().registerEvents(new Speed.Listeners(this, new Speed()), this);
+        Bukkit.getPluginManager().registerEvents(new Strength.Listeners(this, new Strength()), this);
+        Bukkit.getPluginManager().registerEvents(new Thunder.Listeners(this, new Thunder()), this);
 
         // Enabling apophis listeners if the config allows
         if (mainConfig.enableApophis()) {
-            getServer().getPluginManager().registerEvents(new ApophisListeners(this), this);
+            getServer().getPluginManager().registerEvents(new Apophis.Listeners(this, new Apophis()), this);
         }
 
         // Enabling thief listeners if the config allows
         if (mainConfig.enableThief()) {
-            getServer().getPluginManager().registerEvents(new ThiefListeners(this), this);
+            getServer().getPluginManager().registerEvents(new Thief.Listeners(this, new Thief()), this);
         }
     }
 
