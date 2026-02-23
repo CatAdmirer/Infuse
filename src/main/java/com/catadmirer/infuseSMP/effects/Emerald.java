@@ -102,11 +102,10 @@ public class Emerald extends InfuseEffect {
 
     public class Listeners implements Listener {
         private final Infuse plugin;
-        private final Emerald emerald;
+        private final Emerald emerald = new Emerald();
 
-        public Listeners(Infuse plugin, Emerald emerald) {
+        public Listeners(Infuse plugin) {
             this.plugin = plugin;
-            this.emerald = emerald;
         }
 
         @EventHandler
