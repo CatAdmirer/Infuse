@@ -27,8 +27,8 @@ public class Heart implements Listener {
         Heart.plugin = plugin;
     }
 
-    public static NamespacedKey heartBoost = new NamespacedKey("infuse", "apophis_boost");
-    public static NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
+    public static NamespacedKey heartBoost = new NamespacedKey("infuse", "heart_boost");
+    public static NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "heart_spark_boost");
 
     public static void applyPassiveEffects(Player player) {
         AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
