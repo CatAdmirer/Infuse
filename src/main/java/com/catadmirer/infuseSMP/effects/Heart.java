@@ -1,135 +1,77 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
+import net.kyori.adventure.text.Component;
 
 public class Heart extends InfuseEffect {
-    private static Infuse plugin;
-
-    public Heart(Infuse plugin) {
-        Heart.plugin = plugin;
+    public Heart() {
+        super(EffectIds.HEART, "heart", false);
     }
 
-    public static NamespacedKey heartBoost = new NamespacedKey("infuse", "apophis_boost");
-    public static NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
-
-    public static void applyPassiveEffects(Player player) {
-        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
-        if (attribute.getModifier(heartBoost) == null) {
-            AttributeModifier modifier = new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER);
-            attribute.addModifier(modifier);
-        }
+    public Heart(boolean augmented) {
+        super(EffectIds.HEART, "heart", augmented);
     }
 
-    @EventHandler
-    public void heartShowTargetHealth(TenHitEvent event) {
-        Player attacker = event.getAttacker();
-        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.HEART)) return;
-
-        this.showAndUpdateHealthAboveEntity(event.getTarget());
+    @Override
+    public Component getItemName() {
+        return augmented ? Messages.AUG_HEART_NAME.toComponent() : Messages.HEART_NAME.toComponent();
     }
 
-    private void showAndUpdateHealthAboveEntity(Entity player) {
-        Location ploc = player.getLocation().add(0, 2.5, 0);
-
-        TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
-
-        as.setGravity(false);
-        as.setCustomNameVisible(true);
-        as.customName();
-        updateHealthDisplay(as, (LivingEntity) player);
-        player.addPassenger(as);
-        final BukkitRunnable updateTask = new BukkitRunnable() {
-            public void run() {
-                if (!player.isDead() && player.isValid()) {
-                    Heart.this.updateHealthDisplay(as, (LivingEntity) player);
-                } else {
-                    this.cancel();
-                    as.setCustomNameVisible(false);
-                    as.customName(null);
-                }
-            }
-        };
-
-        updateTask.runTaskTimer(plugin, 0L, 10L);
-        (new BukkitRunnable() {
-            public void run() {
-                updateTask.cancel();
-                as.setCustomNameVisible(false);
-                as.customName(null);
-                player.removePassenger(as);
-            }
-        }).runTaskLater(plugin, 200L);
+    @Override
+    public List<Component> getItemLore() {
+        return augmented ? Messages.AUG_HEART_LORE.getComponentList() : Messages.HEART_LORE.getComponentList();
     }
 
-    private void updateHealthDisplay(TextDisplay entity, LivingEntity player) {
-        if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
-            entity.customName(Messages.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
-        } else {
-            entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
-        }
+    @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Heart(true);
     }
 
-    @EventHandler
-    public void onPlayerEat(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        if (!plugin.getDataManager().hasEffect(player, new Heart())) return;
-
-        ItemStack item = event.getItem();
-        if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
-        } else {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
-        }
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Heart(false);
     }
 
-    public static void activateSpark(Boolean isAugmented, Player player) {
+    @Override
+    public void equip(Infuse plugin, Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
+    }
+
+    @Override
+    public void unequip(Infuse plugin, Player player) {
+        player.removePotionEffect(PotionEffectType.LUCK);
+        player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
+    }
+
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
         UUID playerUUID = player.getUniqueId();
 
+        // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
-        
-        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
-        if (attribute.getModifier(heartSparkBoost) == null) {
-            AttributeModifier modifier = new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER);
-            attribute.addModifier(modifier);
-        }
-        
+        // Applying effects for the heart spark
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
+
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getConfigFile().cooldown(this);
         long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "heart", duration);
         CooldownManager.setCooldown(playerUUID, "heart", cooldown);
-        
-        Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }
 }

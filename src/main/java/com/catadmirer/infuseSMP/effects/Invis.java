@@ -1,184 +1,77 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+
 import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.Particle.DustOptions;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
+import net.kyori.adventure.text.Component;
 
 public class Invis extends InfuseEffect {
-    private static Infuse plugin;
-
-    public Invisibility(Infuse plugin) {
-        Invisibility.plugin = plugin;
+    public Invis() {
+        super(EffectIds.INVIS, "invis", false);
     }
 
-    public static void applyPassiveEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, false));
+    public Invis(boolean augmented) {
+        super(EffectIds.INVIS, "invis", augmented);
     }
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
-        Player killer = victim.getKiller();
-
-        if (plugin.getConfigFile().invisDeaths()) {
-            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Messages.INVIS_KILL.getMessage();
-                msg = msg.replace("%victim%", victim.getName());
-                msg = msg.replace("%killer%", "<gray><obf>Someone");
-                event.deathMessage(Messages.toComponent(msg));
-            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                if (killer != null) {
-                    String msg = Messages.INVIS_DEATH.getMessage();
-                    msg = msg.replace("%victim%", "<gray><obf>Someone");
-                    msg = msg.replace("%killer%", killer.getName());
-                    event.deathMessage(Messages.toComponent(msg));
-                }
-            }
-        }
+    @Override
+    public Component getItemName() {
+        return augmented ? Messages.AUG_INVIS_NAME.toComponent() : Messages.INVIS_NAME.toComponent();
     }
 
-    @EventHandler
-    public void onProjectileHit(ProjectileHitEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
-        if (!plugin.getDataManager().hasEffect(shooter, EffectMapping.INVIS)) return;
-        if (!(event.getEntity() instanceof Arrow)) return;
-        if (!(event.getHitEntity() instanceof Player target)) return;
-        
-        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-        this.spawnBlackParticles(target, 4);
+    @Override
+    public List<Component> getItemLore() {
+        return augmented ? Messages.AUG_INVIS_LORE.getComponentList() : Messages.INVIS_LORE.getComponentList();
     }
 
-    @EventHandler
-    public void onTenHits(TenHitEvent event) {
-        Player attacker = event.getAttacker();
-        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.INVIS)) return;
-
-        Player target = event.getTarget();
-        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-        this.spawnBlackParticles(target, 4);
+    @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Invis(true);
     }
 
-    private void spawnBlackParticles(final Player target, final int durationInSeconds) {
-        (new BukkitRunnable() {
-            int ticksElapsed = 0;
-            final int maxTicks = durationInSeconds * 20;
-
-            public void run() {
-                if (this.ticksElapsed >= this.maxTicks) {
-                    this.cancel();
-                } else {
-                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
-                    this.ticksElapsed += 5;
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 5L);
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Invis(false);
     }
 
-    @EventHandler
-    public void onEntityTarget(EntityTargetEvent event) {
-        if (!(event.getTarget() instanceof Player target)) return;
-        if (!plugin.getDataManager().hasEffect(target, EffectMapping.INVIS)) return;
-
-        event.setCancelled(true);
+    @Override
+    public void equip(Infuse plugin, Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
     }
 
-    public static void activateSpark(Boolean isAugmented, Player caster) {
-        UUID playerUUID = caster.getUniqueId();
+    @Override
+    public void unequip(Infuse plugin, Player player) {
+        player.removePotionEffect(PotionEffectType.LUCK);
+        player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
+    }
+
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
+        UUID playerUUID = player.getUniqueId();
+
+        // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
 
-        caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-                    
+        // Applying effects for the invis spark
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
+
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "invis", duration);
         CooldownManager.setCooldown(playerUUID, "invis", cooldown);
-
-        final double radius = 10;
-        final long durationTicks = duration * 20;
-        final World world = caster.getWorld();
-        final Set<Player> vanishedPlayers = new HashSet<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getWorld().equals(world) && player.getLocation().distance(caster.getLocation()) <= radius && isTeammate(caster, player)) {
-                vanishedPlayers.add(player);
-            }
-        }
-
-        for (Player vanished : vanishedPlayers) {
-            for (Player other : Bukkit.getOnlinePlayers()) {
-                if (!other.equals(vanished) && !isTeammate(other, vanished)) {
-                    other.hidePlayer(plugin, vanished);
-                }
-            }
-        }
-
-        (new BukkitRunnable() {
-            long ticksElapsed = 0L;
-
-            public void run() {
-                if (this.ticksElapsed >= durationTicks) {
-                    this.cancel();
-                    for (Player vanished : vanishedPlayers) {
-                        for (Player other : Bukkit.getOnlinePlayers()) {
-                            other.showPlayer(plugin, vanished);
-                        }
-                    }
-
-                } else {
-                    Location center = caster.getLocation();
-
-                    for(int angle = 0; angle < 360; angle += 2) {
-                        double rad = Math.toRadians(angle);
-                        double baseX = center.getX() + radius * Math.cos(rad);
-                        double baseZ = center.getZ() + radius * Math.sin(rad);
-                        DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
-
-                        for(int i = 0; i < 1; ++i) {
-                            double offsetX = (Math.random() - 0.5) * 0.3;
-                            double offsetZ = (Math.random() - 0.5) * 0.3;
-                            Location particleLoc = new Location(world, baseX + offsetX, center.getY(), baseZ + offsetZ);
-                            world.spawnParticle(Particle.DUST, particleLoc, 1, dustOptions);
-                        }
-                    }
-
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
-                        }
-                    }
-
-                    this.ticksElapsed += 10L;
-                }
-            }
-        }).runTaskTimer(plugin, 0L, 10L);
-    }
-
-    private static boolean isTeammate(Player player, Player caster) {
-        return plugin.getDataManager().isTrusted(player, caster);
     }
 }

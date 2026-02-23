@@ -1,71 +1,77 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
+import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.ItemUtil;
-import org.bukkit.Material;
+
 import org.bukkit.Sound;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
+import net.kyori.adventure.text.Component;
+
 public class Haste extends InfuseEffect {
-    private static Infuse plugin;
-
-    public Haste(Infuse plugin) {
-        Haste.plugin = plugin;
+    public Haste() {
+        super(EffectIds.HASTE, "haste", false);
     }
 
-    public static void applyPassiveEffects(Player player) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-            item.addUnsafeEnchantment(Enchantment.FORTUNE, 5);
-            item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, 5);
-        }
+    public Haste(boolean augmented) {
+        super(EffectIds.HASTE, "haste", augmented);
     }
 
-    public static void activateSpark(Boolean isAugmented, Player player) {
+    @Override
+    public Component getItemName() {
+        return augmented ? Messages.AUG_HASTE_NAME.toComponent() : Messages.HASTE_NAME.toComponent();
+    }
+
+    @Override
+    public List<Component> getItemLore() {
+        return augmented ? Messages.AUG_HASTE_LORE.getComponentList() : Messages.HASTE_LORE.getComponentList();
+    }
+
+    @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Haste(true);
+    }
+
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Haste(false);
+    }
+
+    @Override
+    public void equip(Infuse plugin, Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
+    }
+
+    @Override
+    public void unequip(Infuse plugin, Player player) {
+        player.removePotionEffect(PotionEffectType.LUCK);
+        player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
+    }
+
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
         UUID playerUUID = player.getUniqueId();
 
+        // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
 
+        // Applying effects for the haste spark
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
+
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
         CooldownManager.setDuration(playerUUID, "haste", duration);
         CooldownManager.setCooldown(playerUUID, "haste", cooldown);
-
-        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
-    }
-
-    @EventHandler
-    public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        ItemStack offHand = player.getInventory().getItemInOffHand();
-        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, EffectMapping.HASTE)) {
-            if (!(event.getDamager() instanceof Player attacker)) return;
-            if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
-
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                this.stunShield(player);
-            }, 20L);
-        }
-    }
-
-    private void stunShield(Player player) {
-        player.setCooldown(Material.SHIELD, 50);
     }
 }

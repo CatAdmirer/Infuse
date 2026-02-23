@@ -1,123 +1,71 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.particles.Particles;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
+
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
+import net.kyori.adventure.text.Component;
 
 public class Speed extends InfuseEffect {
-    private static Infuse plugin;
-
-    private static final Map<UUID, Integer> speedLevels = new HashMap<>();
-    private static final Map<UUID, Long> lastHitTime = new HashMap<>();
-    private static final Map<UUID, Long> bowPullStartTime = new HashMap<>();
-
-    public Speed(Infuse plugin) {
-        Speed.plugin = plugin;
+    public Speed() {
+        super(EffectIds.SPEED, "speed", false);
     }
 
-    public static void applyPassiveEffects(Player player) {
-        if (!plugin.getDataManager().hasEffect(player, new Speed())) return;
-
-        UUID uuid = player.getUniqueId();
-        long lastHit = lastHitTime.getOrDefault(uuid, 0L);
-        if (System.currentTimeMillis() - lastHit > 1000L) {
-            speedLevels.put(uuid, 1);
-        }
-
-        int currentLevel = speedLevels.getOrDefault(uuid, 1);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, Math.max(0, currentLevel - 1), false, false, false));
-    }
-    
-    @EventHandler
-    public void onEntityShootBow(EntityShootBowEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!plugin.getDataManager().hasEffect(player, EffectMapping.SPEED)) return;
-
-        long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
-        long pullTimeMs = System.currentTimeMillis() - startTime;
-        double adjustedPullTimeMs = pullTimeMs * 1.8;
-        float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000, 1);
-        event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
-        bowPullStartTime.remove(player.getUniqueId());
+    public Speed(boolean augmented) {
+        super(EffectIds.SPEED, "speed", augmented);
     }
 
-    @EventHandler
-    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player player)) return;
-        if (!plugin.getDataManager().hasEffect(player, EffectMapping.SPEED)) return;
-
-        UUID uuid = player.getUniqueId();
-        long currentTime = System.currentTimeMillis();
-        long lastHit = lastHitTime.getOrDefault(uuid, 0L);
-        if (currentTime - lastHit >= 50L) {
-            lastHitTime.put(uuid, currentTime);
-            speedLevels.put(uuid, speedLevels.getOrDefault(uuid, 1) + 1);
-            if (event.getEntity() instanceof LivingEntity target) {
-                int currentNoDamageTicks = target.getNoDamageTicks();
-                target.setNoDamageTicks(currentNoDamageTicks / 2);
-            }
-        }
+    @Override
+    public Component getItemName() {
+        return augmented ? Messages.AUG_SPEED_NAME.toComponent() : Messages.SPEED_NAME.toComponent();
     }
 
-    public static void activateSpark(Boolean isAugmented, Player player) {
+    @Override
+    public List<Component> getItemLore() {
+        return augmented ? Messages.AUG_SPEED_LORE.getComponentList() : Messages.SPEED_LORE.getComponentList();
+    }
+
+    @Override
+    public InfuseEffect getAugmentedForm() {
+        return new Speed(true);
+    }
+
+    @Override
+    public InfuseEffect getRegularForm() {
+        return new Speed(false);
+    }
+
+    @Override
+    public void equip(Infuse plugin, Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
+    }
+
+    @Override
+    public void unequip(Infuse plugin, Player player) {
+        player.removePotionEffect(PotionEffectType.LUCK);
+        player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
+    }
+
+    @Override
+    public void activateSpark(Infuse plugin, Player player) {
         UUID playerUUID = player.getUniqueId();
 
+        // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
 
-        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
-        final Vector direction = player.getEyeLocation().getDirection().normalize();
-        double playerVelocityMultiplier = plugin.getConfigFile().speedPlayerVelocityMultiplier();
-        player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
-        final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
-        final Location[] previousLocation = new Location[]{player.getLocation().clone()};
-        final int[] ticksPassed = new int[]{0};
-        final Location anchor = player.getLocation();
-        Bukkit.getRegionScheduler().runAtFixedRate(plugin, anchor, (task) -> {
-            if (!player.isOnline()) {
-                task.cancel();
-                return;
-            }
-
-            Location currentLocation = player.getLocation();
-            double distance = previousLocation[0].distance(currentLocation);
-
-            if (distance > 0.1) {
-                Vector step = currentLocation.toVector().subtract(previousLocation[0].toVector()).normalize().multiply(0.3);
-                Location particleLocation = previousLocation[0].clone();
-
-                for (double d = 0; d <= distance; d += step.length()) {
-                    particleLocation.add(step);
-                    player.getWorld().spawnParticle(Particle.DUST, particleLocation, 5, 0.1, 0.05, 0.1, 0.05, dustOptions);
-                }
-
-                previousLocation[0] = currentLocation.clone();
-            }
-
-            if (ticksPassed[0] >= 3 && player.isOnGround()) {
-                task.cancel();
-            }
-
-            ticksPassed[0]++;
-        }, 1L, 1L);
+        // Applying effects for the speed spark
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getConfigFile().cooldown(this);
