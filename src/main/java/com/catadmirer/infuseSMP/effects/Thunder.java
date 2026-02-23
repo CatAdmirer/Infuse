@@ -56,80 +56,86 @@ public class Thunder implements Listener {
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {
-        final UUID playerUUID = caster.getUniqueId();
+        UUID playerUUID = caster.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "thunder")) {
-            caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+        if (CooldownManager.isOnCooldown(playerUUID, "thunder")) return;
+        caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
 
-            CooldownManager.setDuration(playerUUID, "thunder", duration);
-            CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
+        CooldownManager.setDuration(playerUUID, "thunder", duration);
+        CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
-            final long effectDuration = duration * 20;
+        long durationTicks = duration * 20;
+        World world = caster.getWorld();
 
-            final double radius = 10;
-            final World world = caster.getWorld();
+        // Future configs
+        double radius = 10;
 
-            new BukkitRunnable() {
-                int ticksElapsed = 0;
+        // Starting the lightning storm
+        new BukkitRunnable() {
+            int ticksElapsed = 0;
 
-                public void run() {
-                    if (this.ticksElapsed >= effectDuration) {
-                        this.cancel();
-                        return;
-                    }
-
-                    Location center = caster.getLocation();
-                    for (Entity entity : world.getNearbyEntities(center, radius, radius, radius)) {
-                        if (!(entity instanceof LivingEntity target)) continue;
-                        if (target.equals(caster)) continue;
-
-                        if (target instanceof Player p) {
-                            if (plugin.getDataManager().isTrusted(p, caster)) continue;
-                        }
-
-                        target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4, caster);
-                        world.spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
-                    }
-
-                    this.ticksElapsed += 20;
+            public void run() {
+                if (this.ticksElapsed >= durationTicks) {
+                    this.cancel();
+                    return;
                 }
-            }.runTaskTimer(plugin, 0L, 20L);
-        }
+
+                Location center = caster.getLocation();
+                for (Entity entity : world.getNearbyEntities(center, radius, radius, radius)) {
+                    if (!(entity instanceof LivingEntity target)) continue;
+                    if (target.equals(caster)) continue;
+
+                    if (target instanceof Player p) {
+                        if (plugin.getDataManager().isTrusted(p, caster)) continue;
+                    }
+
+                    target.getWorld().strikeLightningEffect(target.getLocation());
+                    target.damage(4, caster);
+                    world.spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+                }
+
+                this.ticksElapsed += 20;
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     @EventHandler
-    public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player attacker) {
-            if (plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) {
-                if (event.getEntity() instanceof LivingEntity target) {
-                    UUID targetUUID = target.getUniqueId();
-                    long currentTime = System.currentTimeMillis();
-                    if (this.entityLightningCooldowns.containsKey(targetUUID)) {
-                        long lastStrikeTime = this.entityLightningCooldowns.get(targetUUID);
-                        if (currentTime - lastStrikeTime < 2000L) {
-                            return;
-                        }
-                    }
+    public void thunderChainLightning(EntityDamageByEntityEvent event) {
+        // Making sure the attacker has the thunder effect
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) return;
 
-                    this.entityLightningCooldowns.put(targetUUID, currentTime);
-                    List<Entity> nearbyEntities = target.getNearbyEntities(3, 3, 3);
-                    Optional<Entity> nextChainTarget = nearbyEntities.stream().filter((e) -> {
-                        return e instanceof LivingEntity && !e.equals(attacker);
-                    }).findFirst();
-                    if (nextChainTarget.isPresent()) {
-                        target.getWorld().strikeLightningEffect(target.getLocation());
-                        target.damage(4, attacker);
-                        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
-                        this.chainLightning(target, attacker);
-                    }
+        // Making sure the target is a living entity
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
 
-                }
+        // Adding the target to the chain lightning cooldown
+        UUID targetUUID = target.getUniqueId();
+        long currentTime = System.currentTimeMillis();
+        if (this.entityLightningCooldowns.containsKey(targetUUID)) {
+            long lastStrikeTime = this.entityLightningCooldowns.get(targetUUID);
+            if (currentTime - lastStrikeTime < 2000L) {
+                return;
             }
+        }
+
+        this.entityLightningCooldowns.put(targetUUID, currentTime);
+
+        // Finding the next target of the lightning chain
+        List<Entity> nearbyEntities = target.getNearbyEntities(3, 3, 3);
+        Optional<Entity> nextChainTarget = nearbyEntities.stream().filter((e) -> {
+            return e instanceof LivingEntity && !e.equals(attacker);
+        }).findFirst();
+
+        // Only striking if there is another target?
+        if (nextChainTarget.isPresent()) {
+            target.getWorld().strikeLightningEffect(target.getLocation());
+            target.damage(4, attacker);
+            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+            this.chainLightning(target, attacker);
         }
     }
 
