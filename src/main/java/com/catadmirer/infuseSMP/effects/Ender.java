@@ -159,6 +159,7 @@ public class Ender implements Listener {
         if (handItem.getAmount() > 1) {
             handItem.setAmount(handItem.getAmount() - 1);
         } else {
+            // Is this necessary?
             player.getInventory().setItemInMainHand(null);
         }
 

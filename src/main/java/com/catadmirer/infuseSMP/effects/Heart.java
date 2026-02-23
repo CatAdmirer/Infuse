@@ -67,6 +67,7 @@ public class Heart implements Listener {
                 }
             }
         };
+
         updateTask.runTaskTimer(plugin, 0L, 10L);
         (new BukkitRunnable() {
             public void run() {
@@ -84,43 +85,41 @@ public class Heart implements Listener {
         } else {
             entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
         }
-
     }
 
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) {
-            ItemStack item = event.getItem();
-            if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
-            } else {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
-            }
-        }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) return;
 
+        ItemStack item = event.getItem();
+        if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
+        } else {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
+        }
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "heart")) {
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
+        
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
-            if (attribute.getModifier(heartSparkBoost) == null) {
-                AttributeModifier modifier = new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER);
-                attribute.addModifier(modifier);
-            }
-            
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
-
-            CooldownManager.setDuration(playerUUID, "heart", duration);
-            CooldownManager.setCooldown(playerUUID, "heart", cooldown);
-            
-            Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(heartSparkBoost) == null) {
+            AttributeModifier modifier = new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER);
+            attribute.addModifier(modifier);
         }
+        
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+
+        CooldownManager.setDuration(playerUUID, "heart", duration);
+        CooldownManager.setCooldown(playerUUID, "heart", cooldown);
+        
+        Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }
 }

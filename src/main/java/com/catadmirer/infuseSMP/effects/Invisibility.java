@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -36,17 +38,36 @@ public class Invisibility implements Listener {
     }
 
     @EventHandler
-    public void onProjectileHit(ProjectileHitEvent event) {
-        if (event.getEntity().getShooter() instanceof Player shooter) {
-            if (plugin.getDataManager().hasEffect(shooter, EffectMapping.INVIS)) {
-                if (event.getEntity() instanceof Arrow) {
-                    if (event.getHitEntity() instanceof Player target) {
-                        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-                        this.spawnBlackParticles(target, 4);
-                    }
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
+        Player killer = victim.getKiller();
+
+        if (plugin.getConfigFile().invisDeaths()) {
+            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                String msg = Messages.INVIS_KILL.getMessage();
+                msg = msg.replace("%victim%", victim.getName());
+                msg = msg.replace("%killer%", "<gray><obf>Someone");
+                event.deathMessage(Messages.toComponent(msg));
+            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                if (killer != null) {
+                    String msg = Messages.INVIS_DEATH.getMessage();
+                    msg = msg.replace("%victim%", "<gray><obf>Someone");
+                    msg = msg.replace("%killer%", killer.getName());
+                    event.deathMessage(Messages.toComponent(msg));
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
+        if (!plugin.getDataManager().hasEffect(shooter, EffectMapping.INVIS)) return;
+        if (!(event.getEntity() instanceof Arrow)) return;
+        if (!(event.getHitEntity() instanceof Player target)) return;
+        
+        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
+        this.spawnBlackParticles(target, 4);
     }
 
     @EventHandler
@@ -77,84 +98,83 @@ public class Invisibility implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.getTarget() instanceof Player target) {
-            if (plugin.getDataManager().hasEffect(target, EffectMapping.INVIS)) {
-                event.setCancelled(true);
-            }
-        }
+        if (!(event.getTarget() instanceof Player target)) return;
+        if (!plugin.getDataManager().hasEffect(target, EffectMapping.INVIS)) return;
+
+        event.setCancelled(true);
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {
         UUID playerUUID = caster.getUniqueId();
-        if (!CooldownManager.isOnCooldown(playerUUID, "invis")) {
-            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-                        
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+        if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
 
-            CooldownManager.setDuration(playerUUID, "invis", duration);
-            CooldownManager.setCooldown(playerUUID, "invis", cooldown);
+        caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+                    
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
 
-            final double radius = 10;
-            final long durationTicks = duration * 20;
-            final World world = caster.getWorld();
-            final Set<Player> vanishedPlayers = new HashSet<>();
+        CooldownManager.setDuration(playerUUID, "invis", duration);
+        CooldownManager.setCooldown(playerUUID, "invis", cooldown);
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getWorld().equals(world) && player.getLocation().distance(caster.getLocation()) <= radius && isTeammate(caster, player)) {
-                    vanishedPlayers.add(player);
-                }
+        final double radius = 10;
+        final long durationTicks = duration * 20;
+        final World world = caster.getWorld();
+        final Set<Player> vanishedPlayers = new HashSet<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getWorld().equals(world) && player.getLocation().distance(caster.getLocation()) <= radius && isTeammate(caster, player)) {
+                vanishedPlayers.add(player);
             }
-
-            for (Player vanished : vanishedPlayers) {
-                for (Player other : Bukkit.getOnlinePlayers()) {
-                    if (!other.equals(vanished) && !isTeammate(other, vanished)) {
-                        other.hidePlayer(plugin, vanished);
-                    }
-                }
-            }
-
-            (new BukkitRunnable() {
-                long ticksElapsed = 0L;
-
-                public void run() {
-                    if (this.ticksElapsed >= durationTicks) {
-                        this.cancel();
-                        for (Player vanished : vanishedPlayers) {
-                            for (Player other : Bukkit.getOnlinePlayers()) {
-                                other.showPlayer(plugin, vanished);
-                            }
-                        }
-
-                    } else {
-                        Location center = caster.getLocation();
-
-                        for(int angle = 0; angle < 360; angle += 2) {
-                            double rad = Math.toRadians(angle);
-                            double baseX = center.getX() + radius * Math.cos(rad);
-                            double baseZ = center.getZ() + radius * Math.sin(rad);
-                            DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
-
-                            for(int i = 0; i < 1; ++i) {
-                                double offsetX = (Math.random() - 0.5) * 0.3;
-                                double offsetZ = (Math.random() - 0.5) * 0.3;
-                                Location particleLoc = new Location(world, baseX + offsetX, center.getY(), baseZ + offsetZ);
-                                world.spawnParticle(Particle.DUST, particleLoc, 1, dustOptions);
-                            }
-                        }
-
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
-                                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
-                            }
-                        }
-
-                        this.ticksElapsed += 10L;
-                    }
-                }
-            }).runTaskTimer(plugin, 0L, 10L);
         }
+
+        for (Player vanished : vanishedPlayers) {
+            for (Player other : Bukkit.getOnlinePlayers()) {
+                if (!other.equals(vanished) && !isTeammate(other, vanished)) {
+                    other.hidePlayer(plugin, vanished);
+                }
+            }
+        }
+
+        (new BukkitRunnable() {
+            long ticksElapsed = 0L;
+
+            public void run() {
+                if (this.ticksElapsed >= durationTicks) {
+                    this.cancel();
+                    for (Player vanished : vanishedPlayers) {
+                        for (Player other : Bukkit.getOnlinePlayers()) {
+                            other.showPlayer(plugin, vanished);
+                        }
+                    }
+
+                } else {
+                    Location center = caster.getLocation();
+
+                    for(int angle = 0; angle < 360; angle += 2) {
+                        double rad = Math.toRadians(angle);
+                        double baseX = center.getX() + radius * Math.cos(rad);
+                        double baseZ = center.getZ() + radius * Math.sin(rad);
+                        DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
+
+                        for(int i = 0; i < 1; ++i) {
+                            double offsetX = (Math.random() - 0.5) * 0.3;
+                            double offsetZ = (Math.random() - 0.5) * 0.3;
+                            Location particleLoc = new Location(world, baseX + offsetX, center.getY(), baseZ + offsetZ);
+                            world.spawnParticle(Particle.DUST, particleLoc, 1, dustOptions);
+                        }
+                    }
+
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !isTeammate(p, caster)) {
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
+                        }
+                    }
+
+                    this.ticksElapsed += 10L;
+                }
+            }
+        }).runTaskTimer(plugin, 0L, 10L);
     }
 
     private static boolean isTeammate(Player player, Player caster) {

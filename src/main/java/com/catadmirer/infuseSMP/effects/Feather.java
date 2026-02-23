@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -103,61 +102,54 @@ public class Feather implements Listener {
 
     @EventHandler
     public void onPlayerFallDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (event.getCause() == DamageCause.FALL) {
-                if (plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) {
-                    event.setCancelled(true);
-                }
-            }
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != DamageCause.FALL) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) return;
+
+        event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item != null && item.getType() == Material.WIND_CHARGE) {
-                if (!player.hasCooldown(Material.WIND_CHARGE)) {
-                    if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                        Location anchor = player.getLocation();
-                        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-                            player.setCooldown(Material.WIND_CHARGE, 5);
-                        }, 1L);
-                    }
-                }
-            }
-        }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FEATHER)) return;
+
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() != Material.WIND_CHARGE) return;
+        if (player.hasCooldown(Material.WIND_CHARGE)) return;
+        if (!event.getAction().isRightClick()) return;
+
+        Location anchor = player.getLocation();
+        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
+            player.setCooldown(Material.WIND_CHARGE, 5);
+        }, 1L);
     }
 
     @EventHandler
     public void onWindChargeLaunch(ProjectileLaunchEvent event) {
-        if (event.getEntity() instanceof WindCharge windCharge) {
-            if (windCharge.getShooter() instanceof Player player) {
-                Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
-                windCharge.setVelocity(direction);
-            }
-        }
+        if (!(event.getEntity() instanceof WindCharge windCharge)) return;
+        if (!(windCharge.getShooter() instanceof Player player)) return;
+        
+        Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
+        windCharge.setVelocity(direction);
     }
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player attacker) {
-            if (plugin.getDataManager().hasEffect(attacker, EffectMapping.FEATHER)) {
-                double fallDistance = attacker.getFallDistance();
-                if (fallDistance >= 7) {
-                    attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
-                    Location startLoc = attacker.getLocation();
-                    World world = startLoc.getWorld();
-                    Location particleLoc = event.getDamager().getLocation();
-                    world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
-                    attacker.setVelocity(new Vector(0, 1.8, 0));
-                    double multiplier = 1.1;
-                    event.setDamage(event.getDamage() * multiplier);
-                }
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.FEATHER)) return;
 
-            }
-        }
+        double fallDistance = attacker.getFallDistance();
+        if (fallDistance < 7) return;
+
+        attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
+        Location startLoc = attacker.getLocation();
+        World world = startLoc.getWorld();
+        Location particleLoc = event.getDamager().getLocation();
+        world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
+        attacker.setVelocity(new Vector(0, 1.8, 0));
+        double multiplier = 1.1;
+        event.setDamage(event.getDamage() * multiplier);
     }
 
     public static String applyHexColors(String input) {

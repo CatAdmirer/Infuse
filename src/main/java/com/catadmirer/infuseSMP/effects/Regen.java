@@ -28,29 +28,27 @@ public class Regen implements Listener {
     }
 
     public static void applyPassiveEffects(Player player) {
-        if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN) ) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, 0, false, false));
-        }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, 0, false, false));
     }
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player player) {
-            if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
-            }
-        }
+    public void regenRegenerateOnHit(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
     }
 
     @EventHandler
     public void consume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
-            float sat = player.getSaturation();
-            player.setSaturation(sat + 6);
-        }
-    }
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
 
+        float sat = player.getSaturation();
+        player.setSaturation(sat + 6);
+    }
 
     @EventHandler
     public void regenCanAlwaysEat(PlayerInteractEvent event) {
@@ -63,7 +61,7 @@ public class Regen implements Listener {
         // Filtering always edible items
         if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
 
-        // Making the food always edible if the player has the regen effect
+        // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
         event.getItem().editMeta(meta -> {
             meta.getFood().setCanAlwaysEat(plugin.getDataManager().hasEffect(player, EffectMapping.REGEN));
         });
@@ -84,6 +82,7 @@ public class Regen implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
 
+        // Alternatively, we could just set their food level to 20 no matter what.
         if (foodLevelMap.containsKey(player)) {
             if (event.getFoodLevel() < foodLevelMap.get(player)) {
                 event.setFoodLevel(foodLevelMap.get(player));
@@ -94,16 +93,16 @@ public class Regen implements Listener {
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
-        final UUID playerUUID = player.getUniqueId();
-        if (!CooldownManager.isOnCooldown(playerUUID, "regen")) {
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
+        UUID playerUUID = player.getUniqueId();
+        if (CooldownManager.isOnCooldown(playerUUID, "regen")) return;
+            
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
 
-            CooldownManager.setDuration(playerUUID, "regen", duration);
-            CooldownManager.setCooldown(playerUUID, "regen", cooldown);
+        CooldownManager.setDuration(playerUUID, "regen", duration);
+        CooldownManager.setCooldown(playerUUID, "regen", cooldown);
 
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        }
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
     }
 }
