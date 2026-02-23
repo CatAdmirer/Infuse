@@ -19,6 +19,7 @@ repositories {
 dependencies {
     compileOnly "io.papermc.paper:paper-api:${minecraftVersion}-R0.1-SNAPSHOT"
     compileOnly "me.clip:placeholderapi:${placeholderAPIVersion}"
+    compileOnly "com.h2database:h2:${h2Version}"
 }
 
 tasks {
@@ -47,7 +48,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    def props = [version: version, mcVersion: minecraftVersion]
+    def props = [version: version, h2Version: h2Version, mcVersion: minecraftVersion]
     inputs.properties props
     filteringCharset = 'UTF-8'
     filesMatching('plugin.yml') {

@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.destroystokyo.paper.MaterialSetTag;
 import java.util.HashSet;

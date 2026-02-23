@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.UUID;
 import org.bukkit.entity.Player;
