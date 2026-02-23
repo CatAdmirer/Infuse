@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -11,9 +10,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -64,78 +61,74 @@ public class Ocean extends InfuseEffect {
         
     }
 
-    private boolean isTrusted(Player player, Player caster) {
-        return plugin.getDataManager().isTrusted(caster, player);
-    }
-
     public static void activateSpark(Boolean isAugmented, Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "ocean")) {
-            caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        if (CooldownManager.isOnCooldown(playerUUID, "ocean")) return;
 
-            final double radius = 5;
-            final World world = caster.getWorld();
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(this);
-            long duration = plugin.getConfigFile().duration(this);
+        caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-            CooldownManager.setDuration(playerUUID, "ocean", duration);
-            CooldownManager.setCooldown(playerUUID, "ocean", cooldown);
+        final double radius = 5;
+        final World world = caster.getWorld();
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(this);
+        long duration = plugin.getConfigFile().duration(this);
 
-            final long durationTicks = duration * 20L;
+        CooldownManager.setDuration(playerUUID, "ocean", duration);
+        CooldownManager.setCooldown(playerUUID, "ocean", cooldown);
 
-            new BukkitRunnable() {
-                long ticksElapsed = 0L;
+        final long durationTicks = duration * 20L;
 
-                public void run() {
-                    if (this.ticksElapsed >= durationTicks) {
-                        this.cancel();
-                        return;
-                    }
+        new BukkitRunnable() {
+            long ticksElapsed = 0L;
 
-                    for (int angle = 0; angle < 360; angle += 10) {
-                        double rad = Math.toRadians(angle);
-                        double x = caster.getLocation().getX() + radius * Math.cos(rad);
-                        double z = caster.getLocation().getZ() + radius * Math.sin(rad);
-                        Location particleLoc = new Location(world, x, caster.getLocation().getY(), z);
-                        world.spawnParticle(Particle.FALLING_WATER, particleLoc, 1);
-                    }
-
-                    this.ticksElapsed += 10L;
+            public void run() {
+                if (this.ticksElapsed >= durationTicks) {
+                    this.cancel();
+                    return;
                 }
-            }.runTaskTimer(plugin, 0L, 10L);
- 
-            // Ocean pull runnable
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Stopping when the spark has run out
-                    if (!CooldownManager.isEffectActive(caster.getUniqueId(), "ocean")) {
-                        cancel();
-                        return;
-                    }
 
-                    World world = caster.getWorld();
-                    Location holderLoc = caster.getLocation();
-                    double radius = plugin.getConfigFile().oceanPullRadius();
-                    double strength = plugin.getConfigFile().oceanPullStrength();
+                for (int angle = 0; angle < 360; angle += 10) {
+                    double rad = Math.toRadians(angle);
+                    double x = caster.getLocation().getX() + radius * Math.cos(rad);
+                    double z = caster.getLocation().getZ() + radius * Math.sin(rad);
+                    Location particleLoc = new Location(world, x, caster.getLocation().getY(), z);
+                    world.spawnParticle(Particle.FALLING_WATER, particleLoc, 1);
+                }
 
-                    for (Player p : world.getPlayers()) {
-                        if (p.equals(caster)) continue;
-                        if (plugin.getDataManager().isTrusted(caster, p)) continue;
-                        if (p.getLocation().distance(holderLoc) <= radius) continue;
+                this.ticksElapsed += 10L;
+            }
+        }.runTaskTimer(plugin, 0L, 10L);
 
-                        Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
-                        if (direction.lengthSquared() > 0.0001) {
-                            Vector pullVector = direction.normalize().multiply(strength);
-                            if (Double.isFinite(pullVector.getX()) && Double.isFinite(pullVector.getY()) && Double.isFinite(pullVector.getZ())) {
-                                p.setVelocity(pullVector);
-                            }
+        // Ocean pull runnable
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Stopping when the spark has run out
+                if (!CooldownManager.isEffectActive(caster.getUniqueId(), "ocean")) {
+                    cancel();
+                    return;
+                }
+
+                World world = caster.getWorld();
+                Location holderLoc = caster.getLocation();
+                double radius = plugin.getConfigFile().oceanPullRadius();
+                double strength = plugin.getConfigFile().oceanPullStrength();
+
+                for (Player p : world.getPlayers()) {
+                    if (p.equals(caster)) continue;
+                    if (plugin.getDataManager().isTrusted(caster, p)) continue;
+                    if (p.getLocation().distance(holderLoc) > radius) continue;
+
+                    Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
+                    if (direction.lengthSquared() > 0.0001) {
+                        Vector pullVector = direction.normalize().multiply(strength);
+                        if (Double.isFinite(pullVector.getX()) && Double.isFinite(pullVector.getY()) && Double.isFinite(pullVector.getZ())) {
+                            p.setVelocity(pullVector);
                         }
                     }
                 }
-            }.runTaskTimer(plugin, 0, plugin.getConfigFile().oceanPullInterval());
-        }
+            }
+        }.runTaskTimer(plugin, 0, plugin.getConfigFile().oceanPullInterval());
     }
 }

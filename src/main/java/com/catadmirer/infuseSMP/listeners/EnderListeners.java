@@ -55,7 +55,17 @@ public class EnderListeners implements Listener {
         }
     }
 
-     @EventHandler
+    @EventHandler
+    public void enderCurseHit(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
+
+        if (!plugin.getDataManager().hasEffect(attacker, genericEnder)) return;
+
+        genericEnder.cursePlayer(plugin, target, 1200);
+    }
+
+    @EventHandler
     public void enderOnehitMobs(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof LivingEntity mob)) return;

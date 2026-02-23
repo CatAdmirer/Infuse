@@ -43,7 +43,10 @@ public class GUI implements Listener, CommandExecutor {
     public void onClick(InventoryClickEvent event) {
         HumanEntity player = event.getWhoClicked();
         Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null) return;
+
         ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || clicked.getType() == Material.AIR) return;
 
         // Only running if the inventory is an EffectInventory
         if (clickedInventory.getHolder() instanceof EffectChooser) {

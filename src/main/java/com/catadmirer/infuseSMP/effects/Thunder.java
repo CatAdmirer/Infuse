@@ -56,7 +56,7 @@ public class Thunder extends InfuseEffect {
     }
 
     public static void activateSpark(Boolean isAugmented, Player caster) {
-        final UUID playerUUID = caster.getUniqueId();
+        UUID playerUUID = caster.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "thunder")) return;
         
@@ -69,16 +69,18 @@ public class Thunder extends InfuseEffect {
         CooldownManager.setDuration(playerUUID, "thunder", duration);
         CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
 
-        final long effectDuration = duration * 20;
+        long durationTicks = duration * 20;
+        World world = caster.getWorld();
 
-        final double radius = 10;
-        final World world = caster.getWorld();
+        // Future configs
+        double radius = 10;
 
+        // Starting the lightning storm
         new BukkitRunnable() {
             int ticksElapsed = 0;
 
             public void run() {
-                if (this.ticksElapsed >= effectDuration) {
+                if (this.ticksElapsed >= durationTicks) {
                     this.cancel();
                     return;
                 }
@@ -100,6 +102,42 @@ public class Thunder extends InfuseEffect {
                 this.ticksElapsed += 20;
             }
         }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    @EventHandler
+    public void thunderChainLightning(EntityDamageByEntityEvent event) {
+        // Making sure the attacker has the thunder effect
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, new Thunder())) return;
+
+        // Making sure the target is a living entity
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        // Adding the target to the chain lightning cooldown
+        UUID targetUUID = target.getUniqueId();
+        long currentTime = System.currentTimeMillis();
+        if (this.entityLightningCooldowns.containsKey(targetUUID)) {
+            long lastStrikeTime = this.entityLightningCooldowns.get(targetUUID);
+            if (currentTime - lastStrikeTime < 2000L) {
+                return;
+            }
+        }
+
+        this.entityLightningCooldowns.put(targetUUID, currentTime);
+
+        // Finding the next target of the lightning chain
+        List<Entity> nearbyEntities = target.getNearbyEntities(3, 3, 3);
+        Optional<Entity> nextChainTarget = nearbyEntities.stream().filter((e) -> {
+            return e instanceof LivingEntity && !e.equals(attacker);
+        }).findFirst();
+
+        // Only striking if there is another target?
+        if (nextChainTarget.isPresent()) {
+            target.getWorld().strikeLightningEffect(target.getLocation());
+            target.damage(4, attacker);
+            target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+            this.chainLightning(target, attacker);
+        }
     }
 
     private void chainLightning(Entity startEntity, final Player attacker) {

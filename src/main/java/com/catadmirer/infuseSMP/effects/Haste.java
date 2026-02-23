@@ -36,37 +36,33 @@ public class Haste extends InfuseEffect {
     public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
-        if (!CooldownManager.isOnCooldown(playerUUID, "haste")) {
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-            
-            // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(this);
-            long duration = plugin.getConfigFile().duration(this);
+        if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
 
-            CooldownManager.setDuration(playerUUID, "haste", duration);
-            CooldownManager.setCooldown(playerUUID, "haste", cooldown);
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
+        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
 
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
-        }
+        CooldownManager.setDuration(playerUUID, "haste", duration);
+        CooldownManager.setCooldown(playerUUID, "haste", cooldown);
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
     }
-
 
     @EventHandler
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            ItemStack offHand = player.getInventory().getItemInOffHand();
-            if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, new Haste())) {
-                if (event.getDamager() instanceof Player attacker) {
-                    if (attacker.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE")) {
-                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                            this.stunShield(player);
-                        }, 20L);
-                    }
-                }
-            }
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, EffectMapping.HASTE)) {
+            if (!(event.getDamager() instanceof Player attacker)) return;
+            if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                this.stunShield(player);
+            }, 20L);
+        }
     }
 
     private void stunShield(Player player) {

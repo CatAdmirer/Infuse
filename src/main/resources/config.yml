@@ -82,6 +82,7 @@ apophis:
     augmented: 18
 
 emerald:
+  lock_duration_seconds: 10
   cooldown:
     default: 91
     augmented: 76

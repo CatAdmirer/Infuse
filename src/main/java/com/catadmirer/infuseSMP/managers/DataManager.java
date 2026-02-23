@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -123,11 +124,11 @@ public class DataManager {
     }
 
     public List<Player> getTrusted(Player truster) {
-        return config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList();
+        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList());
     }
 
     public void setTrusted(Player truster, List<Player> trusted) {
-        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).toList());
+        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).map(UUID::toString).toList());
 
         save();
     }

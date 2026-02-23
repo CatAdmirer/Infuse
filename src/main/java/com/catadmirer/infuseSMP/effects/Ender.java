@@ -127,6 +127,7 @@ public class Ender extends InfuseEffect {
         if (handItem.getAmount() > 1) {
             handItem.setAmount(handItem.getAmount() - 1);
         } else {
+            // Is this necessary?
             player.getInventory().setItemInMainHand(null);
         }
 

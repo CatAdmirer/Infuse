@@ -14,7 +14,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpRequest.BodyPublishers;
-import com.catadmirer.infuseSMP.inventories.EffectCrafting;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -49,6 +48,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -82,7 +82,7 @@ public class InfuseRecipeManager implements Listener {
             // Making sure the recipe is enabled
             boolean enabled = recipesConfig.getBoolean("recipes." + recipeKey + ".enabled", false);
             if (!enabled) {
-                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping2.");
+                plugin.getLogger().info("Recipe " + recipeKey + " is disabled in config, skipping.");
                 continue;
             }
 
@@ -136,19 +136,12 @@ public class InfuseRecipeManager implements Listener {
 
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        // Making sure the crafting menu belongs to the infuse plugin
-        if (!(event.getClickedInventory().getHolder() instanceof EffectCrafting menu))
-            return;
-
         ItemStack craftedItem = event.getInventory().getResult();
         InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
 
         // Making sure the item being crafted is an Infuse effect and not crafting it if
         // it isn't
-        if (effect == null) {
-            event.setCancelled(true);
-            return;
-        }
+        if (effect == null) return;
 
         // Not allowing the player to shift click effects
         if (event.isShiftClick()) {
@@ -157,7 +150,7 @@ public class InfuseRecipeManager implements Listener {
         }
 
         // Making sure the brewing stand is still placed
-        Location brewerLocation = menu.getBrewerLocation();
+        Location brewerLocation = event.getInventory().getLocation();
         if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
             event.setCancelled(true);
             return;
@@ -173,12 +166,15 @@ public class InfuseRecipeManager implements Listener {
             event.setCancelled(true);
             return;
         }
-
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setCrafted(effect, numCrafted + 1);
-
         // If the effect is not augmented, just let the item be crafted
-        if (!effect.isAugmented()) return;
+        if (!effect.isAugmented())  {
+            CraftingInventory inv = event.getInventory();
+            inv.clear();
+            player.closeInventory();
+            return;
+        }
 
         // Clearing the ingredients
         CraftingInventory inv = event.getInventory();
@@ -219,12 +215,16 @@ public class InfuseRecipeManager implements Listener {
 
         // Spawning the ender crystal if the config allows
         if (plugin.getConfigFile().ritualBeacon()) {
-            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld()
-                    .spawnEntity(brewerLocation.clone().set(0, -100, 0), EntityType.END_CRYSTAL);
+            Location startLoc = brewerLocation.clone();
+            startLoc.setY(-100);
+            Location targetLoc = brewerLocation.clone();
+            targetLoc.setY(500);
+            
+            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
             crystal.setShowingBottom(false);
             crystal.setInvulnerable(true);
             crystal.setInvisible(true);
-            crystal.setBeamTarget(brewerLocation.clone().set(0, 500, 0));
+            crystal.setBeamTarget(targetLoc);
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // TODO: Test if i need to remove beam or not
@@ -276,32 +276,26 @@ public class InfuseRecipeManager implements Listener {
         // Preventing the brewing stand from being broken
         ImmortalBrewerListeners brewerListeners = new ImmortalBrewerListeners(brewerLocation);
         Bukkit.getPluginManager().registerEvents(brewerListeners, plugin);
-
         // Starting the ritual progress bar
         new BukkitRunnable() {
-            float progress = 1;
-            final double progressDecrement = 1.0 / ritualDuration * 20;
-
+            float progress = 1.0f;
+            final double progressDecrement = 1.0 / (ritualDuration * 20.0);
             @Override
             public void run() {
-                // Shouldn't happen.
-                // TODO Remove?
                 if (ritualBossBar == null) {
                     cancel();
                     return;
                 }
-
                 progress -= progressDecrement;
-
                 if (progress <= 0) {
+                    ritualBossBar.progress(0);
                     cancel();
                     return;
                 }
-
                 ritualBossBar.progress(progress);
             }
-        }.runTaskTimer(this.plugin, 0, 1);
 
+        }.runTaskTimer(this.plugin, 0, 1);
         // Scheduling the task that ends and cleans up the ritual
         Bukkit.getScheduler().runTaskLater(plugin, task -> {
             // Removing the bossbar from view
@@ -379,33 +373,31 @@ public class InfuseRecipeManager implements Listener {
     @EventHandler
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         // Ignoring non-infuse items
+        if (event.getRecipe() == null) return;
         ItemStack item = event.getRecipe().getResult();
         InfuseEffect effect = InfuseEffect.fromItem(item);
         if (effect == null) return;
-
-        // Making sure the items are being crafted in the EffectCrafting menu
-        if (!(event.getInventory() instanceof EffectCrafting)) {
-            event.getInventory().setResult(null);
-            return;
-        }
-
         // Checking the limits for the effect
         InfuseEffect augForm = effect.getAugmentedForm();
         int augLimit = plugin.getConfigFile().getCraftLimit(augForm);
         int augCrafted = plugin.getDataManager().getCrafted(augForm);
         if (augLimit > augCrafted) {
             event.getInventory().setResult(effect.getAugmentedForm().createItem());
+            return;
         }
 
         InfuseEffect regForm = effect.getRegularForm();
         int regLimit = plugin.getConfigFile().getCraftLimit(regForm);
         int regCrafted = plugin.getDataManager().getCrafted(regForm);
         if (regLimit > regCrafted) {
-            event.getInventory().setResult(effect.getRegularForm().createItem());
+            event.getInventory().setResult(regForm.createItem());
+            return;
         }
         
         event.getInventory().setResult(null);
     }
+
+    public static final Component effectCraftingMenu = Component.text("Effect Crafting");
 
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
@@ -420,18 +412,17 @@ public class InfuseRecipeManager implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        Bukkit.getPluginManager().registerEvents(plugin, plugin);
-        HandlerList.unregisterAll();
         if (plugin.getConfigFile().brewingGui()) {
             player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
         } else {
             // Opening the menu for crafting effects
-            player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
+            MenuType.CRAFTING.builder().location(block.getLocation()).title(effectCraftingMenu).build(player).open();
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null || event.getClickedInventory().getHolder() == null) return;
         if (event.getClickedInventory().getHolder() instanceof StationSelectionMenu menu) {
             event.setCancelled(true);
             HumanEntity player = event.getWhoClicked();
@@ -446,13 +437,13 @@ public class InfuseRecipeManager implements Listener {
                 player.closeInventory();
 
                 // Opening the menu for crafting effects
-                player.openInventory(new EffectCrafting(block.getLocation()).getInventory());
+                MenuType.CRAFTING.builder().location(block.getLocation()).title(effectCraftingMenu).build(player).open();
             } else if (event.getSlot() == 15) {
                 // Closing the StationSelectionMenu
                 player.closeInventory();
 
                 // Opening the brewing stand
-                BrewingStand data = (BrewingStand) block.getBlockData();
+                BrewingStand data = (BrewingStand) block.getState();
                 player.openInventory(data.getInventory());
             }
         }

@@ -1,8 +1,10 @@
 package com.catadmirer.infuseSMP.listeners;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.effects.Emerald;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
@@ -16,6 +18,7 @@ import io.papermc.paper.registry.tag.Tag;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -25,17 +28,64 @@ import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 public class EmeraldListeners implements Listener {
     private final Infuse plugin;
 
     public EmeraldListeners(Infuse plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void tenHitEvent(TenHitEvent event) {
+        InfuseDebug.log("[Emerald] Recieved TenHitEvent");
+        InfuseDebug.log("[Emerald] Attacker: {}", event.getAttacker().getName());
+        InfuseDebug.log("[Emerald] Target: {}", event.getTarget().getName());
+
+        if (!plugin.getDataManager().hasEffect(event.getTarget(), new Emerald())) return;
+
+        InfuseDebug.log("[Emerald] Target has emerald effect");
+        InfuseDebug.log("[Emerald] Locking attacker's food and XP");
+
+        new FoodAndXPLock(plugin, event.getAttacker(), plugin.getConfigFile().emeraldLockDurationSeconds());
+    }
+
+    public static class FoodAndXPLock implements Listener {
+        private final Player player;
+
+        public FoodAndXPLock(Plugin plugin, Player player, double durationSeconds) {
+            this.player = player;
+            
+            Bukkit.getPluginManager().registerEvents(this, plugin);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                HandlerList.unregisterAll(this);
+            }, (long) (durationSeconds * 20));
+        }
+
+        /** Preventing the player's food level from changing. */
+        @EventHandler
+        public void onFoodChange(FoodLevelChangeEvent event) {
+            if (event.getEntity().getUniqueId().equals(player.getUniqueId())) {
+                event.setCancelled(true);
+            }
+        }
+
+        /** Preventing the player's xp level from changing. */
+        @EventHandler
+        public void onXPChange(PlayerExpChangeEvent event) {
+            if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                event.setAmount(0);
+            }
+        }
     }
     
     @EventHandler

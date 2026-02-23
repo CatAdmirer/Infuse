@@ -43,6 +43,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final ApophisManager apophisManager;
     private final DataManager dataManager;
     private final MainConfig mainConfig;
+    private final GlobalLoop loop;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -50,6 +51,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.apophisManager = new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
+        this.loop = new GlobalLoop(this);
     }
 
     public void onEnable() {
@@ -75,6 +77,9 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Registering infuse commands
         this.registerCommands();
+
+        // Starting the passive effect loop
+        loop.start();
 
         // Registering event listeners for the plugin
         this.registerEvents();
@@ -165,6 +170,9 @@ public class Infuse extends JavaPlugin implements Listener {
         // Resetting the instance
         instance = null;
 
+        // Stopping the passive effect loop
+        loop.stop();
+
         // Sending the log message
         this.getLogger().info("Infuse Plugin is disabling...");
 
@@ -183,6 +191,9 @@ public class Infuse extends JavaPlugin implements Listener {
     private void registerEvents() {
         // Initializing the particle manager
         new Particles(this).startTask();
+
+        // Initializing the hit tracker
+        Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
 
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);

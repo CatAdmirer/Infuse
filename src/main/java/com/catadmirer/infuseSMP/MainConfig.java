@@ -136,7 +136,7 @@ public class MainConfig {
     }
 
     public List<InfuseEffect> joinEffects() {
-        return config.getStringList("join_effects").stream().map(InfuseEffect::fromEffectKey).filter(Objects::isNull).toList();
+        return config.getStringList("join_effects").stream().map(InfuseEffect::fromEffectKey).filter(Objects::nonNull).toList();
     }
 
     public boolean enableApophis() {
@@ -173,6 +173,10 @@ public class MainConfig {
 
     public long duration(InfuseEffect effect) {
         return config.getLong(effect.getName() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+    }
+
+    public double emeraldLockDurationSeconds() {
+        return config.getDouble("emerald.lock_duration_seconds", 10);
     }
 
     public int speedDashMultiplier() {
