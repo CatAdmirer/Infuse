@@ -3,9 +3,6 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Sound;
@@ -75,21 +72,12 @@ public class Regen implements Listener {
         event.getTarget().setFoodLevel(currentFood - 2);
     }
 
-    public Map<Player,Integer> foodLevelMap = new HashMap<>();
-
     @EventHandler
-    public void foodChange(FoodLevelChangeEvent event) {
+    public void regenPreserveHunger(FoodLevelChangeEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
 
-        // Alternatively, we could just set their food level to 20 no matter what.
-        if (foodLevelMap.containsKey(player)) {
-            if (event.getFoodLevel() < foodLevelMap.get(player)) {
-                event.setFoodLevel(foodLevelMap.get(player));
-            }
-        } else {
-            foodLevelMap.put(player, event.getFoodLevel());
-        }
+        event.setFoodLevel(20);
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
