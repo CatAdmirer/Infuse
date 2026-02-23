@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +75,10 @@ public class Recipes implements CommandExecutor, Listener {
             augLeft = 0;
         } else if (effect == EffectMapping.AUG_ENDER) {
             regLeft = 0;
+        }
+
+        if (augLeft == 0 && regLeft == 0) {
+            return InventoryUtils.createNoName(Material.RED_STAINED_GLASS_PANE);
         }
 
         ItemMeta meta = potionItem.getItemMeta();
