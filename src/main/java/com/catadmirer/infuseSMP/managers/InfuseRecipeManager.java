@@ -44,6 +44,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -390,6 +391,8 @@ public class InfuseRecipeManager implements Listener {
         event.getInventory().setResult(null);
     }
 
+    public static final Component effectCraftingMenu = Component.text("Effect Crafting");
+
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
@@ -407,7 +410,7 @@ public class InfuseRecipeManager implements Listener {
             player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
         } else {
             // Opening the menu for crafting effects
-            player.openWorkbench(event.getClickedBlock().getLocation(), true);
+            MenuType.CRAFTING.builder().location(block.getLocation()).title(effectCraftingMenu).build(player).open();
         }
     }
 
@@ -428,7 +431,7 @@ public class InfuseRecipeManager implements Listener {
                 player.closeInventory();
 
                 // Opening the menu for crafting effects
-                player.openWorkbench(block.getLocation(), true);
+                MenuType.CRAFTING.builder().location(block.getLocation()).title(effectCraftingMenu).build(player).open();
             } else if (event.getSlot() == 15) {
                 // Closing the StationSelectionMenu
                 player.closeInventory();
