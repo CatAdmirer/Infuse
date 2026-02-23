@@ -6,6 +6,7 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.UUID;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,15 @@ public class Regen implements Listener {
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
+            for (Entity loopentity : player.getNearbyEntities(5, 5, 5)) {
+                if (loopentity instanceof Player otherplayer) {
+                    if (plugin.getDataManager().isTrusted(player, otherplayer)) {
+                        otherplayer.heal(event.getDamage()/2);
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler
