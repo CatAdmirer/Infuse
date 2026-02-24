@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

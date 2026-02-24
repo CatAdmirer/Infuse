@@ -2,8 +2,8 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.UUID;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;

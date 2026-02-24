@@ -2,10 +2,10 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.UUID;
-import org.bukkit.Bukkit;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;

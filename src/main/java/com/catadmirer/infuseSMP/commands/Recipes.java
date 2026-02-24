@@ -6,13 +6,12 @@ import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
-import net.kyori.adventure.text.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class Recipes implements CommandExecutor, Listener {
     private static Infuse plugin;

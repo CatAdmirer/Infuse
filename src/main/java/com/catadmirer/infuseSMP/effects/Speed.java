@@ -2,11 +2,11 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.particles.Particles;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.particles.Particles;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

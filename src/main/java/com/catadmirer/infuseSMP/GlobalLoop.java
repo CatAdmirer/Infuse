@@ -1,16 +1,15 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.effects.Ender;
+import com.catadmirer.infuseSMP.effects.Heart;
+import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.catadmirer.infuseSMP.effects.Ender;
-import com.catadmirer.infuseSMP.effects.Heart;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
 
 public class GlobalLoop extends BukkitRunnable {
     private final Infuse plugin;

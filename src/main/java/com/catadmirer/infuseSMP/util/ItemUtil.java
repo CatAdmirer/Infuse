@@ -1,8 +1,8 @@
 package com.catadmirer.infuseSMP.util;
 
+import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
-import com.destroystokyo.paper.MaterialSetTag;
 
 public class ItemUtil {
     public static boolean isSword(ItemStack item) {
