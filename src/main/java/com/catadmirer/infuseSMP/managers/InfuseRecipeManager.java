@@ -226,7 +226,7 @@ public class InfuseRecipeManager implements Listener {
                 // TODO: Test if i need to remove beam or not
                 crystal.setBeamTarget(null);
                 crystal.remove();
-            }, ritualDuration * 20);
+            }, ritualDuration * 20L);
         }
 
         String worldName = brewerLocation.getWorld().getName();
@@ -313,7 +313,7 @@ public class InfuseRecipeManager implements Listener {
             brewerLocation.getWorld().dropItemNaturally(brewerLocation, effect.createItem());
             ritualBossBar = null;
             task.cancel();
-        }, ritualDuration * 20);
+        }, ritualDuration * 20L);
     }
 
     private void registerRecipeFromConfig(String recipeKey, ItemStack result) {
