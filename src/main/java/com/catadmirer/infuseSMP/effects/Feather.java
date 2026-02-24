@@ -5,8 +5,6 @@ import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.particles.Particles;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +34,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Feather implements Listener {
-    private static final Set<UUID> spark = new HashSet<>();
-
     private static Infuse plugin;
 
     public Feather(Infuse plugin) {
@@ -192,7 +188,5 @@ public class Feather implements Listener {
                 CooldownManager.setDuration(playerUUID, "feathermace", 5L);
             }
         }, 10L);
-
-        spark.add(playerUUID);
     }
 }
