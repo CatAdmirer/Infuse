@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -143,6 +145,18 @@ public class Ender extends InfuseEffect {
         cursedPlayers.add(playerUUID);
 
         Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), delayTicks);
+    }
+
+    public void applyGlowingToUntrusted(Infuse plugin, Player player) {
+        double radius = 10;
+
+        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof Player nearby)) continue;
+            if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
+            if (plugin.getDataManager().isTrusted(nearby, player)) continue;
+            nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
+        }
     }
 
     public class Listeners implements Listener {
