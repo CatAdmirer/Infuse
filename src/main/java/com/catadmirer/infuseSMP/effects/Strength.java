@@ -67,7 +67,7 @@ public class Strength extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "strength", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Strength effect = new Strength();
 

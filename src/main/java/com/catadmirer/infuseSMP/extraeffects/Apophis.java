@@ -214,7 +214,7 @@ public class Apophis extends InfuseEffect {
         }
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Apophis effect = new Apophis();
 

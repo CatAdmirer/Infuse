@@ -67,7 +67,7 @@ public class Frost extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "frost", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Frost effect = new Frost();
 

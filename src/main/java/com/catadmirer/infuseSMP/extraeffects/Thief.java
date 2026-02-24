@@ -200,7 +200,7 @@ public class Thief extends InfuseEffect {
 
     private record DisguiseData(Component customName, Component displayName, boolean customNameVisible, PlayerTextures skin) {}
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Thief effect = new Thief();
 
@@ -242,7 +242,7 @@ public class Thief extends InfuseEffect {
         public void onPlayerQuit(PlayerQuitEvent event) {
             Player player = event.getPlayer();
             if (disguisedPlayers.containsKey(player.getUniqueId())) {
-                removeDisguise(player);
+                effect.removeDisguise(player);
             }
         }
 

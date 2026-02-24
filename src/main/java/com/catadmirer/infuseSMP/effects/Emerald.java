@@ -100,7 +100,7 @@ public class Emerald extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Emerald emerald = new Emerald();
 

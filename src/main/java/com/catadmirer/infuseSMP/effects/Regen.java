@@ -66,7 +66,7 @@ public class Regen extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "regen", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Regen effect = new Regen();
 

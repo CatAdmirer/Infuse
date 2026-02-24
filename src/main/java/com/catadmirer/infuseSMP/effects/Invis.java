@@ -67,7 +67,7 @@ public class Invis extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "invis", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Invis effect = new Invis();
 

@@ -67,7 +67,7 @@ public class Ocean extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "ocean", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Ocean effect = new Ocean();
 

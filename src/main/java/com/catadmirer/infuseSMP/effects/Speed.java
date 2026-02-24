@@ -66,7 +66,7 @@ public class Speed extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "speed", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Speed effect = new Speed();
 

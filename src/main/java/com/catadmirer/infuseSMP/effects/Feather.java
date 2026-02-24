@@ -93,7 +93,7 @@ public class Feather extends InfuseEffect {
         }, null, 10);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Feather effect = new Feather();
 

@@ -67,7 +67,7 @@ public class Haste extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "haste", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Haste effect = new Haste();
 

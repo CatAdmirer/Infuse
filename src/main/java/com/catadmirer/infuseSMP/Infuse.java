@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
@@ -221,12 +220,12 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Enabling apophis listeners if the config allows
         if (mainConfig.enableApophis()) {
-            getServer().getPluginManager().registerEvents(new Apophis.Listeners(this, new Apophis()), this);
+            getServer().getPluginManager().registerEvents(new Apophis.Listeners(this), this);
         }
 
         // Enabling thief listeners if the config allows
         if (mainConfig.enableThief()) {
-            getServer().getPluginManager().registerEvents(new Thief.Listeners(this, new Thief()), this);
+            getServer().getPluginManager().registerEvents(new Thief.Listeners(this), this);
         }
     }
 

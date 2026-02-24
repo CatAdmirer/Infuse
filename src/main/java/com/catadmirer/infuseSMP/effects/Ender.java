@@ -159,7 +159,7 @@ public class Ender extends InfuseEffect {
         }
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Ender ender = new Ender();
 
@@ -220,7 +220,7 @@ public class Ender extends InfuseEffect {
             // Making sure the cursing fireball isn't on cooldown
             if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
 
-            shootCursingFireball(player);
+            ender.shootCursingFireball(player);
             event.setCancelled(true);
         }
 

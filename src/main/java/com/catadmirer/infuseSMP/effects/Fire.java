@@ -67,7 +67,7 @@ public class Fire extends InfuseEffect {
         CooldownManager.setCooldown(playerUUID, "fire", cooldown);
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Fire effect = new Fire();
 

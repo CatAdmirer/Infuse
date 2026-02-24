@@ -152,7 +152,7 @@ public class Heart extends InfuseEffect {
         }
     }
 
-    public class Listeners implements Listener {
+    public static class Listeners implements Listener {
         private final Infuse plugin;
         private final Heart effect = new Heart();
 
