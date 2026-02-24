@@ -63,12 +63,10 @@ public class Feather extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
-    }
+    public void equip(Infuse plugin, Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {
-    }
+    public void unequip(Infuse plugin, Player player) {}
 
     @Override
     public void activateSpark(Infuse plugin, Player player) {

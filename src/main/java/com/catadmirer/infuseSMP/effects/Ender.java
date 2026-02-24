@@ -67,16 +67,10 @@ public class Ender extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, PotionEffect.INFINITE_DURATION, 9, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
-    }
+    public void equip(Infuse plugin, Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {
-        player.removePotionEffect(PotionEffectType.LUCK);
-        player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
-    }
+    public void unequip(Infuse plugin, Player player) {}
 
     @Override
     public void activateSpark(Infuse plugin, Player player) {
