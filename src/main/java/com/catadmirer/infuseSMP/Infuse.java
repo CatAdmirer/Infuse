@@ -155,17 +155,6 @@ public class Infuse extends JavaPlugin implements Listener {
         });
     }
 
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-        (new BukkitRunnable() {
-            public void run() {
-                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-                player.setHealth(20);
-            }
-        }).runTaskLater(this, 10L);
-    }
-
     public void onDisable() {
         // Resetting the instance
         instance = null;

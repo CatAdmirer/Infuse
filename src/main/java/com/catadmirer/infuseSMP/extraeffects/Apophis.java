@@ -63,17 +63,6 @@ public class Apophis implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskLater(plugin, task -> {
-            AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
-            if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(20);
-            }
-        }, 15);
-    }
-
-    @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         UUID attackerUUID = attacker.getUniqueId();
