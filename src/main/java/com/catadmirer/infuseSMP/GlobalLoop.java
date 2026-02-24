@@ -32,8 +32,7 @@ public class GlobalLoop extends BukkitRunnable {
             // Applying glowing to players near someone with the ender effect
             Ender enderEffect = new Ender();
             if (plugin.getDataManager().hasEffect(player, enderEffect)) {
-                enderEffect.setOwner(player);
-                enderEffect.applyGlowingToUntrusted(plugin);
+                enderEffect.applyGlowingToUntrusted(plugin, player);
             }
         }
     }

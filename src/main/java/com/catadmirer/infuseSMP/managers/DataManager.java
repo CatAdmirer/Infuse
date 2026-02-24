@@ -172,8 +172,6 @@ public class DataManager {
             return null;
         }
         
-        effect.setOwner(Bukkit.getOfflinePlayer(playerUUID));
-
         return effect;
     }
 

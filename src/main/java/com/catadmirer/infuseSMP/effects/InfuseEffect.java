@@ -5,7 +5,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -20,17 +19,11 @@ public abstract class InfuseEffect {
     protected final int id;
     protected final String name;
     protected final boolean augmented;
-    protected OfflinePlayer owner;
 
     protected InfuseEffect(int id, String name, boolean augmented) {
-        this(id, name, augmented, null);
-    }
-
-    protected InfuseEffect(int id, String name, boolean augmented, OfflinePlayer owner) {
         this.id = id;
         this.name = name;
         this.augmented = augmented;
-        this.owner = owner;
     }
 
     public String getName() {
@@ -47,15 +40,6 @@ public abstract class InfuseEffect {
 
     public int getId() {
         return id;
-    }
-
-    @Nullable
-    public OfflinePlayer getOwner() {
-        return owner;
-    }
-
-    public void setOwner(OfflinePlayer owner) {
-        this.owner = owner;
     }
 
     public abstract Component getItemName();

@@ -26,9 +26,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Thief extends InfuseEffect {
     private static final Map<UUID, DisguiseData> disguisedPlayers = new HashMap<>();
+    private InfuseEffect stolen = null;
 
     public Thief() {
         super(EffectIds.THIEF, "thief", false);
@@ -65,8 +67,6 @@ public class Thief extends InfuseEffect {
             otherPlayer.unlistPlayer(player);
             otherPlayer.hidePlayer(plugin, player);
         }
-
-        owner = player;
     }
     
     @Override
@@ -75,8 +75,6 @@ public class Thief extends InfuseEffect {
             otherPlayer.listPlayer(player);
             otherPlayer.showPlayer(plugin, player);
         }
-
-        owner = player;
     }
 
     @Override
@@ -163,27 +161,41 @@ public class Thief extends InfuseEffect {
         player.setPlayerProfile(profile);
     }
 
-    private void activateEffect(Infuse plugin, Player player, @NotNull InfuseEffect effect, Entity victim) {
+
+    @Nullable
+    public InfuseEffect getStolenEffect() {
+        return stolen;
+    }
+
+    private void activateEffect(Infuse plugin, Player player, @NotNull InfuseEffect stolen, Entity victim) {
         String msg = Messages.THIEF_STEAL.getMessage();
         msg = msg.replace("%player%", victim.getName());
-        msg = msg.replace("%effect_name%", effect.getName());
+        msg = msg.replace("%effect_name%", stolen.getName());
         player.sendMessage(Messages.toComponent(msg));
 
+        // Saving the stolen effect
+        this.stolen = stolen;
+
         // Activating the stolen spark.
-        effect.activateSpark(plugin, player);
+        stolen.activateSpark(plugin, player);
 
         UUID playerUUID = player.getUniqueId();
 
         // Removing cooldowns from the stolen spark
-        CooldownManager.clearSpecificCooldown(playerUUID, effect.getRegularForm().getKey());
-        CooldownManager.clearSpecificDuration(playerUUID, effect.getRegularForm().getKey());
+        CooldownManager.clearSpecificCooldown(playerUUID, stolen.getRegularForm().getKey());
+        CooldownManager.clearSpecificDuration(playerUUID, stolen.getRegularForm().getKey());
 
         // Applying cooldowns for the thief effect
-        long cooldown = plugin.getConfigFile().cooldown(effect);
-        long duration = plugin.getConfigFile().duration(effect);
+        long cooldown = plugin.getConfigFile().cooldown(stolen);
+        long duration = plugin.getConfigFile().duration(stolen);
 
         CooldownManager.setDuration(playerUUID, "thief_stolen", duration);
         CooldownManager.setCooldown(playerUUID, "thief_stolen", cooldown * 2);
+
+        // Clearing the stolen effect after the spark is done
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            this.stolen = null;
+        }, duration * 20);
     }
 
     private record DisguiseData(Component customName, Component displayName, boolean customNameVisible, PlayerTextures skin) {}
