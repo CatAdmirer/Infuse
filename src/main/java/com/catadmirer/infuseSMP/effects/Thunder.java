@@ -3,15 +3,13 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -139,44 +137,33 @@ public class Thunder implements Listener {
         }
     }
 
-    private void chainLightning(Entity startEntity, final Player attacker) {
-        final Set<Entity> processedEntities = new HashSet<>();
-        final Queue<Entity> queue = new LinkedList<>();
-        queue.add(startEntity);
-        (new BukkitRunnable() {
-            int strikes = 0;
+    private void chainLightning(LivingEntity startEntity, Player attacker) {
+        List<LivingEntity> lightningTargets = new ArrayList<>();
+        lightningTargets.add(startEntity);
 
-            public void run() {
-                if (!queue.isEmpty() && this.strikes < 5) {
-                    Entity currentEntity = null;
-
-                    while(!queue.isEmpty()) {
-                        Entity candidate = queue.poll();
-                        if (candidate instanceof LivingEntity && !processedEntities.contains(candidate)) {
-                            currentEntity = candidate;
-                            break;
-                        }
-                    }
-
-                    if (currentEntity != null) {
-                        processedEntities.add(currentEntity);
-                        LivingEntity livingEntity = (LivingEntity)currentEntity;
-                        if (!livingEntity.equals(attacker)) {
-                            livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
-                            livingEntity.damage(4, attacker);
-                            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
-                            ++this.strikes;
-                            for (Entity entity : livingEntity.getNearbyEntities(3, 3, 3)) {
-                                if (entity instanceof LivingEntity && !processedEntities.contains(entity)) {
-                                    queue.add(entity);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    this.cancel();
-                }
+        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+            // Stopping once enough people have been hit
+            if (lightningTargets.size() > 5) {
+                task.cancel();
+                return;
             }
-        }).runTaskTimer(plugin, 0L, 20L);
+
+            // Getting the current target
+            LivingEntity livingEntity = lightningTargets.get(0);
+
+            // Damaging the current target
+            livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
+            livingEntity.damage(4, attacker);
+            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+
+            // Finding the next target
+            for (Entity entity : livingEntity.getNearbyEntities(3, 3, 3)) {
+                if (!(entity instanceof LivingEntity living)) continue;
+                if (entity.equals(attacker)) continue;
+                if (lightningTargets.contains(entity)) continue;
+
+                lightningTargets.add(0, living);
+            }
+        }, 0, 20);
     }
 }
