@@ -144,21 +144,14 @@ public class Apophis extends InfuseEffect {
 
     private final void fireSparkEffect(Infuse plugin, Player caster) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> stage0(caster), 20);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 20);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 40);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 60);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 80);
+        for (int i = 0; i < 5; i++) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 20 * (i + 1));
+        }
         Bukkit.getScheduler().runTaskLater(plugin, () -> stage2(caster), 100);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  1), 101);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  2), 102);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  3), 103);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  4), 104);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  5), 105);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  6), 106);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  7), 107);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  8), 108);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster,  9), 109);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster, 10), 110);
+        for (int i = 1; i < 11; i++) {
+            final int j = i;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> stage3(caster, j), 100 + j);
+        }
     }
 
     private final void stage0(Player player) {
