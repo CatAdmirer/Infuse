@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -88,9 +88,9 @@ public class Heart implements Listener {
 
     private void updateHealthDisplay(TextDisplay entity, LivingEntity player) {
         if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
-            entity.customName(Messages.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
+            entity.customName(Message.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
         } else {
-            entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
+            entity.customName(Message.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
         }
     }
 

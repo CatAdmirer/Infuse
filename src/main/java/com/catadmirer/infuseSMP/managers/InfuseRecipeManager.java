@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import java.io.File;
 import java.io.IOException;
@@ -188,15 +189,15 @@ public class InfuseRecipeManager implements Listener {
         // Starting the ritual for the augmented effect
         // Making sure there isn't a ritual active already
         if (ritualBossBar != null) {
-            player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
+            player.sendMessage(new Message(MessageType.ERROR_RITUAL_ACTIVE).toComponent());
             event.setCancelled(true);
             return;
         }
 
         // Creating the bossbar
-        Component itemName = Messages.toComponent(effect.getName());
+        Component itemName = effect.getName().toComponent();
         this.ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
-                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1.0f,
+                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1,
                 effect.getRitualColor(), BossBar.Overlay.PROGRESS);
 
         // Adding every player online to the bossbar
@@ -247,28 +248,28 @@ public class InfuseRecipeManager implements Listener {
         String y = String.valueOf(brewerLocation.getBlockY());
         String z = String.valueOf(brewerLocation.getBlockZ());
 
-        String formattedMessage = Messages.EFFECT_BROADCAST.getMessage()
-                .replace("%player%", player.getName())
-                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", worldName);
+        Message mcMessage = new Message(MessageType.EFFECT_BROADCAST);
+        mcMessage.applyPlaceholder("player", player.getName());
+        mcMessage.applyPlaceholder("item", MiniMessage.miniMessage().serialize(itemName));
+        mcMessage.applyPlaceholder("x", x);
+        mcMessage.applyPlaceholder("y", y);
+        mcMessage.applyPlaceholder("z", z);
+        mcMessage.applyPlaceholder("dimension", worldName);
 
-        String formattedDiscordMessage = Messages.DISCORD_BROADCAST.getMessage()
-                .replace("%player%", player.getName())
-                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", MiniMessage.miniMessage().stripTags(worldName));
+        Message dscMessage = new Message(MessageType.DISCORD_BROADCAST);
+        dscMessage.applyPlaceholder("player", player.getName());
+        dscMessage.applyPlaceholder("item", PlainTextComponentSerializer.plainText().serialize(itemName));
+        dscMessage.applyPlaceholder("x", x);
+        dscMessage.applyPlaceholder("y", y);
+        dscMessage.applyPlaceholder("z", z);
+        dscMessage.applyPlaceholder("dimension", MiniMessage.miniMessage().stripTags(worldName));
 
         // Broadcasting that the ritual has started
-        Bukkit.broadcast(Messages.toComponent(formattedMessage));
+        Bukkit.broadcast(mcMessage.toComponent());
         if (plugin.getConfigFile().enableDiscordBroadcasts()) {
             String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
             if (webhookUrl != null && !webhookUrl.isEmpty()) {
-                sendToDiscord(webhookUrl, formattedDiscordMessage);
+                sendToDiscord(webhookUrl, dscMessage.toString());
             }
         }
 
@@ -308,9 +309,9 @@ public class InfuseRecipeManager implements Listener {
             HandlerList.unregisterAll(brewerListeners);
 
             // Broadcasting that the effect has been brewed
-            String msg = Messages.EFFECT_FINISHED.getMessage();
-            msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
-            Bukkit.broadcast(Messages.toComponent(msg));
+            Message msg = new Message(MessageType.EFFECT_FINISHED);
+            msg.applyPlaceholder("item", MiniMessage.miniMessage().serialize(itemName));
+            Bukkit.broadcast(msg.toComponent());
 
             // Dropping the item
             brewerLocation.getWorld().dropItemNaturally(brewerLocation, effect.createItem());

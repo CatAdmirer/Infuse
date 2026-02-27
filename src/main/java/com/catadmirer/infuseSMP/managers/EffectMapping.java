@@ -3,7 +3,9 @@ package com.catadmirer.infuseSMP.managers;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
+
 import java.awt.Color;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -144,38 +146,38 @@ public enum EffectMapping {
      * @return The name of the effect as defined in the config.
      */
     @NotNull
-    public String getName() {
+    public Message getName() {
         return switch (this) {
-            case EMERALD -> Messages.EMERALD_NAME.getMessage();
-            case ENDER -> Messages.ENDER_NAME.getMessage();
-            case FEATHER -> Messages.FEATHER_NAME.getMessage();
-            case FIRE -> Messages.FIRE_NAME.getMessage();
-            case FROST -> Messages.FROST_NAME.getMessage();
-            case HASTE -> Messages.HASTE_NAME.getMessage();
-            case HEART -> Messages.HEART_NAME.getMessage();
-            case INVIS -> Messages.INVIS_NAME.getMessage();
-            case OCEAN -> Messages.OCEAN_NAME.getMessage();
-            case REGEN -> Messages.REGEN_NAME.getMessage();
-            case SPEED -> Messages.SPEED_NAME.getMessage();
-            case STRENGTH -> Messages.STRENGTH_NAME.getMessage();
-            case THUNDER -> Messages.THUNDER_NAME.getMessage();
-            case APOPHIS -> Messages.APOPHIS_NAME.getMessage();
-            case THIEF -> Messages.THIEF_NAME.getMessage();
-            case AUG_EMERALD -> Messages.AUG_EMERALD_NAME.getMessage();
-            case AUG_ENDER -> Messages.AUG_ENDER_NAME.getMessage();
-            case AUG_FEATHER -> Messages.AUG_FEATHER_NAME.getMessage();
-            case AUG_FIRE -> Messages.AUG_FIRE_NAME.getMessage();
-            case AUG_FROST -> Messages.AUG_FROST_NAME.getMessage();
-            case AUG_HASTE -> Messages.AUG_HASTE_NAME.getMessage();
-            case AUG_HEART -> Messages.AUG_HEART_NAME.getMessage();
-            case AUG_INVIS -> Messages.AUG_INVIS_NAME.getMessage();
-            case AUG_OCEAN -> Messages.AUG_OCEAN_NAME.getMessage();
-            case AUG_REGEN -> Messages.AUG_REGEN_NAME.getMessage();
-            case AUG_SPEED -> Messages.AUG_SPEED_NAME.getMessage();
-            case AUG_STRENGTH -> Messages.AUG_STRENGTH_NAME.getMessage();
-            case AUG_THUNDER -> Messages.AUG_THUNDER_NAME.getMessage();
-            case AUG_APOPHIS -> Messages.AUG_APOPHIS_NAME.getMessage();
-            case AUG_THIEF -> Messages.AUG_THIEF_NAME.getMessage();
+            case EMERALD -> new Message(MessageType.EMERALD_NAME);
+            case ENDER -> new Message(MessageType.ENDER_NAME);
+            case FEATHER -> new Message(MessageType.FEATHER_NAME);
+            case FIRE -> new Message(MessageType.FIRE_NAME);
+            case FROST -> new Message(MessageType.FROST_NAME);
+            case HASTE -> new Message(MessageType.HASTE_NAME);
+            case HEART -> new Message(MessageType.HEART_NAME);
+            case INVIS -> new Message(MessageType.INVIS_NAME);
+            case OCEAN -> new Message(MessageType.OCEAN_NAME);
+            case REGEN -> new Message(MessageType.REGEN_NAME);
+            case SPEED -> new Message(MessageType.SPEED_NAME);
+            case STRENGTH -> new Message(MessageType.STRENGTH_NAME);
+            case THUNDER -> new Message(MessageType.THUNDER_NAME);
+            case APOPHIS -> new Message(MessageType.APOPHIS_NAME);
+            case THIEF -> new Message(MessageType.THIEF_NAME);
+            case AUG_EMERALD -> new Message(MessageType.AUG_EMERALD_NAME);
+            case AUG_ENDER -> new Message(MessageType.AUG_ENDER_NAME);
+            case AUG_FEATHER -> new Message(MessageType.AUG_FEATHER_NAME);
+            case AUG_FIRE -> new Message(MessageType.AUG_FIRE_NAME);
+            case AUG_FROST -> new Message(MessageType.AUG_FROST_NAME);
+            case AUG_HASTE -> new Message(MessageType.AUG_HASTE_NAME);
+            case AUG_HEART -> new Message(MessageType.AUG_HEART_NAME);
+            case AUG_INVIS -> new Message(MessageType.AUG_INVIS_NAME);
+            case AUG_OCEAN -> new Message(MessageType.AUG_OCEAN_NAME);
+            case AUG_REGEN -> new Message(MessageType.AUG_REGEN_NAME);
+            case AUG_SPEED -> new Message(MessageType.AUG_SPEED_NAME);
+            case AUG_STRENGTH -> new Message(MessageType.AUG_STRENGTH_NAME);
+            case AUG_THUNDER -> new Message(MessageType.AUG_THUNDER_NAME);
+            case AUG_APOPHIS -> new Message(MessageType.AUG_APOPHIS_NAME);
+            case AUG_THIEF -> new Message(MessageType.AUG_THIEF_NAME);
         };
     }
 
@@ -184,38 +186,38 @@ public enum EffectMapping {
      * 
      * @return The lore of the effect as defined in the config.
      */
-    public List<String> getLore() {
+    public Message getLore() {
         return switch (this) {
-            case EMERALD -> Messages.EMERALD_LORE.getStringList();
-            case ENDER -> Messages.ENDER_LORE.getStringList();
-            case FEATHER -> Messages.FEATHER_LORE.getStringList();
-            case FIRE -> Messages.FIRE_LORE.getStringList();
-            case FROST -> Messages.FROST_LORE.getStringList();
-            case HASTE -> Messages.HASTE_LORE.getStringList();
-            case HEART -> Messages.HEART_LORE.getStringList();
-            case INVIS -> Messages.INVIS_LORE.getStringList();
-            case OCEAN -> Messages.OCEAN_LORE.getStringList();
-            case REGEN -> Messages.REGEN_LORE.getStringList();
-            case SPEED -> Messages.SPEED_LORE.getStringList();
-            case STRENGTH -> Messages.STRENGTH_LORE.getStringList();
-            case THUNDER -> Messages.THUNDER_LORE.getStringList();
-            case APOPHIS -> Messages.APOPHIS_LORE.getStringList();
-            case THIEF -> Messages.THIEF_LORE.getStringList();
-            case AUG_EMERALD -> Messages.AUG_EMERALD_LORE.getStringList();
-            case AUG_ENDER -> Messages.AUG_ENDER_LORE.getStringList();
-            case AUG_FEATHER -> Messages.AUG_FEATHER_LORE.getStringList();
-            case AUG_FIRE -> Messages.AUG_FIRE_LORE.getStringList();
-            case AUG_FROST -> Messages.AUG_FROST_LORE.getStringList();
-            case AUG_HASTE -> Messages.AUG_HASTE_LORE.getStringList();
-            case AUG_HEART -> Messages.AUG_HEART_LORE.getStringList();
-            case AUG_INVIS -> Messages.AUG_INVIS_LORE.getStringList();
-            case AUG_OCEAN -> Messages.AUG_OCEAN_LORE.getStringList();
-            case AUG_REGEN -> Messages.AUG_REGEN_LORE.getStringList();
-            case AUG_SPEED -> Messages.AUG_SPEED_LORE.getStringList();
-            case AUG_STRENGTH -> Messages.AUG_STRENGTH_LORE.getStringList();
-            case AUG_THUNDER -> Messages.AUG_THUNDER_LORE.getStringList();
-            case AUG_APOPHIS -> Messages.AUG_APOPHIS_LORE.getStringList();
-            case AUG_THIEF -> Messages.AUG_THIEF_LORE.getStringList();
+            case EMERALD -> new Message(MessageType.EMERALD_LORE);
+            case ENDER -> new Message(MessageType.ENDER_LORE);
+            case FEATHER -> new Message(MessageType.FEATHER_LORE);
+            case FIRE -> new Message(MessageType.FIRE_LORE);
+            case FROST -> new Message(MessageType.FROST_LORE);
+            case HASTE -> new Message(MessageType.HASTE_LORE);
+            case HEART -> new Message(MessageType.HEART_LORE);
+            case INVIS -> new Message(MessageType.INVIS_LORE);
+            case OCEAN -> new Message(MessageType.OCEAN_LORE);
+            case REGEN -> new Message(MessageType.REGEN_LORE);
+            case SPEED -> new Message(MessageType.SPEED_LORE);
+            case STRENGTH -> new Message(MessageType.STRENGTH_LORE);
+            case THUNDER -> new Message(MessageType.THUNDER_LORE);
+            case APOPHIS -> new Message(MessageType.APOPHIS_LORE);
+            case THIEF -> new Message(MessageType.THIEF_LORE);
+            case AUG_EMERALD -> new Message(MessageType.AUG_EMERALD_LORE);
+            case AUG_ENDER -> new Message(MessageType.AUG_ENDER_LORE);
+            case AUG_FEATHER -> new Message(MessageType.AUG_FEATHER_LORE);
+            case AUG_FIRE -> new Message(MessageType.AUG_FIRE_LORE);
+            case AUG_FROST -> new Message(MessageType.AUG_FROST_LORE);
+            case AUG_HASTE -> new Message(MessageType.AUG_HASTE_LORE);
+            case AUG_HEART -> new Message(MessageType.AUG_HEART_LORE);
+            case AUG_INVIS -> new Message(MessageType.AUG_INVIS_LORE);
+            case AUG_OCEAN -> new Message(MessageType.AUG_OCEAN_LORE);
+            case AUG_REGEN -> new Message(MessageType.AUG_REGEN_LORE);
+            case AUG_SPEED -> new Message(MessageType.AUG_SPEED_LORE);
+            case AUG_STRENGTH -> new Message(MessageType.AUG_STRENGTH_LORE);
+            case AUG_THUNDER -> new Message(MessageType.AUG_THUNDER_LORE);
+            case AUG_APOPHIS -> new Message(MessageType.AUG_APOPHIS_LORE);
+            case AUG_THIEF -> new Message(MessageType.AUG_THIEF_LORE);
         };
     }
 
@@ -269,8 +271,8 @@ public enum EffectMapping {
 
         if (meta != null) {
             // Setting the usual data
-            meta.displayName(Messages.toComponent(getName()));
-            meta.lore(getLore().stream().map(Messages::toComponent).toList());
+            meta.displayName(getName().toComponent());
+            meta.lore(getLore().toComponentList());
             meta.setColor(org.bukkit.Color.fromARGB(color.getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, key);
             meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);

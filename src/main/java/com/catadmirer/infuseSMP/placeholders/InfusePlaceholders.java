@@ -93,13 +93,13 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect== null) return "";
         
-        return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
+        return PlainTextComponentSerializer.plainText().serialize(effect.getName().toComponent());
     }
 
     public String getEffectName(UUID uuid, String slot) {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         
-        return effect.getName();
+        return effect.getName().toString();
     }
 }

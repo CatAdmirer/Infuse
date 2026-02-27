@@ -1,7 +1,9 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.MessageConfig;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -30,14 +32,14 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            player.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
+            player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
             return true;
         }
 
         switch (args[0].toLowerCase()) {
             case "gui":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
 
@@ -46,12 +48,12 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
             case "reload":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
 
                 plugin.getConfigFile().load();
-                Messages.load(plugin);
+                MessageConfig.load(plugin);
                 player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
@@ -59,50 +61,50 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 break;
             case "giveeffect":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
 
                 if (args.length != 3) {
-                    player.sendMessage(Messages.INFUSE_GIVEEFFECT_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_GIVEEFFECT_USAGE).toComponent());
                     return true;
                 }
 
                 Player target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
-                    player.sendMessage(Messages.ERROR_TARGET_NOT_FOUND.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
 
                 String effectKey = args[2].toLowerCase();
                 EffectMapping mapping = EffectMapping.fromEffectKey(effectKey);
                 if (mapping == null) {
-                    player.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                     return true;
                 }
 
                 target.getInventory().addItem(mapping.createItem());
 
-                String msg = Messages.INFUSE_GIVEEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
-                msg = msg.replace("%effect_name%", mapping.getName());
-                target.sendMessage(Messages.toComponent(msg));
+                Message msg = new Message(MessageType.INFUSE_GIVEEFFECT_SUCCESS);
+                msg.applyPlaceholder("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
+                msg.applyPlaceholder("%effect_name%", mapping.getName());
+                target.sendMessage(msg.toComponent());
                 break;
             case "seteffect":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
                 
                 if (args.length != 4) {
-                    player.sendMessage(Messages.INFUSE_SETEFFECT_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_SETEFFECT_USAGE).toComponent());
                     return true;
                 }
                 
                 // Getting the player and making sure they are online.
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
-                    player.sendMessage(Messages.ERROR_TARGET_NOT_FOUND.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
                 
@@ -110,86 +112,86 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 effectKey = args[2].toLowerCase();
                 mapping = EffectMapping.fromEffectKey(effectKey);
                 if (mapping == null) {
-                    player.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                     return true;
                 }
                 
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];
                 if (!slot.equals("1") && !slot.equals("2")) {
-                    msg = Messages.INFUSE_INVALID_SLOT.getMessage();
-                    msg = msg.replace("%slot%", slot);
-                    player.sendMessage(Messages.toComponent(msg));
+                    msg = new Message(MessageType.INFUSE_INVALID_SLOT);
+                    msg.applyPlaceholder("%slot%", slot);
+                    player.sendMessage(msg.toComponent());
                     return true;
                 }
 
                 // Setting the effect
                 plugin.getDataManager().setEffect(target.getUniqueId(), args[3], mapping);
-                msg = Messages.INFUSE_SETEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%slot%", slot);
-                msg = msg.replace("%player_name%", target.getName());
-                msg = msg.replace("%effect_name%", mapping.getName());
-                player.sendMessage(Messages.toComponent(msg));
+                msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
+                msg.applyPlaceholder("%slot%", slot);
+                msg.applyPlaceholder("%player_name%", target.getName());
+                msg.applyPlaceholder("%effect_name%", mapping.getName());
+                player.sendMessage(msg.toComponent());
                 break;
             case "cleareffect":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
 
                 if (args.length != 2) {
-                    player.sendMessage(Messages.INFUSE_CLEAREFFECT_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_CLEAREFFECT_USAGE).toComponent());
                     return true;
                 }
 
                 // Getting the player and making sure they are online
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
-                    player.sendMessage(Messages.ERROR_TARGET_NOT_FOUND.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
 
                 // Removing the effects from the player
                 plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
                 plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
-                msg = Messages.INFUSE_CLEAREFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%player_name%", target.getName());
-                player.sendMessage(Messages.toComponent(msg));
+                msg = new Message(MessageType.INFUSE_CLEAREFFECT_SUCCESS);
+                msg.applyPlaceholder("%player_name%", target.getName());
+                player.sendMessage(msg.toComponent());
                 break;
             case "cooldown":
                 if (!player.isOp()) {
-                    player.sendMessage(Messages.ERROR_NOT_OP.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
 
                 if (args.length != 2) {
-                    player.sendMessage(Messages.INFUSE_COOLDOWN_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_COOLDOWN_USAGE).toComponent());
                     return true;
                 }
                 
                 // Getting the player and making sure they are online
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
-                    player.sendMessage(Messages.ERROR_TARGET_NOT_FOUND.toComponent());
+                    player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
 
                 // Removing cooldowns from the player
                 CooldownManager.removeAllCooldowns(target.getUniqueId());
-                msg = Messages.INFUSE_COOLDOWN_SUCCESS.getMessage();
-                msg = msg.replace("%player_name%", target.getName());
-                player.sendMessage(Messages.toComponent(msg));
+                msg = new Message(MessageType.INFUSE_COOLDOWN_SUCCESS);
+                msg.applyPlaceholder("%player_name%", target.getName());
+                player.sendMessage(msg.toComponent());
                 break;
             case "controls":
                 if (args.length != 2) {
-                    player.sendMessage(Messages.INFUSE_CONTROLS_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_CONTROLS_USAGE).toComponent());
                     return true;
                 }
 
                 // Getting the control mode and validating the input.
                 String choice = args[1].toLowerCase();
                 if (!choice.equals("offhand") && !choice.equals("command")) {
-                    player.sendMessage(Messages.INFUSE_CONTROLS_USAGE.toComponent());
+                    player.sendMessage(new Message(MessageType.INFUSE_CONTROLS_USAGE).toComponent());
                     return true;
                 }
 
@@ -200,12 +202,12 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
                 player.addAttachment(plugin, "ability.use", !offhandEnabled);
 
-                msg = Messages.INFUSE_CONTROLS_SUCCESS.getMessage();
-                msg = msg.replace("%controlMode%", choice);
-                player.sendMessage(Messages.toComponent(msg));
+                msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
+                msg.applyPlaceholder("%controlMode%", choice);
+                player.sendMessage(msg.toComponent());
                 break;
             default:
-                sender.sendMessage(Messages.INFUSE_INVALID_PARAM.toComponent());
+                sender.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                 break;
         }
 

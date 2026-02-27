@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -195,10 +196,10 @@ public class Thief implements Listener {
     }
 
     private void activateEffect(Player player, @NotNull EffectMapping effect, Entity victim) {
-        String msg = Messages.THIEF_STEAL.getMessage();
-        msg = msg.replace("%player%", victim.getName());
-        msg = msg.replace("%effect_name%", effect.getName());
-        player.sendMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.THIEF_STEAL);
+        msg.applyPlaceholder("player", victim.getName());
+        msg.applyPlaceholder("effect_name", effect.getName());
+        player.sendMessage(msg.toComponent());
 
         // Activating the stolen spark.
         effect.activateSpark(player);

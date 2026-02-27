@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -44,16 +45,16 @@ public class Invisibility implements Listener {
 
         if (plugin.getConfigFile().invisDeaths()) {
             if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Messages.INVIS_KILL.getMessage();
-                msg = msg.replace("%victim%", victim.getName());
-                msg = msg.replace("%killer%", "<gray><obf>Someone");
-                event.deathMessage(Messages.toComponent(msg));
+                Message msg = new Message(MessageType.INVIS_KILL);
+                msg.applyPlaceholder("%victim%", victim.getName());
+                msg.applyPlaceholder("%killer%", "<gray><obf>Someone");
+                event.deathMessage(msg.toComponent());
             } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 if (killer != null) {
-                    String msg = Messages.INVIS_DEATH.getMessage();
-                    msg = msg.replace("%victim%", "<gray><obf>Someone");
-                    msg = msg.replace("%killer%", killer.getName());
-                    event.deathMessage(Messages.toComponent(msg));
+                    Message msg = new Message(MessageType.INVIS_DEATH);
+                    msg.applyPlaceholder("%victim%", "<gray><obf>Someone");
+                    msg.applyPlaceholder("%killer%", killer.getName());
+                    event.deathMessage(msg.toComponent());
                 }
             }
         }

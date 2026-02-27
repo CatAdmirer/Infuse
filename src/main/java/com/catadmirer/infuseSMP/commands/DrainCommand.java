@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.command.Command;
@@ -23,7 +24,7 @@ public class DrainCommand implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
+            sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
             return true;
         }
 
@@ -32,7 +33,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         if (label.contains("ldrain")) slot = "1";
         else if (label.contains("rdrain")) slot = "2";
         else {
-            player.sendMessage(Messages.WITHDRAW_INVALID.toComponent());
+            player.sendMessage(new Message(MessageType.WITHDRAW_INVALID).toComponent());
             return true;
         }
 
@@ -41,15 +42,15 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Handling an invalid or empty mapping
         if (effect == null) {
-            String msg = Messages.EFFECT_NONE_EQUIPPED.getMessage();
-            msg = msg.replace("%slot%", slot);
-            player.sendMessage(Messages.toComponent(msg));
+            Message msg = new Message(MessageType.EFFECT_NONE_EQUIPPED);
+            msg.applyPlaceholder("slot", slot);
+            player.sendMessage(msg.toComponent());
             return true;
         }
 
         // Making sure the player has inventory space for the drained item.
         if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
+            player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
             return true;
         }
     
@@ -64,9 +65,9 @@ public class DrainCommand implements CommandExecutor, Listener {
 
         // Removing the effect from the player
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
-        String msg = Messages.DRAIN_SUCCESS.getMessage();
-        msg = msg.replace("%effect_name%", effect.getName());
-        player.sendMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.DRAIN_SUCCESS);
+        msg.applyPlaceholder("effect_name", effect.getName());
+        player.sendMessage(msg.toComponent());
 
         // Giving the player the effect item.
         ItemStack item = effect.createItem();
