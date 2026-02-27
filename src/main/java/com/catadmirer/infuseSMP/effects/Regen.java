@@ -62,6 +62,9 @@ public class Regen implements Listener {
         if (!(event.getAction().isRightClick())) return;
         Player player = event.getPlayer();
 
+        // Filtering an empty hand
+        if (event.getItem() == null) return;
+        
         // Filtering inedible items
         if (!event.getItem().getType().isEdible()) return;
         
