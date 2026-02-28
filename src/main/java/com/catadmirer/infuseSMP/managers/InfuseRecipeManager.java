@@ -170,14 +170,32 @@ public class InfuseRecipeManager implements Listener {
         // If the effect is not augmented, just let the item be crafted
         if (!effect.isAugmented())  {
             CraftingInventory inv = event.getInventory();
-            inv.clear();
+            ItemStack[] matrix = inv.getMatrix();
+
+            for(int i = 0; i < matrix.length; ++i) {
+                if (matrix[i] != null && matrix[i].getType() != Material.AIR) {
+                    int newAmt = matrix[i].getAmount() - 1;
+                    matrix[i] = newAmt > 0 ? new ItemStack(matrix[i].getType(), newAmt) : null;
+                }
+            }
+
+            inv.setMatrix(matrix);
             player.closeInventory();
             return;
         }
 
         // Clearing the ingredients
         CraftingInventory inv = event.getInventory();
-        inv.clear();
+        ItemStack[] matrix = inv.getMatrix();
+
+        for(int i = 0; i < matrix.length; ++i) {
+            if (matrix[i] != null && matrix[i].getType() != Material.AIR) {
+                int newAmt = matrix[i].getAmount() - 1;
+                matrix[i] = newAmt > 0 ? new ItemStack(matrix[i].getType(), newAmt) : null;
+            }
+        }
+
+        inv.setMatrix(matrix);
 
         // Closing the inventory
         player.closeInventory();
