@@ -167,8 +167,11 @@ public class InfuseRecipeManager implements Listener {
         }
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setCrafted(effect, numCrafted + 1);
+        Component itemName = Messages.toComponent(effect.getName());
+
         // If the effect is not augmented, just let the item be crafted
         if (!effect.isAugmented())  {
+            event.setCancelled(true);
             CraftingInventory inv = event.getInventory();
             ItemStack[] matrix = inv.getMatrix();
 
@@ -181,12 +184,39 @@ public class InfuseRecipeManager implements Listener {
 
             inv.setMatrix(matrix);
             player.closeInventory();
+            brewerLocation.getWorld().dropItemNaturally(brewerLocation, craftedItem);
+            if (plugin.getConfigFile().regularBroadcast()) {
+                String worldName = brewerLocation.getWorld().getName();
+                if (worldName.equalsIgnoreCase("world")) {
+                    worldName = "<green><b>Overworld";
+                } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
+                    worldName = "<dark_purple><b>End";
+                } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
+                    worldName = "<dark_red><b>Nether";
+                } else {
+                    worldName = "<gray>" + worldName;
+                }
+
+                String x = String.valueOf(brewerLocation.getBlockX());
+                String y = String.valueOf(brewerLocation.getBlockY());
+                String z = String.valueOf(brewerLocation.getBlockZ());
+
+                String formattedMessage = Messages.REGULAR_BROADCAST.getMessage()
+                        .replace("%player%", player.getName())
+                        .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
+                        .replace("%x%", x)
+                        .replace("%y%", y)
+                        .replace("%z%", z)
+                        .replace("%dimension%", worldName);
+                Bukkit.broadcast(Messages.toComponent(formattedMessage));
+            }
             return;
         }
 
         // Clearing the ingredients
         CraftingInventory inv = event.getInventory();
         ItemStack[] matrix = inv.getMatrix();
+
 
         for(int i = 0; i < matrix.length; ++i) {
             if (matrix[i] != null && matrix[i].getType() != Material.AIR) {
@@ -212,7 +242,6 @@ public class InfuseRecipeManager implements Listener {
         }
 
         // Creating the bossbar
-        Component itemName = Messages.toComponent(effect.getName());
         this.ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
                 .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1.0f,
                 effect.getRitualColor(), BossBar.Overlay.PROGRESS);
@@ -252,11 +281,11 @@ public class InfuseRecipeManager implements Listener {
 
         String worldName = brewerLocation.getWorld().getName();
         if (worldName.equalsIgnoreCase("world")) {
-            worldName = "<green>Overworld";
+            worldName = "<green><b>Overworld";
         } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            worldName = "<dark_purple>End";
+            worldName = "<dark_purple><b>End";
         } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            worldName = "<dark_red>Nether";
+            worldName = "<dark_red><b>Nether";
         } else {
             worldName = "<gray>" + worldName;
         }

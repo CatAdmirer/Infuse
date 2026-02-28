@@ -23,6 +23,8 @@ public enum Messages {
     DISCORD_BROADCAST("discord_broadcast", "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
     EFFECT_FINISHED("effect_finished", "%item% has been brewed!"),
 
+    REGULAR_BROADCAST("regular_effect_broadcast", "🧪 A %item%<reset> has been crafted at <#90D5FF><b>%x%, %y%, %z%... %dimension%"),
+
     SLOT_EMPTY("slot_empty", "<red>You don't have any effect equipped in slot %slot%."),
     EFFECT_NONE_EQUIPPED("effect_none_equipped", "<red>You don't have an Effect equipped in slot %slot%."),
 

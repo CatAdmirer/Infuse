@@ -143,6 +143,11 @@ public class MainConfig {
         return config.getBoolean("extra_effects.Apophis");
     }
 
+    public boolean regularBroadcast() {
+        return config.getBoolean("regular_effect_broadcast");
+    }
+
+
     public boolean enableThief() {
         return config.getBoolean("extra_effects.Thief");
     }

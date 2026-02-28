@@ -9,6 +9,8 @@ effect_broadcast: "🧪 %player% is cooking up the %item%<reset> at %x%, %y%, %z
 discord_broadcast: "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"
 effect_finished: "%item% has been brewed!"
 
+regular_effect_broadcast: "🧪 A %item%<reset> has been crafted at <#90D5FF><b>%x%, %y%, %z%... %dimension%"
+
 # %slot% = Number 1/2 (Which slot they're using)
 
 slot_empty: "<red>You don't have any effect equipped in slot %slot%."
