@@ -261,9 +261,9 @@ public class InfuseRecipeManager implements Listener {
 
         // Spawning the ender crystal if the config allows
         if (plugin.getConfigFile().ritualBeacon()) {
-            Location startLoc = brewerLocation.clone();
+            Location startLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             startLoc.setY(-100);
-            Location targetLoc = brewerLocation.clone();
+            Location targetLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             targetLoc.setY(500);
             
             EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
