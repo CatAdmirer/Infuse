@@ -88,7 +88,7 @@ public class InfuseRecipeManager implements Listener {
             EffectMapping mapping = EffectMapping.fromEffectKey(recipeKey);
 
             // Handling the augmented ender effect
-            if (mapping.isAugmented()) {
+            if (mapping != null && mapping.isAugmented()) {
                 registerRecipeFromConfig("aug_ender", EffectMapping.AUG_ENDER.createItem());
                 continue;
             }
