@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,10 +53,6 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
     
-        // Resetting the player's health
-        // TODO: Make this work better.  It will conflict with other health-managing plugins.
-        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-
         // Handling special apophis effects
         if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
             plugin.getDataManager().removeEffect(player.getUniqueId(), slot);

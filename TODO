@@ -4,3 +4,8 @@ Player Schedulers!  They cancel automatically if the player goes offline.
     player.getScheduler().runDelayed(plugin, task -> { if (maxHealthAttribute != null) maxHealthAttribute.setBaseValue(20); }, null, 1200);
 
 Remove as many static functions as I can
+
+Add separate recipes for the augmented and regular versions of each effect
+- For convenience, add a quick way to keep two recipes the same (maybe define recipe then state applicable effects for that recipe)
+
+Add a config to disable in certain worlds

@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -32,10 +31,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
@@ -43,6 +40,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final ApophisManager apophisManager;
     private final DataManager dataManager;
     private final MainConfig mainConfig;
+    private final GlobalLoop loop;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -50,6 +48,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.apophisManager = new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
+        this.loop = new GlobalLoop(this);
     }
 
     public void onEnable() {
@@ -75,6 +74,9 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Registering infuse commands
         this.registerCommands();
+
+        // Starting the passive effect loop
+        loop.start();
 
         // Registering event listeners for the plugin
         this.registerEvents();
@@ -150,20 +152,12 @@ public class Infuse extends JavaPlugin implements Listener {
         });
     }
 
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-        (new BukkitRunnable() {
-            public void run() {
-                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
-                player.setHealth(20);
-            }
-        }).runTaskLater(this, 10L);
-    }
-
     public void onDisable() {
         // Resetting the instance
         instance = null;
+
+        // Stopping the passive effect loop
+        loop.stop();
 
         // Sending the log message
         this.getLogger().info("Infuse Plugin is disabling...");
@@ -184,6 +178,9 @@ public class Infuse extends JavaPlugin implements Listener {
         // Initializing the particle manager
         new Particles(this).startTask();
 
+        // Initializing the hit tracker
+        Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
+
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
@@ -195,14 +192,14 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Registering events for all the effects
         Bukkit.getPluginManager().registerEvents(new Emerald(this), this);
-        Bukkit.getPluginManager().registerEvents(new Ender(dataManager, this), this);
-        Bukkit.getPluginManager().registerEvents(new Feather(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Ender(this), this);
+        Bukkit.getPluginManager().registerEvents(new Feather(this), this);
         Bukkit.getPluginManager().registerEvents(new Fire(this), this);
         Bukkit.getPluginManager().registerEvents(new Frost(dataManager, this), this);
         Bukkit.getPluginManager().registerEvents(new Haste(this), this);
         Bukkit.getPluginManager().registerEvents(new Heart(this), this);
         Bukkit.getPluginManager().registerEvents(new Invisibility(this), this);
-        Bukkit.getPluginManager().registerEvents(new Ocean(this, dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new Ocean(this), this);
         Bukkit.getPluginManager().registerEvents(new Regen(this), this);
         Bukkit.getPluginManager().registerEvents(new Speed(this), this);
         Bukkit.getPluginManager().registerEvents(new Strength(this), this);

@@ -5,17 +5,16 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
     private final Infuse plugin;
@@ -85,7 +84,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(mapping.createItem());
 
                 String msg = Messages.INFUSE_GIVEEFFECT_SUCCESS.getMessage();
-                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB()) + ">");
+                msg = msg.replace("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
                 msg = msg.replace("%effect_name%", mapping.getName());
                 target.sendMessage(Messages.toComponent(msg));
                 break;

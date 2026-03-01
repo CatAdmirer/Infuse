@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -13,9 +14,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class StationSelectionMenu implements InventoryHolder {
     private final Inventory inventory;
+    private final Location standLocation;
 
-    public StationSelectionMenu() {
+    public StationSelectionMenu(Location standLocation) {
         inventory = Bukkit.createInventory(this, 27, Component.text("Station Selection"));
+        this.standLocation = standLocation;
 
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(Material.GRAY_STAINED_GLASS_PANE));
@@ -40,5 +43,9 @@ public class StationSelectionMenu implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return inventory;
+    }
+
+    public Location getStandLocation() {
+        return standLocation;
     }
 }

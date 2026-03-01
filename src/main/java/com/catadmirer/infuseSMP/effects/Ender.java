@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import net.kyori.adventure.text.Component;
 import java.util.Collection;
@@ -12,11 +11,14 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.*;
+import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -31,27 +33,26 @@ import org.bukkit.util.Vector;
 
 public class Ender implements Listener {
     public static final Component fireballName = Component.text("Cursing Projectile");
+    public static final Set<UUID> cursedPlayers = new HashSet<>();
 
     private static Infuse plugin;
 
-    private final Set<UUID> cursedPlayers = new HashSet<>();
-    private final DataManager dataManager;
-
-    public Ender(DataManager dataManager, Infuse plugin) {
-        this.dataManager = dataManager;
+    public Ender(Infuse plugin) {
         Ender.plugin = plugin;
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) {
-                    applyGlowingToUntrusted(player);
-                }
+    }
 
-                // Spawning particles on cursed players
-                if (cursedPlayers.contains(player.getUniqueId())) {
-                    player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.01);
-                }
-            }
-        }, 0L, 20L);
+    public static void applyPassiveEffects(Player player) {
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
+
+        double radius = 10;
+
+        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof Player nearby)) continue;
+            if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
+            if (plugin.getDataManager().isTrusted(nearby, player)) continue;
+            nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
+        }
     }
 
     @EventHandler
@@ -77,11 +78,6 @@ public class Ender implements Listener {
             player.damage(event.getDamage(), fakeSource);
         }
     }
-
-    private boolean isTeammate(Player player, Player caster) {
-        return dataManager.isTrusted(player, caster);
-    }
-
 
     public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
@@ -167,6 +163,7 @@ public class Ender implements Listener {
         if (handItem.getAmount() > 1) {
             handItem.setAmount(handItem.getAmount() - 1);
         } else {
+            // Is this necessary?
             player.getInventory().setItemInMainHand(null);
         }
 
@@ -182,12 +179,22 @@ public class Ender implements Listener {
     }
 
     @EventHandler
+    public void enderCurseHit(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
+
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.ENDER)) return;
+
+        cursePlayer(target.getUniqueId(), 1200);
+    }
+
+    @EventHandler
     public void onFireballDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof DragonFireball fireball)) return;
         if (!fireballName.equals(fireball.customName())) return;
         if (!(event.getEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
-        if (isTeammate(target, shooter)) return;
+        if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
         cursePlayer(target.getUniqueId(), 1200);
 
@@ -200,7 +207,7 @@ public class Ender implements Listener {
         if (!fireballName.equals(fireball.customName())) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
-        if (isTeammate(target, shooter)) return;
+        if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
         cursePlayer(target.getUniqueId(), 1200);
     }
@@ -209,19 +216,5 @@ public class Ender implements Listener {
         cursedPlayers.add(playerUUID);
 
         Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), delayTicks);
-    }
-
-    public void applyGlowingToUntrusted(Player player) {
-        if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
-
-        double radius = 10;
-
-        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
-        for (Entity entity : nearbyEntities) {
-            if (!(entity instanceof Player nearby)) continue;
-            if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
-            if (dataManager.isTrusted(nearby, player)) continue;
-            nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
-        }
     }
 }

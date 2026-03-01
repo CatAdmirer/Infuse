@@ -1,10 +1,10 @@
 package com.catadmirer.infuseSMP.util;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import net.kyori.adventure.text.Component;
 
 public class InventoryUtils {
     /**

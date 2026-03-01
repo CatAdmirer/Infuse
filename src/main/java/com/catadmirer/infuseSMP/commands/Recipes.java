@@ -5,14 +5,13 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import net.kyori.adventure.text.Component;
+import com.catadmirer.infuseSMP.util.InventoryUtils;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class Recipes implements CommandExecutor, Listener {
     private static Infuse plugin;
@@ -60,21 +60,32 @@ public class Recipes implements CommandExecutor, Listener {
      * @return The effect item with modified lore.
      */
     public static ItemStack createPotionWithModifiedLore(String potionName) {
-        // Creating the potion from the key
-        ItemStack potionItem = createPotion(potionName);
-        if (potionItem == null) return null;
+        // Getting the EffectMapping from the recipe key
+        EffectMapping effect = EffectMapping.fromEffectKey(potionName);
+        if (effect == null) return null;
 
-        Map<String,Integer> limits = loadCraftLimitsFromConfig().get(potionName);
+        // Creating the potion from the effect
+        ItemStack potionItem = effect.createItem();
 
-        if (limits == null) {
-            return new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        int augLeft = plugin.getConfigFile().getCraftLimit(effect.augmented()) - plugin.getDataManager().getCrafted(effect.augmented());
+        int regLeft = plugin.getConfigFile().getCraftLimit(effect) - plugin.getDataManager().getCrafted(effect);
+
+        // Ender effect is *special*
+        if (effect == EffectMapping.ENDER) {
+            augLeft = 0;
+        } else if (effect == EffectMapping.AUG_ENDER) {
+            regLeft = 0;
+        }
+
+        if (augLeft == 0 && regLeft == 0) {
+            return InventoryUtils.createNoName(Material.RED_STAINED_GLASS_PANE);
         }
 
         ItemMeta meta = potionItem.getItemMeta();
         if (meta != null) {
             List<Component> lore = new ArrayList<>();
-            lore.add(Messages.toComponent("<gray>Augmented Limit: <aqua>" + limits.get("augmented_limit")));
-            lore.add(Messages.toComponent("<gray>Regular Limit: <aqua>" + limits.get("regular_limit")));
+            lore.add(Messages.toComponent("<gray>Augmented Limit: <aqua>" + augLeft));
+            lore.add(Messages.toComponent("<gray>Regular Limit: <aqua>" + regLeft));
             meta.lore(lore);
             potionItem.setItemMeta(meta);
         }
@@ -119,37 +130,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     public static void openGUI(Player player) {
         Inventory gui = new RecipeListGUI().getInventory();
-
-        fillRemainingSlots(gui);
         player.openInventory(gui);
-    }
-
-    private static Map<String, Map<String, Integer>> loadCraftLimitsFromConfig() {
-        Map<String, Map<String, Integer>> result = new HashMap<>();
-
-        for (String itemName : Arrays.asList(
-                "emerald","feather","fire","aug_ender","ender","frost",
-                "haste","heart","invis","ocean","regen","speed","strength","thunder","apophis","thief"
-        )) {
-            if (!plugin.getConfigFile().enableApophis() && itemName.equals("apophis")) continue;
-            if (!plugin.getConfigFile().enableThief()  && itemName.equals("thief"))   continue;
-
-            Object augObj = plugin.getConfig().get("craft_limits." + itemName + ".augmented_limit");
-            Object regObj = plugin.getConfig().get("craft_limits." + itemName + ".regular_limit");
-
-            if (!(augObj instanceof Number) || !(regObj instanceof Number)) {
-                plugin.getLogger().warning("bug: " + itemName);
-                continue;
-            }
-
-            Map<String, Integer> limits = new HashMap<>();
-            limits.put("augmented_limit", ((Number) augObj).intValue());
-            limits.put("regular_limit",   ((Number) regObj).intValue());
-
-            result.put(itemName, limits);
-        }
-
-        return result;
     }
 
     /**
@@ -176,6 +157,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeGUIHandler(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeGUI) {
             event.setCancelled(true);
         }
@@ -188,6 +170,7 @@ public class Recipes implements CommandExecutor, Listener {
      */
     @EventHandler
     public void recipeListGUIHandler(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) return;
         if (event.getClickedInventory().getHolder() instanceof RecipeListGUI
                 && event.getCurrentItem() != null) {
             event.setCancelled(true);

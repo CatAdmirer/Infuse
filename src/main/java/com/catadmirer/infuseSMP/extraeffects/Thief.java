@@ -5,10 +5,10 @@ import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import net.kyori.adventure.text.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
@@ -32,19 +32,14 @@ public class Thief implements Listener {
 
     public Thief(Infuse plugin) {
         Thief.plugin = plugin;
+    }
 
-        // TODO: Try to remove this
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                    if (!plugin.getDataManager().hasEffect(player, EffectMapping.THIEF)) {
-                        if (otherPlayer.canSee(player)) {
-                            otherPlayer.listPlayer(player);
-                        }
-                    }
-                }
+    public static void applyPassiveEffects(Player player) {
+        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+            if (otherPlayer.canSee(player)) {
+                otherPlayer.listPlayer(player);
             }
-        }, 0L, 20L);
+        }
     }
 
     // Hiding a thief user from the rest of the players online
@@ -129,13 +124,14 @@ public class Thief implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             long timeLeft = disguiseEndTime - System.currentTimeMillis();
 
-            bossBar.setProgress(timeLeft / 3600);
-
-            if (timeLeft < 0) {
+            if (timeLeft < 0 || timeLeft / 3600.0 < 0) {
                 removeDisguise(thiefUser);
                 bossBar.removePlayer(thiefUser);
                 task.cancel();
+                return;
             }
+
+            bossBar.setProgress(timeLeft / 3600.0);
         }, 0, 20);
     }
 

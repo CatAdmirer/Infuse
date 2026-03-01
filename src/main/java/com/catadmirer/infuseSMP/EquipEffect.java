@@ -85,7 +85,7 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        ItemStack mainHandItem = event.getItem();
 
         // Getting the effect from the item
         EffectMapping effect = EffectMapping.fromItem(mainHandItem);
