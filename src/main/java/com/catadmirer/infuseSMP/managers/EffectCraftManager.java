@@ -233,6 +233,9 @@ public class EffectCraftManager implements Listener {
         ImmortalBrewer brewerListener = new ImmortalBrewer(brewerLocation);
         Bukkit.getPluginManager().registerEvents(brewerListener, plugin);
 
+        // Updating the ender recipe
+        plugin.getRecipeManager().updateEnderRecipe();
+
         // Starting the ritual progress bar
         new BukkitRunnable() {
             float progress = 1.0f;

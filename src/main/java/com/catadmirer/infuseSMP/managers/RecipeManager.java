@@ -76,6 +76,26 @@ public class RecipeManager {
         return effectRecipe;
     }
 
+    public void updateEnderRecipe() {
+        if (plugin.getDataManager().getCrafted(EffectMapping.AUG_ENDER) > 0) {
+            ShapedRecipe enderRecipe = getRecipe(EffectMapping.ENDER);
+            Bukkit.removeRecipe(enderRecipe.getKey(), true);
+
+            String matName = recipesConfig.getString("ender.egg_replacement");
+            Material eggReplacement = Material.valueOf(matName.toUpperCase());
+
+            ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection("ender.ingredients");
+            for (String key : ingredientsConfig.getKeys(false)) {
+                char ingredientLabel = key.charAt(0);
+                if (!ingredientsConfig.getString(key).equals("DRAGON_EGG")) continue;
+
+                enderRecipe.setIngredient(ingredientLabel, eggReplacement);
+            }
+
+            Bukkit.addRecipe(enderRecipe);
+        }
+    }
+
     public NamespacedKey getRecipeKey(EffectMapping effect) {
         return new NamespacedKey(plugin, effect.regular().getKey());
     }
