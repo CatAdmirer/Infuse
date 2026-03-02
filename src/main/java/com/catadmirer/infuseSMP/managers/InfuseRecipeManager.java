@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.configuration.ConfigurationSection;
@@ -158,7 +159,7 @@ public class InfuseRecipeManager implements Listener {
         HumanEntity player = event.getWhoClicked();
 
         // Checking craft limits
-        int craftLimit = plugin.getConfigFile().getCraftLimit(effect);
+        int craftLimit = plugin.getMainConfig().getCraftLimit(effect);
         int numCrafted = plugin.getDataManager().getCrafted(effect);
 
         if (numCrafted == craftLimit) {
@@ -185,17 +186,14 @@ public class InfuseRecipeManager implements Listener {
             inv.setMatrix(matrix);
             player.closeInventory();
             brewerLocation.getWorld().dropItemNaturally(brewerLocation, craftedItem);
-            if (plugin.getConfigFile().regularBroadcast()) {
-                String worldName = brewerLocation.getWorld().getName();
-                if (worldName.equalsIgnoreCase("world")) {
-                    worldName = "<green><b>Overworld";
-                } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-                    worldName = "<dark_purple><b>End";
-                } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-                    worldName = "<dark_red><b>Nether";
-                } else {
-                    worldName = "<gray>" + worldName;
-                }
+            if (plugin.getMainConfig().regularBroadcast()) {
+                Environment worldEnv = brewerLocation.getWorld().getEnvironment();
+                String worldName = switch(worldEnv) {
+                    case NORMAL -> "<green><b>Overworld";
+                    case NETHER -> "<dark_red><b>Nether";
+                    case THE_END -> "<dark_purple><b>End";
+                    default -> "<gray>" + brewerLocation.getWorld().getName();
+                };
 
                 String x = String.valueOf(brewerLocation.getBlockX());
                 String y = String.valueOf(brewerLocation.getBlockY());
@@ -254,13 +252,13 @@ public class InfuseRecipeManager implements Listener {
         // Getting the duration of the ritual
         int ritualDuration;
         if (effect == EffectMapping.AUG_ENDER) {
-            ritualDuration = plugin.getConfigFile().ritualDurationEnder();
+            ritualDuration = plugin.getMainConfig().ritualDurationEnder();
         } else {
-            ritualDuration = plugin.getConfigFile().ritualDuration();
+            ritualDuration = plugin.getMainConfig().ritualDuration();
         }
 
         // Spawning the ender crystal if the config allows
-        if (plugin.getConfigFile().ritualBeacon()) {
+        if (plugin.getMainConfig().ritualBeacon()) {
             Location startLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             startLoc.setY(-100);
             Location targetLoc = brewerLocation.clone().add(0.5, 0, 0.5);
@@ -279,16 +277,13 @@ public class InfuseRecipeManager implements Listener {
             }, ritualDuration * 20L);
         }
 
-        String worldName = brewerLocation.getWorld().getName();
-        if (worldName.equalsIgnoreCase("world")) {
-            worldName = "<green><b>Overworld";
-        } else if (worldName.equalsIgnoreCase("world_end") || worldName.equalsIgnoreCase("world_the_end")) {
-            worldName = "<dark_purple><b>End";
-        } else if (worldName.equalsIgnoreCase("world_nether") || worldName.equalsIgnoreCase("world_the_nether")) {
-            worldName = "<dark_red><b>Nether";
-        } else {
-            worldName = "<gray>" + worldName;
-        }
+        Environment worldEnv = brewerLocation.getWorld().getEnvironment();
+        String worldName = switch(worldEnv) {
+            case NORMAL -> "<green><b>Overworld";
+            case NETHER -> "<dark_red><b>Nether";
+            case THE_END -> "<dark_purple><b>End";
+            default -> "<gray>" + brewerLocation.getWorld().getName();
+        };
 
         String x = String.valueOf(brewerLocation.getBlockX());
         String y = String.valueOf(brewerLocation.getBlockY());
@@ -312,8 +307,8 @@ public class InfuseRecipeManager implements Listener {
 
         // Broadcasting that the ritual has started
         Bukkit.broadcast(Messages.toComponent(formattedMessage));
-        if (plugin.getConfigFile().enableDiscordBroadcasts()) {
-            String webhookUrl = plugin.getConfigFile().discordWebhookUrl();
+        if (plugin.getMainConfig().enableDiscordBroadcasts()) {
+            String webhookUrl = plugin.getMainConfig().discordWebhookUrl();
             if (webhookUrl != null && !webhookUrl.isEmpty()) {
                 sendToDiscord(webhookUrl, formattedDiscordMessage);
             }
@@ -425,13 +420,13 @@ public class InfuseRecipeManager implements Listener {
         if (effect == null) return;
         // Checking the limits for the effect
         EffectMapping augForm = effect.augmented();
-        int augLimit = plugin.getConfigFile().getCraftLimit(augForm);
+        int augLimit = plugin.getMainConfig().getCraftLimit(augForm);
         int augCrafted = plugin.getDataManager().getCrafted(augForm);
         if (augLimit > augCrafted) {
             event.getInventory().setResult(effect.augmented().createItem());
             return;
         }
-        int regLimit = plugin.getConfigFile().getCraftLimit(effect);
+        int regLimit = plugin.getMainConfig().getCraftLimit(effect);
         int regCrafted = plugin.getDataManager().getCrafted(effect);
         if (regLimit > regCrafted) {
             event.getInventory().setResult(effect.createItem());
@@ -456,7 +451,7 @@ public class InfuseRecipeManager implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        if (plugin.getConfigFile().brewingGui()) {
+        if (plugin.getMainConfig().brewingGui()) {
             player.openInventory(new StationSelectionMenu(block.getLocation()).getInventory());
         } else {
             // Opening the menu for crafting effects
