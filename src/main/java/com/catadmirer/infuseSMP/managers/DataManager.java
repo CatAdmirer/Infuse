@@ -120,6 +120,8 @@ public class DataManager {
 
     public void setCrafted(EffectMapping effect, int crafted) {
         config.set("effects-crafted." + effect.getKey(), crafted);
+        
+        save();
     }
 
     public List<Player> getTrusted(Player truster) {
