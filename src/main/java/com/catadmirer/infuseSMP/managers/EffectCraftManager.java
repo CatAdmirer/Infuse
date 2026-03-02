@@ -156,6 +156,14 @@ public class EffectCraftManager implements Listener {
             return;
         }
 
+        // Removing the ingredients
+        event.getInventory().forEach(item -> {
+            item.subtract(1);
+        });
+
+        // Closing the inventory
+        player.closeInventory();
+
         // Cancelling the event
         event.setCancelled(true);        
 
