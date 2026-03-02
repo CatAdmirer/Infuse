@@ -94,18 +94,10 @@ public class Recipes implements CommandExecutor, Listener {
         EffectMapping effect = EffectMapping.fromItem(clickedItem);
         if (effect == null) return;
 
-        openRecipeGUI(event.getWhoClicked(), effect);
-    }
+        HumanEntity player = event.getWhoClicked();
 
-    /**
-     * Opens the recipe gui for a player based on the item they clicked.
-     * 
-     * @param player The player to open the inventory for.
-     * @param clickedItem The item to get the recipe for.
-     */
-    public void openRecipeGUI(HumanEntity player, EffectMapping effect) {
         // Erroring out if the recipe is not enabled
-        if (plugin.getRecipeManager().isRecipeEnabled(effect)) {
+        if (!plugin.getRecipeManager().isRecipeEnabled(effect)) {
             player.sendMessage(Messages.RECIPE_DISABLED.toComponent());
             return;
         }
