@@ -28,8 +28,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -229,7 +231,7 @@ public class EffectCraftManager implements Listener {
             }
         }
 
-        // Preventing the brewing stand from being broken
+        // Preventing the brewing stand from being broken or opened
         ImmortalBrewer brewerListener = new ImmortalBrewer(brewerLocation);
         Bukkit.getPluginManager().registerEvents(brewerListener, plugin);
 
@@ -297,6 +299,7 @@ public class EffectCraftManager implements Listener {
     /** Handles when players right click a brewing stand. */
     @EventHandler
     public void onBrewingStandInteract(PlayerInteractEvent event) {
+        if (event.useInteractedBlock() == Result.DENY) return;
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         Block block = event.getClickedBlock();
@@ -369,6 +372,15 @@ public class EffectCraftManager implements Listener {
                     blocks.remove(block);
                 }
             }
+        }
+
+        @EventHandler(priority = EventPriority.LOW)
+        public void onBrewingStandInteract(PlayerInteractEvent event) {
+            Block clicked = event.getClickedBlock();
+            if (clicked == null) return;
+            if (!clicked.getLocation().equals(brewerLocation)) return;
+
+            event.setUseInteractedBlock(Result.DENY);
         }
     }
 }
