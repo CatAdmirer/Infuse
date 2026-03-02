@@ -41,6 +41,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final DataManager dataManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
+    private final RecipeManager recipeManager;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -49,6 +50,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
+        this.recipeManager = new RecipeManager(this);
     }
 
     public void onEnable() {
@@ -81,6 +83,9 @@ public class Infuse extends JavaPlugin implements Listener {
         // Registering event listeners for the plugin
         this.registerEvents();
 
+        // Registering the infuse recipes
+        recipeManager.registerRecipes();
+
         // Initializing the action bar updater
         new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
 
@@ -98,6 +103,10 @@ public class Infuse extends JavaPlugin implements Listener {
 
     public MainConfig getMainConfig() {
         return mainConfig;
+    }
+
+    public RecipeManager getRecipeManager() {
+        return recipeManager;
     }
 
     /** Registers the commands for the plugin. */
