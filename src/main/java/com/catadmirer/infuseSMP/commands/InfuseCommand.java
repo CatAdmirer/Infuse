@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
-                Recipes.openGUI(player);
+                player.openInventory(new RecipeListGUI().getInventory());
                 break;
             case "giveeffect":
                 if (!player.isOp()) {
