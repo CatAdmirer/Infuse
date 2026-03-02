@@ -285,6 +285,9 @@ public class Infuse extends JavaPlugin implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        // Giving the player all the infuse recipes
+        Stream.of(EffectMapping.values()).map(recipeManager::getRecipeKey).forEach(player::discoverRecipe);
         
         // Telling the player their current control mode
         String controlMode = dataManager.getControlMode(player.getUniqueId());
