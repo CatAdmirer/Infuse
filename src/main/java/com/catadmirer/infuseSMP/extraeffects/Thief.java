@@ -66,8 +66,8 @@ public class Thief implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
 
         CooldownManager.setDuration(playerUUID, "thief", duration);
         CooldownManager.setCooldown(playerUUID, "thief", cooldown);
@@ -210,8 +210,8 @@ public class Thief implements Listener {
         CooldownManager.clearSpecificDuration(playerUUID, effect.regular().getKey());
 
         // Applying cooldowns for the thief effect
-        long cooldown = plugin.getConfigFile().cooldown(effect);
-        long duration = plugin.getConfigFile().duration(effect);
+        long cooldown = plugin.getMainConfig().cooldown(effect);
+        long duration = plugin.getMainConfig().duration(effect);
 
         CooldownManager.setDuration(playerUUID, "thief_stolen", duration);
         CooldownManager.setCooldown(playerUUID, "thief_stolen", cooldown * 2);

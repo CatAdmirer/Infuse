@@ -96,7 +96,7 @@ public class Infuse extends JavaPlugin implements Listener {
         getLogger().info("Infuse Plugin has been enabled!");
     }
 
-    public MainConfig getConfigFile() {
+    public MainConfig getMainConfig() {
         return mainConfig;
     }
 

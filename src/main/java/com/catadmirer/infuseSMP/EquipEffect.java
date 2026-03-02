@@ -28,8 +28,8 @@ public class EquipEffect implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player their starting effects if they haven't been given already
-        if (!player.hasPlayedBefore() && plugin.getConfigFile().joinEffectsEnabled()) {
-            List<EffectMapping> effects = plugin.getConfigFile().joinEffects();
+        if (!player.hasPlayedBefore() && plugin.getMainConfig().joinEffectsEnabled()) {
+            List<EffectMapping> effects = plugin.getMainConfig().joinEffects();
             if (effects.isEmpty()) return;
             EffectMapping effect = effects.get(new Random().nextInt(effects.size()));
             equipEffect(player, effect, "2");
@@ -121,7 +121,7 @@ public class EquipEffect implements Listener {
         Player player = event.getEntity();
         EffectMapping effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
         EffectMapping effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        String dropMode = plugin.getConfigFile().effectDrops();
+        String dropMode = plugin.getMainConfig().effectDrops();
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
             case "1":

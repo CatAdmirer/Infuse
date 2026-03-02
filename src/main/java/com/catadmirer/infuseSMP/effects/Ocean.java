@@ -58,8 +58,8 @@ public class Ocean implements Listener {
         final double radius = 5;
         final World world = caster.getWorld();
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
 
         CooldownManager.setDuration(playerUUID, "ocean", duration);
         CooldownManager.setCooldown(playerUUID, "ocean", cooldown);
@@ -99,8 +99,8 @@ public class Ocean implements Listener {
 
                 World world = caster.getWorld();
                 Location holderLoc = caster.getLocation();
-                double radius = plugin.getConfigFile().oceanPullRadius();
-                double strength = plugin.getConfigFile().oceanPullStrength();
+                double radius = plugin.getMainConfig().oceanPullRadius();
+                double strength = plugin.getMainConfig().oceanPullStrength();
 
                 for (Player p : world.getPlayers()) {
                     if (p.equals(caster)) continue;
@@ -116,6 +116,6 @@ public class Ocean implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0, plugin.getConfigFile().oceanPullInterval());
+        }.runTaskTimer(plugin, 0, plugin.getMainConfig().oceanPullInterval());
     }
 }

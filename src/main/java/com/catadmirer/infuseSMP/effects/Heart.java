@@ -121,8 +121,8 @@ public class Heart implements Listener {
         }
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
 
         CooldownManager.setDuration(playerUUID, "heart", duration);
         CooldownManager.setCooldown(playerUUID, "heart", cooldown);

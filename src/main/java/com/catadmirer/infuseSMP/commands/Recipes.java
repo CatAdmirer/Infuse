@@ -67,8 +67,8 @@ public class Recipes implements CommandExecutor, Listener {
         // Creating the potion from the effect
         ItemStack potionItem = effect.createItem();
 
-        int augLeft = plugin.getConfigFile().getCraftLimit(effect.augmented()) - plugin.getDataManager().getCrafted(effect.augmented());
-        int regLeft = plugin.getConfigFile().getCraftLimit(effect) - plugin.getDataManager().getCrafted(effect);
+        int augLeft = plugin.getMainConfig().getCraftLimit(effect.augmented()) - plugin.getDataManager().getCrafted(effect.augmented());
+        int regLeft = plugin.getMainConfig().getCraftLimit(effect) - plugin.getDataManager().getCrafted(effect);
 
         // Ender effect is *special*
         if (effect == EffectMapping.ENDER) {

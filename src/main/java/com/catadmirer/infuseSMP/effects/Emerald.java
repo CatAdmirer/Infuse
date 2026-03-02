@@ -67,7 +67,7 @@ public class Emerald implements Listener {
         InfuseDebug.log("[Emerald] Target has emerald effect");
         InfuseDebug.log("[Emerald] Locking attacker's food and XP");
 
-        new FoodAndXPLock(event.getAttacker(), plugin.getConfigFile().emeraldLockDurationSeconds());
+        new FoodAndXPLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
 
     public static class FoodAndXPLock implements Listener {
@@ -209,8 +209,8 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
 
         CooldownManager.setDuration(playerUUID, "emerald", duration);
         CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
