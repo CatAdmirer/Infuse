@@ -297,6 +297,7 @@ public class EffectCraftManager implements Listener {
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         // Ignoring non-infuse items
         if (event.getRecipe() == null) return;
+        if (EffectMapping.fromItem(event.getRecipe().getResult()) == null) return;
 
         ItemStack toCraft = plugin.getRecipeManager().getItemToCraft(event.getRecipe());
         event.getInventory().setResult(toCraft);
