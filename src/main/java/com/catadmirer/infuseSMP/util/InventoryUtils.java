@@ -52,9 +52,8 @@ public class InventoryUtils {
      * @param inventory The inventory to fill with panes.
      */
     public static void fillRemainingSlots(Inventory inventory) {
-        ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
-        ItemMeta meta = stainedGlassPane.getItemMeta();
-        meta.displayName(Component.empty());
+        ItemStack stainedGlassPane = createNoName(Material.RED_STAINED_GLASS_PANE);
+
         for (int i = 0; i < inventory.getSize(); i++) {
             if (inventory.getItem(i) == null) {
                 inventory.setItem(i, stainedGlassPane);
