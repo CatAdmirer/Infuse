@@ -69,7 +69,7 @@ public class Infuse extends JavaPlugin implements Listener {
         mainConfig.load();
 
         // Initializing the recipe manager
-        new InfuseRecipeManager(this);
+        new EffectCraftManager(this);
 
         // Loading the data manager
         dataManager.load();
