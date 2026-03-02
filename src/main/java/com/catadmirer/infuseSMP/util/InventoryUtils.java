@@ -44,4 +44,21 @@ public class InventoryUtils {
     public static void setItems(Inventory inventory, int[] slots, ItemStack item) {
         for (int slot : slots) inventory.setItem(slot, item);
     }
+
+    /**
+     * Utility function that fills all empty slots of an inventory with red stained glass panes with
+     * empty names.
+     * 
+     * @param inventory The inventory to fill with panes.
+     */
+    public static void fillRemainingSlots(Inventory inventory) {
+        ItemStack stainedGlassPane = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        ItemMeta meta = stainedGlassPane.getItemMeta();
+        meta.displayName(Component.empty());
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) {
+                inventory.setItem(i, stainedGlassPane);
+            }
+        }
+    }
 }
