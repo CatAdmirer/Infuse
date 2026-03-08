@@ -29,6 +29,9 @@ public class RecipeListGUI implements InventoryHolder {
         }
 
         InventoryUtils.fillRemainingSlots(inventory);
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override

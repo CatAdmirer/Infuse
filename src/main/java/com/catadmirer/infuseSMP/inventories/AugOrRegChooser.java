@@ -21,6 +21,9 @@ public class AugOrRegChooser implements InventoryHolder {
         // Adding the effects to the inventory
         inventory.setItem(11, effect.regular().createItem());
         inventory.setItem(15, effect.augmented().createItem());
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override

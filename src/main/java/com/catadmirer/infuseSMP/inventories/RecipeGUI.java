@@ -40,6 +40,9 @@ public class RecipeGUI implements InventoryHolder {
 
         // Filling the rest of the slots with red glass panes
         InventoryUtils.fillRemainingSlots(inventory);
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override

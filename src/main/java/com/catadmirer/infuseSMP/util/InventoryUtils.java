@@ -60,4 +60,18 @@ public class InventoryUtils {
             }
         }
     }
+
+    /**
+     * "Locks" an inventory by setting the stack size for each item to 1.
+     * 
+     * @param inventory The inventory to lock.
+     */
+    public static void lockInventory(Inventory inventory) {
+        for (ItemStack item : inventory.getContents()) {
+            if (item == null) continue;
+            item.editMeta(meta -> {
+                meta.setMaxStackSize(1);
+            });
+        }
+    }
 }

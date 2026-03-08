@@ -44,6 +44,9 @@ public class EffectChooser implements InventoryHolder {
         if (plugin.getMainConfig().enableApophis()) {
             inventory.setItem(41, EffectMapping.AUG_APOPHIS.createItem());
         }
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override
