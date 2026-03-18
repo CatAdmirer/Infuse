@@ -163,7 +163,7 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        File disguiseFile = new File(plugin.getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
+        File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + player.getUniqueId() + ".yml");
         if (disguiseFile.exists()) {
             apophisManager.disguiseAsApophis(player);
         }
