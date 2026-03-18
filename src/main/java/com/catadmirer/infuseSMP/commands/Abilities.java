@@ -40,7 +40,7 @@ public class Abilities implements CommandExecutor {
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
-            String msg = Messages.getMessage(Messages.SLOT_EMPTY);
+            String msg = Messages.SLOT_EMPTY.getMessage();
             msg = msg.replace("%slot%", slot);
             player.sendMessage(Messages.toComponent(msg));
             return true;

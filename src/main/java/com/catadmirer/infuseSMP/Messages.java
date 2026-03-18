@@ -238,39 +238,6 @@ public enum Messages {
         return true;
     }
 
-    /**
-     * Gets a message from the config.
-     * 
-     * @param key The message to retrieve.
-     * 
-     * @return A message from the config
-     */
-    public static String getMessage(Messages key) {
-        if (!config.contains(key.configKey)) {
-            Bukkit.getLogger().severe("Could not find \"" + key.configKey + "\" in the config.");
-            config.set(key.configKey, key.defaultValue);
-            try {
-                config.save(file);
-            } catch (IOException err) {
-                err.printStackTrace();
-            }
-            return key.defaultValue;
-        }
-
-        // If the config is a list, it converts it into a single string separated by newlines.
-        // Otherwise, it just returns the string.
-        if (config.isList(key.configKey)) {
-            StringBuilder retVal = new StringBuilder();
-            for (String line : config.getStringList(key.configKey)) {
-                retVal.append(line).append("\n");
-            }
-
-            return retVal.substring(0, retVal.length() - 1);
-        } else {
-            return config.getString(key.configKey);
-        }
-    }
-
     public String getMessage() {
         if (!config.contains(configKey)) {
             Bukkit.getLogger().severe("Could not find \"" + configKey + "\" in the config.");
@@ -305,19 +272,8 @@ public enum Messages {
         return getStringList().stream().map(Messages::toComponent).toList();
     }
 
-    /**
-     * Converts a message to a component by passing it through legacy and minimessage formatting.
-     * 
-     * @param message The message enum to convert.
-     * 
-     * @return The component value of the message.
-     */
-    public static Component toComponent(Messages message) {
-        return toComponent(getMessage(message));
-    }
-
     public Component toComponent() {
-        return toComponent(getMessage(this));
+        return toComponent(getMessage());
     }
 
     /**
