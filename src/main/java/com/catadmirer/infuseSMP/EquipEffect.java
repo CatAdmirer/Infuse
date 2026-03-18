@@ -92,7 +92,7 @@ public class EquipEffect implements Listener {
         // Skipping if the effect is not found.
         if (effect == null) return;
 
-        // Skipping if the plauer's inventory is full.
+        // Skipping if the player's inventory is full.
         if (player.getInventory().firstEmpty() == -1) {
             event.setCancelled(true);
             player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
