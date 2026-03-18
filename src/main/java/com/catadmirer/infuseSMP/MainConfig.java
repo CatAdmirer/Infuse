@@ -207,4 +207,12 @@ public class MainConfig {
     public double oceanPullStrength() {
         return config.getDouble("ocean_pulling.pull.strength");
     }
+
+    public void applyUpdates() {
+        config.set("invis_deaths", null);
+        config.set("invis.hide_kills", false);
+        config.set("invis.hide_deaths", false);
+
+        save();
+    }
 }

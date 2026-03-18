@@ -325,4 +325,16 @@ public enum Messages {
     public static Component toComponent(String message) {
         return MiniMessage.miniMessage().deserialize("<i:false>" + message);
     }
+
+    public static void applyUpdates() {
+        config.set("invis.kill_invis", null);
+        config.set("invis.death_invis", null);
+        config.set("death_message", "%victim% was slain by %killer%");
+        
+        try {
+            config.save(file);
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
+    }
 }

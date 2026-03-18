@@ -68,6 +68,10 @@ public class Infuse extends JavaPlugin implements Listener {
         // Loading the config
         mainConfig.load();
 
+        // Applying config updates
+        Messages.applyUpdates();
+        mainConfig.applyUpdates();
+
         // Initializing the recipe manager
         new EffectCraftManager(this);
 
