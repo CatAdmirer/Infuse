@@ -113,7 +113,7 @@ public class EffectCraftManager implements Listener {
 
         // Checking craft limits
         int craftLimit = plugin.getMainConfig().getCraftLimit(effect);
-        int numCrafted = plugin.getDataManager().getCrafted(effect);
+        int numCrafted = plugin.getDataManager().getExistingCount(effect);
         if (numCrafted == craftLimit) {
             player.sendMessage(Component.text("The max number of ").append(Messages.toComponent(effect.getName())).append(Component.text("effects has been reached", NamedTextColor.WHITE)));
             event.setCancelled(true);
@@ -121,7 +121,7 @@ public class EffectCraftManager implements Listener {
         }
 
         // Incrementing the number of effects crafted.
-        plugin.getDataManager().setCrafted(effect, numCrafted + 1);
+        plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
         Component itemName = Messages.toComponent(effect.getName());
 
         // If the effect is not augmented, just craft it

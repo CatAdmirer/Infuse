@@ -77,7 +77,7 @@ public class RecipeManager {
     }
 
     public void updateEnderRecipe() {
-        if (plugin.getDataManager().getCrafted(EffectMapping.AUG_ENDER) > 0) {
+        if (plugin.getDataManager().getExistingCount(EffectMapping.AUG_ENDER) > 0) {
             ShapedRecipe enderRecipe = getRecipe(EffectMapping.ENDER);
             Bukkit.removeRecipe(enderRecipe.getKey(), true);
 
@@ -118,12 +118,12 @@ public class RecipeManager {
 
         // Checking if the augmented limit has been reached
         EffectMapping augEffect = effect.augmented();
-        if (plugin.getMainConfig().getCraftLimit(augEffect) > plugin.getDataManager().getCrafted(augEffect)) {
+        if (plugin.getMainConfig().getCraftLimit(augEffect) > plugin.getDataManager().getExistingCount(augEffect)) {
             return augEffect.createItem();
         }
 
         // Checking if the regular limit has been reached
-        if (plugin.getMainConfig().getCraftLimit(effect) > plugin.getDataManager().getCrafted(effect)) {
+        if (plugin.getMainConfig().getCraftLimit(effect) > plugin.getDataManager().getExistingCount(effect)) {
             return effect.createItem();
         }
 

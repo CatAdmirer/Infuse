@@ -70,16 +70,17 @@ public class Infuse extends JavaPlugin implements Listener {
         
         // Loading the config
         mainConfig.load();
+        
+        // Loading the data manager
+        dataManager.load();
 
         // Applying config updates
         Messages.applyUpdates();
         mainConfig.applyUpdates();
+        dataManager.applyUpdates();
 
         // Initializing the recipe manager
         new EffectCraftManager(this);
-
-        // Loading the data manager
-        dataManager.load();
 
         // Registering infuse commands
         this.registerCommands();
@@ -346,7 +347,7 @@ public class Infuse extends JavaPlugin implements Listener {
         if (effect == null) return;
 
         // Decrementing the number of crafted effects
-        dataManager.setCrafted(effect, dataManager.getCrafted(effect) - 1);
+        dataManager.setExistingCount(effect, dataManager.getExistingCount(effect) - 1);
     }
 
     @EventHandler
@@ -358,7 +359,7 @@ public class Infuse extends JavaPlugin implements Listener {
         if (effect == null) return;
 
         // Decrementing the number of crafted effects
-        dataManager.setCrafted(effect, dataManager.getCrafted(effect) - 1);
+        dataManager.setExistingCount(effect, dataManager.getExistingCount(effect) - 1);
     }
 
     public DataManager getDataManager() {
