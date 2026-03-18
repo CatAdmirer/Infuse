@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -177,6 +178,13 @@ public class Apophis implements Listener {
                 }
             }
         }).runTaskTimer(plugin, 0L, 1L);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        AttributeInstance maxHealth = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        maxHealth.removeModifier(apophisBoost);
+        maxHealth.removeModifier(apophisSparkBoost);
     }
 }
 
