@@ -29,8 +29,6 @@ enable_discord_broadcasts: false
 
 discord_webhook_url: ""
 
-invis_deaths: false # Change death messages in messages.yml (WILL ONLY APPLY TO INVIS ONES), made by Duckiee2
-
 brewing_gui: true
 
 effect_drops: Random
@@ -68,6 +66,8 @@ craft_limits:
 
 # Full cooldown is duration + cooldown
 invis:
+  hide_kills: false
+  hide_deaths: false
   cooldown:
     default: 121
     augmented: 61

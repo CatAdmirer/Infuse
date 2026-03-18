@@ -119,10 +119,6 @@ public class MainConfig {
         return config.getString("discord_webhook_url");
     }
 
-    public boolean invisDeaths() {
-        return config.getBoolean("invis_deaths");
-    }
-
     public boolean brewingGui() {
         return config.getBoolean("brewing_gui");
     }
@@ -174,6 +170,14 @@ public class MainConfig {
 
     public double emeraldLockDurationSeconds() {
         return config.getDouble("emerald.lock_duration_seconds", 10);
+    }
+
+    public boolean invisHideKills() {
+        return config.getBoolean("invis.hide_kills");
+    }
+
+    public boolean invisHideDeaths() {
+        return config.getBoolean("invis.hide_deaths");
     }
 
     public long cooldown(EffectMapping effect) {

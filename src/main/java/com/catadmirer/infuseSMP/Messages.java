@@ -40,9 +40,7 @@ public enum Messages {
     TRUST_NOTTRUSTED("trust_nottrusted", "<green>You already didn't trust %target%."),
 
     EFFECT_NOBREWING("effect_nobrewing", "<red>You need to craft this in a brewing stand!"),
-
-    INVIS_KILL("invis.kill_invis", "%victim% was slain by %killer%"),
-    INVIS_DEATH("invis.death_invis", "%victim% was slain by %killer%"),
+    DEATH_MESSAGE("death_message", "%victim% was slain by %killer%"),
 
     CONTROLS_USAGE("controls.usage", "<red>Usage: /controls <offhand|command>"),
     CONTROLS_INVALID_PARAM("controls.invalid_param", "<red>Invalid option. Use \"offhand\" or \"command\"."),

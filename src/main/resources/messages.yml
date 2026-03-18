@@ -31,6 +31,7 @@ trust_alreadytrusted: "<green>You already trust %target%."
 trust_nottrusted: "<green>You already didn't trust %target%."
 
 effect_nobrewing: "<red>You need to craft this in a brewing stand!"
+death_message: "%victim% was slain by %killer%"
 
 controls:
   usage: "<red>Usage: /controls <offhand|command>"
@@ -87,10 +88,6 @@ errors:
   invalid_command: "<red>Invalid command."
   ritual_active: "<red>A ritual is already in progress!"
   target_not_found: "<red>Player not found or not online."
-
-invis:
-  kill_invis: "%victim% was slain by %killer%"
-  death_invis: "%victim% was slain by %killer%"
 
 strength:
   effect_name: "<dark_red>Strength Effect"

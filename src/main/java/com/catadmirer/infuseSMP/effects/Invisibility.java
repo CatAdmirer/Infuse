@@ -8,6 +8,10 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -27,6 +31,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invisibility implements Listener {
+    public static final MiniMessage mm = MiniMessage.miniMessage();
+
     private static Infuse plugin;
 
     public Invisibility(Infuse plugin) {
@@ -42,21 +48,26 @@ public class Invisibility implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (plugin.getMainConfig().invisDeaths()) {
-            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                String msg = Messages.INVIS_KILL.getMessage();
-                msg = msg.replace("%victim%", victim.getName());
-                msg = msg.replace("%killer%", "<gray><obf>Someone");
-                event.deathMessage(Messages.toComponent(msg));
-            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                if (killer != null) {
-                    String msg = Messages.INVIS_DEATH.getMessage();
-                    msg = msg.replace("%victim%", "<gray><obf>Someone");
-                    msg = msg.replace("%killer%", killer.getName());
-                    event.deathMessage(Messages.toComponent(msg));
-                }
-            }
+        if (killer == null) return;
+
+        Component victimName;
+        if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
+            victimName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+        } else {
+            victimName = victim.displayName();
         }
+        
+        Component killerName;
+        if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
+            killerName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+        } else {
+            killerName = killer.displayName();
+        }
+
+        String msg = Messages.DEATH_MESSAGE.getMessage();
+        msg.replace("%victim%", mm.serialize(victimName));
+        msg.replace("%killer%", mm.serialize(killerName));
+        event.deathMessage(Messages.toComponent(msg));
     }
 
     @EventHandler
