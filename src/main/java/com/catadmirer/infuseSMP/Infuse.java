@@ -26,9 +26,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -334,6 +337,28 @@ public class Infuse extends JavaPlugin implements Listener {
         // } catch (Exception e) {
         //     player.sendMessage("Failed to check for Infuse updates" + e);
         // }
+    }
+
+    @EventHandler
+    public void lowerCraftLimitOnDespawn(ItemDespawnEvent event) {
+        ItemStack item = event.getEntity().getItemStack();
+        EffectMapping effect = EffectMapping.fromItem(item);
+        if (effect == null) return;
+
+        // Decrementing the number of crafted effects
+        dataManager.setCrafted(effect, dataManager.getCrafted(effect) - 1);
+    }
+
+    @EventHandler
+    public void lowerCraftLimitOnDestroy(EntityDeathEvent event) {
+        if (!(event.getEntity() instanceof Item itemEntity)) return;
+
+        ItemStack item = itemEntity.getItemStack();
+        EffectMapping effect = EffectMapping.fromItem(item);
+        if (effect == null) return;
+
+        // Decrementing the number of crafted effects
+        dataManager.setCrafted(effect, dataManager.getCrafted(effect) - 1);
     }
 
     public DataManager getDataManager() {
