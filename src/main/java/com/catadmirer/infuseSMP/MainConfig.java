@@ -119,10 +119,6 @@ public class MainConfig {
         return config.getString("discord_webhook_url");
     }
 
-    public boolean invisDeaths() {
-        return config.getBoolean("invis_deaths");
-    }
-
     public boolean brewingGui() {
         return config.getBoolean("brewing_gui");
     }
@@ -142,6 +138,11 @@ public class MainConfig {
     public boolean enableApophis() {
         return config.getBoolean("extra_effects.Apophis");
     }
+
+    public boolean regularBroadcast() {
+        return config.getBoolean("regular_effect_broadcast");
+    }
+
 
     public boolean enableThief() {
         return config.getBoolean("extra_effects.Thief");
@@ -171,6 +172,14 @@ public class MainConfig {
         return config.getDouble("emerald.lock_duration_seconds", 10);
     }
 
+    public boolean invisHideKills() {
+        return config.getBoolean("invis.hide_kills");
+    }
+
+    public boolean invisHideDeaths() {
+        return config.getBoolean("invis.hide_deaths");
+    }
+
     public long cooldown(EffectMapping effect) {
         return config.getLong(effect.regular().getKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
     }
@@ -197,5 +206,13 @@ public class MainConfig {
 
     public double oceanPullStrength() {
         return config.getDouble("ocean_pulling.pull.strength");
+    }
+
+    public void applyUpdates() {
+        config.set("invis_deaths", null);
+        config.set("invis.hide_kills", false);
+        config.set("invis.hide_deaths", false);
+
+        save();
     }
 }

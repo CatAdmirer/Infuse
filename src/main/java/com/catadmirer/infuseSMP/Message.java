@@ -79,6 +79,8 @@ public class Message {
         DISCORD_BROADCAST(List.of("player", "item", "x", "y", "z", "dimension"), "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
         EFFECT_FINISHED(List.of("item"), "%item% has been brewed!"),
 
+        REGULAR_BROADCAST(List.of("item", "x", "y", "z", "dimension"), "🧪 A %item%<reset> has been crafted at <#90D5FF><b>%x%, %y%, %z%... %dimension%"),
+
         SLOT_EMPTY(List.of("slot"), "<red>You don't have any effect equipped in slot %slot%."),
         EFFECT_NONE_EQUIPPED(List.of("slot"), "<red>You don't have an Effect equipped in slot %slot%."),
 
@@ -94,9 +96,7 @@ public class Message {
         TRUST_NOTTRUSTED(List.of("target"), "<green>You already didn't trust %target%."),
 
         EFFECT_NOBREWING("<red>You need to craft this in a brewing stand!"),
-
-        INVIS_KILL(List.of("victim", "killer"), "%victim% was slain by %killer%"),
-        INVIS_DEATH(List.of("victim", "killer"), "%victim% was slain by %killer%"),
+        DEATH_MESSAGE(List.of("victim", "killer"), "%victim% was slain by %killer%"),
 
         CONTROLS_USAGE("<red>Usage: /controls <offhand|command>"),
         CONTROLS_INVALID_PARAM("<red>Invalid option. Use \"offhand\" or \"command\"."),
@@ -104,7 +104,7 @@ public class Message {
         INFUSE_INVALID_PARAM("<red>Please use the tab completions as a reference."),
         INFUSE_INVALID_SLOT(List.of("slot"), "<red>Invalid Argument! Could not identify slot %slot%.  Please use \"1\" or \"2\"."),
         INFUSE_CONTROLS_USAGE("<red>Usage: /infuse controls <offhand|command>"),
-        INFUSE_CONTROLS_SUCCESS(List.of("control_mode"), "<dark_red>Your controls are now %control_mode%"),
+        INFUSE_CONTROLS_SUCCESS(List.of("controlMode"), "<dark_red>Your controls are now %controlMode%"),
 
         INFUSE_SETEFFECT_USAGE("<red>Invalid Argument! Please use /infuse setEffect <player> <aug_fire|ocean> <1|2>"),
         INFUSE_SETEFFECT_SUCCESS(List.of("slot", "player_name", "effect_name"), "<green>Successfully set the effect in slot %slot% of player %player_name% to %effect_name%."),

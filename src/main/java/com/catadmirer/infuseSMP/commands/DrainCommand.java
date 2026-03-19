@@ -10,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
@@ -53,15 +52,6 @@ public class DrainCommand implements CommandExecutor, Listener {
             player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
             return true;
         }
-    
-        // Handling special apophis effects
-        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
-            ItemStack glitchItem = effect.createItem();
-            player.getInventory().addItem(glitchItem);
-            apophisManager.unsetApophis(player);
-            return true;
-        }
 
         // Removing the effect from the player
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
@@ -70,9 +60,12 @@ public class DrainCommand implements CommandExecutor, Listener {
         player.sendMessage(msg.toComponent());
 
         // Giving the player the effect item.
-        ItemStack item = effect.createItem();
-        player.getInventory().addItem(item);
+        player.getInventory().addItem(effect.createItem());
 
+        // Handling special apophis effects
+        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
+            apophisManager.unsetApophis(player);
+        }
         return true;
     }
 }

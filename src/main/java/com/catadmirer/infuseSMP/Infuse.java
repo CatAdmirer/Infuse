@@ -27,9 +27,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -42,6 +45,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final DataManager dataManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
+    private final RecipeManager recipeManager;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -50,6 +54,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
+        this.recipeManager = new RecipeManager(this);
     }
 
     public void onEnable() {
@@ -66,12 +71,17 @@ public class Infuse extends JavaPlugin implements Listener {
         
         // Loading the config
         mainConfig.load();
-
-        // Initializing the recipe manager
-        new InfuseRecipeManager(this);
-
+        
         // Loading the data manager
         dataManager.load();
+
+        // Applying config updates
+        MessageConfig.applyUpdates();
+        mainConfig.applyUpdates();
+        dataManager.applyUpdates();
+
+        // Initializing the recipe manager
+        new EffectCraftManager(this);
 
         // Registering infuse commands
         this.registerCommands();
@@ -81,6 +91,9 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Registering event listeners for the plugin
         this.registerEvents();
+
+        // Registering the infuse recipes
+        recipeManager.registerRecipes();
 
         // Initializing the action bar updater
         new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
@@ -97,8 +110,12 @@ public class Infuse extends JavaPlugin implements Listener {
         getLogger().info("Infuse Plugin has been enabled!");
     }
 
-    public MainConfig getConfigFile() {
+    public MainConfig getMainConfig() {
         return mainConfig;
+    }
+
+    public RecipeManager getRecipeManager() {
+        return recipeManager;
     }
 
     /** Registers the commands for the plugin. */
@@ -277,6 +294,9 @@ public class Infuse extends JavaPlugin implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        // Giving the player all the infuse recipes
+        Stream.of(EffectMapping.values()).map(recipeManager::getRecipeKey).forEach(player::discoverRecipe);
         
         // Telling the player their current control mode
         String controlMode = dataManager.getControlMode(player.getUniqueId());
@@ -319,6 +339,28 @@ public class Infuse extends JavaPlugin implements Listener {
         // } catch (Exception e) {
         //     player.sendMessage("Failed to check for Infuse updates" + e);
         // }
+    }
+
+    @EventHandler
+    public void lowerCraftLimitOnDespawn(ItemDespawnEvent event) {
+        ItemStack item = event.getEntity().getItemStack();
+        EffectMapping effect = EffectMapping.fromItem(item);
+        if (effect == null) return;
+
+        // Decrementing the number of crafted effects
+        dataManager.setExistingCount(effect, dataManager.getExistingCount(effect) - 1);
+    }
+
+    @EventHandler
+    public void lowerCraftLimitOnDestroy(EntityDeathEvent event) {
+        if (!(event.getEntity() instanceof Item itemEntity)) return;
+
+        ItemStack item = itemEntity.getItemStack();
+        EffectMapping effect = EffectMapping.fromItem(item);
+        if (effect == null) return;
+
+        // Decrementing the number of crafted effects
+        dataManager.setExistingCount(effect, dataManager.getExistingCount(effect) - 1);
     }
 
     public DataManager getDataManager() {

@@ -66,7 +66,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         if (effect == null) {
-            return plugin.getConfigFile().emptyEffectIcon() ? "\uE901" : "";
+            return plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
         }
 
         return "" + (CooldownManager.isEffectActive(uuid, effect.regular().getKey()) ? effect.getActiveIcon() : effect.getIcon());

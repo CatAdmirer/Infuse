@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -95,8 +96,8 @@ public class Apophis implements Listener {
             }
             
             // Applying cooldowns and durations for the effect
-            long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
-            long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
+            long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
+            long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
 
             CooldownManager.setDuration(playerUUID, "apophis", duration);
             CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
@@ -177,6 +178,13 @@ public class Apophis implements Listener {
                 }
             }
         }).runTaskTimer(plugin, 0L, 1L);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        AttributeInstance maxHealth = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        maxHealth.removeModifier(apophisBoost);
+        maxHealth.removeModifier(apophisSparkBoost);
     }
 }
 

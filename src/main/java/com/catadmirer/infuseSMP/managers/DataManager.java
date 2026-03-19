@@ -2,9 +2,11 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -114,12 +116,14 @@ public class DataManager {
         return true;
     }
 
-    public int getCrafted(EffectMapping effect) {
-        return config.getInt("effects-crafted." + effect.getKey(), 0);
+    public int getExistingCount(EffectMapping effect) {
+        return config.getInt("existing-effects." + effect.getKey(), 0);
     }
 
-    public void setCrafted(EffectMapping effect, int crafted) {
-        config.set("effects-crafted." + effect.getKey(), crafted);
+    public void setExistingCount(EffectMapping effect, int crafted) {
+        config.set("existing-effects." + effect.getKey(), crafted);
+        
+        save();
     }
 
     public List<Player> getTrusted(Player truster) {
@@ -209,5 +213,32 @@ public class DataManager {
 
     public String getControlMode(UUID playerUUID) {
         return config.getString(playerUUID.toString() + ".controls", "offhand");
+    }
+
+    public void applyUpdates() {
+        try {
+            Scanner scanner = new Scanner(dataFile);
+            StringBuffer inputBuffer = new StringBuffer();
+            String line;
+
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+
+                // Replacing old configs
+                if (line.startsWith("effects-crafted")) {
+                    line = line.replace("effects-crafted", "existing-effects");
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+            scanner.close();
+
+            // Emptying the string buffer back into the file
+            FileOutputStream fileOut = new FileOutputStream(dataFile);
+            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut.close();
+        } catch (IOException err) {
+            
+        }
     }
 }

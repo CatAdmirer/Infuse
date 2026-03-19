@@ -38,6 +38,9 @@ public class StationSelectionMenu implements InventoryHolder {
         // Putting the options into the inventory
         inventory.setItem(11, craftingTable);
         inventory.setItem(15, brewingStand);
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override

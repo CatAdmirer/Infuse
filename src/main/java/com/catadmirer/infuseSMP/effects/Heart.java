@@ -22,6 +22,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -121,12 +122,19 @@ public class Heart implements Listener {
         }
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
 
         CooldownManager.setDuration(playerUUID, "heart", duration);
         CooldownManager.setCooldown(playerUUID, "heart", cooldown);
         
         Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        AttributeInstance maxHealth = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        maxHealth.removeModifier(heartBoost);
+        maxHealth.removeModifier(heartSparkBoost);
     }
 }

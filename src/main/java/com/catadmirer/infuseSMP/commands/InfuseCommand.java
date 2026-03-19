@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.MessageConfig;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.ArrayList;
@@ -52,12 +53,13 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                plugin.getConfigFile().load();
+                plugin.getMainConfig().load();
                 MessageConfig.load(plugin);
+                plugin.getRecipeManager().reload();
                 player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
-                Recipes.openGUI(player);
+                player.openInventory(new RecipeListGUI().getInventory());
                 break;
             case "giveeffect":
                 if (!player.isOp()) {

@@ -118,8 +118,8 @@ public class Fire implements Listener {
         }.runTaskLater(plugin, 20L);
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
 
         CooldownManager.setDuration(playerUUID, "fire", duration);
         CooldownManager.setCooldown(playerUUID, "fire", cooldown);

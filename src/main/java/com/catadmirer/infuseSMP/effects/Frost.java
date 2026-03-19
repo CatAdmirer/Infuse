@@ -125,8 +125,8 @@ public class Frost implements Listener {
         caster.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
 
         CooldownManager.setDuration(playerUUID, "frost", duration);
         CooldownManager.setCooldown(playerUUID, "frost", cooldown);

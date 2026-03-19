@@ -17,6 +17,8 @@ allow_infinite_effects: false
 ritual_duration: 600  # Duration in seconds (10 minutes)
 ritual_duration_ender: 3600 # Duration in seconds (1hr)
 
+regular_effect_broadcast: true
+
 ritual_beacon: true
 
 empty_effect_icon: true
@@ -26,8 +28,6 @@ player_head_drops: true
 enable_discord_broadcasts: false
 
 discord_webhook_url: ""
-
-invis_deaths: false # Change death messages in messages.yml (WILL ONLY APPLY TO INVIS ONES), made by Duckiee2
 
 brewing_gui: true
 
@@ -66,6 +66,8 @@ craft_limits:
 
 # Full cooldown is duration + cooldown
 invis:
+  hide_kills: false
+  hide_deaths: false
   cooldown:
     default: 121
     augmented: 61

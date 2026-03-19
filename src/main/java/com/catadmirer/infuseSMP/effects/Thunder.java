@@ -24,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class Thunder implements Listener {
     private final Map<UUID, Long> entityLightningCooldowns = new HashMap<>();
@@ -60,8 +61,8 @@ public class Thunder implements Listener {
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
 
         CooldownManager.setDuration(playerUUID, "thunder", duration);
         CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
@@ -141,29 +142,42 @@ public class Thunder implements Listener {
         List<LivingEntity> lightningTargets = new ArrayList<>();
         lightningTargets.add(startEntity);
 
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            // Stopping once enough people have been hit
-            if (lightningTargets.size() > 5) {
-                task.cancel();
-                return;
+        BukkitTask loop = new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Stopping once enough people have been hit
+                if (lightningTargets.size() > 5) {
+                    cancel();
+                    return;
+                }
+
+                if (lightningTargets.isEmpty()) {
+                    cancel();
+                    return;
+                }
+
+                // Getting the current target
+                LivingEntity livingEntity = lightningTargets.get(0);
+
+                // Damaging the current target
+                livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
+                livingEntity.damage(4, attacker);
+                livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
+
+                lightningTargets.removeIf(LivingEntity::isDead);
+
+                // Finding the next target
+                for (Entity entity : livingEntity.getNearbyEntities(3, 3, 3)) {
+                    if (!(entity instanceof LivingEntity living)) continue;
+                    if (entity.equals(attacker)) continue;
+                    if (lightningTargets.contains(entity)) continue;
+
+                    lightningTargets.add(living);
+                }
             }
-
-            // Getting the current target
-            LivingEntity livingEntity = lightningTargets.get(0);
-
-            // Damaging the current target
-            livingEntity.getWorld().strikeLightningEffect(livingEntity.getLocation());
-            livingEntity.damage(4, attacker);
-            livingEntity.getWorld().spawnParticle(Particle.DUST, livingEntity.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
-
-            // Finding the next target
-            for (Entity entity : livingEntity.getNearbyEntities(3, 3, 3)) {
-                if (!(entity instanceof LivingEntity living)) continue;
-                if (entity.equals(attacker)) continue;
-                if (lightningTargets.contains(entity)) continue;
-
-                lightningTargets.add(0, living);
-            }
-        }, 0, 20);
+        }.runTaskTimer(plugin, 0, 20L);
+        Bukkit.getScheduler().runTaskLater(plugin, othertask -> {
+            loop.cancel();
+        }, 60L);
     }
 }

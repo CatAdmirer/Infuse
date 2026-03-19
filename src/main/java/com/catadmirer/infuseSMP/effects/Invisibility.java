@@ -9,6 +9,10 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -28,6 +32,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invisibility implements Listener {
+    public static final MiniMessage mm = MiniMessage.miniMessage();
+
     private static Infuse plugin;
 
     public Invisibility(Infuse plugin) {
@@ -43,21 +49,26 @@ public class Invisibility implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (plugin.getConfigFile().invisDeaths()) {
-            if (killer != null && killer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                Message msg = new Message(MessageType.INVIS_KILL);
-                msg.applyPlaceholder("%victim%", victim.getName());
-                msg.applyPlaceholder("%killer%", "<gray><obf>Someone");
-                event.deathMessage(msg.toComponent());
-            } else if (victim.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                if (killer != null) {
-                    Message msg = new Message(MessageType.INVIS_DEATH);
-                    msg.applyPlaceholder("%victim%", "<gray><obf>Someone");
-                    msg.applyPlaceholder("%killer%", killer.getName());
-                    event.deathMessage(msg.toComponent());
-                }
-            }
+        if (killer == null) return;
+
+        Component victimName;
+        if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
+            victimName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+        } else {
+            victimName = victim.displayName();
         }
+        
+        Component killerName;
+        if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
+            killerName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+        } else {
+            killerName = killer.displayName();
+        }
+
+        Message msg = new Message(MessageType.DEATH_MESSAGE);
+        msg.applyPlaceholder("victim", mm.serialize(victimName));
+        msg.applyPlaceholder("killer", mm.serialize(killerName));
+        event.deathMessage(msg.toComponent());
     }
 
     @EventHandler
@@ -112,8 +123,8 @@ public class Invisibility implements Listener {
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
                     
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
-        long duration = plugin.getConfigFile().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
+        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
 
         CooldownManager.setDuration(playerUUID, "invis", duration);
         CooldownManager.setCooldown(playerUUID, "invis", cooldown);

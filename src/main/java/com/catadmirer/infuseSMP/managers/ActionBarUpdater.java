@@ -41,7 +41,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
-        boolean emptyEffectEmoji = plugin.getConfigFile().emptyEffectIcon();
+        boolean emptyEffectEmoji = plugin.getMainConfig().emptyEffectIcon();
         if (effect == null) {
             return emptyEffectEmoji ? Component.text("\uE901 ") : Component.empty();
         }
@@ -71,7 +71,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
 
         // Handling empty slots
-        boolean emptyEffectEmoji = plugin.getConfigFile().emptyEffectIcon();
+        boolean emptyEffectEmoji = plugin.getMainConfig().emptyEffectIcon();
         if (effect == null) {
             return emptyEffectEmoji ? Component.text("\uE901 ") : Component.empty();
         }
