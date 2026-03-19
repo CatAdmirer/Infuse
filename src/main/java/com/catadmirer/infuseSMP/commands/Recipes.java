@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -55,8 +56,8 @@ public class Recipes implements CommandExecutor, Listener {
 
         potionItem.editMeta(meta -> {
             List<Component> lore = new ArrayList<>();
-            lore.add(Messages.toComponent("<gray>Augmented Limit: <aqua>" + augLeft));
-            lore.add(Messages.toComponent("<gray>Regular Limit: <aqua>" + regLeft));
+            lore.add(Message.toComponent("<gray>Augmented Limit: <aqua>" + augLeft));
+            lore.add(Message.toComponent("<gray>Regular Limit: <aqua>" + regLeft));
             meta.lore(lore);
             potionItem.setItemMeta(meta);
         });
@@ -98,7 +99,7 @@ public class Recipes implements CommandExecutor, Listener {
 
         // Erroring out if the recipe is not enabled
         if (!plugin.getRecipeManager().isRecipeEnabled(effect)) {
-            player.sendMessage(Messages.RECIPE_DISABLED.toComponent());
+            player.sendMessage(new Message(MessageType.RECIPE_DISABLED).toComponent());
             return;
         }
 

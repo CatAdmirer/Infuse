@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -64,10 +65,10 @@ public class Invisibility implements Listener {
             killerName = killer.displayName();
         }
 
-        String msg = Messages.DEATH_MESSAGE.getMessage();
-        msg.replace("%victim%", mm.serialize(victimName));
-        msg.replace("%killer%", mm.serialize(killerName));
-        event.deathMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.DEATH_MESSAGE);
+        msg.applyPlaceholder("victim", mm.serialize(victimName));
+        msg.applyPlaceholder("killer", mm.serialize(killerName));
+        event.deathMessage(msg.toComponent());
     }
 
     @EventHandler

@@ -1,6 +1,6 @@
 package com.catadmirer.infuseSMP.inventories;
 
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -26,13 +26,13 @@ public class StationSelectionMenu implements InventoryHolder {
         // Creating the crafting table option
         ItemStack craftingTable = new ItemStack(Material.CRAFTING_TABLE);
         ItemMeta craftingMeta = craftingTable.getItemMeta();
-        craftingMeta.displayName(Messages.toComponent("<dark_red>Crafting Table"));
+        craftingMeta.displayName(Message.toComponent("<dark_red>Crafting Table"));
         craftingTable.setItemMeta(craftingMeta);
 
         // Creating the brewing stand option
         ItemStack brewingStand = new ItemStack(Material.BREWING_STAND);
         ItemMeta brewingMeta = brewingStand.getItemMeta();
-        brewingMeta.displayName(Messages.toComponent("<dark_red>Brewing Stand"));
+        brewingMeta.displayName(Message.toComponent("<dark_red>Brewing Stand"));
         brewingStand.setItemMeta(brewingMeta);
 
         // Putting the options into the inventory

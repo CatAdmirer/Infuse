@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
@@ -66,7 +67,7 @@ public class Infuse extends JavaPlugin implements Listener {
         instance = this;
 
         // Loading the messages
-        Messages.load(this);
+        MessageConfig.load(this);
         
         // Loading the config
         mainConfig.load();
@@ -75,7 +76,7 @@ public class Infuse extends JavaPlugin implements Listener {
         dataManager.load();
 
         // Applying config updates
-        Messages.applyUpdates();
+        MessageConfig.applyUpdates();
         mainConfig.applyUpdates();
         dataManager.applyUpdates();
 
@@ -136,13 +137,13 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("controls").setExecutor((sender, command, label, args) -> {
             // Making sure only players can run the command
             if (!(sender instanceof Player player)) {
-                sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
+                sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
                 return true;
             }
 
             // Making sure the command has an argument
             if (args.length != 1) {
-                player.sendMessage(Messages.CONTROLS_USAGE.toComponent());
+                player.sendMessage(new Message(MessageType.CONTROLS_USAGE).toComponent());
                 return true;
             }
 
@@ -151,7 +152,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
             // Validating the control mode string
             if (!choice.equals("offhand") && !choice.equals("command")) {
-                player.sendMessage(Messages.CONTROLS_INVALID_PARAM.toComponent());
+                player.sendMessage(new Message(MessageType.CONTROLS_INVALID_PARAM).toComponent());
                 return true;
             }
 
@@ -303,9 +304,9 @@ public class Infuse extends JavaPlugin implements Listener {
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
 
-        String msg = Messages.JOIN_ABILITY_NOTIFY.getMessage();
-        msg = msg.replace("%control_mode%", controlMode);
-        player.sendMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.JOIN_ABILITY_NOTIFY);
+        msg.applyPlaceholder("control_mode", controlMode);
+        player.sendMessage(msg.toComponent());
 
         // Checking for updates but only notifying the player if they are op.
         // TODO: Only run this on startup and save the result for when players join.

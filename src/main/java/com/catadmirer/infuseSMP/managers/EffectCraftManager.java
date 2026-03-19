@@ -1,7 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
 import java.io.IOException;
 import java.net.URI;
@@ -115,14 +116,13 @@ public class EffectCraftManager implements Listener {
         int craftLimit = plugin.getMainConfig().getCraftLimit(effect);
         int numCrafted = plugin.getDataManager().getExistingCount(effect);
         if (numCrafted == craftLimit) {
-            player.sendMessage(Component.text("The max number of ").append(Messages.toComponent(effect.getName())).append(Component.text("effects has been reached", NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("The max number of ").append(effect.getName().toComponent()).append(Component.text("effects has been reached", NamedTextColor.WHITE)));
             event.setCancelled(true);
             return;
         }
 
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
-        Component itemName = Messages.toComponent(effect.getName());
 
         // If the effect is not augmented, just craft it
         if (!effect.isAugmented())  {
@@ -137,21 +137,21 @@ public class EffectCraftManager implements Listener {
                 default -> "<gray>" + brewerLocation.getWorld().getName();
             };
 
-            String formattedMessage = Messages.REGULAR_BROADCAST.getMessage()
-                    .replace("%player%", player.getName())
-                    .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
-                    .replace("%x%", "" + brewerLocation.getBlockX())
-                    .replace("%y%", "" + brewerLocation.getBlockY())
-                    .replace("%z%", "" + brewerLocation.getBlockZ())
-                    .replace("%dimension%", worldName);
+            Message formattedMessage = new Message(MessageType.REGULAR_BROADCAST);
+            formattedMessage.applyPlaceholder("player", player.getName());
+            formattedMessage.applyPlaceholder("item", effect.getName().toString());
+            formattedMessage.applyPlaceholder("x", brewerLocation.getBlockX());
+            formattedMessage.applyPlaceholder("y", brewerLocation.getBlockY());
+            formattedMessage.applyPlaceholder("z", brewerLocation.getBlockZ());
+            formattedMessage.applyPlaceholder("dimension", worldName);
             
-            Bukkit.broadcast(Messages.toComponent(formattedMessage));
+            Bukkit.broadcast(formattedMessage.toComponent());
             return;
         }
 
         // Making sure there isn't a ritual active already
         if (ritualBossBar != null) {
-            player.sendMessage(Messages.ERROR_RITUAL_ACTIVE.toComponent());
+            player.sendMessage(new Message(MessageType.ERROR_RITUAL_ACTIVE).toComponent());
             event.setCancelled(true);
             return;
         }
@@ -169,8 +169,9 @@ public class EffectCraftManager implements Listener {
 
         // Starting the ritual for the augmented effect
         // Creating the bossbar
+        Component itemName = effect.getName().toComponent();
         this.ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
-                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1.0f,
+                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1,
                 effect.getRitualColor(), BossBar.Overlay.PROGRESS);
 
         // Adding every player online to the bossbar
@@ -214,28 +215,28 @@ public class EffectCraftManager implements Listener {
         String y = String.valueOf(brewerLocation.getBlockY());
         String z = String.valueOf(brewerLocation.getBlockZ());
 
-        String formattedMessage = Messages.EFFECT_BROADCAST.getMessage()
-                .replace("%player%", player.getName())
-                .replace("%item%", MiniMessage.miniMessage().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", worldName);
+        Message mcMessage = new Message(MessageType.EFFECT_BROADCAST);
+        mcMessage.applyPlaceholder("player", player.getName());
+        mcMessage.applyPlaceholder("item", MiniMessage.miniMessage().serialize(itemName));
+        mcMessage.applyPlaceholder("x", x);
+        mcMessage.applyPlaceholder("y", y);
+        mcMessage.applyPlaceholder("z", z);
+        mcMessage.applyPlaceholder("dimension", worldName);
 
-        String formattedDiscordMessage = Messages.DISCORD_BROADCAST.getMessage()
-                .replace("%player%", player.getName())
-                .replace("%item%", PlainTextComponentSerializer.plainText().serialize(itemName))
-                .replace("%x%", x)
-                .replace("%y%", y)
-                .replace("%z%", z)
-                .replace("%dimension%", MiniMessage.miniMessage().stripTags(worldName));
+        Message dscMessage = new Message(MessageType.DISCORD_BROADCAST);
+        dscMessage.applyPlaceholder("player", player.getName());
+        dscMessage.applyPlaceholder("item", PlainTextComponentSerializer.plainText().serialize(itemName));
+        dscMessage.applyPlaceholder("x", x);
+        dscMessage.applyPlaceholder("y", y);
+        dscMessage.applyPlaceholder("z", z);
+        dscMessage.applyPlaceholder("dimension", MiniMessage.miniMessage().stripTags(worldName));
 
         // Broadcasting that the ritual has started
-        Bukkit.broadcast(Messages.toComponent(formattedMessage));
+        Bukkit.broadcast(mcMessage.toComponent());
         if (plugin.getMainConfig().enableDiscordBroadcasts()) {
             String webhookUrl = plugin.getMainConfig().discordWebhookUrl();
             if (webhookUrl != null && !webhookUrl.isEmpty()) {
-                sendToDiscord(webhookUrl, formattedDiscordMessage);
+                sendToDiscord(webhookUrl, dscMessage.toString());
             }
         }
 
@@ -267,9 +268,9 @@ public class EffectCraftManager implements Listener {
                     HandlerList.unregisterAll(brewerListener);
 
                     // Broadcasting that the effect has been brewed
-                    String msg = Messages.EFFECT_FINISHED.getMessage();
-                    msg = msg.replace("%item%", MiniMessage.miniMessage().serialize(itemName));
-                    Bukkit.broadcast(Messages.toComponent(msg));
+                    Message msg = new Message(MessageType.EFFECT_FINISHED);
+                    msg.applyPlaceholder("item", MiniMessage.miniMessage().serialize(itemName));
+                    Bukkit.broadcast(msg.toComponent());
 
                     // Dropping the item
                     brewerLocation.getWorld().dropItem(brewerLocation.add(0, 1, 0), effect.createItem());

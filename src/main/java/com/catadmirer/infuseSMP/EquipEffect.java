@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -66,9 +67,9 @@ public class EquipEffect implements Listener {
         
         // Equipping the effect to the slot.
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
-        String msg = Messages.EFFECT_EQUIPPED.getMessage();
-        msg = msg.replace("%effect_name%", effect.getName());
-        player.sendMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.EFFECT_EQUIPPED);
+        msg.applyPlaceholder("effect_name", effect.getName());
+        player.sendMessage(msg.toComponent());
 
         if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
             Thief.equipThief(player);
@@ -95,7 +96,7 @@ public class EquipEffect implements Listener {
         // Skipping if the player's inventory is full.
         if (player.getInventory().firstEmpty() == -1) {
             event.setCancelled(true);
-            player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
+            player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
             return;
         }
          

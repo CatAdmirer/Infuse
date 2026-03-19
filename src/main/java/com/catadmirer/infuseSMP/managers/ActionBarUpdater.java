@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -61,7 +61,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         // Building the result
         if (time.equals(Component.empty())) return Component.text(emoji);
 
-        return time.append(Messages.toComponent("  <white>" + emoji).color(NamedTextColor.WHITE));
+        return time.append(Message.toComponent("  <white>" + emoji).color(NamedTextColor.WHITE));
     }
 
     private Component getPart2(UUID uuid, String slot) {
@@ -90,6 +90,6 @@ public class ActionBarUpdater extends BukkitRunnable {
 
         // Building the result
         if (time.equals(Component.empty())) return Component.text(emoji);
-        return Messages.toComponent("<white>" + emoji + "  ").color(NamedTextColor.WHITE).append(time).color(NamedTextColor.WHITE);
+        return Message.toComponent("<white>" + emoji + "  ").color(NamedTextColor.WHITE).append(time).color(NamedTextColor.WHITE);
     }
 }
