@@ -145,6 +145,7 @@ public class Ender implements Listener {
 
         // Making sure the player used a bottle of dragons breath
         ItemStack item = event.getItem();
+        if (item == null) return;
         if (item.getType() != Material.DRAGON_BREATH) return;
 
         // Making sure the cursing fireball isn't on cooldown
