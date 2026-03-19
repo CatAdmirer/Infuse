@@ -9,9 +9,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -51,23 +48,23 @@ public class Invisibility implements Listener {
 
         if (killer == null) return;
 
-        Component victimName;
+        String victimName;
         if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
-            victimName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+            victimName = "<gray><obf>Someone";
         } else {
-            victimName = victim.displayName();
+            victimName = mm.serialize(victim.displayName());
         }
         
-        Component killerName;
+        String killerName;
         if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, EffectMapping.INVIS)) {
-            killerName = Component.text("Someone", NamedTextColor.GRAY, TextDecoration.OBFUSCATED);
+            killerName = "<gray><obf>Someone";
         } else {
-            killerName = killer.displayName();
+            killerName = mm.serialize(killer.displayName());
         }
 
         Message msg = new Message(MessageType.DEATH_MESSAGE);
-        msg.applyPlaceholder("victim", mm.serialize(victimName));
-        msg.applyPlaceholder("killer", mm.serialize(killerName));
+        msg.applyPlaceholder("victim", victimName);
+        msg.applyPlaceholder("killer", killerName);
         event.deathMessage(msg.toComponent());
     }
 
