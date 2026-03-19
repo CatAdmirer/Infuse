@@ -28,18 +28,14 @@ public class Particles {
         EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 
-        final double regularRadius = 0;
-        final double augmentedRadius = 0.3;
-        double radius = effect.isAugmented() ? augmentedRadius : regularRadius;
-
         // Handling special particles for ender effect
         // TODO: Decide whether or not to keep this
         if (effect == EffectMapping.ENDER || effect == EffectMapping.AUG_ENDER) {
-            player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, radius, 0.5, radius, 0);
+            player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5, 0.3, 0);
             return;
         }
 
-        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, radius, 0.5, radius, 0.1, Color.fromARGB(effect.getColor().getRGB()));
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, 0.3, 0.5, 0.3, 0.1, Color.fromARGB(effect.getColor().getRGB()));
     }
 
     /**
