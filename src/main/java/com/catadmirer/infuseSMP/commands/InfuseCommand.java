@@ -88,8 +88,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(mapping.createItem());
 
                 Message msg = new Message(MessageType.INFUSE_GIVEEFFECT_SUCCESS);
-                msg.applyPlaceholder("%effect_color%", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
-                msg.applyPlaceholder("%effect_name%", mapping.getName());
+                msg.applyPlaceholder("effect_color", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
+                msg.applyPlaceholder("effect_name", mapping.getName());
                 target.sendMessage(msg.toComponent());
                 break;
             case "seteffect":
@@ -122,7 +122,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 String slot = args[3];
                 if (!slot.equals("1") && !slot.equals("2")) {
                     msg = new Message(MessageType.INFUSE_INVALID_SLOT);
-                    msg.applyPlaceholder("%slot%", slot);
+                    msg.applyPlaceholder("slot", slot);
                     player.sendMessage(msg.toComponent());
                     return true;
                 }
@@ -130,9 +130,9 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 // Setting the effect
                 plugin.getDataManager().setEffect(target.getUniqueId(), args[3], mapping);
                 msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
-                msg.applyPlaceholder("%slot%", slot);
-                msg.applyPlaceholder("%player_name%", target.getName());
-                msg.applyPlaceholder("%effect_name%", mapping.getName());
+                msg.applyPlaceholder("slot", slot);
+                msg.applyPlaceholder("player_name", target.getName());
+                msg.applyPlaceholder("effect_name", mapping.getName());
                 player.sendMessage(msg.toComponent());
                 break;
             case "cleareffect":
@@ -157,7 +157,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
                 plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
                 msg = new Message(MessageType.INFUSE_CLEAREFFECT_SUCCESS);
-                msg.applyPlaceholder("%player_name%", target.getName());
+                msg.applyPlaceholder("player_name", target.getName());
                 player.sendMessage(msg.toComponent());
                 break;
             case "cooldown":
@@ -181,7 +181,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 // Removing cooldowns from the player
                 CooldownManager.removeAllCooldowns(target.getUniqueId());
                 msg = new Message(MessageType.INFUSE_COOLDOWN_SUCCESS);
-                msg.applyPlaceholder("%player_name%", target.getName());
+                msg.applyPlaceholder("player_name", target.getName());
                 player.sendMessage(msg.toComponent());
                 break;
             case "controls":
@@ -205,7 +205,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 player.addAttachment(plugin, "ability.use", !offhandEnabled);
 
                 msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
-                msg.applyPlaceholder("%controlMode%", choice);
+                msg.applyPlaceholder("controlMode", choice);
                 player.sendMessage(msg.toComponent());
                 break;
             default:
