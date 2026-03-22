@@ -38,7 +38,7 @@ public class Ocean implements Listener {
         
         for (Player otherPlayer : player.getWorld().getPlayers()) {
             if (otherPlayer.equals(player)) continue;
-            if (otherPlayer.getLocation().distance(player.getLocation()) <= 5 && otherPlayer.getLocation().getBlock().isLiquid()) {
+            if (otherPlayer.getLocation().distance(player.getLocation()) <= 5) {
                 int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
                 otherPlayer.setRemainingAir(newAir);
                 if (newAir <= 0) {
