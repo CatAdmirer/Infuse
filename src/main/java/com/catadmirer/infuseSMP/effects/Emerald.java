@@ -128,6 +128,7 @@ public class Emerald implements Listener {
         EnchantmentOffer[] currentOffers = event.getOffers();
         Registry<Enchantment> enchantRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
         Tag<Enchantment> inEnchantingTable = enchantRegistry.getTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE);
+
         ItemStack item = event.getItem();
 
         // Getting the enchantability of the item
@@ -154,7 +155,7 @@ public class Emerald implements Listener {
             // Overriding the existing enchantment offers
             if (!inEnchantingTable.isEmpty()) {
                 List<EnchantmentOffer> applicableEnchants = inEnchantingTable.resolve(enchantRegistry).stream()
-                    .filter(e -> e.getPrimaryItems().contains(TypedKey.create(RegistryKey.ITEM, item.getType().key())) || item.getType() == Material.BOOK)
+                    .filter(e -> e.canEnchantItem(item) || item.getType() == Material.BOOK)
                     .map(e -> {
                     for (int level = e.getMaxLevel(); level >= e.getStartLevel(); level--) {
                         if (finalCost >= e.getMinModifiedCost(level) && finalCost <= e.getMaxModifiedCost(level)) {
