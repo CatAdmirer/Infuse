@@ -6,10 +6,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -76,17 +72,15 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         EffectMapping effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         String key = effect.getKey();
-        Component comp;
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, TextColor.color(effect.getColor().getRGB()));
+            return MessageUtil.formatTime(timeLeft, "<#" + Integer.toHexString(effect.getColor().getRGB() & 0xFFFFFF) + ">");
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, NamedTextColor.WHITE);
+            return MessageUtil.formatTime(timeLeft, "<white>");
         } else {
             return "";
         }
-        return LegacyComponentSerializer.legacySection().serialize(comp);
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
