@@ -44,13 +44,24 @@ public class Thief implements Listener {
         }
     }
 
+    public static void unequipThief(Player thiefUser) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.listPlayer(thiefUser.getPlayer());
+        }
+    }
+
     // Hiding thief effect users from players who recently joined
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.THIEF)) {
+            Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
+        }
+
         for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
             if (!plugin.getDataManager().hasEffect(otherPlayer, EffectMapping.THIEF)) continue;
             
-            event.getPlayer().unlistPlayer(otherPlayer);
+            player.unlistPlayer(otherPlayer);
         }
     }
 
