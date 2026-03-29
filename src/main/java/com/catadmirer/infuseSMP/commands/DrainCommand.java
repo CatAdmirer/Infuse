@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.command.Command;
@@ -65,6 +66,11 @@ public class DrainCommand implements CommandExecutor, Listener {
         // Handling special apophis effects
         if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
             apophisManager.unsetApophis(player);
+        }
+
+        // Handling special thief effects
+        if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
+            Thief.unequipThief(player);
         }
         return true;
     }
