@@ -35,13 +35,7 @@ public class Thief implements Listener {
         Thief.plugin = plugin;
     }
 
-    public static void applyPassiveEffects(Player player) {
-        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            if (otherPlayer.canSee(player)) {
-                otherPlayer.listPlayer(player);
-            }
-        }
-    }
+    public static void applyPassiveEffects(Player player) {}
 
     // Hiding a thief user from the rest of the players online
     public static void equipThief(Player thiefUser) {
