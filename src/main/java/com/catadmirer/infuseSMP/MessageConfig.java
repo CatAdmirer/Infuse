@@ -241,6 +241,9 @@ public class MessageConfig {
                 config.set(effectKey + ".effect_lore", null);
             }
         }
+
+        config.set("aug_ocean_lore", MessageType.AUG_OCEAN_LORE.defaultValue);
+        config.set("ocean_lore", MessageType.OCEAN_LORE.defaultValue);
         
         try {
             config.save(file);
