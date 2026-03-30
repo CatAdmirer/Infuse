@@ -3,6 +3,8 @@ package com.catadmirer.infuseSMP.extraeffects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -37,16 +39,21 @@ public class Thief implements Listener {
 
     public static void applyPassiveEffects(Player player) {}
 
-    // Hiding a thief user from the rest of the players online
-    public static void equipThief(Player thiefUser) {
+    @EventHandler
+    public void equipThief(EffectEquipEvent event) {
+        if (event.getEffect() != EffectMapping.THIEF && event.getEffect() != EffectMapping.AUG_THIEF) return;
+
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.unlistPlayer(thiefUser.getPlayer());
+            player.unlistPlayer(event.getPlayer());
         }
     }
 
-    public static void unequipThief(Player thiefUser) {
+    @EventHandler
+    public void unequipThief(EffectUnequipEvent event) {
+        if (event.getEffect() != EffectMapping.THIEF && event.getEffect() != EffectMapping.AUG_THIEF) return;
+
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.listPlayer(thiefUser.getPlayer());
+            player.listPlayer(event.getPlayer());
         }
     }
 

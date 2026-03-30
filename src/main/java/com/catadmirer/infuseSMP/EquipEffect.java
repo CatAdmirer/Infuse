@@ -3,10 +3,7 @@ package com.catadmirer.infuseSMP;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
-import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.io.File;
 import java.util.List;
 import java.util.Random;
 import org.bukkit.entity.Player;
@@ -19,11 +16,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class EquipEffect implements Listener {
     private final Infuse plugin;
-    private final ApophisManager apophisManager;
 
-    public EquipEffect(Infuse plugin, ApophisManager apophisManager) {
+    public EquipEffect(Infuse plugin) {
         this.plugin = plugin;
-        this.apophisManager = apophisManager;
     }
 
     @EventHandler
@@ -75,10 +70,6 @@ public class EquipEffect implements Listener {
         msg.applyPlaceholder("effect_name", effect.getName());
         player.sendMessage(msg.toComponent());
 
-        if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
-            Thief.equipThief(player);
-        }
-
         return true;
     }
 
@@ -109,11 +100,6 @@ public class EquipEffect implements Listener {
 
         // Removing the effect from the player
         event.setItem(event.getItem().subtract(1));
-
-        // Performing special logic for the apophis effect.
-        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            apophisManager.disguiseAsApophis(player);
-        }
     }
 
     /**
@@ -156,22 +142,21 @@ public class EquipEffect implements Listener {
                 }
                 break;
         }
-
-        apophisManager.unsetApophis(player);
     }
 
     /**
-     * Disguising players who join that have the apophis effect.
+     * Calling an EffectEquipEvent for each player that joins.
      * 
      * @param event The server PlayerJoinEvent to catch.
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + player.getUniqueId() + ".yml");
-        if (disguiseFile.exists()) {
-            apophisManager.disguiseAsApophis(player);
-        }
+        EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        if (effect != null) new EffectEquipEvent(player, effect, "1").callEvent();
+        
+        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        if (effect != null) new EffectEquipEvent(player, effect, "2").callEvent();
     }
 
     /**
@@ -192,5 +177,4 @@ public class EquipEffect implements Listener {
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
     }
-
 }

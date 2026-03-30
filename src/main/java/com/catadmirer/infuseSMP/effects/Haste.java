@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
-
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

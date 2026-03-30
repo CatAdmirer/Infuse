@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import java.io.File;
@@ -15,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 
 public class ApophisManager {
     private static final MiniMessage mm = MiniMessage.miniMessage();
@@ -62,7 +65,10 @@ public class ApophisManager {
         }
     }
 
-    public void disguiseAsApophis(Player target) {
+    @EventHandler
+    public void equipApophis(EffectEquipEvent event) {
+        Player target = event.getPlayer();
+        
         // Making sure the disguise file is created
         initDisguise(target);
 
@@ -77,10 +83,13 @@ public class ApophisManager {
         target.playerListName(apophisName);
     }
 
-    public boolean unsetApophis(Player target) {
+    @EventHandler
+    public void unequipApophis(EffectUnequipEvent event) {
+        Player target = event.getPlayer();
+
         if (!target.isOnline()) {
             plugin.getLogger().log(Level.WARNING, "Could not remove {0}'s disguise as they are not online.", target.getName());
-            return false;
+            return;
         }
 
         UUID uuid = target.getUniqueId();
@@ -123,6 +132,6 @@ public class ApophisManager {
             disguiseFile.delete();
         }
 
-        return true;
+        return;
     }
 }
