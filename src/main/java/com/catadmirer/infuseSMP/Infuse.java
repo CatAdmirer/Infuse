@@ -41,7 +41,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
 
-    private final ApophisManager apophisManager;
     private final DataManager dataManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
@@ -50,7 +49,7 @@ public class Infuse extends JavaPlugin implements Listener {
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
     public Infuse() {
-        this.apophisManager = new ApophisManager(this);
+        new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
@@ -128,8 +127,8 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("infuse").setExecutor(new InfuseCommand(this));
         getCommand("infuse").setTabCompleter(new InfuseCommand(this));
 
-        getCommand("ldrain").setExecutor(new DrainCommand(this, apophisManager));
-        getCommand("rdrain").setExecutor(new DrainCommand(this, apophisManager));
+        getCommand("ldrain").setExecutor(new DrainCommand(this));
+        getCommand("rdrain").setExecutor(new DrainCommand(this));
 
         getCommand("rspark").setExecutor(new Abilities(this));
         getCommand("lspark").setExecutor(new Abilities(this));
@@ -204,7 +203,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipEffect(this, apophisManager), this);
+        Bukkit.getPluginManager().registerEvents(new EquipEffect(this), this);
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
 

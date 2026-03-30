@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.WeightedRandom;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -12,7 +13,6 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -33,14 +34,16 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald implements Listener {
     private static Infuse plugin;
+
+    private static final NamespacedKey lootingKey = new NamespacedKey("infuse", "emerald_looting");
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
@@ -50,9 +53,36 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
-        ItemStack mainHand = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
-            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (ItemUtil.isSword(item)) {
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+        }
+    }
+
+    @EventHandler
+    public void onInventoryCloseEvent(InventoryCloseEvent event) {
+        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
+
+        for (ItemStack item : event.getView().getTopInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+            
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
+        ItemUtil.applySpecialEnchantment(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+    }
+
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
+
+        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
         }
     }
 
@@ -75,7 +105,7 @@ public class Emerald implements Listener {
 
         public FoodAndXPLock(Player player, double durationSeconds) {
             this.player = player;
-            
+
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 HandlerList.unregisterAll(this);
@@ -151,20 +181,20 @@ public class Emerald implements Listener {
             float f = (rand.nextFloat() + rand.nextFloat() - 1) * 0.15F;
             cost = Math.clamp(Math.round(cost + cost * f), 1, Integer.MAX_VALUE);
             final int finalCost = cost;
-            
+
             // Overriding the existing enchantment offers
             if (!inEnchantingTable.isEmpty()) {
                 List<EnchantmentOffer> applicableEnchants = inEnchantingTable.resolve(enchantRegistry).stream()
-                    .filter(e -> e.canEnchantItem(item) || item.getType() == Material.BOOK)
-                    .map(e -> {
-                    for (int level = e.getMaxLevel(); level >= e.getStartLevel(); level--) {
-                        if (finalCost >= e.getMinModifiedCost(level) && finalCost <= e.getMaxModifiedCost(level)) {
-                            return new EnchantmentOffer(e, level, finalCost);
-                        }
-                    }
-                    return null;
-                }).filter(Objects::nonNull).toList();
-        
+                        .filter(e -> e.canEnchantItem(item) || item.getType() == Material.BOOK)
+                        .map(e -> {
+                            for (int level = e.getMaxLevel(); level >= e.getStartLevel(); level--) {
+                                if (finalCost >= e.getMinModifiedCost(level) && finalCost <= e.getMaxModifiedCost(level)) {
+                                    return new EnchantmentOffer(e, level, finalCost);
+                                }
+                            }
+                            return null;
+                        }).filter(Objects::nonNull).toList();
+
                 // Overriding the current offer with a random one.
                 currentOffers[i] = WeightedRandom.getRandomItem(rand, applicableEnchants, e -> e.getEnchantment().getWeight());
             }

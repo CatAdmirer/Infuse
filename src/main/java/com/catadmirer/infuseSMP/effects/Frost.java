@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InfuseDebug;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
@@ -23,7 +24,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -165,13 +165,12 @@ public class Frost implements Listener {
 
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(EffectEquipEvent event) {
         Player player = event.getPlayer();
         AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
         if (jumpAttribute != null && jumpAttribute.getBaseValue() == 0.1) {
             jumpAttribute.setBaseValue(0.42);
         }
-
     }
 
     private static boolean isTeammate(Player player, Player caster) {

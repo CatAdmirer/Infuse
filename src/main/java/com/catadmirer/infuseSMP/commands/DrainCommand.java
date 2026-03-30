@@ -3,8 +3,7 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.extraeffects.Thief;
-import com.catadmirer.infuseSMP.managers.ApophisManager;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,11 +13,9 @@ import org.bukkit.event.Listener;
 
 public class DrainCommand implements CommandExecutor, Listener {
     private final Infuse plugin;
-    private final ApophisManager apophisManager;
 
-    public DrainCommand(Infuse plugin, ApophisManager apophisManager) {
+    public DrainCommand(Infuse plugin) {
         this.plugin = plugin;
-        this.apophisManager = apophisManager;
     }
 
     @Override
@@ -48,6 +45,8 @@ public class DrainCommand implements CommandExecutor, Listener {
             return true;
         }
 
+        new EffectUnequipEvent(player, effect, slot).callEvent();
+
         // Making sure the player has inventory space for the drained item.
         if (player.getInventory().firstEmpty() == -1) {
             player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
@@ -63,15 +62,6 @@ public class DrainCommand implements CommandExecutor, Listener {
         // Giving the player the effect item.
         player.getInventory().addItem(effect.createItem());
 
-        // Handling special apophis effects
-        if (effect == EffectMapping.APOPHIS || effect == EffectMapping.AUG_APOPHIS) {
-            apophisManager.unsetApophis(player);
-        }
-
-        // Handling special thief effects
-        if (effect == EffectMapping.THIEF || effect == EffectMapping.AUG_THIEF) {
-            Thief.unequipThief(player);
-        }
         return true;
     }
 }
