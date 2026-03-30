@@ -62,9 +62,8 @@ public class Fire implements Listener {
         Vector direction = player.getLocation().getDirection().normalize();
         if (inLava && plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-            double boostStrength = 0.6;
-            Vector newVelocity = direction.multiply(boostStrength);
-            player.setVelocity(newVelocity);
+
+            player.setVelocity(direction.multiply(plugin.getMainConfig().fireBoostStrength()));
         }
     }
 

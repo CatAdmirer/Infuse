@@ -44,13 +44,13 @@ public class Ender implements Listener {
     public static void applyPassiveEffects(Player player) {
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
 
-        double radius = 10;
-
+        final double radius = plugin.getMainConfig().enderPassiveRadius();
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
             if (plugin.getDataManager().isTrusted(nearby, player)) continue;
+
             nearby.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
         }
     }
@@ -96,7 +96,7 @@ public class Ender implements Listener {
         // Teleporting the player in the direction they're looking
         Location startLoc = player.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
-        int maxDistance = 15;
+        final int maxDistance = plugin.getMainConfig().enderSparkTeleportMaxDistance();
 
         Location targetLoc = null;
 
@@ -145,8 +145,7 @@ public class Ender implements Listener {
 
         // Making sure the player used a bottle of dragons breath
         ItemStack item = event.getItem();
-        if (item == null) return;
-        if (item.getType() != Material.DRAGON_BREATH) return;
+        if (item == null || item.getType() != Material.DRAGON_BREATH) return;
 
         // Making sure the cursing fireball isn't on cooldown
         if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
@@ -172,7 +171,7 @@ public class Ender implements Listener {
         fireball.setIsIncendiary(false);
         fireball.customName(fireballName);
 
-        CooldownManager.setCooldown(uuid, "ender_fireball", 30);
+        CooldownManager.setCooldown(uuid, "ender_fireball", plugin.getMainConfig().enderCurseCooldown());
 
         Vector velocity = fireball.getVelocity();
         velocity.multiply(2.0);
@@ -186,7 +185,7 @@ public class Ender implements Listener {
 
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.ENDER)) return;
 
-        cursePlayer(target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), plugin.getMainConfig().enderCurseDuration());
     }
 
     @EventHandler
@@ -197,7 +196,7 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        cursePlayer(target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), plugin.getMainConfig().enderCurseDuration());
 
         event.setDamage(0);
     }
@@ -210,7 +209,7 @@ public class Ender implements Listener {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        cursePlayer(target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), plugin.getMainConfig().enderCurseDuration());
     }
 
     public void cursePlayer(UUID playerUUID, long delayTicks) {

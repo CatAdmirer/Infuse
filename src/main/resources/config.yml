@@ -101,6 +101,13 @@ ender:
   duration:
     default: 15
     augmented: 20
+  passive_radius: 10
+  # WARNING: The further this option is below, could impact server performance if turned higher then 15!
+  spark_teleport_max_distance: 15
+  # WARNING: The option below uses seconds.
+  curse_cooldown: 30
+  # WARNING: The option below uses TICKS, 20 ticks = a second, 40 ticks = 2 seconds, etc.
+  curse_duration: 1200
 
 feather:
   cooldown:
@@ -109,6 +116,8 @@ feather:
   duration:
     default: 2
     augmented: 2
+  land_launch_radius: 4
+  land_launch_damage: 8
 
 fire:
   cooldown:
@@ -117,6 +126,7 @@ fire:
   duration:
     default: 5
     augmented: 6
+  boost_strength: 0.6
 
 frost:
   cooldown:
