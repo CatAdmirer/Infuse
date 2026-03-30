@@ -51,9 +51,14 @@ public class Haste implements Listener {
                 meta.getPersistentDataContainer().set(unbreakingKey, PersistentDataType.INTEGER, item.getEnchantmentLevel(Enchantment.UNBREAKING));
             });
 
-            item.addUnsafeEnchantment(Enchantment.FORTUNE, 5);
-            item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, 5);
+            // for some reason it wont read/enchant if this isn't like this??????? (or i might just be stupid who knows) - duff_mans_jnr
+            final int fortune = plugin.getMainConfig().hasteFortuneLevel();
+            final int efficiency = plugin.getMainConfig().hasteEfficiencyLevel();
+            final int unbreaking = plugin.getMainConfig().hasteUnbreakingLevel();
+
+            item.addUnsafeEnchantment(Enchantment.FORTUNE, fortune);
+            item.addUnsafeEnchantment(Enchantment.EFFICIENCY, efficiency);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
 
             player.getInventory().setItemInMainHand(item);
         }

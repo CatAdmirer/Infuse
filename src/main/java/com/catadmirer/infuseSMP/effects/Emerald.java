@@ -52,11 +52,13 @@ public class Emerald implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
+        final int lootingLevel = plugin.getMainConfig().emeraldLootingLevel();
+
         ItemStack mainHand = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < 5) {
+        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < lootingLevel) {
 
             mainHand.editMeta(meta -> meta.getPersistentDataContainer().set(lootingKey, PersistentDataType.INTEGER, mainHand.getEnchantmentLevel(Enchantment.LOOTING)));
-            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, 5);
+            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, lootingLevel);
 
             player.getInventory().setItemInMainHand(mainHand);
         }

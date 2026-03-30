@@ -91,6 +91,8 @@ emerald:
   duration:
     default: 30
     augmented: 35
+  enchantment:
+    looting_level: 5
 
 ender:
   cooldown:
@@ -131,6 +133,10 @@ haste:
   duration:
     default: 15
     augmented: 20
+  enchantment:
+    fortune_level: 5
+    efficiency_level: 10
+    unbreaking_level: 5
 
 heart:
   cooldown:

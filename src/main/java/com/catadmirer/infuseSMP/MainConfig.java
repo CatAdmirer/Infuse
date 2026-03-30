@@ -143,7 +143,6 @@ public class MainConfig {
         return config.getBoolean("regular_effect_broadcast");
     }
 
-
     public boolean enableThief() {
         return config.getBoolean("extra_effects.Thief");
     }
@@ -214,5 +213,21 @@ public class MainConfig {
         config.set("invis.hide_deaths", false);
 
         save();
+    }
+
+    public int emeraldLootingLevel() {
+        return config.getInt("emerald.enchantment.looting_level");
+    }
+
+    public int hasteFortuneLevel() {
+        return config.getInt("haste.enchantment.fortune_level");
+    }
+
+    public int hasteEfficiencyLevel() {
+        return config.getInt("haste.enchantment.efficiency_level");
+    }
+
+    public int hasteUnbreakingLevel() {
+        return config.getInt("haste.enchantment.unbreaking_level");
     }
 }
