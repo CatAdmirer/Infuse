@@ -124,7 +124,7 @@ public class Haste implements Listener {
 
     @EventHandler
     public void onEffectUnequipEvent(EffectUnequipEvent event) {
-        if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
+        if (!(event.getEffect().equals(EffectMapping.HASTE))) return;
 
         int slot = -1;
         for (ItemStack item : event.getPlayer().getInventory().getContents()) {
