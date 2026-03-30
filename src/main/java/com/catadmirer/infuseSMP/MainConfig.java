@@ -211,10 +211,22 @@ public class MainConfig {
         config.set("invis_deaths", null);
         config.set("invis.hide_kills", false);
         config.set("invis.hide_deaths", false);
-        config.set("haste.enchantment.looting_level", 5);
+
+        config.set("emerald.enchantment.looting_level", 5);
+
         config.set("haste.enchantment.fortune_level", 5);
         config.set("haste.enchantment.efficiency_level", 10);
         config.set("haste.enchantment.unbreaking_level", 5);
+
+        config.set("ender.passive_radius", 4);
+        config.set("ender.spark_teleport_max_distance", 15);
+        config.set("ender.curse_cooldown", 30);
+        config.set("ender.curse_duration", 1200);
+
+        config.set("feather.land_launch_radius", 4);
+        config.set("feather.land_launch_damage", 8);
+
+        config.set("fire.boost_strength", 0.6);
 
         save();
     }

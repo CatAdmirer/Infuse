@@ -36,7 +36,7 @@ public class Frost implements Listener {
 
     private static Infuse plugin;
 
-    public Frost(DataManager dataManager, Infuse plugin) {
+    public Frost(Infuse plugin) {
         Frost.plugin = plugin;
     }
 
