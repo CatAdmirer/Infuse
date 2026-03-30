@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
-import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,47 +18,26 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Haste implements Listener {
-
     private static Infuse plugin;
 
-    private static NamespacedKey fortuneKey;
-    private static NamespacedKey efficiencyKey;
-    private static NamespacedKey unbreakingKey;
+    private static final NamespacedKey fortuneKey = new NamespacedKey("infuse", "haste_fortune");
+    private static final NamespacedKey efficiencyKey = new NamespacedKey("infuse", "haste_efficiency");
+    private static final NamespacedKey unbreakingKey = new NamespacedKey("infuse", "haste_unbreaking");
 
     public Haste(Infuse plugin) {
         Haste.plugin = plugin;
-
-        Haste.fortuneKey = new NamespacedKey(plugin, "fortuneLevel");
-        Haste.efficiencyKey = new NamespacedKey(plugin, "efficiencyLevel");
-        Haste.unbreakingKey = new NamespacedKey(plugin, "unbreakingLevel");
     }
 
     public static void applyPassiveEffects(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-
-            item.editMeta(meta -> {
-                meta.getPersistentDataContainer().set(fortuneKey, PersistentDataType.INTEGER, item.getEnchantmentLevel(Enchantment.FORTUNE));
-                meta.getPersistentDataContainer().set(efficiencyKey, PersistentDataType.INTEGER, item.getEnchantmentLevel(Enchantment.EFFICIENCY));
-                meta.getPersistentDataContainer().set(unbreakingKey, PersistentDataType.INTEGER, item.getEnchantmentLevel(Enchantment.UNBREAKING));
-            });
-
-            // for some reason it wont read/enchant if this isn't like this??????? (or i might just be stupid who knows) - duff_mans_jnr
-            final int fortune = plugin.getMainConfig().hasteFortuneLevel();
-            final int efficiency = plugin.getMainConfig().hasteEfficiencyLevel();
-            final int unbreaking = plugin.getMainConfig().hasteUnbreakingLevel();
-
-            item.addUnsafeEnchantment(Enchantment.FORTUNE, fortune);
-            item.addUnsafeEnchantment(Enchantment.EFFICIENCY, efficiency);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-
-            player.getInventory().setItemInMainHand(item);
+            ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
+            ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
+            ItemUtil.applySpecialEnchantment(item, unbreakingKey, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
         }
     }
 
@@ -67,99 +45,35 @@ public class Haste implements Listener {
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
         if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
 
-        int slot = -1;
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
-            slot++;
-
             if (item == null || item.getType() == Material.AIR) continue;
 
-            final PersistentDataContainerView container = item.getPersistentDataContainer();
-            if (!(container.has(fortuneKey, PersistentDataType.INTEGER)) || !(container.has(efficiencyKey, PersistentDataType.INTEGER)) || !(container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
-
-            final Integer fortune = container.get(fortuneKey, PersistentDataType.INTEGER);
-            final Integer efficiency = container.get(efficiencyKey, PersistentDataType.INTEGER);
-            final Integer unbreaking = container.get(unbreakingKey, PersistentDataType.INTEGER);
-
-            item.editMeta(meta -> {
-                meta.removeEnchant(Enchantment.FORTUNE);
-                meta.removeEnchant(Enchantment.EFFICIENCY);
-                meta.removeEnchant(Enchantment.UNBREAKING);
-
-                if (fortune != null && fortune > 0) meta.addEnchant(Enchantment.FORTUNE, fortune, false);
-                if (efficiency != null && efficiency > 0) meta.addEnchant(Enchantment.FORTUNE, efficiency, false);
-                if (unbreaking != null && unbreaking > 0) meta.addEnchant(Enchantment.FORTUNE, unbreaking, false);
-
-                meta.getPersistentDataContainer().remove(fortuneKey);
-                meta.getPersistentDataContainer().remove(efficiencyKey);
-                meta.getPersistentDataContainer().remove(unbreakingKey);
-            });
-
-            event.getView().getTopInventory().setItem(slot, item);
+            ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
+            ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
+            ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
         }
     }
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
         final ItemStack item = event.getItemDrop().getItemStack();
-        final PersistentDataContainerView container = item.getPersistentDataContainer();
 
-        if (!(container.has(fortuneKey, PersistentDataType.INTEGER) || container.has(efficiencyKey, PersistentDataType.INTEGER) || container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
-
-        final Integer fortune = container.get(fortuneKey, PersistentDataType.INTEGER);
-        final Integer efficiency = container.get(efficiencyKey, PersistentDataType.INTEGER);
-        final Integer unbreaking = container.get(unbreakingKey, PersistentDataType.INTEGER);
-
-        item.editMeta(meta -> {
-            meta.removeEnchant(Enchantment.FORTUNE);
-            meta.removeEnchant(Enchantment.EFFICIENCY);
-            meta.removeEnchant(Enchantment.UNBREAKING);
-
-            if (fortune != null && fortune > 0) meta.addEnchant(Enchantment.FORTUNE, fortune, false);
-            if (efficiency != null && efficiency > 0) meta.addEnchant(Enchantment.FORTUNE, efficiency, false);
-            if (unbreaking != null && unbreaking > 0) meta.addEnchant(Enchantment.FORTUNE, unbreaking, false);
-
-            meta.getPersistentDataContainer().remove(fortuneKey);
-            meta.getPersistentDataContainer().remove(efficiencyKey);
-            meta.getPersistentDataContainer().remove(unbreakingKey);
-        });
-
-        event.getItemDrop().setItemStack(item);
+        ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
+        ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
+        ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
     }
 
     @EventHandler
     public void onEffectUnequipEvent(EffectUnequipEvent event) {
         if (!(event.getEffect().equals(EffectMapping.HASTE))) return;
 
-        int slot = -1;
         for (ItemStack item : event.getPlayer().getInventory().getContents()) {
-            slot++;
-
             if (item == null || item.getType() == Material.AIR) continue;
 
-            final PersistentDataContainerView container = item.getPersistentDataContainer();
-            if (!(container.has(fortuneKey, PersistentDataType.INTEGER)) || !(container.has(efficiencyKey, PersistentDataType.INTEGER)) || !(container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
-
-            final Integer fortune = container.get(fortuneKey, PersistentDataType.INTEGER);
-            final Integer efficiency = container.get(efficiencyKey, PersistentDataType.INTEGER);
-            final Integer unbreaking = container.get(unbreakingKey, PersistentDataType.INTEGER);
-
-            item.editMeta(meta -> {
-                meta.removeEnchant(Enchantment.FORTUNE);
-                meta.removeEnchant(Enchantment.EFFICIENCY);
-                meta.removeEnchant(Enchantment.UNBREAKING);
-
-                if (fortune != null && fortune > 0) meta.addEnchant(Enchantment.FORTUNE, fortune, false);
-                if (efficiency != null && efficiency > 0) meta.addEnchant(Enchantment.FORTUNE, efficiency, false);
-                if (unbreaking != null && unbreaking > 0) meta.addEnchant(Enchantment.FORTUNE, unbreaking, false);
-
-                meta.getPersistentDataContainer().remove(fortuneKey);
-                meta.getPersistentDataContainer().remove(efficiencyKey);
-                meta.getPersistentDataContainer().remove(unbreakingKey);
-            });
-
-            event.getPlayer().getInventory().setItem(slot, item);
+            ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
+            ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
+            ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
         }
-
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

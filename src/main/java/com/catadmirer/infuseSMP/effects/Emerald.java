@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InfuseDebug;
-import com.catadmirer.infuseSMP.PlayerSwapHandItemsListener;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
@@ -14,13 +13,18 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.tag.Tag;
-
-import java.util.*;
-
-import org.bukkit.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
@@ -33,101 +37,53 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald implements Listener {
-
     private static Infuse plugin;
-    private static NamespacedKey lootingKey;
+
+    private static final NamespacedKey lootingKey = new NamespacedKey("infuse", "emerald_looting");
 
     public Emerald(Infuse plugin) {
         Emerald.plugin = plugin;
-        Emerald.lootingKey = new NamespacedKey(plugin, "lootingLevel");
     }
 
     public static void applyPassiveEffects(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
-        final int lootingLevel = plugin.getMainConfig().emeraldLootingLevel();
-
-        ItemStack mainHand = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isSword(mainHand) && mainHand.getEnchantmentLevel(Enchantment.LOOTING) < lootingLevel) {
-
-            mainHand.editMeta(meta -> meta.getPersistentDataContainer().set(lootingKey, PersistentDataType.INTEGER, mainHand.getEnchantmentLevel(Enchantment.LOOTING)));
-            mainHand.addUnsafeEnchantment(Enchantment.LOOTING, lootingLevel);
-
-            player.getInventory().setItemInMainHand(mainHand);
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (ItemUtil.isSword(item)) {
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
         }
-
     }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
         if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
 
-        int slot = -1;
-
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
-            slot++;
-
             if (item == null || item.getType() == Material.AIR) continue;
-            if (!(item.getPersistentDataContainer().has(lootingKey, PersistentDataType.INTEGER))) continue;
-
-            final Integer level = item.getPersistentDataContainer().get(lootingKey, PersistentDataType.INTEGER);
-
-            item.editMeta(meta -> {
-                meta.removeEnchant(Enchantment.LOOTING);
-                if (level != null && level > 0) meta.addEnchant(Enchantment.LOOTING, level, false);
-                meta.getPersistentDataContainer().remove(lootingKey);
-            });
-
-            event.getView().getTopInventory().setItem(slot, item);
+            
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
         }
     }
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        final ItemStack item = event.getItemDrop().getItemStack();
-        if (!(item.getPersistentDataContainer().has(lootingKey, PersistentDataType.INTEGER))) return;
-
-        final Integer level = item.getPersistentDataContainer().get(lootingKey, PersistentDataType.INTEGER);
-
-        item.editMeta(meta -> {
-            meta.removeEnchant(Enchantment.LOOTING);
-            if (level != null && level > 0) meta.addEnchant(Enchantment.LOOTING, level, false);
-            meta.getPersistentDataContainer().remove(lootingKey);
-        });
-
-        event.getItemDrop().setItemStack(item);
+        ItemUtil.applySpecialEnchantment(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
     }
 
     @EventHandler
     public void onEffectUnequipEvent(EffectUnequipEvent event) {
         if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
 
-        int slot = -1;
-
         for (ItemStack item : event.getPlayer().getInventory().getContents()) {
-            slot++;
-
             if (item == null || item.getType() == Material.AIR) continue;
-            if (!(item.getPersistentDataContainer().has(lootingKey, PersistentDataType.INTEGER))) continue;
 
-            final Integer level = item.getPersistentDataContainer().get(lootingKey, PersistentDataType.INTEGER);
-
-            item.editMeta(meta -> {
-                meta.removeEnchant(Enchantment.LOOTING);
-                if (level != null && level > 0) meta.addEnchant(Enchantment.LOOTING, level, false);
-                meta.getPersistentDataContainer().remove(lootingKey);
-            });
-
-            event.getPlayer().getInventory().setItem(slot, item);
+            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
         }
-
     }
 
     @EventHandler
