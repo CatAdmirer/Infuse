@@ -72,12 +72,8 @@ public class ActionBarUpdater extends BukkitRunnable {
                 }
             }
 
-            String fmt = String.format("<b>%s%s</b> <white>%s %s <b>%s%s</b>", leftPad, leftTime, leftEmoji, rightEmoji, rightTime, rightPad);
-
-            Component msg = mm.deserialize(fmt);
-
             // Sending the action bar
-            player.sendActionBar(msg);
+            player.sendActionBar(mm.deserialize(String.format("<b>%s%s</b> <white>%s %s <b>%s%s</b>", leftPad, leftTime, leftEmoji, rightEmoji, rightTime, rightPad)));
         });
     }
 
