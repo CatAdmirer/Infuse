@@ -211,6 +211,10 @@ public class MainConfig {
         config.set("invis_deaths", null);
         config.set("invis.hide_kills", false);
         config.set("invis.hide_deaths", false);
+        config.set("haste.enchantment.looting_level", 5);
+        config.set("haste.enchantment.fortune_level", 5);
+        config.set("haste.enchantment.efficiency_level", 10);
+        config.set("haste.enchantment.unbreaking_level", 5);
 
         save();
     }
