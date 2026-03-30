@@ -74,10 +74,10 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         String key = effect.getKey();
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-            return MessageUtil.formatTime(timeLeft, "<#" + Integer.toHexString(effect.getColor().getRGB() & 0xFFFFFF) + ">");
+            return "<#" + Integer.toHexString(effect.getColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
-            return MessageUtil.formatTime(timeLeft, "<white>");
+            return "<white>" + MessageUtil.formatTime(timeLeft);
         } else {
             return "";
         }
