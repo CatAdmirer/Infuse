@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.PlayerSwapHandItemsListener;
 import com.catadmirer.infuseSMP.WeightedRandom;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -100,6 +101,30 @@ public class Emerald implements Listener {
         });
 
         event.getItemDrop().setItemStack(item);
+    }
+
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
+
+        int slot = -1;
+
+        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+            slot++;
+
+            if (item == null || item.getType() == Material.AIR) continue;
+            if (!(item.getPersistentDataContainer().has(lootingKey, PersistentDataType.INTEGER))) continue;
+
+            final Integer level = item.getPersistentDataContainer().get(lootingKey, PersistentDataType.INTEGER);
+
+            item.editMeta(meta -> {
+                meta.removeEnchant(Enchantment.LOOTING);
+                if (level != null && level > 0) meta.addEnchant(Enchantment.LOOTING, level, false);
+                meta.getPersistentDataContainer().remove(lootingKey);
+            });
+
+            event.getPlayer().getInventory().setItem(slot, item);
+        }
     }
 
     @EventHandler

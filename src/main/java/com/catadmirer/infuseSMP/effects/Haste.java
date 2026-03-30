@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import com.catadmirer.infuseSMP.util.ItemUtil;
@@ -34,6 +35,7 @@ public class Haste implements Listener {
 
     public Haste(Infuse plugin) {
         Haste.plugin = plugin;
+
         Haste.fortuneKey = new NamespacedKey(plugin, "fortuneLevel");
         Haste.efficiencyKey = new NamespacedKey(plugin, "efficiencyLevel");
         Haste.unbreakingKey = new NamespacedKey(plugin, "unbreakingLevel");
@@ -55,7 +57,6 @@ public class Haste implements Listener {
 
             player.getInventory().setItemInMainHand(item);
         }
-
     }
 
     @EventHandler
@@ -63,13 +64,13 @@ public class Haste implements Listener {
         if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
 
         int slot = -1;
-
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
             slot++;
 
             if (item == null || item.getType() == Material.AIR) continue;
+
             final PersistentDataContainerView container = item.getPersistentDataContainer();
-            if (!(container.has(fortuneKey, PersistentDataType.INTEGER) || container.has(efficiencyKey, PersistentDataType.INTEGER) || container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
+            if (!(container.has(fortuneKey, PersistentDataType.INTEGER)) || !(container.has(efficiencyKey, PersistentDataType.INTEGER)) || !(container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
 
             final Integer fortune = container.get(fortuneKey, PersistentDataType.INTEGER);
             final Integer efficiency = container.get(efficiencyKey, PersistentDataType.INTEGER);
@@ -119,6 +120,41 @@ public class Haste implements Listener {
         });
 
         event.getItemDrop().setItemStack(item);
+    }
+
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
+
+        int slot = -1;
+        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+            slot++;
+
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            final PersistentDataContainerView container = item.getPersistentDataContainer();
+            if (!(container.has(fortuneKey, PersistentDataType.INTEGER)) || !(container.has(efficiencyKey, PersistentDataType.INTEGER)) || !(container.has(unbreakingKey, PersistentDataType.INTEGER))) return;
+
+            final Integer fortune = container.get(fortuneKey, PersistentDataType.INTEGER);
+            final Integer efficiency = container.get(efficiencyKey, PersistentDataType.INTEGER);
+            final Integer unbreaking = container.get(unbreakingKey, PersistentDataType.INTEGER);
+
+            item.editMeta(meta -> {
+                meta.removeEnchant(Enchantment.FORTUNE);
+                meta.removeEnchant(Enchantment.EFFICIENCY);
+                meta.removeEnchant(Enchantment.UNBREAKING);
+
+                if (fortune != null && fortune > 0) meta.addEnchant(Enchantment.FORTUNE, fortune, false);
+                if (efficiency != null && efficiency > 0) meta.addEnchant(Enchantment.FORTUNE, efficiency, false);
+                if (unbreaking != null && unbreaking > 0) meta.addEnchant(Enchantment.FORTUNE, unbreaking, false);
+
+                meta.getPersistentDataContainer().remove(fortuneKey);
+                meta.getPersistentDataContainer().remove(efficiencyKey);
+                meta.getPersistentDataContainer().remove(unbreakingKey);
+            });
+
+            event.getPlayer().getInventory().setItem(slot, item);
+        }
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

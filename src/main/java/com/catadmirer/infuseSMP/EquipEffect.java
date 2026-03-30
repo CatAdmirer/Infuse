@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.ApophisManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -67,6 +69,8 @@ public class EquipEffect implements Listener {
         
         // Equipping the effect to the slot.
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
+        new EffectEquipEvent(player, effect, slot).callEvent();
+
         Message msg = new Message(MessageType.EFFECT_EQUIPPED);
         msg.applyPlaceholder("effect_name", effect.getName());
         player.sendMessage(msg.toComponent());
@@ -183,6 +187,7 @@ public class EquipEffect implements Listener {
 
         // Removing the effect from the player.
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+        new EffectUnequipEvent(player, effect, slot).callEvent();
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
