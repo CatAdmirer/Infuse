@@ -155,6 +155,7 @@ public class Haste implements Listener {
 
             event.getPlayer().getInventory().setItem(slot, item);
         }
+
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

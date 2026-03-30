@@ -125,6 +125,7 @@ public class Emerald implements Listener {
 
             event.getPlayer().getInventory().setItem(slot, item);
         }
+
     }
 
     @EventHandler

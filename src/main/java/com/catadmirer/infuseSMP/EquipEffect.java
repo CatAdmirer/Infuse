@@ -192,4 +192,5 @@ public class EquipEffect implements Listener {
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
     }
+
 }
