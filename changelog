@@ -5,6 +5,6 @@
 - If an effect item despawns or is destroyed, it subtracts 1 from the number of those effects that have been crafted.
 - Fixed the way apophis applies skins and nametags (it works on rejoin now).
 - Fixed the invis death message modification so that it works based on the infuse effect, not the potion effect.
-- Redid some of the action bar code.  It stays centered now.
+- Redid the action bar code.  It stays centered now.
 - Fixed an issue with the ender effect whining in console about an event.
 - Thief effect actually hides people from tablist
