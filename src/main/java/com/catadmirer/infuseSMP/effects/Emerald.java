@@ -245,6 +245,6 @@ public class Emerald implements Listener {
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, (int) duration * 20, 4));
 
-        CooldownManager.setTimes(playerUUID, "emerald", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "emerald", duration, cooldown);
     }
 }

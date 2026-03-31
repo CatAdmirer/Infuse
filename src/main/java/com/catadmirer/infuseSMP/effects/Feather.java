@@ -179,7 +179,7 @@ public class Feather implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
 
-        CooldownManager.setTimes(playerUUID, "feather", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "feather", duration, cooldown);
 
         player.getScheduler().runDelayed(plugin, t -> {
             CooldownManager.setDuration(playerUUID, "feathermace", 5L);

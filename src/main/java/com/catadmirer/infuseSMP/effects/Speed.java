@@ -123,6 +123,6 @@ public class Speed implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_SPEED : EffectMapping.SPEED);
 
-        CooldownManager.setTimes(playerUUID, "speed", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "speed", duration, cooldown);
     }
 }

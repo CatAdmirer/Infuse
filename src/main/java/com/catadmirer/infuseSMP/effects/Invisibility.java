@@ -123,7 +123,7 @@ public class Invisibility implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_INVIS : EffectMapping.INVIS);
 
-        CooldownManager.setTimes(playerUUID, "invis", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "invis", duration, cooldown);
 
         final double radius = 10;
         final long durationTicks = duration * 20;

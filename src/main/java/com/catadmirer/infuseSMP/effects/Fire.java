@@ -121,7 +121,7 @@ public class Fire implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
 
-        CooldownManager.setTimes(playerUUID, "fire", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "fire", duration, cooldown);
     }
 
     private static void spawnSparkEffect(final Player caster) {
