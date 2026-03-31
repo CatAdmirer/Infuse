@@ -10,8 +10,8 @@ public class CooldownManager {
     public static final Map<String, String> displayNames = new ConcurrentHashMap<>();
 
     public static void setTimes(UUID playerUUID, String key, long durationSeconds, long cooldownSeconds) {
-        setCooldown(playerUUID, key, cooldownSeconds);
-        setDuration(playerUUID, key, cooldownSeconds + durationSeconds);
+        setCooldown(playerUUID, key, cooldownSeconds + durationSeconds);
+        setDuration(playerUUID, key, durationSeconds);
     }
 
     public static void setDuration(UUID playerUUID, String key, long seconds) {
