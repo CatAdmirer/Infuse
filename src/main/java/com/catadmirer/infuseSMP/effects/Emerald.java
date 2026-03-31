@@ -243,7 +243,8 @@ public class Emerald implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
 
-        CooldownManager.setDuration(playerUUID, "emerald", duration);
-        CooldownManager.setCooldown(playerUUID, "emerald", cooldown);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, (int) duration * 20, 4));
+
+        CooldownManager.setTimes(playerUUID, "emerald", cooldown, duration);
     }
 }

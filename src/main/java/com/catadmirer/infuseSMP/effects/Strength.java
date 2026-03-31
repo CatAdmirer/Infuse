@@ -38,8 +38,7 @@ public class Strength implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_STRENGTH : EffectMapping.STRENGTH);
 
-        CooldownManager.setDuration(playerUUID, "strength", duration);
-        CooldownManager.setCooldown(playerUUID, "strength", cooldown);
+        CooldownManager.setTimes(playerUUID, "strength", cooldown, duration);
     }
 
     @EventHandler
