@@ -111,8 +111,7 @@ public class Regen implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
 
-        CooldownManager.setDuration(playerUUID, "regen", duration);
-        CooldownManager.setCooldown(playerUUID, "regen", cooldown);
+        CooldownManager.setTimes(playerUUID, "regen", cooldown, duration);
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
     }

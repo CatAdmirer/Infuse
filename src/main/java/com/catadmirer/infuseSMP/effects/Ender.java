@@ -88,8 +88,7 @@ public class Ender implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_ENDER : EffectMapping.ENDER);
 
-        CooldownManager.setDuration(playerUUID, "ender", duration);
-        CooldownManager.setCooldown(playerUUID, "ender", cooldown);
+        CooldownManager.setTimes(playerUUID, "ender", cooldown, duration);
 
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 

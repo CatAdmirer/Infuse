@@ -128,8 +128,7 @@ public class Frost implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FROST : EffectMapping.FROST);
 
-        CooldownManager.setDuration(playerUUID, "frost", duration);
-        CooldownManager.setCooldown(playerUUID, "frost", cooldown);
+        CooldownManager.setTimes(playerUUID, "frost", cooldown, duration);
 
         Location center = caster.getLocation();
         double radius = 5;
