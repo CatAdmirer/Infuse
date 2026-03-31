@@ -64,8 +64,7 @@ public class Thunder implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_THUNDER : EffectMapping.THUNDER);
 
-        CooldownManager.setDuration(playerUUID, "thunder", duration);
-        CooldownManager.setCooldown(playerUUID, "thunder", cooldown);
+        CooldownManager.setTimes(playerUUID, "thunder", cooldown, duration);
 
         long durationTicks = duration * 20;
         World world = caster.getWorld();

@@ -125,8 +125,7 @@ public class Heart implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
 
-        CooldownManager.setDuration(playerUUID, "heart", duration);
-        CooldownManager.setCooldown(playerUUID, "heart", cooldown);
+        CooldownManager.setTimes(playerUUID, "heart", cooldown, duration);
         
         Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }

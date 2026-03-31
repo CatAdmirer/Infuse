@@ -87,8 +87,7 @@ public class Haste implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HASTE : EffectMapping.HASTE);
 
-        CooldownManager.setDuration(playerUUID, "haste", duration);
-        CooldownManager.setCooldown(playerUUID, "haste", cooldown);
+        CooldownManager.setTimes(playerUUID, "haste", cooldown, duration);
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
     }
