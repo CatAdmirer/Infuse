@@ -15,6 +15,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.components.FoodComponent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -72,9 +73,17 @@ public class Regen implements Listener {
         if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
 
         // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
-        event.getItem().editMeta(meta -> {
-            meta.getFood().setCanAlwaysEat(plugin.getDataManager().hasEffect(player, EffectMapping.REGEN));
-        });
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
+            event.getItem().editMeta(meta -> {
+                FoodComponent foodComp = meta.getFood();
+                foodComp.setCanAlwaysEat(true);
+                meta.setFood(foodComp);
+            });
+        } else {
+            event.getItem().editMeta(meta -> {
+                meta.setFood(null);
+            });
+        }
     }
 
     @EventHandler
