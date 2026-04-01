@@ -31,11 +31,10 @@ discord_webhook_url: ""
 
 brewing_gui: true
 
-effect_drops: Random
-
-# Random = Random effect drops
+# random = Random effect drops
 # 1/2 = Slot 1/2 Drops
-# None = None drop
+# none = None drop
+effect_drops: Random
 
 join_effects_enabled: false
 
