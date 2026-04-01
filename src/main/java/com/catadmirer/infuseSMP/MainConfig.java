@@ -212,13 +212,14 @@ public class MainConfig {
     }
 
     public void applyUpdates() {
-        config.set("invis_deaths", null);
-        config.set("invis.hide_kills", false);
-        config.set("invis.hide_deaths", false);
-        config.set("haste.enchantment.looting_level", 5);
-        config.set("haste.enchantment.fortune_level", 5);
-        config.set("haste.enchantment.efficiency_level", 10);
-        config.set("haste.enchantment.unbreaking_level", 5);
+        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
+        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
+        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
+        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
+        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
+        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
 
         save();
     }
