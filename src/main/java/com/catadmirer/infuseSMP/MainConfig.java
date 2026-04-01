@@ -207,6 +207,10 @@ public class MainConfig {
         return config.getDouble("ocean_pulling.pull.strength");
     }
 
+    public int hitCounterDecaySeconds() {
+        return config.getInt("hit_counter_decay_seconds");
+    }
+
     public void applyUpdates() {
         config.set("invis_deaths", null);
         config.set("invis.hide_kills", false);
