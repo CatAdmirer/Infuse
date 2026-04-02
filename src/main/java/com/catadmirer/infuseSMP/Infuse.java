@@ -131,6 +131,8 @@ public class Infuse extends JavaPlugin implements Listener {
         getCommand("rspark").setExecutor(new Abilities(this));
         getCommand("lspark").setExecutor(new Abilities(this));
 
+        getCommand("draw").setExecutor(new Draw());
+
         getCommand("controls").setExecutor((sender, command, label, args) -> {
             // Making sure only players can run the command
             if (!(sender instanceof Player player)) {
