@@ -2,29 +2,18 @@ package com.catadmirer.infuseSMP.particles;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-public class Particles {
+public class ParticleManager {
     private final Infuse plugin;
 
-    public Particles(Infuse plugin) {
+    public ParticleManager(Infuse plugin) {
         this.plugin = plugin;
     }
 
-    // TODO: There HAS to be a better way to do this.  Maybe a listener like this could be started when a player equips an effect?
-    public void startTask() {
-        Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, task -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                applyParticlesForEffect(player, "1");
-                applyParticlesForEffect(player, "2");
-            }
-        }, 1, 20);
-    }
-
-    private void applyParticlesForEffect(Player player, String slot) {
+    public void spawnEffectParticles(Player player, String slot) {
         EffectMapping effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (effect == null) return;
 

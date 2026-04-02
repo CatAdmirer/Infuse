@@ -6,7 +6,7 @@ import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
-import com.catadmirer.infuseSMP.particles.Particles;
+import com.catadmirer.infuseSMP.particles.ParticleManager;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -42,6 +42,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
+    private final ParticleManager particleManager;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -51,6 +52,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
+        this.particleManager = new ParticleManager(this);
     }
 
     public void onEnable() {
@@ -183,10 +185,11 @@ public class Infuse extends JavaPlugin implements Listener {
         getLogger().info("Infuse Plugin has been disabled!");
     }
 
-    private void registerEvents() {
-        // Initializing the particle manager
-        new Particles(this).startTask();
+    public ParticleManager getParticleManager() {
+        return particleManager;
+    }
 
+    private void registerEvents() {
         // Initializing the hit tracker
         Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
 

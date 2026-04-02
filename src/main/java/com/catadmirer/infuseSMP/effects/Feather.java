@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.particles.Particles;
+import com.catadmirer.infuseSMP.particles.ParticleManager;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,7 +169,7 @@ public class Feather implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
+        ParticleManager.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
         Vector dashDirection = player.getEyeLocation().getDirection().normalize();
         Vector launchVector = dashDirection.multiply(0).setY(1);
         player.setVelocity(launchVector);
