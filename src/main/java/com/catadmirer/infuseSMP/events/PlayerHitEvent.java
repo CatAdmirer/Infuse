@@ -8,18 +8,18 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerHitEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Player lastAttacker;
+    private final Player attacker;
     private final Player target;
     private final int hitCount;
 
-    public PlayerHitEvent(Player lastAttacker, Player target, int hitCount) {
-        this.lastAttacker = lastAttacker;
+    public PlayerHitEvent(Player attacker, Player target, int hitCount) {
+        this.attacker = attacker;
         this.target = target;
         this.hitCount = hitCount;
     }
 
-    public Player getLastAttacker() {
-        return lastAttacker;
+    public Player getAttacker() {
+        return attacker;
     }
 
     public Player getTarget() {
