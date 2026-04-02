@@ -148,6 +148,7 @@ public class Thunder implements Listener {
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         // Making sure both entities are players
         if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof Player target)) return;
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) return;
 
         // Making sure it wasn't a lightning bolt
@@ -175,7 +176,11 @@ public class Thunder implements Listener {
                 decayQueue.remove();
             }
 
-            chainLightning(new ArrayList<>(List.of(attacker)));
+            // Striking the attacked player
+            strikeLighting(target, attacker);
+
+            // Continuing the chain
+            chainLightning(new ArrayList<>(List.of(attacker, target)));
             
             return;
         }
