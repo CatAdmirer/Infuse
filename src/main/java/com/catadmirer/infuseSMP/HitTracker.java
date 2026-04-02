@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.events.PlayerHitEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class HitTracker implements Listener {
         // Incrementing the hit counter
         int hits = hitTracker.getOrDefault(attacker.getUniqueId(), 0) + 1;
         InfuseDebug.log("{}'s hit counter is {}.", attacker.getName(), hits);
+
+        // Calling the PlayerHitEvent
+        new PlayerHitEvent(attacker, target, hits).callEvent();
 
         if (hits == 10) {
             // Calling the TenHitEvent
