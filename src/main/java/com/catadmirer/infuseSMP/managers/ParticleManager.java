@@ -1,9 +1,11 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-
+import com.catadmirer.infuseSMP.InfuseDebug;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 
 public class ParticleManager {
@@ -35,5 +37,33 @@ public class ParticleManager {
      */
     public static void spawnEffectCloud(Player player, Color color) {
         player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 30, 0.5, 0.6, 0.5, 0, color);
+    }
+
+    public static void drawLine(Location start, Location end) {
+        drawLine(start, end, 5, new DustOptions(Color.WHITE, 1));
+    }
+
+    public static void drawLine(Location start, Location end, int count) {
+        drawLine(start, end, count, new DustOptions(Color.WHITE, 1));
+    }
+
+    public static void drawLine(Location start, Location end, DustOptions dustOptions) {
+        drawLine(start, end, 5, dustOptions);
+    }
+
+    public static void drawLine(Location start, Location end, int count, DustOptions dustOptions) {
+        if (!start.getWorld().equals(end.getWorld())) {
+            InfuseDebug.log("Cannot draw lines between two worlds!");
+            return;
+        }
+
+        Location diff = end.subtract(start);
+        int points = (int) (diff.length() * 10);
+        Location step = diff.multiply(1.0 / points);
+        for (int i = 0; i < points; i++) {
+            start.getWorld().spawnParticle(Particle.DUST, start, count, 0, 0, 0, 0, dustOptions);
+            start.add(step);
+        }
+        start.getWorld().spawnParticle(Particle.DUST, end, count, 0, 0, 0, 0, dustOptions);
     }
 }
