@@ -7,7 +7,6 @@ import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +15,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.FoodComponent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -53,17 +51,16 @@ public class Regen implements Listener {
 
     @EventHandler
     public void consume(PlayerItemConsumeEvent event) {
-        if (!plugin.getDataManager().hasEffect(event.getPlayer(), EffectMapping.REGEN)) return;
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) return;
 
-        final float sat = event.getPlayer().getSaturation();
-        event.getPlayer().setSaturation(sat + 6);
+        float sat = player.getSaturation();
+        player.setSaturation(sat + 6);
     }
 
     @EventHandler
     public void regenCanAlwaysEat(PlayerInteractEvent event) {
-        if (!(plugin.getDataManager().hasEffect(event.getPlayer(), EffectMapping.REGEN))) return;
         if (!(event.getAction().isRightClick())) return;
-
         Player player = event.getPlayer();
 
         // Filtering an empty hand
@@ -71,20 +68,22 @@ public class Regen implements Listener {
         
         // Filtering inedible items
         if (!event.getItem().getType().isEdible()) return;
-        // Check if it already can always eat before this.
-        if (event.getItem().getItemMeta().getFood().canAlwaysEat()) return;
+        
+        // Filtering always edible items
+        if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
 
-        final ItemStack item = event.getItem().clone();
-
-        // Making the food always edible only if the player has the regen effect.
-        item.editMeta(meta -> {
-            final FoodComponent food = meta.getFood();
-            food.setCanAlwaysEat(plugin.getDataManager().hasEffect(player, EffectMapping.REGEN));
-            meta.setFood(food);
-        });
-
-        item.setAmount(event.getItem().getAmount());
-        player.getInventory().setItemInMainHand(item);
+        // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
+        if (plugin.getDataManager().hasEffect(player, EffectMapping.REGEN)) {
+            event.getItem().editMeta(meta -> {
+                FoodComponent foodComp = meta.getFood();
+                foodComp.setCanAlwaysEat(true);
+                meta.setFood(foodComp);
+            });
+        } else {
+            event.getItem().editMeta(meta -> {
+                meta.setFood(null);
+            });
+        }
     }
 
     @EventHandler
@@ -111,7 +110,7 @@ public class Regen implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_REGEN : EffectMapping.REGEN);
 
-        CooldownManager.setTimes(playerUUID, "regen", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "regen", duration, cooldown);
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
     }

@@ -82,7 +82,7 @@ public class Thief implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_THIEF : EffectMapping.THIEF);
 
-        CooldownManager.setTimes(playerUUID, "thief", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "thief", duration, cooldown);
     }
 
     @EventHandler
@@ -225,8 +225,7 @@ public class Thief implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(effect);
         long duration = plugin.getMainConfig().duration(effect);
 
-        CooldownManager.setDuration(playerUUID, "thief_stolen", duration);
-        CooldownManager.setCooldown(playerUUID, "thief_stolen", cooldown * 2);
+        CooldownManager.setTimes(playerUUID, "thief_stolen", duration, cooldown * 2);
     }
 
     private record DisguiseData(Component customName, Component displayName, boolean customNameVisible, PlayerTextures skin) {}

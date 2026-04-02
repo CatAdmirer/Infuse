@@ -207,26 +207,19 @@ public class MainConfig {
         return config.getDouble("ocean_pulling.pull.strength");
     }
 
+    public int hitCounterDecaySeconds() {
+        return config.getInt("hit_counter_decay_seconds");
+    }
+
     public void applyUpdates() {
-        config.set("invis_deaths", null);
-        config.set("invis.hide_kills", false);
-        config.set("invis.hide_deaths", false);
-
-        config.set("emerald.enchantment.looting_level", 5);
-
-        config.set("haste.enchantment.fortune_level", 5);
-        config.set("haste.enchantment.efficiency_level", 10);
-        config.set("haste.enchantment.unbreaking_level", 5);
-
-        config.set("ender.passive_radius", 4);
-        config.set("ender.spark_teleport_max_distance", 15);
-        config.set("ender.curse_cooldown", 30);
-        config.set("ender.curse_duration", 1200);
-
-        config.set("feather.land_launch_radius", 4);
-        config.set("feather.land_launch_damage", 8);
-
-        config.set("fire.boost_strength", 0.6);
+        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
+        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
+        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
+        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
+        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
+        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
 
         save();
     }
@@ -245,33 +238,5 @@ public class MainConfig {
 
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
-    }
-
-    public int enderPassiveRadius() {
-        return config.getInt("ender.passive_radius");
-    }
-
-    public int enderSparkTeleportMaxDistance() {
-        return config.getInt("ender.spark_teleport_max_distance");
-    }
-
-    public int enderCurseCooldown() {
-        return config.getInt("ender.curse_cooldown");
-    }
-
-    public int enderCurseDuration() {
-        return config.getInt("ender.curse_duration");
-    }
-
-    public double featherLandLaunchRadius() {
-        return config.getDouble("feather.land_launch_radius");
-    }
-
-    public int featherLandLaunchDamage() {
-        return config.getInt("feather.land_launch_damage");
-    }
-
-    public double fireBoostStrength() {
-        return config.getDouble("fire.boost_strength");
     }
 }

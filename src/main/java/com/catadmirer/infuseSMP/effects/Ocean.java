@@ -61,7 +61,7 @@ public class Ocean implements Listener {
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
         long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
 
-        CooldownManager.setTimes(playerUUID, "ocean", cooldown, duration);
+        CooldownManager.setTimes(playerUUID, "ocean", duration, cooldown);
 
         final long durationTicks = duration * 20L;
 

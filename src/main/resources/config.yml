@@ -31,11 +31,15 @@ discord_webhook_url: ""
 
 brewing_gui: true
 
+# random = Random effect drops
+# 1/2 = Slot 1/2 Drops
+# none = None drop
 effect_drops: Random
 
-# Random = Random effect drops
-# 1/2 = Slot 1/2 Drops
-# None = None drop
+# The number of seconds that it takes for 1 hit to be removed from the hit timer.
+# This is primarily used to trigger the "on ten hit" abilities of each effect.
+# To trigger them, you need to hit your target 10 times with the specified number of seconds
+hit_counter_decay_seconds: 15
 
 join_effects_enabled: false
 

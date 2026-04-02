@@ -99,8 +99,7 @@ public class Apophis implements Listener {
             long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
             long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_APOPHIS : EffectMapping.APOPHIS);
 
-            CooldownManager.setDuration(playerUUID, "apophis", duration);
-            CooldownManager.setCooldown(playerUUID, "apophis", cooldown);
+            CooldownManager.setTimes(playerUUID, "apophis", duration, cooldown);
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(apophisSparkBoost), duration * 20);
         }

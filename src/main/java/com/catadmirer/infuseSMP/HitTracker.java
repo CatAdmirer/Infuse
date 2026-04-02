@@ -67,7 +67,7 @@ public class HitTracker implements Listener {
 
         // Having the hit counter decay over time
         // TODO: make this a config (0 or below disables it)
-        int hitCounterDecaySeconds = 10;
+        int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 
         InfuseDebug.log("Adding item to decay queue");
