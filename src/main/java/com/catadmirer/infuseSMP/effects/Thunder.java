@@ -19,6 +19,8 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -97,7 +99,7 @@ public class Thunder implements Listener {
      */
     public static void strikeLighting(LivingEntity target, LivingEntity attacker) {
         target.getWorld().strikeLightningEffect(target.getLocation());
-        target.damage(2, attacker);
+        target.damage(2, DamageSource.builder(DamageType.LIGHTNING_BOLT).withDirectEntity(attacker).build());
         target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
     }
 
@@ -125,7 +127,7 @@ public class Thunder implements Listener {
             if (targets.contains(target)) continue;
 
             // Scheduling the lightning to strike the target 1 second after the next
-            Bukkit.getScheduler().runTaskLater(plugin, () -> strikeLighting(target, attacker), 20 * targets.size());
+            Bukkit.getScheduler().runTaskLater(plugin, () -> strikeLighting(target, attacker), 20 * (targets.size() - 1));
 
             // Adding the target to the list
             targets.add(target);
@@ -148,6 +150,9 @@ public class Thunder implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.THUNDER)) return;
 
+        // Making sure it wasn't a lightning bolt
+        if (event.getDamageSource().getDamageType().equals(DamageType.LIGHTNING_BOLT)) return;
+
         // Making sure it counts as a normal hit
         // Vanilla attack cooldown needs to be at 84.8% to be a normal hit.
         if (attacker.getAttackCooldown() < 0.85) {
@@ -162,8 +167,17 @@ public class Thunder implements Listener {
         // In stormy weather, the player only needs 5 hits to activate chain lightning
         int hitGoal = attacker.getWorld().isClearWeather() ? 10 : 5;
         if (hits >= hitGoal) {
-            hits = 0;
+            hitTracker.put(attacker.getUniqueId(), 0);
+
+            // Removing x objects from the queue
+            for (int i = 0; i < hitGoal; i++) {
+                if (decayQueue.isEmpty()) continue;
+                decayQueue.remove();
+            }
+
             chainLightning(new ArrayList<>(List.of(attacker)));
+            
+            return;
         }
 
         // Saving the hit count
@@ -184,6 +198,7 @@ public class Thunder implements Listener {
             InfuseDebug.log("[Thunder] {}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
+        InfuseDebug.log("{} items in queue", decayQueue.size());
         
         // Running the decay task if it is still around
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
