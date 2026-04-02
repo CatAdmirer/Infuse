@@ -3,7 +3,8 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.particles.ParticleManager;
+import com.catadmirer.infuseSMP.managers.ParticleManager;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
