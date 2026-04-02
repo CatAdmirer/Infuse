@@ -24,9 +24,6 @@ import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -180,12 +177,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.getLogger().info("Infuse Plugin is disabling...");
 
         // Removing ritual beams
-        // TODO: Do this in a better way than removing all ender crystals
-        for (World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntitiesByClass(EnderCrystal.class)) {
-                entity.remove();
-            }
-        }
+        EffectCraftManager.removeBeam();
 
         // Finalizing the message
         getLogger().info("Infuse Plugin has been disabled!");

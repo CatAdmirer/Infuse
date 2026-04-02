@@ -49,7 +49,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class EffectCraftManager implements Listener {
     private final Infuse plugin;
-    private BossBar ritualBossBar;
+    private static BossBar ritualBossBar;
+    private static EnderCrystal ritualBeam;
 
     public EffectCraftManager(Infuse plugin) {
         this.plugin = plugin;
@@ -59,7 +60,7 @@ public class EffectCraftManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (this.ritualBossBar == null) return;
+        if (ritualBossBar == null) return;
         event.getPlayer().showBossBar(ritualBossBar);
     }
 
@@ -170,7 +171,7 @@ public class EffectCraftManager implements Listener {
         // Starting the ritual for the augmented effect
         // Creating the bossbar
         Component itemName = effect.getName().toComponent();
-        this.ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
+        ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
                 .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1,
                 effect.getRitualColor(), BossBar.Overlay.PROGRESS);
 
@@ -194,13 +195,14 @@ public class EffectCraftManager implements Listener {
             Location targetLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             targetLoc.setY(500);
             
-            EnderCrystal crystal = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
-            crystal.setShowingBottom(false);
-            crystal.setInvulnerable(true);
-            crystal.setInvisible(true);
-            crystal.setBeamTarget(targetLoc);
+            ritualBeam = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
+            ritualBeam.setShowingBottom(false);
+            ritualBeam.setInvulnerable(true);
+            ritualBeam.setInvisible(true);
+            ritualBeam.setBeamTarget(targetLoc);
+            ritualBeam.setPersistent(false);
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> crystal.remove(), ritualDuration * 20L);
+            Bukkit.getScheduler().runTaskLater(plugin, ritualBeam::remove, ritualDuration * 20L);
         }
 
         Environment worldEnv = brewerLocation.getWorld().getEnvironment();
@@ -282,6 +284,10 @@ public class EffectCraftManager implements Listener {
             }
 
         }.runTaskTimer(this.plugin, 0, 1);
+    }
+
+    public static void removeBeam() {
+        ritualBeam = null;
     }
 
     /** Prevents infuse effects from being crafted in a crafter. */
