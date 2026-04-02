@@ -7,13 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-/*
- * TODO:
- * Figure out a better way to get messages.
- * maybe individual functions so that placeholders can be applied correctly
- * Also some things need to be Lists, so make a better implementation for that.  Currently it converts lists to a string separated with "\n" then puts it 
- */
-
 public class Message {
     private String message;
     private List<String> placeholders;
