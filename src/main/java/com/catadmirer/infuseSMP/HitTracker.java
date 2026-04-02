@@ -70,7 +70,6 @@ public class HitTracker implements Listener {
         hitTracker.put(attacker.getUniqueId(), hits);
 
         // Having the hit counter decay over time
-        // TODO: make this a config (0 or below disables it)
         int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 
