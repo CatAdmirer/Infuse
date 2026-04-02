@@ -13,3 +13,5 @@
 - Cooldown timers don't start until after the spark ends. (Technically they do start but they're offset by the duration timer)
 - Added custom events for equipping and unequipping effects
 - The hit tracker's decay rate is now configurable.  Check the config.yml for more info
+- Thunder effect is accurate now
+- Fixed an issue with the hit tracker where hit counts were counted wrong.
