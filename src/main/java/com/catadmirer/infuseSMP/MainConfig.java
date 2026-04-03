@@ -211,12 +211,16 @@ public class MainConfig {
         return config.getInt("hit_counter_decay_seconds");
     }
 
-    public float emeraldXPPerHit() {
-        return (float) config.getDouble("emerald.xp_stolen_per_hit");
+    public int emeraldXPPerHit() {
+        return config.getInt("emerald.xp_stolen_per_hit");
     }
 
     public float emeraldXPPercent() {
         return Math.clamp((float) config.getDouble("emerald.xp_stolen_percent"), 0, 1);
+    }
+
+    public float emeraldPercentXPToShare() {
+        return Math.clamp((float) config.getDouble("emerald.percent_xp_to_share"), 0, 1);
     }
 
     public void applyUpdates() {
@@ -230,6 +234,7 @@ public class MainConfig {
         if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
         if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
         if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
+        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
 
         save();
     }

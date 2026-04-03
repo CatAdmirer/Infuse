@@ -22,6 +22,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -247,6 +248,22 @@ public class Emerald implements Listener {
         // Playing a noise
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
+    }
+
+    @EventHandler
+    public void onXPChange(PlayerExpChangeEvent event) {
+        Player player = event.getPlayer();
+        if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
+
+        for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
+            if (!trusted.isOnline()) continue;
+
+            Player trustedPlayer = trusted.getPlayer();
+            int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentXPToShare());
+            trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);
+
+            // Not calling PlayerExpChangeEvent to prevent infinite looping
+        }
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
