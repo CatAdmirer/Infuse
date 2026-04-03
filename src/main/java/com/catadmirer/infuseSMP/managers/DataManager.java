@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class DataManager {
@@ -126,31 +125,31 @@ public class DataManager {
         save();
     }
 
-    public List<Player> getTrusted(Player truster) {
-        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList());
+    public List<OfflinePlayer> getTrusted(OfflinePlayer truster) {
+        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getOfflinePlayer).toList());
     }
 
-    public void setTrusted(Player truster, List<Player> trusted) {
-        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).map(UUID::toString).toList());
+    public void setTrusted(OfflinePlayer truster, List<OfflinePlayer> trusted) {
+        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toList());
 
         save();
     }
 
-    public void addTrust(Player caster, Player toTrust) {
-        List<Player> trustedPlayers = getTrusted(caster);
+    public void addTrust(OfflinePlayer caster, OfflinePlayer toTrust) {
+        List<OfflinePlayer> trustedPlayers = getTrusted(caster);
         trustedPlayers.add(toTrust);
 
         setTrusted(caster, trustedPlayers);
     }
 
-    public void removeTrust(Player caster, Player trusted) {
-        List<Player> trustedSet = getTrusted(caster);
+    public void removeTrust(OfflinePlayer caster, OfflinePlayer trusted) {
+        List<OfflinePlayer> trustedSet = getTrusted(caster);
         trustedSet.remove(trusted);
 
         setTrusted(caster, trustedSet);
     }
 
-    public boolean isTrusted(Player caster, Player trusted) {
+    public boolean isTrusted(OfflinePlayer caster, OfflinePlayer trusted) {
         if (caster == null || trusted == null) return false;
         if (caster.getUniqueId().equals(trusted.getUniqueId())) return true;
 
