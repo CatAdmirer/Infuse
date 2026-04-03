@@ -205,7 +205,7 @@ public class Emerald implements Listener {
         Player player = event.getPlayer();
 
         // Making sure the player has the emerald effect
-        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD))) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) return;
 
         ItemStack consumedItem = event.getItem();
 
