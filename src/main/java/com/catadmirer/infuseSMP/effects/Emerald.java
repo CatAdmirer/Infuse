@@ -96,20 +96,21 @@ public class Emerald implements Listener {
         if (!plugin.getDataManager().hasEffect(event.getTarget(), EffectMapping.EMERALD)) return;
 
         InfuseDebug.log("[Emerald] Target has emerald effect");
-        InfuseDebug.log("[Emerald] Locking attacker's food and XP");
+        InfuseDebug.log("[Emerald] Locking attacker's food and Exp");
 
-        new FoodAndXPLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
+        new FoodAndExpLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
 
-    public static class FoodAndXPLock implements Listener {
+    public static class FoodAndExpLock implements Listener {
         private final Player player;
 
-        public FoodAndXPLock(Player player, double durationSeconds) {
+        public FoodAndExpLock(Player player, double durationSeconds) {
             this.player = player;
 
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 HandlerList.unregisterAll(this);
+                InfuseDebug.log("[Emerald] Exp lock for {} has been lifted", player.getName());
             }, (long) (durationSeconds * 20));
         }
 
@@ -121,9 +122,9 @@ public class Emerald implements Listener {
             }
         }
 
-        /** Preventing the player's xp level from changing. */
+        /** Preventing the player's exp level from changing. */
         @EventHandler
-        public void onXPChange(PlayerExpChangeEvent event) {
+        public void onExpChange(PlayerExpChangeEvent event) {
             if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 event.setAmount(0);
             }
@@ -203,19 +204,19 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void stealXP(EntityDamageByEntityEvent event) {
+    public void stealExp(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player damaged)) return;
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD)) return;
 
         // Getting configs
-        int xp = damaged.getTotalExperience();
-        int xpPerHit = plugin.getMainConfig().emeraldXPPerHit();
+        int exp = damaged.getTotalExperience();
+        int expPerHit = plugin.getMainConfig().emeraldExpPerHit();
 
         // Updating the xp of the players
-        damaged.setTotalExperience(xp - xpPerHit);
+        damaged.setTotalExperience(exp - expPerHit);
 
-        int toGain = (int) (xpPerHit * plugin.getMainConfig().emeraldXPPercent());
+        int toGain = (int) (expPerHit * plugin.getMainConfig().emeraldExpPercent());
         attacker.setTotalExperience(attacker.getTotalExperience() + toGain);
 
         // Calling the exp change event to allow for sharing if the spark is active
@@ -251,7 +252,7 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
-    public void onXPChange(PlayerExpChangeEvent event) {
+    public void onExpChange(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
 
@@ -259,7 +260,7 @@ public class Emerald implements Listener {
             if (!trusted.isOnline()) continue;
 
             Player trustedPlayer = trusted.getPlayer();
-            int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentXPToShare());
+            int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentExpToShare());
             trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);
 
             // Not calling PlayerExpChangeEvent to prevent infinite looping

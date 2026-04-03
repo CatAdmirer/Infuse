@@ -211,15 +211,15 @@ public class MainConfig {
         return config.getInt("hit_counter_decay_seconds");
     }
 
-    public int emeraldXPPerHit() {
+    public int emeraldExpPerHit() {
         return config.getInt("emerald.xp_stolen_per_hit");
     }
 
-    public float emeraldXPPercent() {
+    public float emeraldExpPercent() {
         return Math.clamp((float) config.getDouble("emerald.xp_stolen_percent"), 0, 1);
     }
 
-    public float emeraldPercentXPToShare() {
+    public float emeraldPercentExpToShare() {
         return Math.clamp((float) config.getDouble("emerald.percent_xp_to_share"), 0, 1);
     }
 
