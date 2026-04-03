@@ -208,12 +208,17 @@ public class Emerald implements Listener {
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD)) return;
 
         // Getting configs
-        float xp = damaged.getExp();
-        float xpPerHit = plugin.getMainConfig().emeraldXPPerHit();
+        int xp = damaged.getTotalExperience();
+        int xpPerHit = plugin.getMainConfig().emeraldXPPerHit();
 
         // Updating the xp of the players
-        damaged.setExp(xp - xpPerHit);
-        attacker.setExp(attacker.getExp() + xpPerHit * plugin.getMainConfig().emeraldXPPercent());
+        damaged.setTotalExperience(xp - xpPerHit);
+
+        int newXP = attacker.getTotalExperience() + (int) (xpPerHit * plugin.getMainConfig().emeraldXPPercent());
+        attacker.setTotalExperience(newXP);
+
+        // Calling the exp change event to allow for sharing if the spark is active
+        new PlayerExpChangeEvent(attacker, (int) newXP).callEvent();
     }
 
     @EventHandler
