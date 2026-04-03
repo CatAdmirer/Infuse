@@ -22,6 +22,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -33,6 +34,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -50,7 +52,6 @@ public class Emerald implements Listener {
     }
 
     public static void applyPassiveEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -138,9 +139,9 @@ public class Emerald implements Listener {
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
 
-        double multiplier = 1.5;
+        double multiplier = 2;
         if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) {
-            multiplier = 3.0;
+            multiplier = 4;
         }
 
         int newAmount = (int) Math.round(amount * multiplier);
@@ -202,11 +203,31 @@ public class Emerald implements Listener {
     }
 
     @EventHandler
+    public void stealXP(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player damaged)) return;
+        if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD)) return;
+
+        // Getting configs
+        int xp = damaged.getTotalExperience();
+        int xpPerHit = plugin.getMainConfig().emeraldXPPerHit();
+
+        // Updating the xp of the players
+        damaged.setTotalExperience(xp - xpPerHit);
+
+        int toGain = (int) (xpPerHit * plugin.getMainConfig().emeraldXPPercent());
+        attacker.setTotalExperience(attacker.getTotalExperience() + toGain);
+
+        // Calling the exp change event to allow for sharing if the spark is active
+        new PlayerExpChangeEvent(attacker, toGain).callEvent();
+    }
+
+    @EventHandler
     public void emeraldPreserveConsumables(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
 
         // Making sure the player has the emerald effect
-        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD))) return;
+        if (!plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD)) return;
 
         ItemStack consumedItem = event.getItem();
 
@@ -214,8 +235,8 @@ public class Emerald implements Listener {
         if (consumedItem.getType() == Material.POTION) return;
 
         // Getting the chance for the item to not be consumed
-        double chance = 0.15;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.25;
+        double chance = 0.5;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.75;
 
         // Rolling the dice
         if (Math.random() > chance) return;
@@ -229,6 +250,22 @@ public class Emerald implements Listener {
         player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 3, 1.5, 0.5, 0.5, 0.01);
     }
 
+    @EventHandler
+    public void onXPChange(PlayerExpChangeEvent event) {
+        Player player = event.getPlayer();
+        if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
+
+        for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
+            if (!trusted.isOnline()) continue;
+
+            Player trustedPlayer = trusted.getPlayer();
+            int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentXPToShare());
+            trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);
+
+            // Not calling PlayerExpChangeEvent to prevent infinite looping
+        }
+    }
+
     public static void activateSpark(Boolean isAugmented, Player player) {
         UUID playerUUID = player.getUniqueId();
 
@@ -237,7 +274,6 @@ public class Emerald implements Listener {
 
         // Applying effects for the emerald spark
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
