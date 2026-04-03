@@ -50,7 +50,6 @@ public class Emerald implements Listener {
     }
 
     public static void applyPassiveEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 40, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 40, 2, false, false));
 
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -138,9 +137,9 @@ public class Emerald implements Listener {
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
 
-        double multiplier = 1.5;
+        double multiplier = 2;
         if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) {
-            multiplier = 3.0;
+            multiplier = 4;
         }
 
         int newAmount = (int) Math.round(amount * multiplier);
@@ -214,8 +213,8 @@ public class Emerald implements Listener {
         if (consumedItem.getType() == Material.POTION) return;
 
         // Getting the chance for the item to not be consumed
-        double chance = 0.15;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.25;
+        double chance = 0.5;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.75;
 
         // Rolling the dice
         if (Math.random() > chance) return;
@@ -237,7 +236,6 @@ public class Emerald implements Listener {
 
         // Applying effects for the emerald spark
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_EMERALD : EffectMapping.EMERALD);
