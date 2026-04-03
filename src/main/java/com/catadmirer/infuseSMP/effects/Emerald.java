@@ -33,6 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -198,6 +199,21 @@ public class Emerald implements Listener {
                 currentOffers[i] = WeightedRandom.getRandomItem(rand, applicableEnchants, e -> e.getEnchantment().getWeight());
             }
         }
+    }
+
+    @EventHandler
+    public void stealXP(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player damaged)) return;
+        if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.EMERALD)) return;
+
+        // Getting configs
+        float xp = damaged.getExp();
+        float xpPerHit = plugin.getMainConfig().emeraldXPPerHit();
+
+        // Updating the xp of the players
+        damaged.setExp(xp - xpPerHit);
+        attacker.setExp(attacker.getExp() + xpPerHit * plugin.getMainConfig().emeraldXPPercent());
     }
 
     @EventHandler

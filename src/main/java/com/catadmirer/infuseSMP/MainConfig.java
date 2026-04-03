@@ -211,6 +211,14 @@ public class MainConfig {
         return config.getInt("hit_counter_decay_seconds");
     }
 
+    public float emeraldXPPerHit() {
+        return (float) config.getDouble("emerald.xp_stolen_per_hit");
+    }
+
+    public float emeraldXPPercent() {
+        return Math.clamp((float) config.getDouble("emerald.xp_stolen_percent"), 0, 1);
+    }
+
     public void applyUpdates() {
         if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
         if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
@@ -220,6 +228,8 @@ public class MainConfig {
         if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
         if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
         if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
+        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
+        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
 
         save();
     }

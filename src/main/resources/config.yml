@@ -88,6 +88,8 @@ apophis:
     augmented: 18
 
 emerald:
+  xp_stolen_per_hit: 15
+  xp_stolen_percent: 1
   lock_duration_seconds: 10
   cooldown:
     default: 91
