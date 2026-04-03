@@ -36,11 +36,13 @@ public class GlobalLoop extends BukkitRunnable {
             // Applying passive effects to the player
             if (lEffect != null) {
                 lEffect.applyPassiveEffects(player);
+                plugin.getParticleManager().spawnEffectParticles(player, "1");
             }
 
             // Applying passive effects to the player
             if (rEffect != null) {
                 rEffect.applyPassiveEffects(player);
+                plugin.getParticleManager().spawnEffectParticles(player, "2");
             }
 
             // Making sure the apophis boost has been removed

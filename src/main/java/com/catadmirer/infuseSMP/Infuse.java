@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
-import com.catadmirer.infuseSMP.particles.Particles;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -24,9 +23,6 @@ import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,6 +41,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
+    private final ParticleManager particleManager;
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
@@ -54,6 +51,7 @@ public class Infuse extends JavaPlugin implements Listener {
         this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
+        this.particleManager = new ParticleManager(this);
     }
 
     public void onEnable() {
@@ -180,21 +178,17 @@ public class Infuse extends JavaPlugin implements Listener {
         this.getLogger().info("Infuse Plugin is disabling...");
 
         // Removing ritual beams
-        // TODO: Do this in a better way than removing all ender crystals
-        for (World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntitiesByClass(EnderCrystal.class)) {
-                entity.remove();
-            }
-        }
+        EffectCraftManager.removeBeam();
 
         // Finalizing the message
         getLogger().info("Infuse Plugin has been disabled!");
     }
 
-    private void registerEvents() {
-        // Initializing the particle manager
-        new Particles(this).startTask();
+    public ParticleManager getParticleManager() {
+        return particleManager;
+    }
 
+    private void registerEvents() {
         // Initializing the hit tracker
         Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
 

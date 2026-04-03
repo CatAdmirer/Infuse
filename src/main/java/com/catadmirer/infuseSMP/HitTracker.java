@@ -52,7 +52,7 @@ public class HitTracker implements Listener {
             tenHit.callEvent();
             InfuseDebug.log("Called TenHitEvent");
 
-            hits -= 10;
+            hitTracker.put(attacker.getUniqueId(), 0);
 
             // Removing 10 objects from the queue
             for (int i = 0; i < 10; i++) {
@@ -60,13 +60,13 @@ public class HitTracker implements Listener {
                 decayQueue.remove();
             }
             InfuseDebug.log("Removed items from queue.");
+            return;
         }
 
         // Saving the hit count
         hitTracker.put(attacker.getUniqueId(), hits);
 
         // Having the hit counter decay over time
-        // TODO: make this a config (0 or below disables it)
         int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 

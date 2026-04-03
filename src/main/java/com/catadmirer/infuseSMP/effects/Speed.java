@@ -3,7 +3,8 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
-import com.catadmirer.infuseSMP.particles.Particles;
+import com.catadmirer.infuseSMP.managers.ParticleManager;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -83,7 +84,7 @@ public class Speed implements Listener {
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        Particles.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
+        ParticleManager.spawnEffectCloud(player, Color.fromRGB(0xD1A44B));
         final Vector direction = player.getEyeLocation().getDirection().normalize();
         double playerVelocityMultiplier = plugin.getMainConfig().speedPlayerVelocityMultiplier();
         player.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
