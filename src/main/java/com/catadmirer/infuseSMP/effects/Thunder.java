@@ -75,7 +75,11 @@ public class Thunder implements Listener {
                 while (true) {
                     long nearbyPlayers = world.getNearbyEntities(caster.getLocation(), radius, radius, radius).stream().filter(p -> p instanceof Player).count();
                     double tmp = baseRadius + radiusBoostPerPlayer * nearbyPlayers;
-                    if (tmp == radius) break;
+                    if (tmp == radius) {
+                        break;
+                    } else {
+                        radius = tmp;
+                    }
                 }
 
                 // Striking all players within the radius
