@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.ToIntFunction;
 
@@ -19,15 +20,15 @@ public class WeightedRandom {
         }
     }
 
-    public static <T> T getRandomItem(Random random, List<T> list, int totalWeight, ToIntFunction<T> getWeight) {
+    public static <T> Optional<T> getRandomItem(Random random, List<T> list, int totalWeight, ToIntFunction<T> getWeight) {
         if (totalWeight < 0) {
             throw new IllegalArgumentException("Negative total weight in getRandomItem");
         }
 
-        if (totalWeight == 0) return null;
+        if (totalWeight == 0) return Optional.empty();
 
         int i = random.nextInt(totalWeight);
-        return getWeightedItem(list, i, getWeight);
+        return Optional.of(getWeightedItem(list, i, getWeight));
     }
 
     public static <T> T getWeightedItem(List<T> list, int weight, ToIntFunction<T> getWeight) {
@@ -41,7 +42,7 @@ public class WeightedRandom {
         return null;
     }
 
-    public static <T> T getRandomItem(Random random, List<T> list, ToIntFunction<T> getWeight) {
+    public static <T> Optional<T> getRandomItem(Random random, List<T> list, ToIntFunction<T> getWeight) {
         return getRandomItem(random, list, getTotalWeight(list, getWeight), getWeight);
     }
 
