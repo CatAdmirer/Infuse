@@ -46,8 +46,8 @@ public class Apophis implements Listener {
     public static void applyPassiveEffects(Player player) {
         AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute.getModifier(apophisBoost) == null) {
-            AttributeModifier modifier = new AttributeModifier(apophisBoost, 10, Operation.ADD_NUMBER);
-            attribute.addModifier(modifier);
+            attribute.addModifier(new AttributeModifier(apophisBoost, 10, Operation.ADD_NUMBER));
+            player.heal(10);
         }
 
         ItemStack mainHand = player.getInventory().getItemInMainHand();
@@ -93,6 +93,7 @@ public class Apophis implements Listener {
             AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
             if (attribute.getModifier(apophisSparkBoost) == null) {
                 attribute.addModifier(new AttributeModifier(apophisSparkBoost, 10, Operation.ADD_NUMBER));
+                player.heal(10);
             }
             
             // Applying cooldowns and durations for the effect

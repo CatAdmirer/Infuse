@@ -41,8 +41,8 @@ public class Heart implements Listener {
     public static void applyPassiveEffects(Player player) {
         AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute.getModifier(heartBoost) == null) {
-            AttributeModifier modifier = new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER);
-            attribute.addModifier(modifier);
+            attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
+            player.heal(10);
         }
     }
 
@@ -117,8 +117,8 @@ public class Heart implements Listener {
 
         AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute.getModifier(heartSparkBoost) == null) {
-            AttributeModifier modifier = new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER);
-            attribute.addModifier(modifier);
+            attribute.addModifier(new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER));
+            player.heal(10);
         }
         
         // Applying cooldowns and durations for the effect
