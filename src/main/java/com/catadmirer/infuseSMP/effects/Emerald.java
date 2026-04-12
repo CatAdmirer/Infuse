@@ -72,13 +72,13 @@ public class Emerald implements Listener {
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;
             
-            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+            ItemUtil.removeSpecialEnchant(item, lootingKey, Enchantment.LOOTING);
         }
     }
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        ItemUtil.applySpecialEnchantment(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+        ItemUtil.removeSpecialEnchant(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING);
     }
 
     @EventHandler
@@ -88,7 +88,7 @@ public class Emerald implements Listener {
         for (ItemStack item : event.getPlayer().getInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;
 
-            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
+            ItemUtil.removeSpecialEnchant(item, lootingKey, Enchantment.LOOTING);
         }
     }
 
