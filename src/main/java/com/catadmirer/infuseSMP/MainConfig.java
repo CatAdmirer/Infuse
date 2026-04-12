@@ -43,9 +43,9 @@ public class MainConfig {
             return true;
 
         } catch (InvalidConfigurationException e) {
-            Infuse.LOGGER.warn("{} is broken :wilted_rose:", file.getName());
+            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
-            Infuse.LOGGER.error("uh broken as well :wilted_rose: {}", file.getName());
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
             e.printStackTrace();
         }
 
