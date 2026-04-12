@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -91,13 +90,13 @@ public class Frost implements Listener {
 
     @EventHandler
     public void onTenthAttack(TenHitEvent event) {
-        InfuseDebug.log("[Frost] Recieved TenHitEvent");
-        InfuseDebug.log("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
-        InfuseDebug.log("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
         
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), EffectMapping.FROST)) return;
 
-        InfuseDebug.log("[Frost] Attacker has frost effect");
+        Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
 
         (new BukkitRunnable() {
             int ticksElapsed = 0;

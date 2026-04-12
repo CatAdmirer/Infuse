@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.InfuseDebug;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -53,7 +52,7 @@ public class ParticleManager {
 
     public static void drawLine(Location start, Location end, int count, DustOptions dustOptions) {
         if (!start.getWorld().equals(end.getWorld())) {
-            InfuseDebug.log("Cannot draw lines between two worlds!");
+            Infuse.LOGGER.debug("Cannot draw lines between two worlds!");
             return;
         }
 
