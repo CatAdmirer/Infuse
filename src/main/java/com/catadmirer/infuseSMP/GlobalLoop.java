@@ -6,14 +6,11 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GlobalLoop extends BukkitRunnable {
-    private final Infuse plugin;
-
-    public GlobalLoop(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     public void start() {
         this.runTaskTimer(plugin, 0, 20);
@@ -34,7 +31,7 @@ public class GlobalLoop extends BukkitRunnable {
             // Applying glowing to players near someone with the ender effect
             Ender enderEffect = new Ender();
             if (plugin.getDataManager().hasEffect(player, enderEffect)) {
-                enderEffect.applyGlowingToUntrusted(plugin, player);
+                enderEffect.applyGlowingToUntrusted(player);
             }
 
             // Drowning players near ocean users

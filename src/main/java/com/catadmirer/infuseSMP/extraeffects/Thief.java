@@ -92,7 +92,7 @@ public class Thief extends InfuseEffect {
      * @param thiefUser The thief user to disguise
      * @param player The player to disguise the thief as
      */
-    private void disguise(Infuse plugin, Player thiefUser, Player player) {
+    private void disguise(Player thiefUser, Player player) {
         // Storing the killer's original skin
         disguisedPlayers.put(thiefUser.getUniqueId(),
                 new DisguiseData(thiefUser.customName(),
@@ -160,7 +160,7 @@ public class Thief extends InfuseEffect {
         return stolen;
     }
 
-    private void activateEffect(Infuse plugin, Player player, @NotNull InfuseEffect stolen, Entity victim) {
+    private void activateEffect(Player player, @NotNull InfuseEffect stolen, Entity victim) {
         Message msg = new Message(MessageType.THIEF_STEAL);
         msg.applyPlaceholder("player", victim.getName());
         msg.applyPlaceholder("effect_name", stolen.getName());
@@ -218,7 +218,7 @@ public class Thief extends InfuseEffect {
 
         // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
         if (plugin.getDataManager().hasEffect(killer, this)) {
-            disguise(plugin, killer, deadPlayer);
+            disguise(killer, deadPlayer);
         }
     }
 
@@ -248,11 +248,11 @@ public class Thief extends InfuseEffect {
         InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
 
         if (leftEffect != null && rightEffect != null) {
-            activateEffect(plugin, player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
+            activateEffect(player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
         } else if (leftEffect != null) {
-            activateEffect(plugin, player, leftEffect, victim);
+            activateEffect(player, leftEffect, victim);
         } else if (rightEffect != null) {
-            activateEffect(plugin, player, rightEffect, victim);
+            activateEffect(player, rightEffect, victim);
         } else return;
 
         CooldownManager.setDuration(playerUUID, "thief", 0);

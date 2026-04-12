@@ -12,15 +12,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class HitTracker implements Listener {
-    private final Infuse plugin;
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     private final Map<UUID,Integer> hitTracker = new HashMap<>();
     Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
-
-    public HitTracker(Infuse plugin) {
-        this.plugin = plugin;
-    }
 
     /**
      * Tracking the number of hits a player has.

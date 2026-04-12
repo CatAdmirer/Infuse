@@ -139,13 +139,13 @@ public class Ender extends InfuseEffect {
         fireball.setVelocity(velocity);
     }
 
-    public void cursePlayer(Infuse plugin, UUID playerUUID, long delayTicks) {
+    public void cursePlayer(UUID playerUUID, long delayTicks) {
         cursedPlayers.add(playerUUID);
 
         Bukkit.getScheduler().runTaskLater(plugin, task -> cursedPlayers.remove(playerUUID), delayTicks);
     }
 
-    public void applyGlowingToUntrusted(Infuse plugin, Player player) {
+    public void applyGlowingToUntrusted(Player player) {
         double radius = 10;
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
@@ -197,7 +197,7 @@ public class Ender extends InfuseEffect {
     public void onUseDragonBreath(PlayerInteractEvent event) {
         // Listening for right clicks
         Action action = event.getAction();
-        if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
+        if (!action.isRightClick()) return;
         
         // Making sure the player has the ender effect
         Player player = event.getPlayer();
@@ -222,7 +222,7 @@ public class Ender extends InfuseEffect {
 
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        cursePlayer(plugin, target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), 1200);
     }
 
     @EventHandler
@@ -233,7 +233,7 @@ public class Ender extends InfuseEffect {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        cursePlayer(plugin, target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), 1200);
 
         event.setDamage(0);
     }
@@ -246,6 +246,6 @@ public class Ender extends InfuseEffect {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        cursePlayer(plugin, target.getUniqueId(), 1200);
+        cursePlayer(target.getUniqueId(), 1200);
     }
 }

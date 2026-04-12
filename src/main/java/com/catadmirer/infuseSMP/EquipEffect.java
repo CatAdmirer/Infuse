@@ -13,13 +13,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class EquipEffect implements Listener {
-    private final Infuse plugin;
-
-    public EquipEffect(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @EventHandler
     public void onFirstJoin(PlayerJoinEvent event) {

@@ -13,15 +13,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 public class DataManager {
-    private final Infuse plugin;
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public DataManager(Infuse plugin) {   
-        this.plugin = plugin;     
+    public DataManager() {
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }

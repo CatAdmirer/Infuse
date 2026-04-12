@@ -10,13 +10,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class DrainCommand implements CommandExecutor, Listener {
-    private final Infuse plugin;
-
-    public DrainCommand(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

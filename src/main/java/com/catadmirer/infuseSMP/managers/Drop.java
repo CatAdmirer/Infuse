@@ -15,15 +15,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class Drop implements Listener {
-    private final Infuse plugin;
-
-    public Drop(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     private boolean isInfuseEffect(ItemStack item) {
         return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();

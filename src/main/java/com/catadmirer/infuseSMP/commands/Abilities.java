@@ -9,13 +9,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Abilities implements CommandExecutor {
-    private final Infuse plugin;
-
-    public Abilities(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {

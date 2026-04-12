@@ -9,14 +9,11 @@ import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class InfusePlaceholders extends PlaceholderExpansion {
-    private Infuse plugin;
-
-    public InfusePlaceholders(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @Override
     public String getAuthor() {

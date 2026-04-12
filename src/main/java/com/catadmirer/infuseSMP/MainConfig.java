@@ -8,15 +8,14 @@ import java.util.Objects;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class MainConfig {
     public final File file;
     public final FileConfiguration config;
-    public final Plugin plugin;
+    public final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
-    public MainConfig(Plugin plugin) {
-        this.plugin = plugin;
+    public MainConfig() {
         this.file = new File(plugin.getDataFolder(), "config.yml");
         this.config = YamlConfiguration.loadConfiguration(file);
     }

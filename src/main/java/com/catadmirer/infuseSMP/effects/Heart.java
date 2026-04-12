@@ -122,7 +122,7 @@ public class Heart extends InfuseEffect {
         Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }
 
-    private void showAndUpdateHealthAboveEntity(Infuse plugin, LivingEntity player) {
+    private void showAndUpdateHealthAboveEntity(LivingEntity player) {
         Location ploc = player.getLocation().add(0, 2.5, 0);
 
         TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
@@ -168,7 +168,7 @@ public class Heart extends InfuseEffect {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        showAndUpdateHealthAboveEntity(plugin, event.getTarget());
+        showAndUpdateHealthAboveEntity(event.getTarget());
     }
 
     @EventHandler

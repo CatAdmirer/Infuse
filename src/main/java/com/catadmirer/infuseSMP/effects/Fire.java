@@ -94,7 +94,7 @@ public class Fire extends InfuseEffect {
             }
         }
 
-        fireSparkEffect(plugin, player);
+        fireSparkEffect(player);
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
@@ -103,7 +103,7 @@ public class Fire extends InfuseEffect {
         CooldownManager.setTimes(playerUUID, "fire", duration, cooldown);
     }
 
-    private final void fireSparkEffect(Infuse plugin, Player caster) {
+    private final void fireSparkEffect(Player caster) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> stage0(caster), 20);
         for (int i = 0; i < 5; i++) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 20 * (i + 1));

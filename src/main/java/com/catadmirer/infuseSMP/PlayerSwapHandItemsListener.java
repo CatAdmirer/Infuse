@@ -7,13 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayerSwapHandItemsListener implements Listener {
-    private final Infuse plugin;
-
-    public PlayerSwapHandItemsListener(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     /**
      * Listens for when the player swaps the items in their main and offhand.

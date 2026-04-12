@@ -47,18 +47,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class EffectCraftManager implements Listener {
-    private final Infuse plugin;
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     private static BossBar ritualBossBar;
     private static EnderCrystal ritualBeam;
-
-    public EffectCraftManager(Infuse plugin) {
-        this.plugin = plugin;
-
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {

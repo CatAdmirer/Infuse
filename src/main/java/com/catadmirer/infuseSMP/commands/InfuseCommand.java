@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.MessageConfig;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
@@ -19,13 +18,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
-    private final Infuse plugin;
-    
-    public InfuseCommand(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -45,7 +41,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                player.openInventory(new EffectChooser(plugin).getInventory());
+                player.openInventory(new EffectChooser().getInventory());
                 break;
 
             case "reload":
@@ -55,7 +51,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 plugin.getMainConfig().load();
-                MessageConfig.load(plugin);
+                plugin.getMessageConfig().load();
                 plugin.getRecipeManager().reload();
                 player.sendMessage("Infuse configs reloaded");
                 break;

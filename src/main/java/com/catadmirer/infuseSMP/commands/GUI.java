@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
@@ -19,17 +18,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class GUI implements Listener, CommandExecutor {
-    private final Infuse plugin;
-    
-    public GUI(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("infuses")) {
             // Opening the gui for players only.
             if (sender instanceof Player player) {
-                player.openInventory(new EffectChooser(plugin).getInventory());
+                player.openInventory(new EffectChooser().getInventory());
             } else {
                 sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
             }

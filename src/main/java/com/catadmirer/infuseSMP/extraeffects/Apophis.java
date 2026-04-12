@@ -125,7 +125,7 @@ public class Apophis extends InfuseEffect {
                 }
             }
 
-            fireSparkEffect(plugin, player);
+            fireSparkEffect(player);
 
             AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
             if (attribute.getModifier(apophisSparkBoost) == null) {
@@ -143,7 +143,7 @@ public class Apophis extends InfuseEffect {
         }
     }
 
-    private final void fireSparkEffect(Infuse plugin, Player caster) {
+    private final void fireSparkEffect(Player caster) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> stage0(caster), 20);
         for (int i = 0; i < 5; i++) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> stage1(caster), 20 * (i + 1));

@@ -3,6 +3,9 @@ package com.catadmirer.infuseSMP;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -12,7 +15,7 @@ public class Message {
     private List<String> placeholders;
 
     public Message(MessageType messageType) {
-        message = MessageConfig.getMessage(messageType);
+        message = JavaPlugin.getPlugin(Infuse.class).getMessageConfig().getMessage(messageType);
         placeholders = new ArrayList<>(messageType.placeholders);
     }
 

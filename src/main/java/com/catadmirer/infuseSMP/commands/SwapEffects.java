@@ -8,13 +8,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class SwapEffects implements CommandExecutor {
-    private final Infuse plugin;
-
-    public SwapEffects(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     
     // Defining the command for swapping effects...
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

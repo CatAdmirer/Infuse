@@ -43,49 +43,43 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private final DataManager dataManager;
     private final MainConfig mainConfig;
+    private final MessageConfig messageConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
     private final ParticleManager particleManager;
 
     public Infuse() {
-        new ApophisManager(this);
-        this.mainConfig = new MainConfig(this);
-        this.dataManager = new DataManager(this);
-        this.loop = new GlobalLoop(this);
-        this.recipeManager = new RecipeManager(this);
-        this.particleManager = new ParticleManager(this);
+        this.mainConfig = new MainConfig();
+        this.messageConfig = new MessageConfig();
+        this.dataManager = new DataManager();
+        this.loop = new GlobalLoop();
+        this.recipeManager = new RecipeManager();
+        this.particleManager = new ParticleManager();
     }
 
     public void onEnable() {
         // Making sure the plugin hasn't been initialized twice
-        if (instance != null) {
-            throw new IllegalStateException("Plugin already initialized!");
+        if (instance != null && instance.isEnabled()) {
+            throw new IllegalStateException("Infuse already enabled!");
         }
 
         // Loading the Infuse plugin instance
         instance = this;
 
-        // Loading the messages
-        MessageConfig.load(this);
-        
-        // Loading the config
+        // Loading configs
+        messageConfig.load();
         mainConfig.load();
-        
-        // Loading the data manager
         dataManager.load();
 
         // Applying config updates
-        MessageConfig.applyUpdates();
+        messageConfig.applyUpdates();
         mainConfig.applyUpdates();
         dataManager.applyUpdates();
-
-        // Initializing the recipe manager
-        new EffectCraftManager(this);
 
         // Registering infuse commands
         this.registerCommands();
 
-        // Starting the passive effect loop
+        // Starting the global loop
         loop.start();
 
         // Registering event listeners for the plugin
@@ -95,11 +89,11 @@ public class Infuse extends JavaPlugin implements Listener {
         recipeManager.registerRecipes();
 
         // Initializing the action bar updater
-        new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
+        new ActionBarUpdater().runTaskTimer(this, 0, 20);
 
         // Registering the PlaceholderAPI listener if the plugin is installed
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new InfusePlaceholders(this).register();
+            new InfusePlaceholders().register();
             LOGGER.info("Placeholders Enabled!");
         } else {
             LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
@@ -113,25 +107,29 @@ public class Infuse extends JavaPlugin implements Listener {
         return mainConfig;
     }
 
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
+    }
+
     public RecipeManager getRecipeManager() {
         return recipeManager;
     }
 
     /** Registers the commands for the plugin. */
     private void registerCommands() {
-        getCommand("trust").setExecutor(new TrustCommand(dataManager));
-        getCommand("untrust").setExecutor(new TrustCommand(dataManager));
-        getCommand("recipes").setExecutor(new Recipes(this));
-        getCommand("swap").setExecutor(new SwapEffects(this));
+        getCommand("trust").setExecutor(new TrustCommand());
+        getCommand("untrust").setExecutor(new TrustCommand());
+        getCommand("recipes").setExecutor(new Recipes());
+        getCommand("swap").setExecutor(new SwapEffects());
         
-        getCommand("infuse").setExecutor(new InfuseCommand(this));
-        getCommand("infuse").setTabCompleter(new InfuseCommand(this));
+        getCommand("infuse").setExecutor(new InfuseCommand());
+        getCommand("infuse").setTabCompleter(new InfuseCommand());
 
-        getCommand("ldrain").setExecutor(new DrainCommand(this));
-        getCommand("rdrain").setExecutor(new DrainCommand(this));
+        getCommand("ldrain").setExecutor(new DrainCommand());
+        getCommand("rdrain").setExecutor(new DrainCommand());
 
-        getCommand("rspark").setExecutor(new Abilities(this));
-        getCommand("lspark").setExecutor(new Abilities(this));
+        getCommand("rspark").setExecutor(new Abilities());
+        getCommand("lspark").setExecutor(new Abilities());
 
         getCommand("draw").setExecutor(new Draw());
 
@@ -172,9 +170,6 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        // Resetting the instance
-        instance = null;
-
         // Stopping the passive effect loop
         loop.stop();
 
@@ -194,17 +189,18 @@ public class Infuse extends JavaPlugin implements Listener {
 
     private void registerEvents() {
         // Initializing the hit tracker
-        Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
+        Bukkit.getPluginManager().registerEvents(new HitTracker(), this);
 
         // Registering events for all the listeners
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new GUI(this), this);
-        Bukkit.getPluginManager().registerEvents(new Drop(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipEffect(this), this);
+        Bukkit.getPluginManager().registerEvents(new GUI(), this);
+        Bukkit.getPluginManager().registerEvents(new Drop(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(), this);
+        Bukkit.getPluginManager().registerEvents(new Recipes(), this);
+        Bukkit.getPluginManager().registerEvents(new EquipEffect(), this);
         Bukkit.getPluginManager().registerEvents(new ClearEffect(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new ItemUtil(), this);
+        Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
 
         // Registering events for all the effects
         Bukkit.getPluginManager().registerEvents(new Emerald(), this);

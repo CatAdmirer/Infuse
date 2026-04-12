@@ -9,13 +9,10 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class ParticleManager {
-    private final Infuse plugin;
-
-    public ParticleManager(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     public void spawnEffectParticles(Player player, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);

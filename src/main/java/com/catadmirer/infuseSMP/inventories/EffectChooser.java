@@ -12,12 +12,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class EffectChooser implements InventoryHolder, Listener {
     private final Inventory inventory;
 
-    public EffectChooser(Infuse plugin) {
+    public EffectChooser() {
         inventory = Bukkit.createInventory(this, 54, Message.toComponent("<b>Infuses"));
 
         // Filling the inventory with decorative glass panes
@@ -42,6 +43,7 @@ public class EffectChooser implements InventoryHolder, Listener {
         inventory.setItem(33, new Haste(true).createItem());
         inventory.setItem(40, new Thunder(true).createItem());
 
+        Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
         if (plugin.getMainConfig().enableThief()) {
             inventory.setItem(39, new Thief(true).createItem());
         }

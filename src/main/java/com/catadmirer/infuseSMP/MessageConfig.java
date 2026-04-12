@@ -9,26 +9,33 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class MessageConfig {
-    // Config and config files
-    public static final File file = new File("plugins/Infuse/messages.yml");
-    public static final YamlConfiguration config = new YamlConfiguration();
-
     // Text serializers
     public static final MiniMessage minimessage = MiniMessage.miniMessage();
     public static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
+
+    // Config and config files
+    public final File file;
+    public final YamlConfiguration config;
+
+    public MessageConfig() {
+        Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+        file = new File(plugin.getDataFolder(), "messages.yml");
+        config = YamlConfiguration.loadConfiguration(file);
+    }
 
     /**
      * Reloads the configuration.
      *
      * @return Whether the configuration was loaded successfully.
      */
-    public static boolean load(Plugin plugin) {
+    public boolean load() {
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         // Logging is handled by the function.
-        if (!createFile(plugin, false)) {
+        if (!createFile(JavaPlugin.getPlugin(Infuse.class), false)) {
             return false;
         }
 
@@ -53,7 +60,7 @@ public class MessageConfig {
      * @param replace Whether or not to replace the config file with the default configs.
      * @return Whether or not the file was created successfully.
      */
-    public static boolean createFile(Plugin plugin, boolean replace) {
+    public boolean createFile(Plugin plugin, boolean replace) {
         // Creating the file if it doesn't exist.
         if (!file.exists()) {
             plugin.saveResource(file.getName(), replace);
@@ -68,7 +75,7 @@ public class MessageConfig {
         return true;
     }
 
-    public static String getMessage(MessageType message) {
+    public String getMessage(MessageType message) {
         // Checking that the config contains the message
         if (!config.contains(message.configKey)) {
             Infuse.LOGGER.error("Could not find \"{}\" in the config.", message.configKey);
@@ -96,7 +103,7 @@ public class MessageConfig {
         }
     }
 
-    public static void applyUpdates() {
+    public void applyUpdates() {
         config.set("invis.kill_invis", null);
         config.set("invis.death_invis", null);
 

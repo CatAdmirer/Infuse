@@ -8,15 +8,12 @@ import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
     private final MiniMessage mm = MiniMessage.miniMessage();
-    private final Infuse plugin;
-
-    public ActionBarUpdater(Infuse plugin) {
-        this.plugin = plugin;
-    }
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @Override
     public void run() {

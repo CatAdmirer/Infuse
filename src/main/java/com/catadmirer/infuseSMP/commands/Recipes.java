@@ -19,13 +19,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Recipes implements CommandExecutor, Listener {
-    private static Infuse plugin;
-
-    public Recipes(Infuse plugin) {
-        Recipes.plugin = plugin;
-    }
+    private static Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

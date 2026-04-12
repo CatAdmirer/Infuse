@@ -13,15 +13,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class RecipeManager {
-    private final Infuse plugin;
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     private final File recipesFile;
     private final FileConfiguration recipesConfig;
 
-    public RecipeManager(Infuse plugin) {
-        this.plugin = plugin;
-
+    public RecipeManager() {
         recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
         if (!recipesFile.exists()) {
             plugin.saveResource("recipes.yml", false);
