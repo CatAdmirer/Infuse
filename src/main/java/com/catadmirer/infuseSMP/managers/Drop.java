@@ -23,25 +23,21 @@ public class Drop implements Listener {
         this.plugin = plugin;
     }
 
-    private boolean isInfuseEffect(ItemStack item) {
-        return item != null && item.getType() == Material.POTION && item.getItemMeta().hasCustomModelData();
-    }
-
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
-        if (this.isInfuseEffect(item)) {
-            this.playDustEffect(true, EffectMapping.fromItem(item), event.getItem().getLocation());
-        }
+        EffectMapping mapping = EffectMapping.fromItem(item);
+        if (mapping == null) return;
+        this.playDustEffect(true, mapping, event.getItem().getLocation());
     }
 
     @EventHandler
     public void onDrop(EntityDropItemEvent event) {
         final Item droppedItem = event.getItemDrop();
         ItemStack itemStack = droppedItem.getItemStack();
-        if (this.isInfuseEffect(itemStack)) {
-            this.playDustEffectDrop(false, EffectMapping.fromItem(itemStack), droppedItem.getLocation());
-            droppedItem.setGlowing(true);
-        }
+        EffectMapping mapping = EffectMapping.fromItem(itemStack);
+        if (mapping == null) return;
+        this.playDustEffectDrop(false, mapping, droppedItem.getLocation());
+        droppedItem.setGlowing(true);
     }
 
     private void playDustEffect(final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
