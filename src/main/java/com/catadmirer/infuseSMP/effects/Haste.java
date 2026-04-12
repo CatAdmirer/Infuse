@@ -7,11 +7,14 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -87,6 +90,19 @@ public class Haste extends InfuseEffect {
             ItemUtil.applySpecialEnchantment(item, FORTUNE_KEY, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
             ItemUtil.applySpecialEnchantment(item, EFFICIENCY_KEY, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
             ItemUtil.applySpecialEnchantment(item, UNBREAKING_KEY, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
+        }
+    }
+
+    @EventHandler
+    public void extendShieldCooldown(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, this)) {
+            if (!(event.getDamager() instanceof Player attacker)) return;
+            if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
+
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.setCooldown(Material.SHIELD, 50), 20L);
         }
     }
 }
