@@ -10,11 +10,13 @@ import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.RecordComponent;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -211,17 +213,33 @@ public class Emerald implements Listener {
                 List<?> list = (List<?>) getEnchantmentList.invoke(menu, ((CraftWorld) player.getWorld()).getHandle().registryAccess(), CraftItemStack.asNMSCopy(item), k, cost);
                 if (!list.isEmpty()) {
                     EnchantmentInstance enchantmentinstance = (EnchantmentInstance) list.get(random.nextInt(list.size()));
-                    offers[k] = new EnchantmentOffer(CraftEnchantment.minecraftHolderToBukkit(enchantmentinstance.enchantment), enchantmentinstance.level, cost);
+
+                    Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment = null;
+                    int level = 0;
+
+                    if (!EnchantmentInstance.class.isRecord()) {
+                        // Handling pre-1.21.5
+                        Class<EnchantmentInstance> clazz = EnchantmentInstance.class;
+                        enchantment = (Holder) clazz.getField("enchantment").get(enchantmentinstance);
+                        level = (int) clazz.getField("level").get(enchantmentinstance);
+                        
+                    } else {
+                        RecordComponent[] components = EnchantmentInstance.class.getRecordComponents();
+                        enchantment = (Holder) components[0].getAccessor().invoke(enchantmentinstance);
+                        level = (int) components[1].getAccessor().invoke(enchantmentinstance);
+                    }
+                    offers[k] = new EnchantmentOffer(CraftEnchantment.minecraftHolderToBukkit(enchantment), level, cost);
                 }
                 getEnchantmentList.setAccessible(false);
             } catch (NoSuchMethodException e) {
                 InfuseDebug.log("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
-            } catch (SecurityException e) {
-                InfuseDebug.log("Could not access the \"container\" field.");
+            } catch (SecurityException ignored) {
             } catch (IllegalArgumentException ignored) {
             } catch (IllegalAccessException ignored) {
             } catch (ClassCastException ignored) {
-            } catch (InvocationTargetException ignored) {}
+            } catch (InvocationTargetException ignored) {
+            } catch (NoSuchFieldException ignored) {
+            }
         }
 
         // On enchant:
