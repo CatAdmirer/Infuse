@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,6 +33,8 @@ public class Heart extends InfuseEffect {
     public static final NamespacedKey heartBoost = new NamespacedKey("infuse", "heart_boost");
     public static final NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "heart_spark_boost");
 
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+    
     public Heart() {
         super(EffectIds.HEART, "heart", false);
     }
@@ -61,7 +64,7 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
+    public void equip(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         
         // Doubling the strength if the user already has the modifier active
@@ -78,7 +81,7 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public void unequip(Infuse plugin, Player player) {
+    public void unequip(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         AttributeModifier healthModifier = maxHealth.getModifier(heartBoost);
 
@@ -96,7 +99,7 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

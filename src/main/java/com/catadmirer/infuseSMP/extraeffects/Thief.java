@@ -24,12 +24,15 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Thief extends InfuseEffect {
     private static final Map<UUID, DisguiseData> disguisedPlayers = new HashMap<>();
+    
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     private InfuseEffect stolen = null;
 
     public Thief() {
@@ -62,13 +65,13 @@ public class Thief extends InfuseEffect {
 
     // Hiding a thief user from the rest of the players online
     @Override
-    public void equip(Infuse plugin, Player player) {}
+    public void equip(Player player) {}
     
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "thief")) return;
 
@@ -166,7 +169,7 @@ public class Thief extends InfuseEffect {
         this.stolen = stolen;
 
         // Activating the stolen spark.
-        stolen.activateSpark(plugin, player);
+        stolen.activateSpark(player);
 
         UUID playerUUID = player.getUniqueId();
 

@@ -31,8 +31,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Thunder extends InfuseEffect {
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+    
     private static final Map<UUID,Integer> hitTracker = new HashMap<>();
     private static final Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
 
@@ -65,13 +68,13 @@ public class Thunder extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {}
+    public void equip(Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

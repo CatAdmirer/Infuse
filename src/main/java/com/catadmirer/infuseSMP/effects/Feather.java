@@ -28,11 +28,14 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Feather extends InfuseEffect {
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+
     public Feather() {
         super(EffectIds.FEATHER, "feather", false);
     }
@@ -62,13 +65,13 @@ public class Feather extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {}
+    public void equip(Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;

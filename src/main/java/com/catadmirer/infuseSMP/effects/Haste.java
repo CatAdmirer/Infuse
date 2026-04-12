@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -28,6 +29,8 @@ public class Haste extends InfuseEffect {
     private static final NamespacedKey efficiencyKey = new NamespacedKey("infuse", "haste_efficiency");
     private static final NamespacedKey unbreakingKey = new NamespacedKey("infuse", "haste_unbreaking");
 
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+    
     public Haste() {
         super(EffectIds.HASTE, "haste", false);
     }
@@ -57,13 +60,13 @@ public class Haste extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {}
+    public void equip(Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

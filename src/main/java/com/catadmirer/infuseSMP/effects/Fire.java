@@ -24,11 +24,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Fire extends InfuseEffect {
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+
     public Fire() {
         super(EffectIds.FIRE, "fire", false);
     }
@@ -58,12 +61,12 @@ public class Fire extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
+    public void equip(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, PotionEffect.INFINITE_DURATION, 0, false, false));
     }
 
     @Override
-    public void unequip(Infuse plugin, Player player) {
+    public void unequip(Player player) {
         player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
     }
 
@@ -77,7 +80,7 @@ public class Fire extends InfuseEffect {
      */
     
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

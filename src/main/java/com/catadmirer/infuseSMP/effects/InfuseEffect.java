@@ -47,10 +47,10 @@ public abstract class InfuseEffect implements Listener {
 
     public abstract Message getItemLore();
 
-    public abstract void equip(Infuse plugin, Player player);
-    public abstract void unequip(Infuse plugin, Player player);
+    public abstract void equip(Player player);
+    public abstract void unequip(Player player);
 
-    public abstract void activateSpark(Infuse plugin, Player player);
+    public abstract void activateSpark(Player player);
 
     public abstract InfuseEffect getAugmentedForm();
     public abstract InfuseEffect getRegularForm();

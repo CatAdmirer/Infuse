@@ -45,11 +45,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald extends InfuseEffect {
     private static final NamespacedKey lootingKey = new NamespacedKey("infuse", "emerald_looting");
+
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     public Emerald() {
         super(EffectIds.EMERALD, "emerald", false);
@@ -80,17 +83,17 @@ public class Emerald extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
+    public void equip(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, PotionEffect.INFINITE_DURATION, 2, false, false));
     }
 
     @Override
-    public void unequip(Infuse plugin, Player player) {
+    public void unequip(Player player) {
         player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
     }
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

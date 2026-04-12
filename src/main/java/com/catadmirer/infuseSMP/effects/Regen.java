@@ -15,10 +15,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Regen extends InfuseEffect {
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+    
     public Regen() {
         super(EffectIds.REGEN, "regen", false);
     }
@@ -48,13 +51,13 @@ public class Regen extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {}
+    public void equip(Player player) {}
 
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         // Making sure the player isn't on cooldown

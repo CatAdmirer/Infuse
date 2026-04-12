@@ -27,11 +27,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invis extends InfuseEffect {
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
+    
     public Invis() {
         super(EffectIds.INVIS, "invis", false);
     }
@@ -61,15 +64,15 @@ public class Invis extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
+    public void equip(Player player) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, -1, 0, false, false));
     }
 
     @Override
-    public void unequip(Infuse plugin, Player player) {}
+    public void unequip(Player player) {}
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
 

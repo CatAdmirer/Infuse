@@ -33,6 +33,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -40,6 +41,8 @@ import org.bukkit.util.Vector;
 public class Apophis extends InfuseEffect {
     public static final NamespacedKey apophisBoost = new NamespacedKey("infuse", "apophis_boost");
     public static final NamespacedKey apophisSparkBoost = new NamespacedKey("infuse", "apophis_spark_boost");
+
+    private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
     public Apophis() {
         super(EffectIds.APOPHIS, "apophis", false);
@@ -70,7 +73,7 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
-    public void equip(Infuse plugin, Player player) {
+    public void equip(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         
         // Doubling the strength if the user already has the modifier active
@@ -92,7 +95,7 @@ public class Apophis extends InfuseEffect {
     }
     
     @Override
-    public void unequip(Infuse plugin, Player player) {
+    public void unequip(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         AttributeModifier healthModifier = maxHealth.getModifier(apophisBoost);
 
@@ -114,7 +117,7 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Infuse plugin, Player player) {
+    public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isOnCooldown(playerUUID, "apophis")) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
