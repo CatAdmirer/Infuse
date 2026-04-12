@@ -7,10 +7,6 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +63,7 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
 
         if (effect == null) {
-            return plugin.getConfigFile().emptyEffectIcon() ? "\uE901" : "";
+            return plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
         }
 
         return "" + (CooldownManager.isEffectActive(uuid, effect.getName()) ? effect.getActiveIcon() : effect.getIcon());
@@ -77,30 +73,28 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         String key = effect.getKey();
-        Component comp;
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, TextColor.color(EffectConstants.potionColor(effect.getId()).getRGB()));
+            return "<#" + Integer.toHexString(EffectConstants.potionColor(effect.getId()).getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
         } else if (CooldownManager.isOnCooldown(uuid, key)) {
             long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
-            comp = MessageUtil.formatTime(timeLeft, NamedTextColor.WHITE);
+            return "<white>" + MessageUtil.formatTime(timeLeft);
         } else {
             return "";
         }
-        return LegacyComponentSerializer.legacySection().serialize(comp);
     }
 
     public String getEffectRaw(UUID uuid, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect== null) return "";
         
-        return PlainTextComponentSerializer.plainText().deserialize(effect.getName()).content();
+        return PlainTextComponentSerializer.plainText().serialize(effect.getItemName().toComponent());
     }
 
     public String getEffectName(UUID uuid, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
         
-        return effect.getName();
+        return effect.getItemName().toString();
     }
 }

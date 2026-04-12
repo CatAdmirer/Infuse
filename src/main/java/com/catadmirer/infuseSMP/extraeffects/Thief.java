@@ -2,16 +2,16 @@ package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -41,13 +41,13 @@ public class Thief extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_THIEF_NAME.toComponent() : Messages.THIEF_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_THIEF_NAME : MessageType.THIEF_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_THIEF_LORE.getComponentList() : Messages.THIEF_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_THIEF_LORE : MessageType.THIEF_LORE);
     }
 
     @Override
@@ -62,20 +62,10 @@ public class Thief extends InfuseEffect {
 
     // Hiding a thief user from the rest of the players online
     @Override
-    public void equip(Infuse plugin, Player player) {
-        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            otherPlayer.unlistPlayer(player);
-            otherPlayer.hidePlayer(plugin, player);
-        }
-    }
+    public void equip(Infuse plugin, Player player) {}
     
     @Override
-    public void unequip(Infuse plugin, Player player) {
-        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-            otherPlayer.listPlayer(player);
-            otherPlayer.showPlayer(plugin, player);
-        }
-    }
+    public void unequip(Infuse plugin, Player player) {}
 
     @Override
     public void activateSpark(Infuse plugin, Player player) {
@@ -85,11 +75,10 @@ public class Thief extends InfuseEffect {
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setDuration(playerUUID, "thief", duration);
-        CooldownManager.setCooldown(playerUUID, "thief", cooldown);
+        CooldownManager.setTimes(playerUUID, "thief", duration, cooldown);
     }
 
     /**
@@ -168,10 +157,10 @@ public class Thief extends InfuseEffect {
     }
 
     private void activateEffect(Infuse plugin, Player player, @NotNull InfuseEffect stolen, Entity victim) {
-        String msg = Messages.THIEF_STEAL.getMessage();
-        msg = msg.replace("%player%", victim.getName());
-        msg = msg.replace("%effect_name%", stolen.getName());
-        player.sendMessage(Messages.toComponent(msg));
+        Message msg = new Message(MessageType.THIEF_STEAL);
+        msg.applyPlaceholder("player", victim.getName());
+        msg.applyPlaceholder("effect_name", stolen.getName());
+        player.sendMessage(msg.toComponent());
 
         // Saving the stolen effect
         this.stolen = stolen;
@@ -186,11 +175,10 @@ public class Thief extends InfuseEffect {
         CooldownManager.clearSpecificDuration(playerUUID, stolen.getRegularForm().getKey());
 
         // Applying cooldowns for the thief effect
-        long cooldown = plugin.getConfigFile().cooldown(stolen);
-        long duration = plugin.getConfigFile().duration(stolen);
+        long cooldown = plugin.getMainConfig().cooldown(stolen);
+        long duration = plugin.getMainConfig().duration(stolen);
 
-        CooldownManager.setDuration(playerUUID, "thief_stolen", duration);
-        CooldownManager.setCooldown(playerUUID, "thief_stolen", cooldown * 2);
+        CooldownManager.setTimes(playerUUID, "thief_stolen", duration, cooldown * 2);
 
         // Clearing the stolen effect after the spark is done
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -208,13 +196,36 @@ public class Thief extends InfuseEffect {
             this.plugin = plugin;
         }
 
+        @EventHandler
+        public void equipThief(EffectEquipEvent event) {
+            if (event.getEffect().getId() != effect.getId()) return;
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.unlistPlayer(event.getPlayer());
+            }
+        }
+
+        @EventHandler
+        public void unequipThief(EffectUnequipEvent event) {
+            if (event.getEffect().getId() != effect.getId()) return;
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.listPlayer(event.getPlayer());
+            }
+        }
+
         // Hiding thief effect users from players who recently joined
         @EventHandler
         public void hideThievesOnJoin(PlayerJoinEvent event) {
+            Player player = event.getPlayer();
+            if (plugin.getDataManager().hasEffect(player, effect)) {
+                Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
+            }
+
             for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
                 if (!plugin.getDataManager().hasEffect(otherPlayer, effect)) continue;
                 
-                event.getPlayer().unlistPlayer(otherPlayer);
+                player.unlistPlayer(otherPlayer);
             }
         }
 

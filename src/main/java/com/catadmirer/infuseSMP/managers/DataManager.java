@@ -3,16 +3,16 @@ package com.catadmirer.infuseSMP.managers;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class DataManager {
@@ -32,8 +32,8 @@ public class DataManager {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot load {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
             return false;
         }
 
@@ -46,12 +46,12 @@ public class DataManager {
         // Loading the config
         try {
             config.load(dataFile);
-            plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", dataFile.getName());
+            Infuse.LOGGER.info("Successfully loaded {}", dataFile.getName());
             return true;
         } catch (InvalidConfigurationException err) {
-            plugin.getLogger().log(Level.WARNING, "{0]} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
+            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
         } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", dataFile.getName());
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", dataFile.getName());
         }
 
         return false;
@@ -64,8 +64,8 @@ public class DataManager {
      */
     public boolean save() {
         // Getting a plugin instance to use
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot save the {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
             return false;
         }
 
@@ -78,10 +78,10 @@ public class DataManager {
         // Saving the config
         try {
             config.save(dataFile);
-            plugin.getLogger().log(Level.INFO, "Saved {0}", dataFile.getName());
+            Infuse.LOGGER.info("Saved {}", dataFile.getName());
             return true;
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Could not save {0}.  Make sure the user has write permissions.", dataFile.getName());
+            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", dataFile.getName());
         }
 
         return false;
@@ -96,8 +96,8 @@ public class DataManager {
      */
     public boolean createFile(boolean replace) {
         // Getting a plugin instance to use
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot create default {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
             return false;
         }
 
@@ -107,7 +107,7 @@ public class DataManager {
                 dataFile.getParentFile().mkdirs();
                 dataFile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().log(Level.SEVERE, "Could not create {0}.  Make sure the user has the right permissions.", dataFile.getName());
+                Infuse.LOGGER.error("Could not create {}.  Make sure the user has the right permissions.", dataFile.getName());
                 return false;
             }
         }
@@ -115,39 +115,41 @@ public class DataManager {
         return true;
     }
 
-    public int getCrafted(InfuseEffect effect) {
-        return config.getInt("effects-crafted." + effect.getKey(), 0);
+    public int getExistingCount(InfuseEffect effect) {
+        return config.getInt("existing-effects." + effect.getKey(), 0);
     }
 
-    public void setCrafted(InfuseEffect effect, int crafted) {
-        config.set("effects-crafted." + effect.getKey(), crafted);
+    public void setExistingCount(InfuseEffect effect, int crafted) {
+        config.set("existing-effects." + effect.getKey(), crafted);
+        
+        save();
     }
 
-    public List<Player> getTrusted(Player truster) {
-        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList());
+    public List<OfflinePlayer> getTrusted(OfflinePlayer truster) {
+        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getOfflinePlayer).toList());
     }
 
-    public void setTrusted(Player truster, List<Player> trusted) {
-        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(Player::getUniqueId).map(UUID::toString).toList());
+    public void setTrusted(OfflinePlayer truster, List<OfflinePlayer> trusted) {
+        config.set(truster.getUniqueId() + ".trust", trusted.stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toList());
 
         save();
     }
 
-    public void addTrust(Player caster, Player toTrust) {
-        List<Player> trustedPlayers = getTrusted(caster);
+    public void addTrust(OfflinePlayer caster, OfflinePlayer toTrust) {
+        List<OfflinePlayer> trustedPlayers = getTrusted(caster);
         trustedPlayers.add(toTrust);
 
         setTrusted(caster, trustedPlayers);
     }
 
-    public void removeTrust(Player caster, Player trusted) {
-        List<Player> trustedSet = getTrusted(caster);
+    public void removeTrust(OfflinePlayer caster, OfflinePlayer trusted) {
+        List<OfflinePlayer> trustedSet = getTrusted(caster);
         trustedSet.remove(trusted);
 
         setTrusted(caster, trustedSet);
     }
 
-    public boolean isTrusted(Player caster, Player trusted) {
+    public boolean isTrusted(OfflinePlayer caster, OfflinePlayer trusted) {
         if (caster == null || trusted == null) return false;
         if (caster.getUniqueId().equals(trusted.getUniqueId())) return true;
 
@@ -168,8 +170,7 @@ public class DataManager {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
         InfuseEffect effect = InfuseEffect.fromEffectKey(effectKey);
         if (effectKey != null && effect == null) {
-            Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
-            return null;
+            Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
         }
         
         return effect;
@@ -211,5 +212,32 @@ public class DataManager {
 
     public String getControlMode(UUID playerUUID) {
         return config.getString(playerUUID.toString() + ".controls", "offhand");
+    }
+
+    public void applyUpdates() {
+        try {
+            Scanner scanner = new Scanner(dataFile);
+            StringBuffer inputBuffer = new StringBuffer();
+            String line;
+
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+
+                // Replacing old configs
+                if (line.startsWith("effects-crafted")) {
+                    line = line.replace("effects-crafted", "existing-effects");
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+            scanner.close();
+
+            // Emptying the string buffer back into the file
+            FileOutputStream fileOut = new FileOutputStream(dataFile);
+            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut.close();
+        } catch (IOException err) {
+            
+        }
     }
 }

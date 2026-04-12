@@ -1,8 +1,9 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import java.util.UUID;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,7 +19,7 @@ public class Abilities implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
+            sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
             return true;
         }
 
@@ -31,7 +32,7 @@ public class Abilities implements CommandExecutor {
         } else if (label.contains("rspark")) {
             slot = "2";
         } else {
-            sender.sendMessage(Messages.ERROR_INVALID_COMMAND.toComponent());
+            sender.sendMessage(new Message(MessageType.ERROR_INVALID_COMMAND).toComponent());
             return true;
         }
 
@@ -40,9 +41,9 @@ public class Abilities implements CommandExecutor {
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
-            String msg = Messages.getMessage(Messages.SLOT_EMPTY);
-            msg = msg.replace("%slot%", slot);
-            player.sendMessage(Messages.toComponent(msg));
+            Message msg = new Message(MessageType.SLOT_EMPTY);
+            msg.applyPlaceholder("slot", slot);
+            player.sendMessage(msg.toComponent());
             return true;
         }
 

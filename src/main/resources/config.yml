@@ -17,6 +17,8 @@ allow_infinite_effects: false
 ritual_duration: 600  # Duration in seconds (10 minutes)
 ritual_duration_ender: 3600 # Duration in seconds (1hr)
 
+regular_effect_broadcast: true
+
 ritual_beacon: true
 
 empty_effect_icon: true
@@ -27,15 +29,17 @@ enable_discord_broadcasts: false
 
 discord_webhook_url: ""
 
-invis_deaths: false # Change death messages in messages.yml (WILL ONLY APPLY TO INVIS ONES), made by Duckiee2
-
 brewing_gui: true
 
+# random = Random effect drops
+# 1/2 = Slot 1/2 Drops
+# none = None drop
 effect_drops: Random
 
-# Random = Random effect drops
-# 1/2 = Slot 1/2 Drops
-# None = None drop
+# The number of seconds that it takes for 1 hit to be removed from the hit timer.
+# This is primarily used to trigger the "on ten hit" abilities of each effect.
+# To trigger them, you need to hit your target 10 times with the specified number of seconds
+hit_counter_decay_seconds: 15
 
 join_effects_enabled: false
 
@@ -66,6 +70,8 @@ craft_limits:
 
 # Full cooldown is duration + cooldown
 invis:
+  hide_kills: false
+  hide_deaths: false
   cooldown:
     default: 121
     augmented: 61
@@ -82,6 +88,9 @@ apophis:
     augmented: 18
 
 emerald:
+  xp_stolen_per_hit: 15
+  xp_stolen_percent: 1
+  percent_xp_to_share: 0.5
   lock_duration_seconds: 10
   cooldown:
     default: 91
@@ -89,6 +98,8 @@ emerald:
   duration:
     default: 30
     augmented: 35
+  enchantment:
+    looting_level: 5
 
 ender:
   cooldown:
@@ -129,6 +140,10 @@ haste:
   duration:
     default: 15
     augmented: 20
+  enchantment:
+    fortune_level: 5
+    efficiency_level: 10
+    unbreaking_level: 5
 
 heart:
   cooldown:

@@ -44,5 +44,4 @@ public class WeightedRandom {
     public static <T> T getRandomItem(Random random, List<T> list, ToIntFunction<T> getWeight) {
         return getRandomItem(random, list, getTotalWeight(list, getWeight), getWeight);
     }
-
 }

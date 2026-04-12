@@ -2,7 +2,8 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ public class GUI implements Listener, CommandExecutor {
             if (sender instanceof Player player) {
                 player.openInventory(new EffectChooser(plugin).getInventory());
             } else {
-                sender.sendMessage(Messages.ERROR_NOT_PLAYER.toComponent());
+                sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
             }
 
             return true;

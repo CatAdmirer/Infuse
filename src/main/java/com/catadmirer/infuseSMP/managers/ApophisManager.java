@@ -1,142 +1,136 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.profile.PlayerTextures;
+import org.bukkit.event.EventHandler;
 
 public class ApophisManager {
+    private static final MiniMessage mm = MiniMessage.miniMessage();
     private final Infuse plugin;
-    private final Set<UUID> apohpisActive = new HashSet<>();
-    private final URL apophisSkinUrl;
+    
+    private final ProfileProperty APOPHIS_SKIN = new ProfileProperty(
+            "textures",
+            "ewogICJ0aW1lc3RhbXAiIDogMTcxNzg4NTA2MDQwNywKICAicHJvZmlsZUlkIiA6ICJlZGUyYzdhMGFjNjM0MTNiYjA5ZDNmMGJlZTllYzhlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0aGVEZXZKYWRlIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MwOTBmY2NjMjBmMWM3ZWMyMDBkNGVkMDUxMjQwNjM3ZmRmNjE5ZDg1Nzg0NWZhNWRmNWJkMzM1MWJiMjBkOCIKICAgIH0KICB9Cn0=",
+            "mBgGwS28lqNz7rJCysD9SElJpA5q+34uTZK68JFXIFzuoN31KQg2VHjVDz+/nAr0yXdRwOrgL5rnRb2NbKBPyKSWdcB8A1nVHeNMpoJ5c5CzEERyOROUiTRxge/MIhYL7Fkj67fkh7Sc/l7BwDAf7/7OIgiAIleUTLZ9COnIN15gylTBldOo3JOka8TTNrI1i4QmnMsbgT0luQZzrUMRtZxIHNwx+26IevzCE+hpNdwiYqnDVZdayDLPVy1vv+i3C7AJGd9b7/2/qv0YmWxvT3uKrPR8+9fbSWltGx9ikrdXO17FrGc5u0gqmPWAaSSWw/NJmMhPenILh7/MvXA8mO2m7JeuhnM/EYzdOMB3qzvkUEVddFIngPl6LNE8XG1R+APFBsbpnpybB7dQphSud5DNfuZijqLDd735kykYlRMzw5VVGf7fONheLzSV42XRsIU+5IazHvmAZ4pxr72+r9bbS9vRW38ZgQIy6p8r4tLv9jfmqmcS9lEn1CAgDLAqZWGzIWeIgOdDsrWH4ia/1gj6oZVefRCr2dAS84NsOQUdoJDbS8G0+ArN+CWgnlcwOJCS6MB5kBmQl2FPvwLcSnnRcS66XKfH28Bu2/J3Hu5zRWbONuOLQTbYFxwftUtvS1IORKBCfWvlJTx5G/mz1KOGW89iOCpW8jdx8EmzpRI="
+    );
 
     public ApophisManager(Infuse plugin) {
         this.plugin = plugin;
-
-        URL apophisSkinUrl = null;
-        try {
-            apophisSkinUrl = URI.create("http://textures.minecraft.net/texture/c090fccc20f1c7ec200d4ed051240637fdf619d857845fa5df5bd3351bb20d8").toURL();
-        } catch (MalformedURLException err) {
-            plugin.getLogger().log(Level.SEVERE, "Apophis skin could not be resolved.", err);
-        }
-
-        this.apophisSkinUrl = apophisSkinUrl;
     }
 
-    public boolean disguiseAsApophis(Player target) {
+    public void initDisguise(Player target) {
         UUID uuid = target.getUniqueId();
 
         // Getting the disguise file for the player
         File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
         disguiseFile.getParentFile().mkdirs();
 
-        // Skipping players who already have the apophis effect
-        if (disguiseFile.exists()) return false;
-
-        // Saving the player's current skin to the disguise file
-        PlayerTextures textures = target.getPlayerProfile().getTextures();
+        // Skipping players who already have a disguise file
+        if (disguiseFile.exists()) return;
         
-        // Getting the original skin and cape url
-        URL ogSkin = textures.getSkin();
-        URL ogCape = textures.getCape();
-
         try {
             FileWriter writer = new FileWriter(disguiseFile);
+            Optional<ProfileProperty> textures = target.getPlayerProfile().getProperties().stream().filter(property -> "textures".equals(property.getName())).findFirst();
 
             // Writing the urls to disk
-            writer.write(String.valueOf(ogSkin));
+            writer.write(mm.serialize(target.displayName()));
             writer.write("\n");
-            writer.write(String.valueOf(ogCape));
+            if (textures.isEmpty()) {
+                writer.write("null\nnull");
+            } else {
+                writer.write(textures.get().getValue());
+                writer.write("\n");
+                writer.write(String.valueOf(textures.get().getSignature()));
+            }
 
             writer.flush();
             writer.close();
         } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to write to {0}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
+            Infuse.LOGGER.error("Failed to write to {}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
         }
+    }
 
-        // Disguising the player's skin
-        textures.setSkin(apophisSkinUrl);
-        textures.setCape(null);
+    @EventHandler
+    public void equipApophis(EffectEquipEvent event) {
+        Player target = event.getPlayer();
+        
+        // Making sure the disguise file is created
+        initDisguise(target);
 
+        // Changing the player's skin
         PlayerProfile profile = target.getPlayerProfile();
-        profile.setTextures(textures);
+        profile.setProperty(APOPHIS_SKIN);
         target.setPlayerProfile(profile);
 
-        // Disguising the player's name
+        // Hiding the player's name
         Component apophisName = Component.text("Apophis", NamedTextColor.DARK_PURPLE);
         target.displayName(apophisName);
         target.playerListName(apophisName);
-        target.customName(apophisName);
-        target.setCustomNameVisible(true);
-        
-        return true;
     }
 
-    public boolean unsetApophis(Player target) {
+    @EventHandler
+    public void unequipApophis(EffectUnequipEvent event) {
+        Player target = event.getPlayer();
+
         if (!target.isOnline()) {
-            plugin.getLogger().log(Level.WARNING, "Could not remove {0}'s disguise as they are not online.", target.getName());
-            return false;
+            Infuse.LOGGER.warn("Could not remove {0}'s disguise as they are not online.", target.getName());
+            return;
         }
 
         UUID uuid = target.getUniqueId();
-
-        // Checking if the target has the apophis effect active
-        if (!apohpisActive.contains(uuid)) return false;
 
         // Getting the player's skin info from the disguise file
         File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
 
         try (Scanner scanner = new Scanner(disguiseFile)) {
-            PlayerTextures textures = target.getPlayerProfile().getTextures();
+            PlayerProfile profile = target.getPlayerProfile();
+            String value = "";
+            String signature = "";
 
+            // Getting the player's name
             if (scanner.hasNextLine()) {
                 String read = scanner.nextLine();
-                try {
-                    textures.setSkin(URI.create(read).toURL());
-                } catch (MalformedURLException err) {
-                    plugin.getLogger().log(Level.SEVERE, target.getName() + "'s original skin could not be found in their apophis disguise file.  Make sure the url is correct.");
+                target.displayName(mm.deserialize(read));
+                target.playerListName(mm.deserialize(read));
+            }
+
+            // Getting the property value
+            if (scanner.hasNextLine()) {
+                value = scanner.nextLine();
+            }
+
+            // Getting the property signature
+            if (scanner.hasNextLine()) {
+                signature = scanner.nextLine();
+                if (signature.equals("null")) {
+                    signature = null;
                 }
             }
 
-            if (scanner.hasNextLine()) {
-                String read = scanner.nextLine();
-                try {
-                    textures.setCape(URI.create(read).toURL());
-                } catch (MalformedURLException err) {
-                    plugin.getLogger().log(Level.SEVERE, target.getName() + "'s original cape could not be found in their apophis disguise file.  Make sure the url is correct.");
-                }
-            }
+            profile.setProperty(new ProfileProperty("textures", value, signature));
+
+            target.setPlayerProfile(profile);
         } catch (FileNotFoundException err) {}
-
 
         // Deleting the disguise file
         if (disguiseFile.exists()) {
             disguiseFile.delete();
         }
 
-        apohpisActive.remove(uuid);
-
-        // Resetting the target's name
-        target.displayName(target.name());
-        target.playerListName(target.name());
-        target.customName(null);
-        target.setCustomNameVisible(false);
-
-        return true;
+        return;
     }
-
 }

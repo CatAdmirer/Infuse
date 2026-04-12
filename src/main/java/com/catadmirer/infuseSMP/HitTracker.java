@@ -33,52 +33,52 @@ public class HitTracker implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof Player target)) return;
 
-        InfuseDebug.log("{} has hit {}", attacker.getName(), target.getName());
+        Infuse.LOGGER.debug("{} has hit {}", attacker.getName(), target.getName());
 
         // Making sure it counts as a normal hit
         // Vanilla attack cooldown needs to be at 84.8% to be a normal hit.
         if (attacker.getAttackCooldown() < 0.85) {
-            InfuseDebug.log("Hit ignored due to being under attack cooldown threshold.");
+            Infuse.LOGGER.debug("Hit ignored due to being under attack cooldown threshold.");
             return;
         }
 
         // Incrementing the hit counter
         int hits = hitTracker.getOrDefault(attacker.getUniqueId(), 0) + 1;
-        InfuseDebug.log("{}'s hit counter is {}.", attacker.getName(), hits);
+        Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), hits);
 
         if (hits == 10) {
             // Calling the TenHitEvent
             TenHitEvent tenHit = new TenHitEvent(attacker, target);
             tenHit.callEvent();
-            InfuseDebug.log("Called TenHitEvent");
+            Infuse.LOGGER.debug("Called TenHitEvent");
 
-            hits -= 10;
+            hitTracker.put(attacker.getUniqueId(), 0);
 
             // Removing 10 objects from the queue
             for (int i = 0; i < 10; i++) {
                 if (decayQueue.isEmpty()) continue;
                 decayQueue.remove();
             }
-            InfuseDebug.log("Removed items from queue.");
+            Infuse.LOGGER.debug("Removed items from queue.");
+            return;
         }
 
         // Saving the hit count
         hitTracker.put(attacker.getUniqueId(), hits);
 
         // Having the hit counter decay over time
-        // TODO: make this a config (0 or below disables it)
-        int hitCounterDecaySeconds = 10;
+        int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 
-        InfuseDebug.log("Adding item to decay queue");
+        Infuse.LOGGER.debug("Adding item to decay queue");
         decayQueue.add(() -> {
             // Skipping if the attacker has left the game
             if (!attacker.isConnected()) return;
 
-            InfuseDebug.log("Decrementing hit counter");
+            Infuse.LOGGER.debug("Decrementing hit counter");
             int curHits = hitTracker.get(attacker.getUniqueId());
 
-            InfuseDebug.log("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
+            Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
         

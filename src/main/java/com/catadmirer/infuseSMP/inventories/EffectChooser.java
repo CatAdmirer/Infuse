@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,7 +21,7 @@ public class EffectChooser implements InventoryHolder, Listener {
     private final Inventory inventory;
 
     public EffectChooser(Infuse plugin) {
-        inventory = Bukkit.createInventory(this, 54, Messages.toComponent("<b>Infuses"));
+        inventory = Bukkit.createInventory(this, 54, Message.toComponent("<b>Infuses"));
 
         // Filling the inventory with decorative glass panes
         int[] magentaSlots = {0, 1, 2, 6, 7, 8, 9, 10, 16, 17, 18, 26, 27, 35};
@@ -45,12 +45,15 @@ public class EffectChooser implements InventoryHolder, Listener {
         inventory.setItem(33, new Haste(true).createItem());
         inventory.setItem(40, new Thunder(true).createItem());
 
-        if (plugin.getConfigFile().enableThief()) {
+        if (plugin.getMainConfig().enableThief()) {
             inventory.setItem(39, new Thief(true).createItem());
         }
-        if (plugin.getConfigFile().enableApophis()) {
+        if (plugin.getMainConfig().enableApophis()) {
             inventory.setItem(41, new Apophis(true).createItem());
         }
+
+        // Locking the inventory
+        InventoryUtils.lockInventory(inventory);
     }
 
     @Override

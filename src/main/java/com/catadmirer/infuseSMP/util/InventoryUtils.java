@@ -1,10 +1,10 @@
 package com.catadmirer.infuseSMP.util;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import net.kyori.adventure.text.Component;
 
 public class InventoryUtils {
     /**
@@ -43,5 +43,35 @@ public class InventoryUtils {
      */
     public static void setItems(Inventory inventory, int[] slots, ItemStack item) {
         for (int slot : slots) inventory.setItem(slot, item);
+    }
+
+    /**
+     * Utility function that fills all empty slots of an inventory with red stained glass panes with
+     * empty names.
+     * 
+     * @param inventory The inventory to fill with panes.
+     */
+    public static void fillRemainingSlots(Inventory inventory) {
+        ItemStack stainedGlassPane = createNoName(Material.RED_STAINED_GLASS_PANE);
+
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) {
+                inventory.setItem(i, stainedGlassPane);
+            }
+        }
+    }
+
+    /**
+     * "Locks" an inventory by setting the stack size for each item to 1.
+     * 
+     * @param inventory The inventory to lock.
+     */
+    public static void lockInventory(Inventory inventory) {
+        for (ItemStack item : inventory.getContents()) {
+            if (item == null) continue;
+            item.editMeta(meta -> {
+                meta.setMaxStackSize(1);
+            });
+        }
     }
 }

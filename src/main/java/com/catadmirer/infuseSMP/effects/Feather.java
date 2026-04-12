@@ -2,13 +2,12 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.particles.Particles;
-import java.util.List;
+import com.catadmirer.infuseSMP.managers.ParticleManager;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -43,13 +42,13 @@ public class Feather extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_FEATHER_NAME.toComponent() : Messages.FEATHER_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_FEATHER_NAME : MessageType.FEATHER_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_FEATHER_LORE.getComponentList() : Messages.FEATHER_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_FEATHER_LORE : MessageType.FEATHER_LORE);
     }
 
     @Override
@@ -75,18 +74,17 @@ public class Feather extends InfuseEffect {
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        Particles.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
+        ParticleManager.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
         Vector dashDirection = player.getEyeLocation().getDirection().normalize();
         Vector launchVector = dashDirection.multiply(0).setY(1);
         player.setVelocity(launchVector);
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setDuration(playerUUID, "feather", duration);
-        CooldownManager.setCooldown(playerUUID, "feather", cooldown);
+        CooldownManager.setTimes(playerUUID, "feather", duration, cooldown);
 
         player.getScheduler().runDelayed(plugin, t -> {
             CooldownManager.setDuration(playerUUID, "feathermace", 5L);

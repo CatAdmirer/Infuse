@@ -2,12 +2,11 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.List;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,13 +38,13 @@ public class Fire extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_FIRE_NAME.toComponent() : Messages.FIRE_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_FIRE_NAME : MessageType.FIRE_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_FIRE_LORE.getComponentList() : Messages.FIRE_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_FIRE_LORE : MessageType.FIRE_LORE);
     }
 
     @Override
@@ -96,11 +95,10 @@ public class Fire extends InfuseEffect {
         fireSparkEffect(plugin, player);
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setDuration(playerUUID, "fire", duration);
-        CooldownManager.setCooldown(playerUUID, "fire", cooldown);
+        CooldownManager.setTimes(playerUUID, "fire", duration, cooldown);
     }
 
     private final void fireSparkEffect(Infuse plugin, Player caster) {

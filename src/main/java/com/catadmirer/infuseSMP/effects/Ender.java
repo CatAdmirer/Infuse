@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,7 +30,8 @@ import org.bukkit.util.Vector;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 
 import net.kyori.adventure.text.Component;
@@ -49,13 +49,13 @@ public class Ender extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_ENDER_NAME.toComponent() : Messages.ENDER_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_ENDER_NAME : MessageType.ENDER_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_ENDER_LORE.getComponentList() : Messages.ENDER_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_ENDER_LORE : MessageType.ENDER_LORE);
     }
 
     @Override
@@ -81,11 +81,10 @@ public class Ender extends InfuseEffect {
         if (CooldownManager.isOnCooldown(playerUUID, "ender")) return;
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setDuration(playerUUID, "ender", duration);
-        CooldownManager.setCooldown(playerUUID, "ender", cooldown);
+        CooldownManager.setTimes(playerUUID, "ender", duration, cooldown);
 
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -161,7 +160,7 @@ public class Ender extends InfuseEffect {
 
     public static class Listeners implements Listener {
         private final Infuse plugin;
-        private final Ender ender = new Ender();
+        private final Ender effect = new Ender();
 
         public Listeners(Infuse plugin) {
             this.plugin = plugin;
@@ -211,16 +210,17 @@ public class Ender extends InfuseEffect {
             
             // Making sure the player has the ender effect
             Player player = event.getPlayer();
-            if (!plugin.getDataManager().hasEffect(player, ender)) return;
+            if (!plugin.getDataManager().hasEffect(player, effect)) return;
 
             // Making sure the player used a bottle of dragons breath
-            ItemStack item = player.getInventory().getItemInMainHand();
+            ItemStack item = event.getItem();
+            if (item == null) return;
             if (item.getType() != Material.DRAGON_BREATH) return;
 
             // Making sure the cursing fireball isn't on cooldown
             if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
 
-            ender.shootCursingFireball(player);
+            effect.shootCursingFireball(player);
             event.setCancelled(true);
         }
 
@@ -229,9 +229,9 @@ public class Ender extends InfuseEffect {
             if (!(event.getEntity() instanceof Player target)) return;
             if (!(event.getDamager() instanceof Player attacker)) return;
 
-            if (!plugin.getDataManager().hasEffect(attacker, ender)) return;
+            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
 
-            ender.cursePlayer(plugin, target.getUniqueId(), 1200);
+            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
         }
 
         @EventHandler
@@ -242,7 +242,7 @@ public class Ender extends InfuseEffect {
             if (!(fireball.getShooter() instanceof Player shooter)) return;
             if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-            ender.cursePlayer(plugin, target.getUniqueId(), 1200);
+            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
 
             event.setDamage(0);
         }
@@ -255,7 +255,7 @@ public class Ender extends InfuseEffect {
             if (!(fireball.getShooter() instanceof Player shooter)) return;
             if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-            ender.cursePlayer(plugin, target.getUniqueId(), 1200);
+            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
         }
     }
 }

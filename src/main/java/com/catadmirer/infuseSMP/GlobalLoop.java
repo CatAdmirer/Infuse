@@ -1,6 +1,9 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.Ender;
+import com.catadmirer.infuseSMP.effects.Ocean;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -33,6 +36,28 @@ public class GlobalLoop extends BukkitRunnable {
             Ender enderEffect = new Ender();
             if (plugin.getDataManager().hasEffect(player, enderEffect)) {
                 enderEffect.applyGlowingToUntrusted(plugin, player);
+            }
+
+            // Drowning players near ocean users
+            if (plugin.getDataManager().hasEffect(player, new Ocean())) {
+                // Boosting the strength and damage of the passive drowning if the spark is active
+                int drownStrength = 5;
+                int drownDamage = 1;
+                if (CooldownManager.isEffectActive(player.getUniqueId(), "ocean"))  {
+                    drownStrength = 20;
+                    drownDamage = 2;
+                }
+                
+                for (Player otherPlayer : player.getWorld().getPlayers()) {
+                    if (otherPlayer.equals(player)) continue;
+                    if (otherPlayer.getLocation().distance(player.getLocation()) <= 5) {
+                        int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
+                        otherPlayer.setRemainingAir(newAir);
+                        if (newAir <= 0) {
+                            otherPlayer.damage(drownDamage);
+                        }
+                    }
+                }
             }
         }
     }

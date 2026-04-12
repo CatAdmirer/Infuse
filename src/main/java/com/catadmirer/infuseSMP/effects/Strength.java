@@ -1,18 +1,14 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.List;
 import java.util.UUID;
-
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-
-import net.kyori.adventure.text.Component;
+import com.catadmirer.infuseSMP.Message.MessageType;
 
 public class Strength extends InfuseEffect {
     public Strength() {
@@ -24,13 +20,13 @@ public class Strength extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_STRENGTH_NAME.toComponent() : Messages.STRENGTH_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_STRENGTH_NAME : MessageType.STRENGTH_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_STRENGTH_LORE.getComponentList() : Messages.STRENGTH_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_STRENGTH_LORE : MessageType.STRENGTH_LORE);
     }
 
     @Override
@@ -60,11 +56,10 @@ public class Strength extends InfuseEffect {
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setDuration(playerUUID, "strength", duration);
-        CooldownManager.setCooldown(playerUUID, "strength", cooldown);
+        CooldownManager.setTimes(playerUUID, "strength", duration, cooldown);
     }
 
     public static class Listeners implements Listener {

@@ -2,8 +2,10 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.extraeffects.Thief;
 import java.util.List;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class InfuseEffect {
-    public static final List<String> allKeys = List.of("emerald", "ender", "feather", "fire", "frost", "haste", "heart", "invis", "ocean", "regen", "speed", "strength", "thunder", "apophis", "thief", "aug_emerald", "aug_ender", "aug_feather", "aug_fire", "aug_frost", "aug_haste", "aug_heart", "aug_invis", "aug_ocean", "aug_regen", "aug_speed", "aug_strength", "aug_thunder", "aug_apophis", "aug_thief");
-
     protected final int id;
     protected final String name;
     protected final boolean augmented;
@@ -42,9 +42,9 @@ public abstract class InfuseEffect {
         return id;
     }
 
-    public abstract Component getItemName();
+    public abstract Message getItemName();
 
-    public abstract List<Component> getItemLore();
+    public abstract Message getItemLore();
 
     public abstract void equip(Infuse plugin, Player player);
     public abstract void unequip(Infuse plugin, Player player);
@@ -78,8 +78,8 @@ public abstract class InfuseEffect {
 
         if (meta != null) {
             // Setting the usual data
-            meta.displayName(getItemName());
-            meta.lore(getItemLore());
+            meta.displayName(getItemName().toComponent());
+            meta.lore(getItemLore().toComponentList());
             meta.setColor(org.bukkit.Color.fromARGB(EffectConstants.potionColor(id).getRGB()));
             meta.getPersistentDataContainer().set(Infuse.EFFECT_KEY, PersistentDataType.STRING, getKey());
 
@@ -156,5 +156,9 @@ public abstract class InfuseEffect {
         }
 
         return null;
+    }
+
+    public static List<InfuseEffect> getAllEffects() {
+        return List.of(new Emerald(true), new Emerald(false), new Ender(true), new Ender(false), new Feather(true), new Feather(false), new Fire(true), new Fire(false), new Frost(true), new Frost(false), new Haste(true), new Haste(false), new Heart(true), new Heart(false), new Invis(true), new Invis(false), new Ocean(true), new Ocean(false), new Regen(true), new Regen(false), new Speed(true), new Speed(false), new Strength(true), new Strength(false), new Thunder(true), new Thunder(false), new Thief(true), new Thief(false), new Apophis(true), new Apophis(false));
     }
 }

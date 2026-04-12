@@ -2,12 +2,12 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Messages;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import java.util.List;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,6 +22,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -40,13 +41,13 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public Component getItemName() {
-        return augmented ? Messages.AUG_HEART_NAME.toComponent() : Messages.HEART_NAME.toComponent();
+    public Message getItemName() {
+        return new Message(augmented ? MessageType.AUG_HEART_NAME : MessageType.HEART_NAME);
     }
 
     @Override
-    public List<Component> getItemLore() {
-        return augmented ? Messages.AUG_HEART_LORE.getComponentList() : Messages.HEART_LORE.getComponentList();
+    public Message getItemLore() {
+        return new Message(augmented ? MessageType.AUG_HEART_LORE : MessageType.HEART_LORE);
     }
 
     @Override
@@ -73,6 +74,7 @@ public class Heart extends InfuseEffect {
         AttributeModifier healthModifier = new AttributeModifier(heartBoost, healthBoost, Operation.ADD_NUMBER);
         
         maxHealth.addModifier(healthModifier);
+        player.heal(healthBoost);
     }
 
     @Override
@@ -103,12 +105,19 @@ public class Heart extends InfuseEffect {
         // Applying effects for the heart spark
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-        // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getConfigFile().cooldown(this);
-        long duration = plugin.getConfigFile().duration(this);
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (attribute.getModifier(heartSparkBoost) == null) {
+            attribute.addModifier(new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER));
+            player.heal(10);
+        }
 
-        CooldownManager.setDuration(playerUUID, "heart", duration);
-        CooldownManager.setCooldown(playerUUID, "heart", cooldown);
+        // Applying cooldowns and durations for the effect
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
+
+        CooldownManager.setTimes(playerUUID, "heart", duration, cooldown);
+        
+        Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }
 
     private void showAndUpdateHealthAboveEntity(Infuse plugin, LivingEntity player) {
@@ -146,9 +155,9 @@ public class Heart extends InfuseEffect {
 
     private void updateHealthDisplay(TextDisplay entity, LivingEntity player) {
         if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
-            entity.customName(Messages.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
+            entity.customName(Message.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
         } else {
-            entity.customName(Messages.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
+            entity.customName(Message.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
         }
     }
 
@@ -180,5 +189,12 @@ public class Heart extends InfuseEffect {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
             }
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        AttributeInstance maxHealth = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        maxHealth.removeModifier(heartBoost);
+        maxHealth.removeModifier(heartSparkBoost);
     }
 }

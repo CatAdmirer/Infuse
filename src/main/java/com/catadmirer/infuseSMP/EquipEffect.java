@@ -1,8 +1,9 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.managers.ApophisManager;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import java.io.File;
+import com.catadmirer.infuseSMP.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import java.util.List;
 import java.util.Random;
 import org.bukkit.entity.Player;
@@ -15,11 +16,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class EquipEffect implements Listener {
     private final Infuse plugin;
-    private final ApophisManager apophisManager;
 
-    public EquipEffect(Infuse plugin, ApophisManager apophisManager) {
+    public EquipEffect(Infuse plugin) {
         this.plugin = plugin;
-        this.apophisManager = apophisManager;
     }
 
     @EventHandler
@@ -27,8 +26,8 @@ public class EquipEffect implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player their starting effects if they haven't been given already
-        if (!player.hasPlayedBefore() && plugin.getConfigFile().joinEffectsEnabled()) {
-            List<InfuseEffect> effects = plugin.getConfigFile().joinEffects();
+        if (!player.hasPlayedBefore() && plugin.getMainConfig().joinEffectsEnabled()) {
+            List<InfuseEffect> effects = plugin.getMainConfig().joinEffects();
             if (effects.isEmpty()) return;
             InfuseEffect effect = effects.get(new Random().nextInt(effects.size()));
             equipEffect(player, effect, "2");
@@ -65,11 +64,13 @@ public class EquipEffect implements Listener {
         
         // Equipping the effect to the slot.
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
-        String msg = Messages.EFFECT_EQUIPPED.getMessage();
-        msg = msg.replace("%effect_name%", effect.getName());
-        player.sendMessage(Messages.toComponent(msg));
+        new EffectEquipEvent(player, effect, slot).callEvent();
 
         effect.equip(plugin, player);
+
+        Message msg = new Message(MessageType.EFFECT_EQUIPPED);
+        msg.applyPlaceholder("effect_name", effect.getName());
+        player.sendMessage(msg.toComponent());
 
         return true;
     }
@@ -89,10 +90,10 @@ public class EquipEffect implements Listener {
         // Skipping if the effect is not found.
         if (effect == null) return;
 
-        // Skipping if the plauer's inventory is full.
+        // Skipping if the player's inventory is full.
         if (player.getInventory().firstEmpty() == -1) {
             event.setCancelled(true);
-            player.sendMessage(Messages.ERROR_INV_FULL.toComponent());
+            player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
             return;
         }
          
@@ -113,7 +114,7 @@ public class EquipEffect implements Listener {
         Player player = event.getEntity();
         InfuseEffect effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
         InfuseEffect effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        String dropMode = plugin.getConfigFile().effectDrops();
+        String dropMode = plugin.getMainConfig().effectDrops();
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
             case "1":
@@ -143,22 +144,21 @@ public class EquipEffect implements Listener {
                 }
                 break;
         }
-
-        apophisManager.unsetApophis(player);
     }
 
     /**
-     * Disguising players who join that have the apophis effect.
+     * Calling an EffectEquipEvent for each player that joins.
      * 
      * @param event The server PlayerJoinEvent to catch.
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        File disguiseFile = new File(plugin.getDataFolder(), "data/AphopisPlayers/" + player.getUniqueId() + ".yml");
-        if (disguiseFile.exists()) {
-            apophisManager.disguiseAsApophis(player);
-        }
+        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        if (effect != null) new EffectEquipEvent(player, effect, "1").callEvent();
+        
+        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        if (effect != null) new EffectEquipEvent(player, effect, "2").callEvent();
     }
 
     /**
@@ -174,6 +174,7 @@ public class EquipEffect implements Listener {
 
         // Removing the effect from the player.
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+        new EffectUnequipEvent(player, effect, slot).callEvent();
 
         // Dropping the effect item at the player's location
         player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
