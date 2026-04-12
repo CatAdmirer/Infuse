@@ -13,7 +13,6 @@ import io.papermc.paper.datacomponent.item.Enchantable;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -28,6 +27,7 @@ import org.bukkit.Sound;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.inventory.view.CraftEnchantmentView;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
@@ -203,10 +203,7 @@ public class Emerald implements Listener {
             // Getting the NMS EnchantmentMenu from the bukkit EnchantmentView
             EnchantmentView view = event.getView();
             try {
-                Field menuField = view.getClass().getDeclaredField("container");
-                menuField.setAccessible(true);
-                EnchantmentMenu menu = (EnchantmentMenu) menuField.get(view);
-                menuField.setAccessible(false);
+                EnchantmentMenu menu = (EnchantmentMenu) ((CraftEnchantmentView) view).getHandle();
 
                 Method getEnchantmentList = menu.getClass().getDeclaredMethod("getEnchantmentList", RegistryAccess.class, net.minecraft.world.item.ItemStack.class, int.class, int.class);
                 getEnchantmentList.setAccessible(true);
@@ -217,8 +214,6 @@ public class Emerald implements Listener {
                     offers[k] = new EnchantmentOffer(CraftEnchantment.minecraftHolderToBukkit(enchantmentinstance.enchantment), enchantmentinstance.level, cost);
                 }
                 getEnchantmentList.setAccessible(false);
-            } catch (NoSuchFieldException e) {
-                InfuseDebug.log("Could not load the EnchantmentMenu.  Emerald enchantments will not be modified");
             } catch (NoSuchMethodException e) {
                 InfuseDebug.log("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
             } catch (SecurityException e) {
