@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -31,7 +29,7 @@ public class MainConfig {
     public boolean load() {
         // Not doing anything if the plugin isn't enabled
         if (!plugin.isEnabled()) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot load {1}.", new String[]{plugin.getName(), file.getName()});
+            Infuse.LOGGER.error("{} not loaded, cannot load {}.", plugin.getName(), file.getName());
             return false;
         }
 
@@ -41,13 +39,13 @@ public class MainConfig {
             if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
             if (!file.exists()) plugin.saveResource("config.yml", false);
             config.load(file);
-            plugin.getLogger().info("Successfully loaded config.yml");
+            Infuse.LOGGER.info("Successfully loaded config.yml");
             return true;
 
         } catch (InvalidConfigurationException e) {
-            plugin.getLogger().warning(file.getName() + "is broken :wilted_rose:");
+            Infuse.LOGGER.warn("{} is broken :wilted_rose:", file.getName());
         } catch (IOException e) {
-            plugin.getLogger().severe("uh broken as well :wilted_rose: " + file.getName());
+            Infuse.LOGGER.error("uh broken as well :wilted_rose: {}", file.getName());
             e.printStackTrace();
         }
 
@@ -62,7 +60,7 @@ public class MainConfig {
     public boolean save() {
         // Not doing anything if the plugin isn't enabled
         if (!plugin.isEnabled()) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot save {1}.", new String[]{plugin.getName(), file.getName()});
+            Infuse.LOGGER.error("{} not loaded, cannot save {}.", plugin.getName(), file.getName());
             return false;
         }
 
@@ -78,10 +76,10 @@ public class MainConfig {
         // Saving the config
         try {
             config.save(file);
-            plugin.getLogger().log(Level.INFO, "Saved {0}", file.getName());
+            Infuse.LOGGER.info("Saved {}", file.getName());
             return true;
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Could not save {0}.  Make sure the user has write permissions.", file.getName());
+            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
         }
 
         return false;
@@ -158,8 +156,8 @@ public class MainConfig {
         List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.regular().getKey());
 
         if (craftLimits.size() != 2) {
-            plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});
-            plugin.getLogger().log(Level.SEVERE, "Returning default limits");
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getKey());
+            Infuse.LOGGER.error("Returning default limits");
 
             return effect.isAugmented() ? 1 : 3;
         }

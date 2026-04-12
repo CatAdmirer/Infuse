@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.UUID;
-import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -61,7 +60,7 @@ public class ApophisManager {
             writer.flush();
             writer.close();
         } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to write to {0}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
+            Infuse.LOGGER.error("Failed to write to {}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
         }
     }
 
@@ -88,7 +87,7 @@ public class ApophisManager {
         Player target = event.getPlayer();
 
         if (!target.isOnline()) {
-            plugin.getLogger().log(Level.WARNING, "Could not remove {0}'s disguise as they are not online.", target.getName());
+            Infuse.LOGGER.warn("Could not remove {0}'s disguise as they are not online.", target.getName());
             return;
         }
 

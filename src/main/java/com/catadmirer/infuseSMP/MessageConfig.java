@@ -1,18 +1,14 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.io.File;
 import java.io.IOException;
-
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class MessageConfig {
     // Config and config files
@@ -39,12 +35,12 @@ public class MessageConfig {
         // Loading the config
         try {
             config.load(file);
-            plugin.getLogger().info("Successfully loaded messages.yml");
+            Infuse.LOGGER.info("Successfully loaded messages.yml");
             return true;
         } catch (InvalidConfigurationException err) {
-            plugin.getLogger().severe("messages.yml contains an invalid YAML configuration.  Verify the contents of the file.");
+            Infuse.LOGGER.error("messages.yml contains an invalid YAML configuration.  Verify the contents of the file.");
         } catch (IOException err) {
-            plugin.getLogger().severe("Could not find messages.yml.  Check that it exists.");
+            Infuse.LOGGER.error("Could not find messages.yml.  Check that it exists.");
         }
 
         return false;
@@ -65,7 +61,7 @@ public class MessageConfig {
 
         // Checking if the file still doesn't exist.
         if (!file.exists()) {
-            plugin.getLogger().severe("Could not create messages.yml.  Check if it already exists.");
+            Infuse.LOGGER.error("Could not create messages.yml.  Check if it already exists.");
             return false;
         }
 
@@ -75,7 +71,7 @@ public class MessageConfig {
     public static String getMessage(MessageType message) {
         // Checking that the config contains the message
         if (!config.contains(message.configKey)) {
-            Bukkit.getLogger().severe("Could not find \"" + message.configKey + "\" in the config.");
+            Infuse.LOGGER.error("Could not find \"{}\" in the config.", message.configKey);
             config.set(message.configKey, message.defaultValue);
             try {
                 config.save(file);

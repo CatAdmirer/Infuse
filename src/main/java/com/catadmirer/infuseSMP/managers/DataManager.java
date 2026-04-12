@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -32,8 +31,8 @@ public class DataManager {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot load {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
             return false;
         }
 
@@ -46,12 +45,12 @@ public class DataManager {
         // Loading the config
         try {
             config.load(dataFile);
-            plugin.getLogger().log(Level.INFO, "Successfully loaded {0}", dataFile.getName());
+            Infuse.LOGGER.info("Successfully loaded {}", dataFile.getName());
             return true;
         } catch (InvalidConfigurationException err) {
-            plugin.getLogger().log(Level.WARNING, "{0]} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
+            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
         } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Could not find {0}.  Check that it exists.", dataFile.getName());
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", dataFile.getName());
         }
 
         return false;
@@ -64,8 +63,8 @@ public class DataManager {
      */
     public boolean save() {
         // Getting a plugin instance to use
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot save the {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
             return false;
         }
 
@@ -78,10 +77,10 @@ public class DataManager {
         // Saving the config
         try {
             config.save(dataFile);
-            plugin.getLogger().log(Level.INFO, "Saved {0}", dataFile.getName());
+            Infuse.LOGGER.info("Saved {}", dataFile.getName());
             return true;
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Could not save {0}.  Make sure the user has write permissions.", dataFile.getName());
+            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", dataFile.getName());
         }
 
         return false;
@@ -96,8 +95,8 @@ public class DataManager {
      */
     public boolean createFile(boolean replace) {
         // Getting a plugin instance to use
-        if (plugin == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "{0} not loaded, cannot create default {1}.", new String[]{plugin.getName(), dataFile.getName()});
+        if (!plugin.isEnabled()) {
+            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
             return false;
         }
 
@@ -107,7 +106,7 @@ public class DataManager {
                 dataFile.getParentFile().mkdirs();
                 dataFile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().log(Level.SEVERE, "Could not create {0}.  Make sure the user has the right permissions.", dataFile.getName());
+                Infuse.LOGGER.error("Could not create {}.  Make sure the user has the right permissions.", dataFile.getName());
                 return false;
             }
         }
@@ -170,7 +169,7 @@ public class DataManager {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
         EffectMapping effect = EffectMapping.fromEffectKey(effectKey);
         if (effectKey != null && effect == null) {
-            Bukkit.getLogger().warning("No valid ability found for the equipped effect.");
+            Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
         }
 
         return effect;

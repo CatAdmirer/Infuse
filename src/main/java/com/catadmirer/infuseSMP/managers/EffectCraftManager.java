@@ -12,7 +12,6 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.util.List;
-import java.util.logging.Level;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -78,14 +77,14 @@ public class EffectCraftManager implements Listener {
             // Checking the response status code
             int status = response.statusCode();
             if (status == 200) {
-                plugin.getLogger().info("Message sent to Discord!");
+                Infuse.LOGGER.info("Message sent to Discord!");
             } else {
-                plugin.getLogger().info("Error sending message to Discord: " + status);
+                Infuse.LOGGER.info("Error sending message to Discord: " + status);
             }
         } catch (IOException err) {
-            plugin.getLogger().log(Level.SEVERE, "Could not send webhook message to discord.", err);
+            Infuse.LOGGER.error("Could not send webhook message to discord.", err);
         } catch (InterruptedException err) {
-            plugin.getLogger().log(Level.SEVERE, "Discord webhook request was interrupted!", err);
+            Infuse.LOGGER.error("Discord webhook request was interrupted!", err);
         }
     }
 
