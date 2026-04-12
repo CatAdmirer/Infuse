@@ -8,6 +8,7 @@ import com.catadmirer.infuseSMP.extraeffects.Thief;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
@@ -15,7 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class InfuseEffect {
+public abstract class InfuseEffect implements Listener {
     protected final int id;
     protected final String name;
     protected final boolean augmented;
