@@ -67,7 +67,7 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
+        if (event.getView().getType() == InventoryType.PLAYER) return;
 
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;
