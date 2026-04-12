@@ -21,7 +21,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -69,15 +68,6 @@ public class Fire extends InfuseEffect {
         player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
     }
 
-    /*
-    TODO: implement
-    if (player.isInLava()) {
-        player.setGliding(true);
-    } else if (player.isInPowderedSnow()) {
-        player.setGliding(true);
-    }
-     */
-    
     @Override
     public void activateSpark(Player player) {
         UUID playerUUID = player.getUniqueId();
@@ -165,17 +155,6 @@ public class Fire extends InfuseEffect {
             double offsetZ = circleRadius * Math.sin(rad);
             Location particleLoc = player.getLocation().clone().add(offsetX, particleHeightOffset, offsetZ);
             world.spawnParticle(Particle.DUST_PILLAR, particleLoc, 3, 0, 0, 0, 0, Material.REDSTONE_BLOCK.createBlockData());
-        }
-    }
-
-    @EventHandler
-    public void onCancelSwim(EntityToggleGlideEvent event) {
-        if (event.isGliding()) return;
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!plugin.getDataManager().hasEffect(player, this)) return;
-
-        if (player.isInLava() || player.isInPowderedSnow()) {
-            event.setCancelled(true);
         }
     }
 
