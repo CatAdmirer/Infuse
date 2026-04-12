@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -8,7 +9,6 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -22,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.catadmirer.infuseSMP.EffectIds;
 
 public class Frost extends InfuseEffect {
     private static final Set<UUID> frozenAttackers = new HashSet<>();

@@ -1,5 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.Ender;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,9 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.Ender;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class RecipeManager {
     private final Infuse plugin;

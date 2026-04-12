@@ -6,13 +6,10 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-
-import net.kyori.adventure.text.minimessage.MiniMessage;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

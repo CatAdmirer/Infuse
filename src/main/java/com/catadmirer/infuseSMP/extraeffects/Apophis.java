@@ -7,12 +7,10 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-
 import java.time.Duration;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

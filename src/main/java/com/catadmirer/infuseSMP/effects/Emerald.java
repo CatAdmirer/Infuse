@@ -10,7 +10,6 @@ import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
-import com.google.common.collect.Lists;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import io.papermc.paper.registry.RegistryAccess;
@@ -269,7 +268,7 @@ public class Emerald extends InfuseEffect {
     }
 
     public static List<EnchantInstance> getAvailableEnchantmentResults(int cost, ItemStack item, Stream<Enchantment> allEnchantments) {
-        List<EnchantInstance> list = Lists.newArrayList();
+        List<EnchantInstance> list = new ArrayList<>();
         boolean flag = item.getType() == Material.BOOK;
         allEnchantments.filter(ench -> {
             if (flag) return true;

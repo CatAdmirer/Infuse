@@ -3,7 +3,6 @@ package com.catadmirer.infuseSMP;
 import com.catadmirer.infuseSMP.effects.Ender;
 import com.catadmirer.infuseSMP.effects.Ocean;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

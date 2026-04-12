@@ -1,10 +1,11 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.UUID;
-
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -15,9 +16,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Message.MessageType;
 
 public class Ocean extends InfuseEffect {
     private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);

@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-
 import java.io.File;
 import java.io.IOException;
 import net.kyori.adventure.text.minimessage.MiniMessage;

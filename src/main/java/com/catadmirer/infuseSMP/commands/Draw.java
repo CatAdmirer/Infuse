@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
+import com.catadmirer.infuseSMP.managers.ParticleManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -7,8 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.catadmirer.infuseSMP.managers.ParticleManager;
 
 public class Draw implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

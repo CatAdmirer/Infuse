@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP;
 
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -8,7 +9,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class MainConfig {
     public final File file;

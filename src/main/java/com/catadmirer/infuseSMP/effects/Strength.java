@@ -1,15 +1,14 @@
 package com.catadmirer.infuseSMP.effects;
 
-import java.util.UUID;
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Message.MessageType;
 
 public class Strength extends InfuseEffect {
     private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);

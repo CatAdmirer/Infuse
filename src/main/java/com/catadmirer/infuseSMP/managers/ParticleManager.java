@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

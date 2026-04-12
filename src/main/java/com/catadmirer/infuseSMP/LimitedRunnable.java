@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP;
 
 import java.util.function.IntConsumer;
-
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class LimitedRunnable extends BukkitRunnable {
