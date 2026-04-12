@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.catadmirer.infuseSMP.EffectIds;
@@ -64,14 +63,5 @@ public class Strength extends InfuseEffect {
         long duration = plugin.getMainConfig().duration(this);
 
         CooldownManager.setTimes(playerUUID, "strength", duration, cooldown);
-    }
-
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Strength effect = new Strength();
-
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
-        }
     }
 }

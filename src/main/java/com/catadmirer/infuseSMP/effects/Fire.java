@@ -18,7 +18,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -169,65 +168,56 @@ public class Fire extends InfuseEffect {
         }
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Fire effect = new Fire();
+    @EventHandler
+    public void onCancelSwim(EntityToggleGlideEvent event) {
+        if (event.isGliding()) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+        if (player.isInLava() || player.isInPowderedSnow()) {
+            event.setCancelled(true);
         }
+    }
 
-        @EventHandler
-        public void onCancelSwim(EntityToggleGlideEvent event) {
-            if (event.isGliding()) return;
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            if (player.isInLava() || player.isInPowderedSnow()) {
-                event.setCancelled(true);
-            }
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        boolean inLava = player.isInLava();
+        Vector direction = player.getLocation().getDirection().normalize();
+        if (inLava && plugin.getDataManager().hasEffect(player, this)) {
+            if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
+            double boostStrength = 0.6;
+            Vector newVelocity = direction.multiply(boostStrength);
+            player.setVelocity(newVelocity);
         }
+    }
 
-        @EventHandler
-        public void onMove(PlayerMoveEvent event) {
-            Player player = event.getPlayer();
-            boolean inLava = player.isInLava();
-            Vector direction = player.getLocation().getDirection().normalize();
-            if (inLava && plugin.getDataManager().hasEffect(player, effect)) {
-                if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-                double boostStrength = 0.6;
-                Vector newVelocity = direction.multiply(boostStrength);
-                player.setVelocity(newVelocity);
-            }
+    @EventHandler
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+
+        if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
+            projectile.setFireTicks(100);
         }
+    }
 
-        @EventHandler
-        public void onEntityShootBow(EntityShootBowEvent event) {
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
-                projectile.setFireTicks(100);
-            }
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != DamageCause.FALL) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        Material blockType = player.getLocation().getBlock().getType();
+        if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
+            event.setCancelled(true);
         }
+    }
 
-        @EventHandler
-        public void onEntityDamage(EntityDamageEvent event) {
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (event.getCause() != DamageCause.FALL) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-            Material blockType = player.getLocation().getBlock().getType();
-            if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
-                event.setCancelled(true);
-            }
-        }
+    @EventHandler
+    public void fireCombustTarget(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        @EventHandler
-        public void fireCombustTarget(TenHitEvent event) {
-            Player attacker = event.getAttacker();
-            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
-
-            event.getTarget().setFireTicks(100);
-        }
+        event.getTarget().setFireTicks(100);
     }
 }

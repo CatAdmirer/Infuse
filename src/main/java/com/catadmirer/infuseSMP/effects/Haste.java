@@ -13,7 +13,6 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -84,57 +83,50 @@ public class Haste extends InfuseEffect {
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 15, 3));
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Haste effect = new Haste();
+    @EventHandler
+    public void onPlayerHoldItem(PlayerItemHeldEvent event) {
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
+            ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
+            ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
+            ItemUtil.applySpecialEnchantment(item, unbreakingKey, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
         }
+    }
 
-        @EventHandler
-        public void onPlayerHoldItem(PlayerItemHeldEvent event) {
-            ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-            if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-                ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
-                ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
-                ItemUtil.applySpecialEnchantment(item, unbreakingKey, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
-            }
-        }
+    @EventHandler
+    public void onInventoryCloseEvent(InventoryCloseEvent event) {
+        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
 
-        @EventHandler
-        public void onInventoryCloseEvent(InventoryCloseEvent event) {
-            if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
-
-            for (ItemStack item : event.getView().getTopInventory().getContents()) {
-                if (item == null || item.getType() == Material.AIR) continue;
-
-                ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
-                ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
-                ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
-            }
-        }
-
-        @EventHandler
-        public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-            final ItemStack item = event.getItemDrop().getItemStack();
+        for (ItemStack item : event.getView().getTopInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
 
             ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
             ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
             ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
         }
+    }
 
-        @EventHandler
-        public void onEffectUnequipEvent(EffectUnequipEvent event) {
-            if (!(event.getEffect().equals(effect))) return;
+    @EventHandler
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
+        final ItemStack item = event.getItemDrop().getItemStack();
 
-            for (ItemStack item : event.getPlayer().getInventory().getContents()) {
-                if (item == null || item.getType() == Material.AIR) continue;
+        ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
+        ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
+        ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
+    }
 
-                ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
-                ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
-                ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
-            }
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        if (!(event.getEffect().equals(this))) return;
+
+        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
+            ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
+            ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
         }
     }
 }

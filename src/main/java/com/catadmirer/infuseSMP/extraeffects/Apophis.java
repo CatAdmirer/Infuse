@@ -29,7 +29,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -211,23 +210,14 @@ public class Apophis extends InfuseEffect {
         }
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Apophis effect = new Apophis();
+    @EventHandler
+    public void onPlayerHit(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        UUID attackerUUID = attacker.getUniqueId();
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
-        }
-
-        @EventHandler
-        public void onPlayerHit(EntityDamageByEntityEvent event) {
-            if (!(event.getDamager() instanceof Player attacker)) return;
-            UUID attackerUUID = attacker.getUniqueId();
-
-            if (event.getEntity() instanceof Player target) {
-                if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
-                    target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
-                }
+        if (event.getEntity() instanceof Player target) {
+            if (CooldownManager.isEffectActive(attackerUUID, "apophis")) {
+                target.showTitle(Title.title(Component.text("\uE090"), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
             }
         }
     }

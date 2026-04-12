@@ -20,7 +20,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -164,33 +163,24 @@ public class Heart extends InfuseEffect {
         }
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Heart effect = new Heart();
+    @EventHandler
+    public void heartShowTargetHealth(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
-        }
+        showAndUpdateHealthAboveEntity(plugin, event.getTarget());
+    }
 
-        @EventHandler
-        public void heartShowTargetHealth(TenHitEvent event) {
-            Player attacker = event.getAttacker();
-            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
+    @EventHandler
+    public void onPlayerEat(PlayerItemConsumeEvent event) {
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-            effect.showAndUpdateHealthAboveEntity(plugin, event.getTarget());
-        }
-
-        @EventHandler
-        public void onPlayerEat(PlayerItemConsumeEvent event) {
-            Player player = event.getPlayer();
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            ItemStack item = event.getItem();
-            if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
-            } else {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
-            }
+        ItemStack item = event.getItem();
+        if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
+        } else {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
         }
     }
 

@@ -23,7 +23,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -33,6 +32,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Invis extends InfuseEffect {
+    private static final MiniMessage mm = MiniMessage.miniMessage();
+
     private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     
     public Invis() {
@@ -144,86 +145,75 @@ public class Invis extends InfuseEffect {
         }).runTaskTimer(plugin, 0L, 10L);
     }
 
-    public static class Listeners implements Listener {
-        private static final MiniMessage mm = MiniMessage.miniMessage();
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
+        Player killer = victim.getKiller();
 
-        private final Infuse plugin;
-        private final Invis effect = new Invis();
+        if (killer == null) return;
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+        String victimName;
+        if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, this)) {
+            victimName = "<gray><obf>Someone";
+        } else {
+            victimName = mm.serialize(victim.displayName());
+        }
+        
+        String killerName;
+        if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, this)) {
+            killerName = "<gray><obf>Someone";
+        } else {
+            killerName = mm.serialize(killer.displayName());
         }
 
-        @EventHandler
-        public void onPlayerDeath(PlayerDeathEvent event) {
-            Player victim = event.getEntity();
-            Player killer = victim.getKiller();
+        Message msg = new Message(MessageType.DEATH_MESSAGE);
+        msg.applyPlaceholder("victim", victimName);
+        msg.applyPlaceholder("killer", killerName);
+        event.deathMessage(msg.toComponent());
+    }
 
-            if (killer == null) return;
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
+        if (!plugin.getDataManager().hasEffect(shooter, this)) return;
+        if (!(event.getEntity() instanceof Arrow)) return;
+        if (!(event.getHitEntity() instanceof Player target)) return;
+        
+        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
+        this.spawnBlackParticles(target, 4);
+    }
 
-            String victimName;
-            if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, effect)) {
-                victimName = "<gray><obf>Someone";
-            } else {
-                victimName = mm.serialize(victim.displayName());
-            }
-            
-            String killerName;
-            if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, effect)) {
-                killerName = "<gray><obf>Someone";
-            } else {
-                killerName = mm.serialize(killer.displayName());
-            }
+    @EventHandler
+    public void onTenHits(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-            Message msg = new Message(MessageType.DEATH_MESSAGE);
-            msg.applyPlaceholder("victim", victimName);
-            msg.applyPlaceholder("killer", killerName);
-            event.deathMessage(msg.toComponent());
-        }
+        Player target = event.getTarget();
+        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
+        this.spawnBlackParticles(target, 4);
+    }
 
-        @EventHandler
-        public void onProjectileHit(ProjectileHitEvent event) {
-            if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
-            if (!plugin.getDataManager().hasEffect(shooter, effect)) return;
-            if (!(event.getEntity() instanceof Arrow)) return;
-            if (!(event.getHitEntity() instanceof Player target)) return;
-            
-            target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-            this.spawnBlackParticles(target, 4);
-        }
+    private void spawnBlackParticles(final Player target, final int durationInSeconds) {
+        (new BukkitRunnable() {
+            int ticksElapsed = 0;
+            final int maxTicks = durationInSeconds * 20;
 
-        @EventHandler
-        public void onTenHits(TenHitEvent event) {
-            Player attacker = event.getAttacker();
-            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
-
-            Player target = event.getTarget();
-            target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
-            this.spawnBlackParticles(target, 4);
-        }
-
-        private void spawnBlackParticles(final Player target, final int durationInSeconds) {
-            (new BukkitRunnable() {
-                int ticksElapsed = 0;
-                final int maxTicks = durationInSeconds * 20;
-
-                public void run() {
-                    if (this.ticksElapsed >= this.maxTicks) {
-                        this.cancel();
-                    } else {
-                        target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
-                        this.ticksElapsed += 5;
-                    }
+            public void run() {
+                if (this.ticksElapsed >= this.maxTicks) {
+                    this.cancel();
+                } else {
+                    target.getWorld().spawnParticle(Particle.SQUID_INK, target.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
+                    this.ticksElapsed += 5;
                 }
-            }).runTaskTimer(plugin, 0L, 5L);
-        }
+            }
+        }).runTaskTimer(plugin, 0L, 5L);
+    }
 
-        @EventHandler
-        public void onEntityTarget(EntityTargetEvent event) {
-            if (!(event.getTarget() instanceof Player target)) return;
-            if (!plugin.getDataManager().hasEffect(target, effect)) return;
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent event) {
+        if (!(event.getTarget() instanceof Player target)) return;
+        if (!plugin.getDataManager().hasEffect(target, this)) return;
 
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 }

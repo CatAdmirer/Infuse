@@ -9,7 +9,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import com.catadmirer.infuseSMP.EffectIds;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -73,54 +72,45 @@ public class Regen extends InfuseEffect {
         CooldownManager.setTimes(playerUUID, "regen", duration, cooldown);
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Regen effect = new Regen();
+    @EventHandler
+    public void regenCanAlwaysEat(PlayerInteractEvent event) {
+        if (!(event.getAction().isRightClick())) return;
+        Player player = event.getPlayer();
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+        // Filtering an empty hand
+        if (event.getItem() == null) return;
+        
+        // Filtering inedible items
+        if (!event.getItem().getType().isEdible()) return;
+        
+        // Filtering always edible items
+        if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
+
+        // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
+        if (plugin.getDataManager().hasEffect(player, this)) {
+            event.getItem().editMeta(meta -> {
+                FoodComponent foodComp = meta.getFood();
+                foodComp.setCanAlwaysEat(true);
+                meta.setFood(foodComp);
+            });
+        } else {
+            event.getItem().editMeta(meta -> {
+                meta.setFood(null);
+            });
         }
+    }
 
-        @EventHandler
-        public void regenCanAlwaysEat(PlayerInteractEvent event) {
-            if (!(event.getAction().isRightClick())) return;
-            Player player = event.getPlayer();
+    @EventHandler
+    public void regenRegenerateOnHit(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-            // Filtering an empty hand
-            if (event.getItem() == null) return;
-            
-            // Filtering inedible items
-            if (!event.getItem().getType().isEdible()) return;
-            
-            // Filtering always edible items
-            if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
-
-            // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
-            if (plugin.getDataManager().hasEffect(player, effect)) {
-                event.getItem().editMeta(meta -> {
-                    FoodComponent foodComp = meta.getFood();
-                    foodComp.setCanAlwaysEat(true);
-                    meta.setFood(foodComp);
-                });
-            } else {
-                event.getItem().editMeta(meta -> {
-                    meta.setFood(null);
-                });
-            }
-        }
-
-        @EventHandler
-        public void regenRegenerateOnHit(EntityDamageByEntityEvent event) {
-            if (!(event.getDamager() instanceof Player player)) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
-            if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
-                for (Entity loopentity : player.getNearbyEntities(5, 5, 5)) {
-                    if (loopentity instanceof Player otherplayer) {
-                        if (plugin.getDataManager().isTrusted(player, otherplayer)) {
-                            otherplayer.heal(event.getDamage()/2);
-                        }
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
+            for (Entity loopentity : player.getNearbyEntities(5, 5, 5)) {
+                if (loopentity instanceof Player otherplayer) {
+                    if (plugin.getDataManager().isTrusted(player, otherplayer)) {
+                        otherplayer.heal(event.getDamage()/2);
                     }
                 }
             }

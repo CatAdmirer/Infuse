@@ -20,7 +20,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -94,121 +93,112 @@ public class Feather extends InfuseEffect {
         }, null, 10);
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Feather effect = new Feather();
+    @EventHandler
+    public void FeatherLand(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        double radius = 4;
+        UUID playerUUID = player.getUniqueId();
+        if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "feathermace")) {
+            CooldownManager.setDuration(playerUUID, "feathermace", 0L);
+            Location loc = player.getLocation();
+            World world = player.getWorld();
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
-        }
+            for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
 
-        @EventHandler
-        public void FeatherLand(PlayerMoveEvent event) {
-            Player player = event.getPlayer();
-            double radius = 4;
-            UUID playerUUID = player.getUniqueId();
-            if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "feathermace")) {
-                CooldownManager.setDuration(playerUUID, "feathermace", 0L);
-                Location loc = player.getLocation();
-                World world = player.getWorld();
+                if (!(entity instanceof LivingEntity target)) continue;
+                if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
-                for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-
-                    if (!(entity instanceof LivingEntity target)) continue;
-                    if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
-
-                    int damage = 8;
-                    target.damage(damage);
-                    Vector knockback = new Vector(0, 1, 0);
-                    target.setVelocity(target.getVelocity().add(knockback));
-                    Location anchor = target.getLocation();
-                    LivingEntity finalTarget = target;
-                    Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
-                        finalTarget.addPotionEffect(
-                                new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
-                    });
-                }
-
-                world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
-                world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
-                Location anchor = player.getLocation();
-                Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-                    if (player.isOnline()) {
-                        Vector dashDirection = player.getEyeLocation().getDirection().normalize();
-                        Vector launchVector = dashDirection.multiply(5);
-                        player.setVelocity(launchVector);
-                    }
-                }, 1L);
+                int damage = 8;
+                target.damage(damage);
+                Vector knockback = new Vector(0, 1, 0);
+                target.setVelocity(target.getVelocity().add(knockback));
+                Location anchor = target.getLocation();
+                LivingEntity finalTarget = target;
+                Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
+                    finalTarget.addPotionEffect(
+                            new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
+                });
             }
-        }
 
-        @EventHandler
-        public void onTenthHit(TenHitEvent event) {
-            Player player = event.getTarget();
-            Player target = event.getAttacker();
-
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
-            Location chargeLocation = player.getLocation().add(0, 1, 0);
-            WindCharge windCharge = player.getWorld().spawn(chargeLocation, WindCharge.class);
-            Location targetLocation = player.getLocation().subtract(0, 1, 0);
-            Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
-            windCharge.setVelocity(direction.multiply(1));
-            windCharge.setShooter(player);
-            player.setVelocity(new Vector(0, 0.5, 0));
-        }
-
-        @EventHandler
-        public void onPlayerFallDamage(EntityDamageEvent event) {
-            if (!(event.getEntity() instanceof Player player)) return;
-            if (event.getCause() != DamageCause.FALL) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            event.setCancelled(true);
-        }
-
-        @EventHandler
-        public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
-            Player player = event.getPlayer();
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType() != Material.WIND_CHARGE) return;
-            if (player.hasCooldown(Material.WIND_CHARGE)) return;
-            if (!event.getAction().isRightClick()) return;
-
+            world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
+            world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
             Location anchor = player.getLocation();
             Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-                player.setCooldown(Material.WIND_CHARGE, 5);
+                if (player.isOnline()) {
+                    Vector dashDirection = player.getEyeLocation().getDirection().normalize();
+                    Vector launchVector = dashDirection.multiply(5);
+                    player.setVelocity(launchVector);
+                }
             }, 1L);
         }
+    }
 
-        @EventHandler
-        public void onWindChargeLaunch(ProjectileLaunchEvent event) {
-            if (!(event.getEntity() instanceof WindCharge windCharge)) return;
-            if (!(windCharge.getShooter() instanceof Player player)) return;
+    @EventHandler
+    public void onTenthHit(TenHitEvent event) {
+        Player player = event.getTarget();
+        Player target = event.getAttacker();
 
-            Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
-            windCharge.setVelocity(direction);
-        }
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-        @EventHandler
-        public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-            if (!(event.getDamager() instanceof Player attacker)) return;
-            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
+        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
+        Location chargeLocation = player.getLocation().add(0, 1, 0);
+        WindCharge windCharge = player.getWorld().spawn(chargeLocation, WindCharge.class);
+        Location targetLocation = player.getLocation().subtract(0, 1, 0);
+        Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
+        windCharge.setVelocity(direction.multiply(1));
+        windCharge.setShooter(player);
+        player.setVelocity(new Vector(0, 0.5, 0));
+    }
 
-            double fallDistance = attacker.getFallDistance();
-            if (fallDistance < 7) return;
+    @EventHandler
+    public void onPlayerFallDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != DamageCause.FALL) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-            attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
-            Location startLoc = attacker.getLocation();
-            World world = startLoc.getWorld();
-            Location particleLoc = event.getDamager().getLocation();
-            world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
-            attacker.setVelocity(new Vector(0, 1.8, 0));
-            double multiplier = 1.1;
-            event.setDamage(event.getDamage() * multiplier);
-        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() != Material.WIND_CHARGE) return;
+        if (player.hasCooldown(Material.WIND_CHARGE)) return;
+        if (!event.getAction().isRightClick()) return;
+
+        Location anchor = player.getLocation();
+        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
+            player.setCooldown(Material.WIND_CHARGE, 5);
+        }, 1L);
+    }
+
+    @EventHandler
+    public void onWindChargeLaunch(ProjectileLaunchEvent event) {
+        if (!(event.getEntity() instanceof WindCharge windCharge)) return;
+        if (!(windCharge.getShooter() instanceof Player player)) return;
+
+        Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
+        windCharge.setVelocity(direction);
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+
+        double fallDistance = attacker.getFallDistance();
+        if (fallDistance < 7) return;
+
+        attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
+        Location startLoc = attacker.getLocation();
+        World world = startLoc.getWorld();
+        Location particleLoc = event.getDamager().getLocation();
+        world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
+        attacker.setVelocity(new Vector(0, 1.8, 0));
+        double multiplier = 1.1;
+        event.setDamage(event.getDamage() * multiplier);
     }
 }

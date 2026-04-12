@@ -4,8 +4,6 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.EffectEquipEvent;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
@@ -19,7 +17,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -65,10 +62,14 @@ public class Thief extends InfuseEffect {
 
     // Hiding a thief user from the rest of the players online
     @Override
-    public void equip(Player player) {}
+    public void equip(Player player) {
+        Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
+    }
     
     @Override
-    public void unequip(Player player) {}
+    public void unequip(Player player) {
+        Bukkit.getOnlinePlayers().forEach(p -> p.listPlayer(player));
+    }
 
     @Override
     public void activateSpark(Player player) {
@@ -191,96 +192,69 @@ public class Thief extends InfuseEffect {
 
     private record DisguiseData(Component customName, Component displayName, boolean customNameVisible, PlayerTextures skin) {}
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Thief effect = new Thief();
-
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+    // Hiding thief effect users from players who recently joined
+    @EventHandler
+    public void hideThievesOnJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (plugin.getDataManager().hasEffect(player, this)) {
+            Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
         }
 
-        @EventHandler
-        public void equipThief(EffectEquipEvent event) {
-            if (event.getEffect().getId() != effect.getId()) return;
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.unlistPlayer(event.getPlayer());
-            }
-        }
-
-        @EventHandler
-        public void unequipThief(EffectUnequipEvent event) {
-            if (event.getEffect().getId() != effect.getId()) return;
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.listPlayer(event.getPlayer());
-            }
-        }
-
-        // Hiding thief effect users from players who recently joined
-        @EventHandler
-        public void hideThievesOnJoin(PlayerJoinEvent event) {
-            Player player = event.getPlayer();
-            if (plugin.getDataManager().hasEffect(player, effect)) {
-                Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
-            }
-
-            for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                if (!plugin.getDataManager().hasEffect(otherPlayer, effect)) continue;
-                
-                player.unlistPlayer(otherPlayer);
-            }
-        }
-
-        @EventHandler
-        public void onPlayerDeath(PlayerDeathEvent event) {
-            Player deadPlayer = event.getEntity();
+        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+            if (!plugin.getDataManager().hasEffect(otherPlayer, this)) continue;
             
-            // If a disguised player dies, revert their disguise
-            if (disguisedPlayers.containsKey(deadPlayer.getUniqueId())) effect.removeDisguise(deadPlayer);
-
-            if (!(event.getDamageSource().getCausingEntity() instanceof Player killer)) return;
-
-            // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
-            if (plugin.getDataManager().hasEffect(killer, effect)) {
-                effect.disguise(plugin, killer, deadPlayer);
-            }
+            player.unlistPlayer(otherPlayer);
         }
+    }
 
-        /**
-         * Removing an active disguise if a disguised player leaves.
-         * 
-         * @param event The {@link PlayerQuitEvent} to handle
-         */
-        @EventHandler
-        public void onPlayerQuit(PlayerQuitEvent event) {
-            Player player = event.getPlayer();
-            if (disguisedPlayers.containsKey(player.getUniqueId())) {
-                effect.removeDisguise(player);
-            }
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player deadPlayer = event.getEntity();
+        
+        // If a disguised player dies, revert their disguise
+        if (disguisedPlayers.containsKey(deadPlayer.getUniqueId())) this.removeDisguise(deadPlayer);
+
+        if (!(event.getDamageSource().getCausingEntity() instanceof Player killer)) return;
+
+        // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
+        if (plugin.getDataManager().hasEffect(killer, this)) {
+            disguise(plugin, killer, deadPlayer);
         }
+    }
 
-        @EventHandler
-        public void onPlayerHit(EntityDamageByEntityEvent event) {
-            if (!(event.getEntity() instanceof Player victim)) return;
-            if (!(event.getDamager() instanceof Player player)) return;
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
-
-            UUID playerUUID = player.getUniqueId();
-            if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
-
-            InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
-            InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
-
-            if (leftEffect != null && rightEffect != null) {
-                effect.activateEffect(plugin, player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
-            } else if (leftEffect != null) {
-                effect.activateEffect(plugin, player, leftEffect, victim);
-            } else if (rightEffect != null) {
-                effect.activateEffect(plugin, player, rightEffect, victim);
-            } else return;
-
-            CooldownManager.setDuration(playerUUID, "thief", 0);
+    /**
+     * Removing an active disguise if a disguised player leaves.
+     * 
+     * @param event The {@link PlayerQuitEvent} to handle
+     */
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        if (disguisedPlayers.containsKey(player.getUniqueId())) {
+            removeDisguise(player);
         }
+    }
+
+    @EventHandler
+    public void onPlayerHit(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player victim)) return;
+        if (!(event.getDamager() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+
+        UUID playerUUID = player.getUniqueId();
+        if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
+
+        InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
+        InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
+
+        if (leftEffect != null && rightEffect != null) {
+            activateEffect(plugin, player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
+        } else if (leftEffect != null) {
+            activateEffect(plugin, player, leftEffect, victim);
+        } else if (rightEffect != null) {
+            activateEffect(plugin, player, rightEffect, victim);
+        } else return;
+
+        CooldownManager.setDuration(playerUUID, "thief", 0);
     }
 }

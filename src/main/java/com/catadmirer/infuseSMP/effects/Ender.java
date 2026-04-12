@@ -17,7 +17,6 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -161,104 +160,95 @@ public class Ender extends InfuseEffect {
         }
     }
 
-    public static class Listeners implements Listener {
-        private final Infuse plugin;
-        private final Ender effect = new Ender();
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player damagedPlayer)) return;
 
-        public Listeners(Infuse plugin) {
-            this.plugin = plugin;
+        // Making sure the damaged player is cursed
+        UUID damagedUUID = damagedPlayer.getUniqueId();
+        if (!cursedPlayers.contains(damagedUUID)) return;
+
+        // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
+        if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
+        
+        // Making the fake damageSource
+        DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
+
+        // Sharing curse damage with all other cursed players
+        for (UUID cursedUUID : cursedPlayers) {
+            // Skipping the player who was hit
+            if (cursedUUID == damagedUUID) continue;
+
+            Player player = Bukkit.getPlayer(cursedUUID);
+            player.damage(event.getDamage(), fakeSource);
         }
+    }
 
-        @EventHandler
-        public void onEntityDamage(EntityDamageEvent event) {
-            if (!(event.getEntity() instanceof Player damagedPlayer)) return;
+    @EventHandler
+    public void enderOnehitMobs(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof LivingEntity mob)) return;
+        if (event.getEntity() instanceof Player) return;
 
-            // Making sure the damaged player is cursed
-            UUID damagedUUID = damagedPlayer.getUniqueId();
-            if (!cursedPlayers.contains(damagedUUID)) return;
-
-            // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
-            if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
-            
-            // Making the fake damageSource
-            DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
-
-            // Sharing curse damage with all other cursed players
-            for (UUID cursedUUID : cursedPlayers) {
-                // Skipping the player who was hit
-                if (cursedUUID == damagedUUID) continue;
-
-                Player player = Bukkit.getPlayer(cursedUUID);
-                player.damage(event.getDamage(), fakeSource);
-            }
+        UUID attackerUUID = attacker.getUniqueId();
+        if (CooldownManager.isEffectActive(attackerUUID, "ender")) {
+            mob.setHealth(0);
         }
+    }
 
-        @EventHandler
-        public void enderOnehitMobs(EntityDamageByEntityEvent event) {
-            if (!(event.getDamager() instanceof Player attacker)) return;
-            if (!(event.getEntity() instanceof LivingEntity mob)) return;
-            if (event.getEntity() instanceof Player) return;
+    @EventHandler
+    public void onUseDragonBreath(PlayerInteractEvent event) {
+        // Listening for right clicks
+        Action action = event.getAction();
+        if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
+        
+        // Making sure the player has the ender effect
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-            UUID attackerUUID = attacker.getUniqueId();
-            if (CooldownManager.isEffectActive(attackerUUID, "ender")) {
-                mob.setHealth(0);
-            }
-        }
+        // Making sure the player used a bottle of dragons breath
+        ItemStack item = event.getItem();
+        if (item == null) return;
+        if (item.getType() != Material.DRAGON_BREATH) return;
 
-        @EventHandler
-        public void onUseDragonBreath(PlayerInteractEvent event) {
-            // Listening for right clicks
-            Action action = event.getAction();
-            if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
-            
-            // Making sure the player has the ender effect
-            Player player = event.getPlayer();
-            if (!plugin.getDataManager().hasEffect(player, effect)) return;
+        // Making sure the cursing fireball isn't on cooldown
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
 
-            // Making sure the player used a bottle of dragons breath
-            ItemStack item = event.getItem();
-            if (item == null) return;
-            if (item.getType() != Material.DRAGON_BREATH) return;
+        shootCursingFireball(player);
+        event.setCancelled(true);
+    }
 
-            // Making sure the cursing fireball isn't on cooldown
-            if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
+    @EventHandler
+    public void curseOnHit(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
 
-            effect.shootCursingFireball(player);
-            event.setCancelled(true);
-        }
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        @EventHandler
-        public void curseOnHit(EntityDamageByEntityEvent event) {
-            if (!(event.getEntity() instanceof Player target)) return;
-            if (!(event.getDamager() instanceof Player attacker)) return;
+        cursePlayer(plugin, target.getUniqueId(), 1200);
+    }
 
-            if (!plugin.getDataManager().hasEffect(attacker, effect)) return;
+    @EventHandler
+    public void onFireballDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof DragonFireball fireball)) return;
+        if (!fireballName.equals(fireball.customName())) return;
+        if (!(event.getEntity() instanceof Player target)) return;
+        if (!(fireball.getShooter() instanceof Player shooter)) return;
+        if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
-        }
+        cursePlayer(plugin, target.getUniqueId(), 1200);
 
-        @EventHandler
-        public void onFireballDamage(EntityDamageByEntityEvent event) {
-            if (!(event.getDamager() instanceof DragonFireball fireball)) return;
-            if (!fireballName.equals(fireball.customName())) return;
-            if (!(event.getEntity() instanceof Player target)) return;
-            if (!(fireball.getShooter() instanceof Player shooter)) return;
-            if (plugin.getDataManager().isTrusted(target, shooter)) return;
+        event.setDamage(0);
+    }
 
-            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
+    @EventHandler
+    public void onFireballHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof DragonFireball fireball)) return;
+        if (!fireballName.equals(fireball.customName())) return;
+        if (!(event.getHitEntity() instanceof Player target)) return;
+        if (!(fireball.getShooter() instanceof Player shooter)) return;
+        if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-            event.setDamage(0);
-        }
-
-        @EventHandler
-        public void onFireballHit(ProjectileHitEvent event) {
-            if (!(event.getEntity() instanceof DragonFireball fireball)) return;
-            if (!fireballName.equals(fireball.customName())) return;
-            if (!(event.getHitEntity() instanceof Player target)) return;
-            if (!(fireball.getShooter() instanceof Player shooter)) return;
-            if (plugin.getDataManager().isTrusted(target, shooter)) return;
-
-            effect.cursePlayer(plugin, target.getUniqueId(), 1200);
-        }
+        cursePlayer(plugin, target.getUniqueId(), 1200);
     }
 }
