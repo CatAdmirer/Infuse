@@ -1,13 +1,22 @@
 package com.catadmirer.infuseSMP.util;
 
+import com.catadmirer.infuseSMP.effects.Emerald;
+import com.catadmirer.infuseSMP.effects.Haste;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.destroystokyo.paper.MaterialSetTag;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-public class ItemUtil {
+public class ItemUtil implements Listener {
     public static boolean isSword(ItemStack item) {
         if (item == null) return false;
 
@@ -67,5 +76,42 @@ public class ItemUtil {
             meta.removeEnchant(enchantment);
             meta.addEnchant(enchantment, oldLevel, true);
         });
+    }
+
+    @EventHandler
+    public void onInventoryCloseEvent(InventoryCloseEvent event) {
+        if (event.getView().getType() == InventoryType.PLAYER) return;
+
+        for (ItemStack item : event.getView().getTopInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+            
+            ItemUtil.removeSpecialEnchant(item, Emerald.LOOTING_KEY, Enchantment.LOOTING);
+            ItemUtil.removeSpecialEnchant(item, Haste.EFFICIENCY_KEY, Enchantment.EFFICIENCY);
+            ItemUtil.removeSpecialEnchant(item, Haste.FORTUNE_KEY, Enchantment.FORTUNE);
+            ItemUtil.removeSpecialEnchant(item, Haste.UNBREAKING_KEY, Enchantment.UNBREAKING);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
+        ItemStack item = event.getItemDrop().getItemStack();
+        ItemUtil.removeSpecialEnchant(item, Emerald.LOOTING_KEY, Enchantment.LOOTING);
+        ItemUtil.removeSpecialEnchant(item, Haste.EFFICIENCY_KEY, Enchantment.EFFICIENCY);
+        ItemUtil.removeSpecialEnchant(item, Haste.FORTUNE_KEY, Enchantment.FORTUNE);
+        ItemUtil.removeSpecialEnchant(item, Haste.UNBREAKING_KEY, Enchantment.UNBREAKING);
+    }
+
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        if (!(event.getEffect().equals(this))) return;
+
+        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            ItemUtil.removeSpecialEnchant(item, Emerald.LOOTING_KEY, Enchantment.LOOTING);
+            ItemUtil.removeSpecialEnchant(item, Haste.EFFICIENCY_KEY, Enchantment.EFFICIENCY);
+            ItemUtil.removeSpecialEnchant(item, Haste.FORTUNE_KEY, Enchantment.FORTUNE);
+            ItemUtil.removeSpecialEnchant(item, Haste.UNBREAKING_KEY, Enchantment.UNBREAKING);
+        }
     }
 }

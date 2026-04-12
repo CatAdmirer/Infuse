@@ -4,18 +4,14 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import java.util.UUID;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,9 +19,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Haste extends InfuseEffect {
-    private static final NamespacedKey fortuneKey = new NamespacedKey("infuse", "haste_fortune");
-    private static final NamespacedKey efficiencyKey = new NamespacedKey("infuse", "haste_efficiency");
-    private static final NamespacedKey unbreakingKey = new NamespacedKey("infuse", "haste_unbreaking");
+    public static final NamespacedKey FORTUNE_KEY = new NamespacedKey("infuse", "haste_fortune");
+    public static final NamespacedKey EFFICIENCY_KEY = new NamespacedKey("infuse", "haste_efficiency");
+    public static final NamespacedKey UNBREAKING_KEY = new NamespacedKey("infuse", "haste_unbreaking");
 
     private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
     
@@ -88,44 +84,9 @@ public class Haste extends InfuseEffect {
 
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-            ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
-            ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
-            ItemUtil.applySpecialEnchantment(item, unbreakingKey, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
-        }
-    }
-
-    @EventHandler
-    public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
-
-        for (ItemStack item : event.getView().getTopInventory().getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;
-
-            ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
-            ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
-            ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        final ItemStack item = event.getItemDrop().getItemStack();
-
-        ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
-        ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
-        ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
-    }
-
-    @EventHandler
-    public void onEffectUnequipEvent(EffectUnequipEvent event) {
-        if (!(event.getEffect().equals(this))) return;
-
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;
-
-            ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
-            ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
-            ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
+            ItemUtil.applySpecialEnchantment(item, FORTUNE_KEY, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
+            ItemUtil.applySpecialEnchantment(item, EFFICIENCY_KEY, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
+            ItemUtil.applySpecialEnchantment(item, UNBREAKING_KEY, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
         }
     }
 }

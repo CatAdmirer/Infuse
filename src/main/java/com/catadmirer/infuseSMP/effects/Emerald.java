@@ -5,7 +5,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.WeightedRandom;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
@@ -40,7 +39,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
@@ -49,7 +47,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Emerald extends InfuseEffect {
-    private static final NamespacedKey lootingKey = new NamespacedKey("infuse", "emerald_looting");
+    public static final NamespacedKey LOOTING_KEY = new NamespacedKey("infuse", "emerald_looting");
 
     private final Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
@@ -112,36 +110,12 @@ public class Emerald extends InfuseEffect {
 
     @EventHandler
     public void onPlayerHoldItem(PlayerItemHeldEvent event) {
-        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+
+        ItemStack item = player.getInventory().getItemInMainHand();
         if (ItemUtil.isSword(item)) {
-            ItemUtil.applySpecialEnchantment(item, lootingKey, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
-        }
-    }
-
-    @EventHandler
-    public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
-
-        for (ItemStack item : event.getView().getTopInventory().getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;
-            
-            ItemUtil.removeSpecialEnchant(item, lootingKey, Enchantment.LOOTING);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        ItemUtil.removeSpecialEnchant(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING);
-    }
-
-    @EventHandler
-    public void onEffectUnequipEvent(EffectUnequipEvent event) {
-        if (!(event.getEffect().equals(this))) return;
-
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;
-
-            ItemUtil.removeSpecialEnchant(item, lootingKey, Enchantment.LOOTING);
+            ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
         }
     }
 
@@ -159,11 +133,12 @@ public class Emerald extends InfuseEffect {
         new FoodAndExpLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
 
-    public class FoodAndExpLock implements Listener {
+    public static class FoodAndExpLock implements Listener {
         private final Player player;
 
         public FoodAndExpLock(Player player, double durationSeconds) {
             this.player = player;
+            Infuse plugin = JavaPlugin.getPlugin(Infuse.class);
 
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
