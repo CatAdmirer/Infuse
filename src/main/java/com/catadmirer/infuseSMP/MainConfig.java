@@ -155,7 +155,7 @@ public class MainConfig {
      * @return The number of effects that can be crafted of the specified {@link EffectMapping}.
      */
     public int getCraftLimit(EffectMapping effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.regular().getKey());
+        final List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.regular().getKey());
 
         if (craftLimits.size() != 2) {
             plugin.getLogger().log(Level.SEVERE, "Craft limits are required to be a list of 2 integers.  Found {0} entries for effect {1}", new Object[] {craftLimits.size(), effect.getKey()});
@@ -238,5 +238,37 @@ public class MainConfig {
 
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
+    }
+
+    public int enderPassiveRadius() {
+        return config.getInt("ender.passive_radius");
+    }
+
+    public int enderSparkTeleportMaxDistance() {
+        return config.getInt("ender.spark_teleport_max_distance");
+    }
+
+    public int enderCurseCooldown() {
+        return config.getInt("ender.curse_cooldown");
+    }
+
+    public int enderCurseDuration() {
+        return config.getInt("ender.curse_duration");
+    }
+
+    public double featherLandLaunchRadius() {
+        return config.getDouble("feather.land_launch_radius");
+    }
+
+    public int featherLandLaunchDamage() {
+        return config.getInt("feather.land_launch_damage");
+    }
+
+    public double fireBoostStrength() {
+        return config.getDouble("fire.boost_strength");
+    }
+
+    public int fireSparkRadius() {
+        return config.getInt("fire.spark_radius");
     }
 }

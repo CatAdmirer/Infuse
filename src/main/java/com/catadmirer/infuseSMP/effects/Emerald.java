@@ -72,6 +72,7 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
+        if (!(plugin.getDataManager().hasEffect(event.getPlayer(), EffectMapping.EMERALD))) return;
         ItemUtil.removeSpecialEnchant(event.getItemDrop().getItemStack(), lootingKey, Enchantment.LOOTING);
     }
 

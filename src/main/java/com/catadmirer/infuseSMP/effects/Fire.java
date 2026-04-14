@@ -103,7 +103,8 @@ public class Fire implements Listener {
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
-        for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
+        final int radius = plugin.getMainConfig().fireSparkRadius();
+        for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (entity instanceof LivingEntity && entity != player) {
                 entity.setFireTicks(100);
             }

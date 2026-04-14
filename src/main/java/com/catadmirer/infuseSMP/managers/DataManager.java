@@ -4,10 +4,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -122,12 +119,11 @@ public class DataManager {
 
     public void setExistingCount(EffectMapping effect, int crafted) {
         config.set("existing-effects." + effect.getKey(), crafted);
-        
         save();
     }
 
     public List<Player> getTrusted(Player truster) {
-        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).toList());
+        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getPlayer).filter(Objects::nonNull).toList());
     }
 
     public void setTrusted(Player truster, List<Player> trusted) {

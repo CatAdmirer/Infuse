@@ -31,7 +31,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Thunder implements Listener {
+public class    Thunder implements Listener {
     private static final Map<UUID,Integer> hitTracker = new HashMap<>();
     private static final Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
 
@@ -115,7 +115,7 @@ public class Thunder implements Listener {
     private void chainLightning(List<Player> targets) {
         if (targets == null) throw new InvalidParameterException("targets cannot be null");
         if (targets.size() == 11) return;
-        if (targets.size() < 1) throw new InvalidParameterException("targets list needs to have the attacker in the front");
+        if (targets.isEmpty()) throw new InvalidParameterException("targets list needs to have the attacker in the front");
 
         Player attacker = targets.get(0);
 

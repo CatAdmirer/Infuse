@@ -131,6 +131,7 @@ fire:
     default: 5
     augmented: 6
   boost_strength: 0.6
+  spark_radius: 5
 
 frost:
   cooldown:

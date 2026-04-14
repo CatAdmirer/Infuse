@@ -56,7 +56,8 @@ public class Speed implements Listener {
         long pullTimeMs = System.currentTimeMillis() - startTime;
         double adjustedPullTimeMs = pullTimeMs * 1.8;
         float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000, 1);
-        event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
+        event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction * plugin.getMainConfig().speedDashMultiplier()));
+
         bowPullStartTime.remove(player.getUniqueId());
     }
 

@@ -56,8 +56,9 @@ public class Haste implements Listener {
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        final ItemStack item = event.getItemDrop().getItemStack();
+        if (!(plugin.getDataManager().hasEffect(event.getPlayer(), EffectMapping.HASTE))) return;
 
+        final ItemStack item = event.getItemDrop().getItemStack();
         ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);
         ItemUtil.removeSpecialEnchant(item, fortuneKey, Enchantment.FORTUNE);
         ItemUtil.removeSpecialEnchant(item, unbreakingKey, Enchantment.UNBREAKING);
