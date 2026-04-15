@@ -157,18 +157,18 @@ public class Emerald implements Listener {
         orb.setExperience(newAmount);
     }
 
-    public static record EnchantInstance(Enchantment enchantment, int level) {}
+    public record EnchantInstance(Enchantment enchantment, int level) {}
 
-    public static int getEnchantmentCost(Random random, int slot, ItemStack item) {
-        Enchantable enchantable = item.getData(DataComponentTypes.ENCHANTABLE);
-        if (enchantable == null) return 0;
-
-        int i = random.nextInt(8) + 8 + random.nextInt(16);
-        
-        if (slot == 0) return Math.max(i / 3, 1);
-
-        return slot == 1 ? i * 2 / 3 + 1 : Math.max(i, 30);
-    }
+//    public static int getEnchantmentCost(Random random, int slot, ItemStack item) {
+//        Enchantable enchantable = item.getData(DataComponentTypes.ENCHANTABLE);
+//        if (enchantable == null) return 0;
+//
+//        int i = random.nextInt(8) + 8 + random.nextInt(16);
+//
+//        if (slot == 0) return Math.max(i / 3, 1);
+//
+//        return slot == 1 ? i * 2 / 3 + 1 : Math.max(i, 30);
+//    }
 
     private List<EnchantInstance> getEnchantmentList(Player player, ItemStack item, int index, int baseCost, Random random) {
         random.setSeed(player.getEnchantmentSeed() + index);

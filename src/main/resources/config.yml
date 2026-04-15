@@ -108,6 +108,11 @@ ender:
   duration:
     default: 15
     augmented: 20
+  ender_passive_radius: 10
+  # WARNING: The option below, the larger the number the more lag it can cause.
+  ender_spark_distance: 15
+  # WARNING: The option below is in SECONDS.
+  ender_curse_fireball_cooldown: 30
 
 feather:
   cooldown:
@@ -116,6 +121,8 @@ feather:
   duration:
     default: 2
     augmented: 2
+  feather_land_radius: 5
+  feather_land_damage: 8
 
 fire:
   cooldown:

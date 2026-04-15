@@ -44,20 +44,20 @@ public class Feather implements Listener {
     @EventHandler
     public void FeatherLand(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        double radius = 4;
-        UUID playerUUID = player.getUniqueId();
-        if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "feathermace")) {
-            CooldownManager.setDuration(playerUUID, "feathermace", 0L);
+
+        final double radius = plugin.getMainConfig().featherLandRadius();
+
+        if (player.isOnGround() && CooldownManager.isEffectActive(player.getUniqueId(), "feathermace")) {
+            CooldownManager.setDuration(player.getUniqueId(), "feathermace", 0L);
             Location loc = player.getLocation();
             World world = player.getWorld();
 
             for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-
                 if (!(entity instanceof LivingEntity target)) continue;
                 if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
-                int damage = 8;
-                target.damage(damage);
+                target.damage(plugin.getMainConfig().featherLandDamage());
+
                 Vector knockback = new Vector(0, 1, 0);
                 target.setVelocity(target.getVelocity().add(knockback));
                 Location anchor = target.getLocation();
