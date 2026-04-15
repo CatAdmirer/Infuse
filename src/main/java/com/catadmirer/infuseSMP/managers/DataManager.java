@@ -4,10 +4,8 @@ import com.catadmirer.infuseSMP.Infuse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -130,7 +128,6 @@ public class DataManager {
 
     public void setTrusted(OfflinePlayer truster, List<OfflinePlayer> trusted) {
         config.set(truster.getUniqueId() + ".trust", trusted.stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toList());
-
         save();
     }
 
