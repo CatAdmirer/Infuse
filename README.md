@@ -90,4 +90,3 @@ Found a bug or have a feature request? [Open an issue](https://github.com/your-u
 
 This project is licensed under the **GNU General Public License (GPL)**. See the [LICENSE](LICENSE) file for full details.
 
-You are free to use, modify, and distribute this software under the terms of the GPL. Any derivative works must also be distributed under the same license.
