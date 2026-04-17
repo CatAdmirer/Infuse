@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
 group = 'com.catadmirer'
@@ -17,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:${minecraftVersion}-R0.1-SNAPSHOT"
     compileOnly "me.clip:placeholderapi:${placeholderAPIVersion}"
+    paperweight.paperDevBundle("${minecraftVersion}-R0.1-SNAPSHOT")
 }
 
 tasks {
@@ -29,6 +30,10 @@ tasks {
         minecraftVersion("1.21.11")
         jvmArgs '-Dlog4j.configurationFile=log4j2.xml'
     }
+}
+
+tasks.assemble {
+  dependsOn(tasks.reobfJar)
 }
 
 def targetJavaVersion = 21
