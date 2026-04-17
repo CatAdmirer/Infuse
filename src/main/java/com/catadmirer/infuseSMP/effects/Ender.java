@@ -44,10 +44,8 @@ public class Ender implements Listener {
     public static void applyPassiveEffects(Player player) {
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
 
-        double radius = 10;
-
-        Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
-        for (Entity entity : nearbyEntities) {
+        final double radius = plugin.getMainConfig().enderPassiveRadius();
+        for (Entity entity : player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius)) {
             if (!(entity instanceof Player nearby)) continue;
             if (nearby.getUniqueId().equals(player.getUniqueId())) continue;
             if (plugin.getDataManager().isTrusted(nearby, player)) continue;
@@ -95,12 +93,12 @@ public class Ender implements Listener {
         // Teleporting the player in the direction they're looking
         Location startLoc = player.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
-        int maxDistance = 15;
 
+        final int maxDistance = plugin.getMainConfig().enderSparkDistance();
         Location targetLoc = null;
 
         for (int i = 1; i <= maxDistance; i++) {
-            Location checkLoc = startLoc.clone().add(direction.clone().multiply(i));
+            final Location checkLoc = startLoc.clone().add(direction.clone().multiply(i));
             if (isSafeTeleportLocation(checkLoc)) {
                 targetLoc = checkLoc;
             } else {
@@ -112,6 +110,9 @@ public class Ender implements Listener {
             Location finalLoc = targetLoc.clone();
             finalLoc.setYaw(player.getLocation().getYaw());
             finalLoc.setPitch(player.getLocation().getPitch());
+
+            // Not sure this is the best method if its out of distance (with the new config option) but should work
+            if (!(finalLoc.getChunk().isLoaded())) finalLoc.getWorld().loadChunk(finalLoc.getChunk());
             player.teleport(finalLoc);
         }
     }
@@ -135,8 +136,7 @@ public class Ender implements Listener {
     @EventHandler
     public void onUseDragonBreath(PlayerInteractEvent event) {
         // Listening for right clicks
-        Action action = event.getAction();
-        if (!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
+        if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
         
         // Making sure the player has the ender effect
         Player player = event.getPlayer();
@@ -155,8 +155,6 @@ public class Ender implements Listener {
     }
 
     public void shootCursingFireball(Player player) {
-        UUID uuid = player.getUniqueId();
-
         if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -171,7 +169,7 @@ public class Ender implements Listener {
         fireball.setIsIncendiary(false);
         fireball.customName(fireballName);
 
-        CooldownManager.setCooldown(uuid, "ender_fireball", 30);
+        CooldownManager.setCooldown(player.getUniqueId(), "ender_fireball", plugin.getMainConfig().enderCurseFireballCooldown());
 
         Vector velocity = fireball.getVelocity();
         velocity.multiply(2.0);

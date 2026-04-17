@@ -252,4 +252,24 @@ public class MainConfig {
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
     }
+
+    public int enderPassiveRadius() {
+        return config.getInt("ender.ender_passive_radius");
+    }
+
+    public int enderSparkDistance() {
+        return config.getInt("ender.ender_spark_distance");
+    }
+
+    public int enderCurseFireballCooldown() {
+        return config.getInt("ender.ender_curse_fireball_cooldown");
+    }
+
+    public int featherLandRadius() {
+        return config.getInt("feather.feather_land_radius");
+    }
+
+    public int featherLandDamage() {
+        return config.getInt("feather.feather_land_damage");
+    }
 }
