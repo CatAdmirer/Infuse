@@ -24,7 +24,7 @@ Infuse is a plugin designed to [briefly describe what the plugin does — e.g. "
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/infuse-plugin.git
+   git clone https://github.com/your-username/infuseSMP.git
    cd infuse-plugin
    ```
 
