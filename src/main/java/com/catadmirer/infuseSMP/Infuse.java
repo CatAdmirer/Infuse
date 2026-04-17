@@ -18,7 +18,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,17 +32,20 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Infuse extends JavaPlugin implements Listener {
     private static Infuse instance;
+
+    public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
+    public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
     private final DataManager dataManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
     private final ParticleManager particleManager;
-
-    public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
     public Infuse() {
         new ApophisManager(this);
@@ -98,13 +100,13 @@ public class Infuse extends JavaPlugin implements Listener {
         // Registering the PlaceholderAPI listener if the plugin is installed
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new InfusePlaceholders(this).register();
-            getLogger().info("Placeholders Enabled!");
+            LOGGER.info("Placeholders Enabled!");
         } else {
-            getLogger().warning("PlaceholderAPI is not installed, so custom placeholders won't work.");
+            LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
         }
 
         // Logging the success message
-        getLogger().info("Infuse Plugin has been enabled!");
+        LOGGER.info("Infuse Plugin has been enabled!");
     }
 
     public MainConfig getMainConfig() {
@@ -177,13 +179,13 @@ public class Infuse extends JavaPlugin implements Listener {
         loop.stop();
 
         // Sending the log message
-        this.getLogger().info("Infuse Plugin is disabling...");
+        LOGGER.info("Infuse Plugin is disabling...");
 
         // Removing ritual beams
         EffectCraftManager.removeBeam();
 
         // Finalizing the message
-        getLogger().info("Infuse Plugin has been disabled!");
+        LOGGER.info("Infuse Plugin has been disabled!");
     }
 
     public ParticleManager getParticleManager() {
@@ -259,7 +261,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
             // Handling http error codes
             if (response.statusCode() != 200) {
-                getLogger().log(Level.WARNING, "Recieved error code {0} from api.modrinth.com", response.statusCode());
+                LOGGER.warn("Recieved error code {} from api.modrinth.com", response.statusCode());
                 return null;
             }
 
@@ -269,18 +271,18 @@ public class Infuse extends JavaPlugin implements Listener {
 
             // If no versions are returned, defaulting to the current version
             if (versions.size() == 0) {
-                getLogger().log(Level.WARNING, "No versions published to modrinth, defaulting to current version");
+                LOGGER.warn("No versions published to modrinth, defaulting to current version");
                 return getVersion();
             }
 
             JsonObject latestVersion = versions.get(0).getAsJsonObject();
             return latestVersion.get("verson_number").getAsString();
         } catch (JsonSyntaxException err) {
-            getLogger().log(Level.SEVERE, "Could not parse the json given by modrinth.", err);
+            LOGGER.error("Could not parse the json given by modrinth.", err);
         } catch (InterruptedException err) {
-            getLogger().log(Level.SEVERE, "Version request was interrupted", err);
+            LOGGER.error("Version request was interrupted", err);
         } catch (IOException err) {
-            getLogger().log(Level.SEVERE, "Could not get versions from modrinth", err);
+            LOGGER.error("Could not get versions from modrinth", err);
         }
 
         return null;

@@ -5,18 +5,16 @@ import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-
 import java.awt.Color;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +53,8 @@ public enum EffectMapping {
     AUG_THUNDER(THUNDER),
     AUG_APOPHIS(APOPHIS),
     AUG_THIEF(THIEF);
+
+    public static final NamespacedKey AUG_MODEL = new NamespacedKey("infuse", "aug");
 
     private final String key;
     private final int id;
@@ -279,9 +279,7 @@ public enum EffectMapping {
 
             // Applying the custom model if the key has the "aug_" prefix
             if (this == augmented) {
-                CustomModelDataComponent customModelData = meta.getCustomModelDataComponent();
-                customModelData.setFloats(List.of(999f));
-                meta.setCustomModelDataComponent(customModelData);
+                meta.setItemModel(AUG_MODEL);
             }
 
             effectItem.setItemMeta(meta);

@@ -69,7 +69,8 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
+        if (!(plugin.getDataManager().hasEffect(event.getPlayer().getKiller(), EffectMapping.EMERALD))) return;
+        if (event.getView().getType() == InventoryType.PLAYER) return;
 
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;
@@ -96,14 +97,14 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void tenHitEvent(TenHitEvent event) {
-        InfuseDebug.log("[Emerald] Recieved TenHitEvent");
-        InfuseDebug.log("[Emerald] Attacker: {}", event.getAttacker().getName());
-        InfuseDebug.log("[Emerald] Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Emerald] Recieved TenHitEvent");
+        Infuse.LOGGER.debug("[Emerald] Attacker: {}", event.getAttacker().getName());
+        Infuse.LOGGER.debug("[Emerald] Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getTarget(), EffectMapping.EMERALD)) return;
 
-        InfuseDebug.log("[Emerald] Target has emerald effect");
-        InfuseDebug.log("[Emerald] Locking attacker's food and Exp");
+        Infuse.LOGGER.debug("[Emerald] Target has emerald effect");
+        Infuse.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
 
         new FoodAndExpLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
@@ -117,7 +118,7 @@ public class Emerald implements Listener {
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 HandlerList.unregisterAll(this);
-                InfuseDebug.log("[Emerald] Exp lock for {} has been lifted", player.getName());
+                Infuse.LOGGER.debug("[Emerald] Exp lock for {} has been lifted", player.getName());
             }, (long) (durationSeconds * 20));
         }
 

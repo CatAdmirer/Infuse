@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.HitTracker;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.InfuseDebug;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
 import java.security.InvalidParameterException;
@@ -161,13 +160,13 @@ public class Thunder implements Listener {
         // Making sure it counts as a normal hit
         // Vanilla attack cooldown needs to be at 84.8% to be a normal hit.
         if (attacker.getAttackCooldown() < 0.85) {
-            InfuseDebug.log("[Thunder] Hit ignored due to being under attack cooldown threshold.");
+            Infuse.LOGGER.debug("[Thunder] Hit ignored due to being under attack cooldown threshold.");
             return;
         }
 
         // Incrementing the hit counter
         int hits = hitTracker.getOrDefault(attacker.getUniqueId(), 0) + 1;
-        InfuseDebug.log("[Thunder] {}'s thunder hit counter is {}.", attacker.getName(), hits);
+        Infuse.LOGGER.debug("[Thunder] {}'s thunder hit counter is {}.", attacker.getName(), hits);
 
         // In stormy weather, the player only needs 5 hits to activate chain lightning
         int hitGoal = attacker.getWorld().isClearWeather() ? 10 : 5;
@@ -196,18 +195,18 @@ public class Thunder implements Listener {
         int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 
-        InfuseDebug.log("[Thunder] Adding item to decay queue");
+        Infuse.LOGGER.debug("[Thunder] Adding item to decay queue");
         decayQueue.add(() -> {
             // Skipping if the attacker has left the game
             if (!attacker.isConnected()) return;
 
-            InfuseDebug.log("[Thunder] Decrementing hit counter");
+            Infuse.LOGGER.debug("[Thunder] Decrementing hit counter");
             int curHits = hitTracker.get(attacker.getUniqueId());
 
-            InfuseDebug.log("[Thunder] {}'s hit counter is {}.", attacker.getName(), curHits - 1);
+            Infuse.LOGGER.debug("[Thunder] {}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
-        InfuseDebug.log("{} items in queue", decayQueue.size());
+        Infuse.LOGGER.debug("{} items in queue", decayQueue.size());
         
         // Running the decay task if it is still around
         Bukkit.getScheduler().runTaskLater(plugin, () -> {

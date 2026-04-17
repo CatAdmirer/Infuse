@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,22 +36,6 @@ public class Fire implements Listener {
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false));
-        if (player.isInLava()) {
-            player.setGliding(true);
-        } else if (player.isInPowderedSnow()) {
-            player.setGliding(true);
-        }
-    }
-
-    @EventHandler
-    public void onCancelSwim(EntityToggleGlideEvent event) {
-        if (event.isGliding()) return;
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) return;
-        
-        if (player.isInLava() || player.isInPowderedSnow()) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler
