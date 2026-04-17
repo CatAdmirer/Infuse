@@ -24,7 +24,7 @@ Infuse is a plugin designed to [briefly describe what the plugin does — e.g. "
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/infuseSMP.git
+   git clone https://github.com/CatAdmirer/Infuse.git
    cd infuse-plugin
    ```
 
@@ -82,7 +82,7 @@ Contributions are welcome and encouraged! Whether you're fixing a bug, improving
 
 ### Reporting Issues
 
-Found a bug or have a feature request? [Open an issue](https://github.com/your-username/infuse-plugin/issues) and describe the problem or suggestion clearly.
+Found a bug or have a feature request? [Open an issue](https://github.com/CatAdmirer/infuse/issues) and describe the problem or suggestion clearly.
 
 ---
 
