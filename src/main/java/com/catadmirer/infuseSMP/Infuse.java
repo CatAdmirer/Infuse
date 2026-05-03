@@ -31,6 +31,7 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,6 +239,9 @@ public class Infuse extends JavaPlugin implements Listener {
 
         if (dropHead) {
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
+            playerHead.editMeta(SkullMeta.class, meta -> {
+                meta.setOwningPlayer(player);
+            });
             player.getWorld().dropItem(player.getLocation(), playerHead);
         }
     }
