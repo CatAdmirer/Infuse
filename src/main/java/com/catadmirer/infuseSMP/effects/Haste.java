@@ -43,7 +43,8 @@ public class Haste implements Listener {
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (!(plugin.getDataManager().hasEffect(event.getPlayer().getKiller(), EffectMapping.HASTE))) return;
+        if (!(event.getPlayer() instanceof Player player)) return;
+        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.HASTE))) return;
         if (event.getView().getTopInventory().equals(event.getPlayer().getInventory())) return;
 
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
@@ -69,7 +70,7 @@ public class Haste implements Listener {
     public void onEffectUnequipEvent(EffectUnequipEvent event) {
         if (!(event.getEffect().equals(EffectMapping.HASTE))) return;
 
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+        for (ItemStack item : event.getPlayer().getInventory()) {
             if (item == null || item.getType() == Material.AIR) continue;
 
             ItemUtil.removeSpecialEnchant(item, efficiencyKey, Enchantment.EFFICIENCY);

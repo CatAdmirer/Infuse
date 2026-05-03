@@ -69,7 +69,8 @@ public class Emerald implements Listener {
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        if (!(plugin.getDataManager().hasEffect(event.getPlayer().getKiller(), EffectMapping.EMERALD))) return;
+        if (!(event.getPlayer() instanceof Player player)) return;
+        if (!(plugin.getDataManager().hasEffect(player, EffectMapping.EMERALD))) return;
         if (event.getView().getType() == InventoryType.PLAYER) return;
 
         for (ItemStack item : event.getView().getTopInventory().getContents()) {
@@ -88,7 +89,7 @@ public class Emerald implements Listener {
     public void onEffectUnequipEvent(EffectUnequipEvent event) {
         if (!(event.getEffect().equals(EffectMapping.EMERALD))) return;
 
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+        for (ItemStack item : event.getPlayer().getInventory()) {
             if (item == null || item.getType() == Material.AIR) continue;
 
             ItemUtil.removeSpecialEnchant(item, lootingKey, Enchantment.LOOTING);
