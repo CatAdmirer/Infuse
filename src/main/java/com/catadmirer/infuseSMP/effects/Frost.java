@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -35,7 +36,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Frost implements Listener {
+
     private final static Set<UUID> frozenAttackers = new HashSet<>();
+    private final static Set<Location> powdered = new HashSet<>();
     private static FixedMetadataValue blockData = null;
 
     private static Infuse plugin;
@@ -81,18 +84,25 @@ public class Frost implements Listener {
                     // Changing the block to regular snow
                     powderSnowBlock.setType(Material.SNOW_BLOCK);
                     
-                    // This may cause powdered snow to permanently become snow if the server shuts down.
+                    powdered.add(powderSnowBlock.getLocation());
                     Bukkit.getScheduler().runTaskTimer(plugin, task -> {
                         // Skipping if the player is too close to the block
                         if (powderSnowBlock.getLocation().distance(player.getLocation()) <= frostSnowRadius) return;
 
                         // Resetting the block to powdered snow
                         powderSnowBlock.setType(Material.POWDER_SNOW);
+                        powdered.remove(powderSnowBlock.getLocation());
                         task.cancel();
                     }, 10, 10);
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onShutdown(PluginDisableEvent event) {
+        powdered.forEach(location -> location.getWorld().getBlockAt(location).setType(Material.POWDER_SNOW));
+        powdered.clear();
     }
 
     @EventHandler
@@ -233,7 +243,7 @@ public class Frost implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!attacker.hasPotionEffect(PotionEffectType.UNLUCK)) return;
         PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
-        if (effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
+        if (effect != null && effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
             target.setFreezeTicks(200);
         }
     }

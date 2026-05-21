@@ -302,7 +302,7 @@ public class Emerald implements Listener {
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
-            if (!trusted.isOnline()) continue;
+            if (!trusted.isOnline() || trusted.getPlayer() == null) continue;
 
             Player trustedPlayer = trusted.getPlayer();
             int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentExpToShare());
