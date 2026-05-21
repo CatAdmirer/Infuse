@@ -225,14 +225,27 @@ public class MainConfig {
         if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
         if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
         if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+
         if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
         if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
         if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
         if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+
         if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
+
         if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
         if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
         if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
+        if (!config.contains("emerald.multiplier.standard")) config.set("emerald.multiplier.standard", 2);
+        if (!config.contains("emerald.multiplier.use-effect")) config.set("emerald.multiplier.use-effect", 4);
+        if (!config.contains("emerald.preserve-consumables.standard")) config.set("emerald.preserve-consumables.standard", 0.50);
+        if (!config.contains("emerald.preserve-consumables.use-effect")) config.set("emerald.preserve-consumables.use-effect", 0.75);
+
+        if (!config.contains("ender.passive.radius")) config.set("ender.passive.radius", 10);
+        if (!config.contains("ender.spark.max-distance")) config.set("ender.spark.max-distance", 15);
+
+        if (!config.contains("feather.land.radius")) config.set("feather.land.radius", 4);
+        if (!config.contains("feather.land.damage")) config.set("feather.land.damage", 8);
 
         save();
     }
@@ -252,4 +265,37 @@ public class MainConfig {
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
     }
+
+    public double emeraldMultiplierStandard() {
+        return config.getDouble("emerald.multiplier.standard");
+    }
+
+    public double emeraldMultiplierUseEffect() {
+        return config.getDouble("emerald.multiplier.use-effect");
+    }
+
+    public double emeraldPreserveConsumablesStandard() {
+        return config.getDouble("emerald.preserve-consumables.standard");
+    }
+
+    public double emeraldPreserveConsumablesUseEffect() {
+        return config.getDouble("emerald.preserve-consumables.use-effect");
+    }
+
+    public double enderPassiveRadius() {
+        return config.getDouble("ender.passive.radius");
+    }
+
+    public int enderSparkMaxDistance() {
+        return config.getInt("ender.spark.max-distance");
+    }
+
+    public double featherLandRadius() {
+        return config.getDouble("feather.land.radius");
+    }
+
+    public double featherLandDamage() {
+        return config.getDouble("feather.land.damage");
+    }
+
 }

@@ -100,6 +100,12 @@ emerald:
     augmented: 35
   enchantment:
     looting_level: 5
+  multiplier:
+    standard: 2
+    use-effect: 4
+  preserve-consumables:
+    standard: 0.50
+    use-effect: 0.75
 
 ender:
   cooldown:
@@ -108,6 +114,11 @@ ender:
   duration:
     default: 15
     augmented: 20
+  passive:
+    radius: 10
+  spark:
+    # WARNING: The higher this increases, the more it can impact server performance.
+    max-distance: 15
 
 feather:
   cooldown:
@@ -116,6 +127,9 @@ feather:
   duration:
     default: 2
     augmented: 2
+  land:
+    radius: 4
+    damage: 8
 
 fire:
   cooldown:

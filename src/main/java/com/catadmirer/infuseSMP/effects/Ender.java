@@ -44,7 +44,7 @@ public class Ender implements Listener {
     public static void applyPassiveEffects(Player player) {
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.ENDER)) return;
 
-        double radius = 10;
+        double radius = plugin.getMainConfig().enderPassiveRadius();
 
         Collection<Entity> nearbyEntities = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius);
         for (Entity entity : nearbyEntities) {
@@ -95,7 +95,7 @@ public class Ender implements Listener {
         // Teleporting the player in the direction they're looking
         Location startLoc = player.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
-        int maxDistance = 15;
+        int maxDistance = plugin.getMainConfig().enderSparkMaxDistance();
 
         Location targetLoc = null;
 
@@ -110,9 +110,10 @@ public class Ender implements Listener {
 
         if (targetLoc != null) {
             Location finalLoc = targetLoc.clone();
+
             finalLoc.setYaw(player.getLocation().getYaw());
             finalLoc.setPitch(player.getLocation().getPitch());
-            player.teleport(finalLoc);
+            player.teleportAsync(finalLoc);
         }
     }
 

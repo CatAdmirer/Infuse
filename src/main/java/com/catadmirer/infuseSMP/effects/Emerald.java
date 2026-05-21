@@ -149,10 +149,8 @@ public class Emerald implements Listener {
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
 
-        double multiplier = 2;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) {
-            multiplier = 4;
-        }
+        double multiplier = plugin.getMainConfig().emeraldMultiplierStandard();
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) multiplier = plugin.getMainConfig().emeraldMultiplierUseEffect();
 
         int newAmount = (int) Math.round(amount * multiplier);
         orb.setExperience(newAmount);
@@ -281,8 +279,8 @@ public class Emerald implements Listener {
         if (consumedItem.getType() == Material.POTION) return;
 
         // Getting the chance for the item to not be consumed
-        double chance = 0.5;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = 0.75;
+        double chance = plugin.getMainConfig().emeraldPreserveConsumablesStandard();
+        if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) chance = plugin.getMainConfig().emeraldPreserveConsumablesUseEffect();
 
         // Rolling the dice
         if (Math.random() > chance) return;

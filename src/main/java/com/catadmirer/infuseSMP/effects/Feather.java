@@ -44,40 +44,39 @@ public class Feather implements Listener {
     @EventHandler
     public void FeatherLand(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        double radius = 4;
-        UUID playerUUID = player.getUniqueId();
-        if (player.isOnGround() && CooldownManager.isEffectActive(playerUUID, "feathermace")) {
-            CooldownManager.setDuration(playerUUID, "feathermace", 0L);
-            Location loc = player.getLocation();
-            World world = player.getWorld();
+        final double radius = plugin.getMainConfig().featherLandRadius();
 
-            for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
+        if (!(player.isOnGround()) || !(CooldownManager.isEffectActive(player.getUniqueId(), "feathermace"))) return;
+        CooldownManager.setDuration(player.getUniqueId(), "feathermace", 0L);
 
-                if (!(entity instanceof LivingEntity target)) continue;
-                if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
+        final Location loc = player.getLocation();
+        final World world = player.getWorld();
 
-                int damage = 8;
-                target.damage(damage);
-                Vector knockback = new Vector(0, 1, 0);
-                target.setVelocity(target.getVelocity().add(knockback));
-                Location anchor = target.getLocation();
-                LivingEntity finalTarget = target;
-                Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
-                    finalTarget.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
-                });
-            }
+        for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
+            if (!(entity instanceof LivingEntity target)) continue;
+            if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
-            world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
-            world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
-            Location anchor = player.getLocation();
-            Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-                if (player.isOnline()) {
-                    Vector dashDirection = player.getEyeLocation().getDirection().normalize();
-                    Vector launchVector = dashDirection.multiply(5);
-                    player.setVelocity(launchVector);
-                }
-            }, 1L);
+            final double damage = plugin.getMainConfig().featherLandDamage();
+            target.damage(damage);
+            Vector knockback = new Vector(0, 1, 0);
+            target.setVelocity(target.getVelocity().add(knockback));
+            Location anchor = target.getLocation();
+            LivingEntity finalTarget = target;
+            Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
+                finalTarget.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
+            });
         }
+
+        world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
+        world.playSound(loc, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.5F, 1);
+        Location anchor = player.getLocation();
+        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
+            if (player.isOnline()) {
+                Vector dashDirection = player.getEyeLocation().getDirection().normalize();
+                Vector launchVector = dashDirection.multiply(5);
+                player.setVelocity(launchVector);
+            }
+        }, 1L);
     }
 
     @EventHandler
@@ -94,6 +93,7 @@ public class Feather implements Listener {
         Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
         windCharge.setVelocity(direction.multiply(1));
         windCharge.setShooter(player);
+
         player.setVelocity(new Vector(0, 0.5, 0));
     }
 
@@ -145,23 +145,9 @@ public class Feather implements Listener {
         Location particleLoc = event.getDamager().getLocation();
         world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
         attacker.setVelocity(new Vector(0, 1.8, 0));
+
         double multiplier = 1.1;
         event.setDamage(event.getDamage() * multiplier);
-    }
-
-    public static String applyHexColors(String input) {
-        String regex = "(#(?:[0-9a-fA-F]{6}))";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        StringBuilder result = new StringBuilder();
-        while (matcher.find()) {
-            String hexCode = matcher.group(1);
-            String colorCode = ChatColor.of(hexCode).toString();
-            matcher.appendReplacement(result, colorCode);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {

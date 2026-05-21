@@ -123,7 +123,7 @@ public class DataManager {
     }
 
     public List<OfflinePlayer> getTrusted(OfflinePlayer truster) {
-        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().map(UUID::fromString).map(Bukkit::getOfflinePlayer).toList());
+        return new ArrayList<>(config.getStringList(truster.getUniqueId() + ".trust").stream().filter(Objects::nonNull).map(UUID::fromString).map(Bukkit::getOfflinePlayer).toList());
     }
 
     public void setTrusted(OfflinePlayer truster, List<OfflinePlayer> trusted) {
