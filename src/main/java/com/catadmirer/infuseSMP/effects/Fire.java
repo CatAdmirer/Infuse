@@ -45,7 +45,8 @@ public class Fire implements Listener {
         Vector direction = player.getLocation().getDirection().normalize();
         if (inLava && plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-            double boostStrength = 0.6;
+
+            final double boostStrength = plugin.getMainConfig().firePassiveWalkSpeed();
             Vector newVelocity = direction.multiply(boostStrength);
             player.setVelocity(newVelocity);
         }
@@ -66,7 +67,8 @@ public class Fire implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.FIRE)) return;
-        Material blockType = player.getLocation().getBlock().getType();
+
+        final Material blockType = player.getLocation().getBlock().getType();
         if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
             event.setCancelled(true);
         }
@@ -74,20 +76,19 @@ public class Fire implements Listener {
 
     @EventHandler
     public void fireCombustTarget(TenHitEvent event) {
-        Player attacker = event.getAttacker();
-        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.FIRE)) return;
+        if (!plugin.getDataManager().hasEffect(event.getAttacker(), EffectMapping.FIRE)) return;
 
         event.getTarget().setFireTicks(100);
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
-        UUID playerUUID = player.getUniqueId();
-
-        if (CooldownManager.isOnCooldown(playerUUID, "fire")) return;
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "fire")) return;
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
-        for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
+        // not to sure if to make this a config.
+        final int radius = 5;
+        for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (entity instanceof LivingEntity && entity != player) {
                 entity.setFireTicks(100);
             }
@@ -101,10 +102,10 @@ public class Fire implements Listener {
         }.runTaskLater(plugin, 20L);
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
-        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
+        final long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
+        final long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FIRE : EffectMapping.FIRE);
 
-        CooldownManager.setTimes(playerUUID, "fire", duration, cooldown);
+        CooldownManager.setTimes(player.getUniqueId(), "fire", duration, cooldown);
     }
 
     private static void spawnSparkEffect(final Player caster) {

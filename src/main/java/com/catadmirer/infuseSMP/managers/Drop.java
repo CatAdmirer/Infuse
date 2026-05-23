@@ -23,10 +23,11 @@ public class Drop implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
-        ItemStack item = event.getItem().getItemStack();
-        EffectMapping mapping = EffectMapping.fromItem(item);
+        EffectMapping mapping = EffectMapping.fromItem(event.getItem().getItemStack());
         if (mapping == null) return;
+
         this.playDustEffect(true, mapping, event.getItem().getLocation());
     }
 
@@ -36,17 +37,20 @@ public class Drop implements Listener {
         ItemStack itemStack = droppedItem.getItemStack();
         EffectMapping mapping = EffectMapping.fromItem(itemStack);
         if (mapping == null) return;
+
         this.playDustEffectDrop(false, mapping, droppedItem.getLocation());
         droppedItem.setGlowing(true);
     }
 
     private void playDustEffect(final boolean bottomToTop, @NotNull EffectMapping effect, Location location) {
+
         final Location base = location.add(0, 0.1, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getColor().getRGB());
+        final Color color = Color.fromRGB(effect.getColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;
+
         (new BukkitRunnable() {
             double y = 0;
 
@@ -71,12 +75,14 @@ public class Drop implements Listener {
     }
 
     private void playDustEffectDrop(final boolean bottomToTop, EffectMapping effect, Location location) {
+
         final Location base = location.add(0, -1.5, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getColor().getRGB());
+        final Color color = Color.fromRGB(effect.getColor().getRGB());
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;
+
         (new BukkitRunnable() {
             double y = 0;
 

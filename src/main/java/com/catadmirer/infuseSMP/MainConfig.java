@@ -246,6 +246,14 @@ public class MainConfig {
 
         if (!config.contains("feather.land.radius")) config.set("feather.land.radius", 4);
         if (!config.contains("feather.land.damage")) config.set("feather.land.damage", 8);
+        if (!config.contains("feather.ability.fall-distance")) config.set("feather.ability.fall-distance", 7);
+        if (!config.contains("feather.ability.multiplier")) config.set("feather.ability.multiplier", 1.1);
+
+        if (!config.contains("fire.passive.walk-speed")) config.set("fire.passive.walk-speed", 0.6);
+
+        if (!config.contains("frost.passive.snow-changing-radius")) config.set("frost.passive.snow-changing-radius", 3);
+        if (!config.contains("frost.passive.walk-speed")) config.set("frost.passive.walk-speed", 0.6);
+        if (!config.contains("frost.ability.radius")) config.set("frost.ability.radius", 5);
 
         save();
     }
@@ -296,6 +304,30 @@ public class MainConfig {
 
     public double featherLandDamage() {
         return config.getDouble("feather.land.damage");
+    }
+
+    public double featherAbilityFallDistance() {
+        return config.getDouble("feather.ability.fall-distance");
+    }
+
+    public double featherAbilityMultiplier() {
+        return config.getDouble("feather.ability.multiplier");
+    }
+
+    public double firePassiveWalkSpeed() {
+        return config.getDouble("fire.passive.walk-speed");
+    }
+
+    public int frostPassiveSnowChangingRadius() {
+        return config.getInt("frost.passive.snow-changing-radius");
+    }
+
+    public double frostPassiveWalkSpeed() {
+        return config.getDouble("frost.passive.walk-speed");
+    }
+
+    public double frostAbilityRadius() {
+        return config.getDouble("frost.ability.radius");
     }
 
 }

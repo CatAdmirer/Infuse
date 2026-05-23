@@ -28,6 +28,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+//
+//
+// NEEDS TO BE REWORKED
+//
+//
+
 public class Heart implements Listener {
     private static Infuse plugin;
 
@@ -48,22 +54,21 @@ public class Heart implements Listener {
 
     @EventHandler
     public void heartShowTargetHealth(TenHitEvent event) {
-        Player attacker = event.getAttacker();
-        if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.HEART)) return;
+        if (!plugin.getDataManager().hasEffect(event.getAttacker(), EffectMapping.HEART)) return;
 
         this.showAndUpdateHealthAboveEntity(event.getTarget());
     }
 
     private void showAndUpdateHealthAboveEntity(Entity player) {
-        Location ploc = player.getLocation().add(0, 2.5, 0);
-
-        TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
-
+        final Location ploc = player.getLocation().add(0, 2.5, 0);
+        final TextDisplay as = ploc.getWorld().spawn(ploc, TextDisplay.class);
         as.setGravity(false);
         as.setCustomNameVisible(true);
         as.customName();
+
         updateHealthDisplay(as, (LivingEntity) player);
         player.addPassenger(as);
+
         final BukkitRunnable updateTask = new BukkitRunnable() {
             public void run() {
                 if (!player.isDead() && player.isValid()) {
@@ -97,10 +102,10 @@ public class Heart implements Listener {
 
     @EventHandler
     public void onPlayerEat(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.HEART)) return;
 
-        ItemStack item = event.getItem();
+        final ItemStack item = event.getItem();
         if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
         } else {
@@ -109,23 +114,21 @@ public class Heart implements Listener {
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
-        UUID playerUUID = player.getUniqueId();
-
-        if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "heart")) return;
         
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
-        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        final AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute.getModifier(heartSparkBoost) == null) {
             attribute.addModifier(new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER));
             player.heal(10);
         }
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
-        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        final long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
+        final long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_HEART : EffectMapping.HEART);
 
-        CooldownManager.setTimes(playerUUID, "heart", duration, cooldown);
+        CooldownManager.setTimes(player.getUniqueId(), "heart", duration, cooldown);
         
         Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(heartSparkBoost), duration * 20);
     }

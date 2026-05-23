@@ -89,7 +89,7 @@ public class HitTracker implements Listener {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     /**
@@ -97,6 +97,8 @@ public class HitTracker implements Listener {
      * 
      * @param event A {@link PlayerQuitEvent}
      */
+
+    @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         hitTracker.remove(event.getPlayer().getUniqueId());
     }

@@ -43,11 +43,10 @@ public class Frost implements Listener {
 
     private static Infuse plugin;
 
-    public Frost(DataManager dataManager, Infuse plugin) {
+    public Frost(Infuse plugin) {
         Frost.plugin = plugin;
 
         if (blockData != null) return;
-
         blockData = new FixedMetadataValue(plugin, 0);
     }
 
@@ -65,8 +64,7 @@ public class Frost implements Listener {
     }
 
     public void changeToSnow(Player player) {
-        int frostSnowRadius = 3;
-
+        final int frostSnowRadius = plugin.getMainConfig().frostPassiveSnowChangingRadius();
         Location center = player.getLocation();
 
         for (int dx = -frostSnowRadius; dx <= frostSnowRadius; dx++) {
@@ -127,11 +125,10 @@ public class Frost implements Listener {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, EffectMapping.FROST)) return;
 
-        boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
-        Vector direction = player.getLocation().getDirection().normalize();
-        if (inFrost) {
-            if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-            double boostStrength = 0.6;
+        final boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
+        final Vector direction = player.getLocation().getDirection().normalize();
+        if (inFrost && event.getFrom().distanceSquared(event.getTo()) > 0.01) {
+            final double boostStrength = plugin.getMainConfig().frostPassiveWalkSpeed();
             Vector newVelocity = direction.multiply(boostStrength);
             player.setVelocity(newVelocity);
         } else {
@@ -141,13 +138,8 @@ public class Frost implements Listener {
 
     @EventHandler
     public void onPlayerInteractWithWindCharge(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item != null && item.getType() == Material.WIND_CHARGE) {
-            if (player.getFreezeTicks() > 1) {
-                event.setCancelled(true);
-            }
-
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WIND_CHARGE && event.getPlayer().getFreezeTicks() > 1) {
+            event.setCancelled(true);
         }
     }
 
@@ -193,7 +185,7 @@ public class Frost implements Listener {
         CooldownManager.setTimes(playerUUID, "frost", duration, cooldown);
 
         Location center = caster.getLocation();
-        double radius = 5;
+        final double radius = plugin.getMainConfig().frostAbilityRadius();
         World world = caster.getWorld();
         final Set<Player> affectedPlayers = new HashSet<>();
 
@@ -242,9 +234,11 @@ public class Frost implements Listener {
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!attacker.hasPotionEffect(PotionEffectType.UNLUCK)) return;
-        PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
-        if (effect != null && effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
-            target.setFreezeTicks(200);
-        }
+
+        final PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
+        if (effect == null || effect.getAmplifier() < 0) return;
+        if (!(frozenAttackers.contains(attacker.getUniqueId())) || !(event.getEntity() instanceof Player)) return;
+
+        event.getEntity().setFreezeTicks(200);
     }
 }

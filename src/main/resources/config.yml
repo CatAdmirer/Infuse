@@ -78,6 +78,8 @@ invis:
   duration:
     default: 20
     augmented: 25
+  ability:
+    radius:
 
 apophis:
   cooldown:
@@ -117,7 +119,7 @@ ender:
   passive:
     radius: 10
   spark:
-    # WARNING: The higher this increases, the more it can impact server performance.
+    # WARNING: The higher this value is, the more it can impact server performance.
     max-distance: 15
 
 feather:
@@ -130,6 +132,11 @@ feather:
   land:
     radius: 4
     damage: 8
+  ability:
+      # How far should they have to fall for the extra damage to be applied to their enemy?
+      fall-distance: 7
+      # How much more damage should it do? (Math is: damage * multiplier)
+      multiplier: 1.1
 
 fire:
   cooldown:
@@ -138,6 +145,9 @@ fire:
   duration:
     default: 5
     augmented: 6
+  passive:
+    # How fast should they be able to walk while in lava?
+    walk-speed: 0.6
 
 frost:
   cooldown:
@@ -146,6 +156,13 @@ frost:
   duration:
     default: 15
     augmented: 20
+  passive:
+    # WARNING: The higher this value is, the more it can impact server performance.
+    snow-changing-radius: 3
+    # How fast should they be able to walk in powdered snow?
+    walk-speed: 0.6
+  ability:
+    radius: 5
 
 haste:
   cooldown:

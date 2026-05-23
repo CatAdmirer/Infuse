@@ -127,7 +127,7 @@ public class Feather implements Listener {
         if (!(event.getEntity() instanceof WindCharge windCharge)) return;
         if (!(windCharge.getShooter() instanceof Player player)) return;
         
-        Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
+        final Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
         windCharge.setVelocity(direction);
     }
 
@@ -136,8 +136,8 @@ public class Feather implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.FEATHER)) return;
 
-        double fallDistance = attacker.getFallDistance();
-        if (fallDistance < 7) return;
+        final double fallDistance = attacker.getFallDistance();
+        if (fallDistance < plugin.getMainConfig().featherAbilityFallDistance()) return;
 
         attacker.getWorld().playSound(attacker.getLocation(), Sound.ITEM_MACE_SMASH_AIR, 1, 1);
         Location startLoc = attacker.getLocation();
@@ -146,14 +146,12 @@ public class Feather implements Listener {
         world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
         attacker.setVelocity(new Vector(0, 1.8, 0));
 
-        double multiplier = 1.1;
+        final double multiplier = plugin.getMainConfig().featherAbilityMultiplier();
         event.setDamage(event.getDamage() * multiplier);
     }
 
     public static void activateSpark(Boolean isAugmented, Player player) {
-        UUID playerUUID = player.getUniqueId();
-
-        if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
+        if (CooldownManager.isOnCooldown(player.getUniqueId(), "feather")) return;
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(player, Color.fromRGB(0xBEA3CA));
@@ -163,13 +161,12 @@ public class Feather implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 10));
         
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
-        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
-
-        CooldownManager.setTimes(playerUUID, "feather", duration, cooldown);
+        final long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
+        final long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_FEATHER : EffectMapping.FEATHER);
+        CooldownManager.setTimes(player.getUniqueId(), "feather", duration, cooldown);
 
         player.getScheduler().runDelayed(plugin, t -> {
-            CooldownManager.setDuration(playerUUID, "feathermace", 5L);
+            CooldownManager.setDuration(player.getUniqueId(), "feathermace", 5L);
         }, null, 10);
     }
 }
