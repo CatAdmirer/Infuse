@@ -40,7 +40,7 @@ public class Recipes implements CommandExecutor, Listener {
     /**
      * Create a potion effect with the effect limits for lore rather than the default lore.
      * 
-     * @param potionName The name of the potion to create.
+     * @param effect The name of the potion to create.
      * 
      * @return The effect item with modified lore.
      */

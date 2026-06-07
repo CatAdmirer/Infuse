@@ -18,23 +18,23 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return "catadmirer";
     }
 
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "infuse";
     }
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return plugin.getPluginMeta().getVersion();
     }
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        UUID uuid = player.getUniqueId();
+        final UUID uuid = player.getUniqueId();
 
         switch (params.toLowerCase()) {
             case "first_effect":

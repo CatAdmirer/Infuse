@@ -49,8 +49,8 @@ public class Strength implements Listener {
         if (!plugin.getDataManager().hasEffect(attacker, EffectMapping.STRENGTH)) return;
 
         // Boosting damage based on the attacker's health.
-        double damage = event.getDamage();
-        double health = attacker.getHealth();
+        final double damage = event.getDamage();
+        final double health = attacker.getHealth();
         if (health < 2) {
             event.setDamage(damage + 3);
         } else if (health < 4) {

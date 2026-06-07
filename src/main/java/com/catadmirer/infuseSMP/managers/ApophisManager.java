@@ -96,7 +96,7 @@ public class ApophisManager implements Listener {
         UUID uuid = target.getUniqueId();
 
         // Getting the player's skin info from the disguise file
-        File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
+        final File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
 
         try (Scanner scanner = new Scanner(disguiseFile)) {
             PlayerProfile profile = target.getPlayerProfile();

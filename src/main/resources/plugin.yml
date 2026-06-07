@@ -3,7 +3,7 @@ version: '$version'
 main: com.catadmirer.infuseSMP.Infuse
 api-version: '1.21.4'
 authors: [CatAdmirer, TurboJax]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, WorldGuard]
 commands:
   infuse:
     description: Base command for Infuse

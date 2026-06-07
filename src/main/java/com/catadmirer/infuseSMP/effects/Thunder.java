@@ -102,8 +102,9 @@ public class Thunder implements Listener {
         // TODO: make configs
         final int damage = 2;
 
-        if (target.getHealth() - damage > 0) { // make sure totems work (this directly interacts with the health)
+        if (target.getHealth() - (damage + 0.01) > 0) { // make sure totems work (this directly interacts with the health)
             target.setHealth(target.getHealth() - damage);
+            target.damage(0.01);
         } else {
             target.damage(100, DamageSource.builder(DamageType.LIGHTNING_BOLT).withDirectEntity(attacker).build());
         }
@@ -125,10 +126,10 @@ public class Thunder implements Listener {
         if (targets.size() == 11) return;
         if (targets.isEmpty()) throw new InvalidParameterException("targets list needs to have the attacker in the front");
 
-        Player attacker = targets.getFirst();
+        final Player attacker = targets.getFirst();
 
         // TODO: make config
-        double radius = 3;
+        final double radius = 3;
 
         for (Entity entity : targets.getLast().getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof Player target)) continue;

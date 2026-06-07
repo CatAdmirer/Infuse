@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.extraeffects.Thief;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.worldguard.WorldGuardHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -19,6 +20,11 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.stream.Stream;
+
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -47,6 +53,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
     private final ParticleManager particleManager;
+    private Boolean WorldGuardEnabled;
 
     public Infuse() {
         new ApophisManager(this);
@@ -55,6 +62,29 @@ public class Infuse extends JavaPlugin implements Listener {
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
         this.particleManager = new ParticleManager(this);
+    }
+
+    @Override
+    public void onLoad() {
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+
+            final StateFlag USE_SPARKS = new StateFlag("regionspark-enabled", true);
+            final StateFlag SPARK_PASSTHROUGH = new StateFlag("regionspark-passthrough", true);
+            final StateFlag OCEAN_ENABLED = new StateFlag("regionocean-enabled", true);
+
+            try {
+                registry.registerAll(List.of(USE_SPARKS, SPARK_PASSTHROUGH, OCEAN_ENABLED));
+            } catch (FlagConflictException ex) {
+                LOGGER.warn("A flag has failed to register due to a conflict! Disabling worldguard support...");
+                WorldGuardEnabled = false;
+                return;
+            }
+
+            WorldGuardEnabled = true;
+        } else {
+            WorldGuardEnabled = false;
+        }
     }
 
     public void onEnable() {
@@ -104,6 +134,13 @@ public class Infuse extends JavaPlugin implements Listener {
             LOGGER.info("Placeholders Enabled!");
         } else {
             LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
+        }
+
+        if (WorldGuardEnabled != null && WorldGuardEnabled) {
+            new WorldGuardHandler(this);
+            LOGGER.info("WorldGuard support Enabled!");
+        } else {
+            LOGGER.warn("WorldGuard is not installed or is to low of a version, so area protection wont work.");
         }
 
         // Logging the success message
