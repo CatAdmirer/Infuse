@@ -157,15 +157,15 @@ public class Invisibility implements Listener {
                     }
 
                 } else {
-                    Location center = caster.getLocation();
+                    final Location center = caster.getLocation();
 
-                    for(int angle = 0; angle < 360; angle += 2) {
+                    for (int angle = 0; angle < 360; angle += 2) {
                         double rad = Math.toRadians(angle);
                         double baseX = center.getX() + radius * Math.cos(rad);
                         double baseZ = center.getZ() + radius * Math.sin(rad);
                         DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
 
-                        for(int i = 0; i < 1; ++i) {
+                        for (int i = 0; i < 1; ++i) {
                             double offsetX = (Math.random() - 0.5) * 0.3;
                             double offsetZ = (Math.random() - 0.5) * 0.3;
                             Location particleLoc = new Location(world, baseX + offsetX, center.getY(), baseZ + offsetZ);

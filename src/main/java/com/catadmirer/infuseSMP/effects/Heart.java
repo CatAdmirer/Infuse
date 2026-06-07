@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectMapping;
@@ -50,6 +51,15 @@ public class Heart implements Listener {
             attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
             player.heal(10);
         }
+    }
+
+    @EventHandler
+    public void onEffectUnequipEvent(EffectUnequipEvent event) {
+        final AttributeInstance attribute = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        if (attribute == null) return;
+
+        attribute.removeModifier(heartBoost);
+        attribute.removeModifier(heartSparkBoost);
     }
 
     @EventHandler

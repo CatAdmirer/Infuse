@@ -92,6 +92,7 @@ public class Speed implements Listener {
         final Location[] previousLocation = new Location[]{player.getLocation().clone()};
         final int[] ticksPassed = new int[]{0};
         final Location anchor = player.getLocation();
+
         Bukkit.getRegionScheduler().runAtFixedRate(plugin, anchor, (task) -> {
             if (!player.isOnline()) {
                 task.cancel();

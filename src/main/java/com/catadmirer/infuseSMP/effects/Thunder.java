@@ -12,11 +12,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -81,12 +78,12 @@ public class Thunder implements Listener {
                     }
                 }
 
-                // Striking all players within the radius
+                // Striking all living entities within the radius
                 for (Entity entity : world.getNearbyEntities(caster.getLocation(), radius, radius, radius)) {
-                    if (!(entity instanceof Player target)) continue;
-                    if (plugin.getDataManager().isTrusted(target, caster)) continue;
+                    if (!(entity instanceof LivingEntity living)) return;
+                    if (living instanceof Player && plugin.getDataManager().isTrusted((OfflinePlayer) living, caster)) continue;
 
-                    strikeLighting(target, caster);
+                    strikeLighting(living, caster);
                 }
 
                 this.ticksElapsed += 20;
@@ -102,7 +99,15 @@ public class Thunder implements Listener {
      */
     public static void strikeLighting(LivingEntity target, LivingEntity attacker) {
         target.getWorld().strikeLightningEffect(target.getLocation());
-        target.damage(2, DamageSource.builder(DamageType.LIGHTNING_BOLT).withDirectEntity(attacker).build());
+        // TODO: make configs
+        final int damage = 2;
+
+        if (target.getHealth() - damage > 0) { // make sure totems work (this directly interacts with the health)
+            target.setHealth(target.getHealth() - damage);
+        } else {
+            target.damage(100, DamageSource.builder(DamageType.LIGHTNING_BOLT).withDirectEntity(attacker).build());
+        }
+
         target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 0, new DustOptions(Color.YELLOW, 1.5F));
     }
 
@@ -118,9 +123,9 @@ public class Thunder implements Listener {
     private void chainLightning(List<Player> targets) {
         if (targets == null) throw new InvalidParameterException("targets cannot be null");
         if (targets.size() == 11) return;
-        if (targets.size() < 1) throw new InvalidParameterException("targets list needs to have the attacker in the front");
+        if (targets.isEmpty()) throw new InvalidParameterException("targets list needs to have the attacker in the front");
 
-        Player attacker = targets.get(0);
+        Player attacker = targets.getFirst();
 
         // TODO: make config
         double radius = 3;
@@ -130,7 +135,7 @@ public class Thunder implements Listener {
             if (targets.contains(target)) continue;
 
             // Scheduling the lightning to strike the target 1 second after the next
-            Bukkit.getScheduler().runTaskLater(plugin, () -> strikeLighting(target, attacker), 20 * (targets.size() - 1));
+            Bukkit.getScheduler().runTaskLater(plugin, () -> strikeLighting(target, attacker), 20L * (targets.size() - 1));
 
             // Adding the target to the list
             targets.add(target);
@@ -215,7 +220,7 @@ public class Thunder implements Listener {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     /**
@@ -223,6 +228,7 @@ public class Thunder implements Listener {
      * 
      * @param event A {@link PlayerQuitEvent}
      */
+    @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         hitTracker.remove(event.getPlayer().getUniqueId());
     }

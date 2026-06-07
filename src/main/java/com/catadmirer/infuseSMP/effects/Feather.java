@@ -61,9 +61,8 @@ public class Feather implements Listener {
             Vector knockback = new Vector(0, 1, 0);
             target.setVelocity(target.getVelocity().add(knockback));
             Location anchor = target.getLocation();
-            LivingEntity finalTarget = target;
             Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
-                finalTarget.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
+                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
             });
         }
 

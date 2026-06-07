@@ -17,8 +17,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class ApophisManager {
+// Not to sure, looks like it should implement it, fix it if im wrong turbo lmao.
+public class ApophisManager implements Listener {
     private static final MiniMessage mm = MiniMessage.miniMessage();
     private final Infuse plugin;
     

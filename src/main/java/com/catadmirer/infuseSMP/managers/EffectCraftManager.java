@@ -201,7 +201,10 @@ public class EffectCraftManager implements Listener {
             ritualBeam.setBeamTarget(targetLoc);
             ritualBeam.setPersistent(false);
 
-            Bukkit.getScheduler().runTaskLater(plugin, ritualBeam::remove, ritualDuration * 20L);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (!(ritualBeam.getChunk().isLoaded())) ritualBeam.getChunk().load();
+                ritualBeam.remove();
+            }, ritualDuration * 20L);
         }
 
         Environment worldEnv = brewerLocation.getWorld().getEnvironment();
