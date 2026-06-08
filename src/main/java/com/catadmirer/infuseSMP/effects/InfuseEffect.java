@@ -5,15 +5,14 @@ import com.catadmirer.infuseSMP.Message;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -90,12 +89,6 @@ public abstract class InfuseEffect implements Listener {
     public String toString() {
         return (augmented ? "aug_" : "") + key;
     }
-
-    public abstract void equip(Player player, int slot);
-    public abstract void unequip(Player player, int slot);
-
-    public abstract void applyPassives(Player owner);
-    public abstract void activateSpark(Player owner);
 
     public abstract InfuseEffect getRegularVersion();
     public abstract InfuseEffect getAugmentedVersion();
