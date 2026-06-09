@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Message;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -89,6 +90,13 @@ public abstract class InfuseEffect implements Listener {
     public String toString() {
         return (augmented ? "aug_" : "") + key;
     }
+
+    public abstract void equip(Player owner);
+    public abstract void unequip(Player owner);
+
+    @Deprecated()
+    public abstract void applyPassives(Player owner);
+    public abstract void activateSpark(Player owner);
 
     public abstract InfuseEffect getRegularVersion();
     public abstract InfuseEffect getAugmentedVersion();
