@@ -142,19 +142,6 @@ public class YamlDataManager implements DataManager {
     }
 
     @Override
-    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented, String slot) {
-        InfuseEffect equippedEffect = getEffect(player.getUniqueId(), slot);
-
-        if (equippedEffect == null) return false;
-
-        if (differentiateAugmented) {
-            return effect.equals(equippedEffect);
-        }
-
-        return effect.getId() == equippedEffect.getId();
-    }
-
-    @Override
     public void removeEffect(UUID playerUUID, String slot) {
         config.set(playerUUID.toString() + "." + slot, null);
         save();
