@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * It may not reflect the current state of the persistent data.<br>
  * It should only be used by internal persistent implementations to prevent constant read/write operations.
  */
+// TODO: Add a DataCacheBuilder
 @ApiStatus.Internal
 @NullMarked
 public class DataCache implements DataManager {
