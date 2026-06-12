@@ -7,8 +7,6 @@ import org.bukkit.OfflinePlayer;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,14 +21,13 @@ import javax.sql.DataSource;
 
 @NullMarked
 public class H2DataManager implements DataManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger("Infuse_Storage");
     private final DataSource dataSource;
 
     public H2DataManager(Infuse plugin) {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException err) {
-            LOGGER.error("Could not load the H2 driver", err);
+            Infuse.LOGGER.error("Could not load the H2 driver", err);
         }
 
         // Creating the JDBC DataSource
@@ -45,8 +42,6 @@ public class H2DataManager implements DataManager {
 
     @Override
     public void load() {
-        // CREATE TABLE IF NOT EXISTS player_data(player UUID PRIMARY KEY NOT NULL, slot_1 INTEGER, slot_2 INTEGER, offhand_control BOOLEAN NOT NULL);
-        // INSERT INTO player_data (player, slot_1, slot_2, offhand_control) VALUES ('4f8d5501-de90-4d92-a927-17f2c4ff0cb1', NULL, NULL, FALSE)
         final String createPlayerDataTable = "CREATE TABLE IF NOT EXISTS player_data(player UUID PRIMARY KEY NOT NULL, slot_1 INTEGER, slot_2 INTEGER, offhand_control BOOLEAN NOT NULL);";
         final String createTrustTable = "CREATE TABLE IF NOT EXISTS trusts(truster UUID NOT NULL, trusted UUID NOT NULL);";
         final String createCraftedTable = "CREATE TABLE IF NOT EXISTS crafted_effects(effect INTEGER PRIMARY KEY NOT NULL, crafted INTEGER NOT NULL);";
@@ -61,8 +56,10 @@ public class H2DataManager implements DataManager {
 
             // Commiting any changes
             conn.commit();
+
+            Infuse.LOGGER.info("Successfully loaded H2 database!");
         } catch (SQLException err) {
-            LOGGER.error("Could not open connection to H2 database", err);
+            Infuse.LOGGER.error("Could not open connection to H2 database", err);
         }
     }
 
@@ -136,13 +133,13 @@ public class H2DataManager implements DataManager {
                 try {
                     trustedUUIDs.add(result.getObject(1, UUID.class));
                 } catch (SQLException err) {
-                    LOGGER.warn("Invalid UUID in SQL results.  Skipping value.");
+                    Infuse.LOGGER.warn("Invalid UUID in SQL results.  Skipping value.");
                 }
             }
 
             return trustedUUIDs.stream().map(Bukkit::getOfflinePlayer).collect(Collectors.toSet());
         } catch (SQLException err) {
-            LOGGER.info("Failed to connect to database.", err);
+            Infuse.LOGGER.info("Failed to connect to database.", err);
         }
         return Set.of();
     }
@@ -198,10 +195,10 @@ public class H2DataManager implements DataManager {
 
                 stmt.executeBatch();
             } catch (SQLException err) {
-                LOGGER.error("Failed to insert players back into the database", err);
+                Infuse.LOGGER.error("Failed to insert players back into the database", err);
             }
         } catch (SQLException err) {
-            LOGGER.info("Failed to connect to database.", err);
+            Infuse.LOGGER.info("Failed to connect to database.", err);
         }
 
         throw new UnsupportedOperationException("Unimplemented method 'setTrusted'");
@@ -227,10 +224,10 @@ public class H2DataManager implements DataManager {
                 stmt.setObject(4, toTrustUUID);
                 stmt.execute();
             } catch (SQLException err) {
-                LOGGER.error("Failed to insert data into database", err);
+                Infuse.LOGGER.error("Failed to insert data into database", err);
             }
         } catch (SQLException err) {
-            LOGGER.info("Failed to connect to database.", err);
+            Infuse.LOGGER.info("Failed to connect to database.", err);
         }
     }
 
@@ -247,10 +244,10 @@ public class H2DataManager implements DataManager {
                 stmt.setObject(2, trustedUUID);
                 stmt.execute();
             } catch (SQLException err) {
-                LOGGER.error("Failed to remove data from the database", err);
+                Infuse.LOGGER.error("Failed to remove data from the database", err);
             }
         } catch (SQLException err) {
-            LOGGER.info("Failed to connect to database.", err);
+            Infuse.LOGGER.info("Failed to connect to database.", err);
         }
     }
 
@@ -271,7 +268,7 @@ public class H2DataManager implements DataManager {
                 Infuse.LOGGER.error("Failed to execute SQL \"{}\"", selectStr, e);
             }
         } catch (SQLException err) {
-            LOGGER.info("Failed to connect to database.", err);
+            Infuse.LOGGER.info("Failed to connect to database.", err);
         }
 
         return false;
