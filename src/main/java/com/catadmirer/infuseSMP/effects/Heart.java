@@ -105,7 +105,7 @@ public class Heart extends InfuseEffect {
     private void showAndUpdateHealthAboveEntity(Entity player) {
         Location ploc = player.getLocation().add(0, 2.5, 0);
 
-        TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
+        TextDisplay as = ploc.getWorld().spawn(ploc, TextDisplay.class);
 
         as.setGravity(false);
         as.setCustomNameVisible(true);

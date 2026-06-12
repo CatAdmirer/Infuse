@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +23,6 @@ public class MainConfig {
 
     /**
      * Reloads the configuration.
-     *
-     * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
         // Not doing anything if the plugin isn't enabled
@@ -48,8 +45,7 @@ public class MainConfig {
         } catch (InvalidConfigurationException e) {
             Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
-            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
-            e.printStackTrace();
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName(), e);
         }
 
         return false;
@@ -57,8 +53,6 @@ public class MainConfig {
 
     /**
      * Writes the config to the file.
-     *
-     * @return Whether or not the config was successfully written.
      */
     public boolean save() {
         // Not doing anything if the plugin isn't enabled

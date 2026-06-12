@@ -46,7 +46,7 @@ public class YamlDataManager implements DataManager {
 
     }
 
-    public void save() {
+    private void save() {
         // Creating the file if it doesn't exist.
         createFile();
 

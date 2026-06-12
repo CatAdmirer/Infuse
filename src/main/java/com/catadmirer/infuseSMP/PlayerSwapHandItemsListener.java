@@ -18,7 +18,7 @@ public class PlayerSwapHandItemsListener implements Listener {
 
     /**
      * Listens for when the player swaps the items in their main and offhand.
-     * When they do so, it will be used to activate their left or right spark based on whether or not they are crouching.
+     * When they do so, it will be used to activate their left or right spark based on whether they are crouching.
      * 
      * @param event The {@link PlayerSwapHandItemsEvent} to process
      */
@@ -26,11 +26,11 @@ public class PlayerSwapHandItemsListener implements Listener {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        String data = dataManager.getControlMode(playerUUID);
+        String data = dataManager.getControlMode(player);
         if (data.equals("offhand")) {
             // Getting the effect equipped in each slot
-            InfuseEffect lEffect = dataManager.getEffect(player.getUniqueId(), "1");
-            InfuseEffect rEffect = dataManager.getEffect(player.getUniqueId(), "2");
+            InfuseEffect lEffect = dataManager.getEffect(player, "1");
+            InfuseEffect rEffect = dataManager.getEffect(player, "2");
 
             // Activating the left effect's spark if the player was sneaking and the effect wasn't on cooldown.
             if (lEffect != null && !player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, lEffect.getKey())) {

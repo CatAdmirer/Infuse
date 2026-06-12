@@ -9,24 +9,28 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class InfusePlaceholders extends PlaceholderExpansion {
-    private Infuse plugin;
+    private final Infuse plugin;
 
     public InfusePlaceholders(Infuse plugin) {
         this.plugin = plugin;
     }
 
+    @NonNull
     @Override
     public String getAuthor() {
         return "catadmirer";
     }
 
+    @NonNull
     @Override
     public String getIdentifier() {
         return "infuse";
     }
 
+    @NonNull
     @Override
     public String getVersion() {
         return plugin.getPluginMeta().getVersion();
@@ -34,32 +38,23 @@ public class InfusePlaceholders extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        UUID uuid = player.getUniqueId();
-
-        switch (params.toLowerCase()) {
-            case "first_effect":
-                return getEffectIcon(uuid, "1");
-            case "second_effect":
-                return getEffectIcon(uuid, "2");
-            case "first_time":
-                return getTime(uuid, "1");
-            case "second_time":
-                return getTime(uuid, "2");
-            case "first_effect_raw":
-                return getEffectRaw(uuid, "1");
-            case "second_effect_raw":
-                return getEffectRaw(uuid, "2");
-            case "first_effect_name":
-                return getEffectName(uuid, "1");
-            case "second_effect_name":
-                return getEffectName(uuid, "2");
-        }
-
-        return null;
+        return switch (params.toLowerCase()) {
+            case "first_effect" -> getEffectIcon(player, "1");
+            case "second_effect" -> getEffectIcon(player, "2");
+            case "first_time" -> getTime(player, "1");
+            case "second_time" -> getTime(player, "2");
+            case "first_effect_raw" -> getEffectRaw(player, "1");
+            case "second_effect_raw" -> getEffectRaw(player, "2");
+            case "first_effect_name" -> getEffectName(player, "1");
+            case "second_effect_name" -> getEffectName(player, "2");
+            default -> null;
+        };
     }
 
-    public String getEffectIcon(UUID uuid, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
+    public String getEffectIcon(OfflinePlayer player, String slot) {
+        UUID uuid = player.getUniqueId();
+
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
 
         if (effect == null) {
             return plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
@@ -68,8 +63,9 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         return "" + (CooldownManager.isEffectActive(uuid, effect.getKey()) ? effect.getActiveIcon() : effect.getIcon());
     }
 
-    public String getTime(UUID uuid, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
+    public String getTime(OfflinePlayer player, String slot) {
+        UUID uuid = player.getUniqueId();
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return "";
         String key = effect.getKey();
         if (CooldownManager.isEffectActive(uuid, key)) {
@@ -83,15 +79,15 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         }
     }
 
-    public String getEffectRaw(UUID uuid, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
+    public String getEffectRaw(OfflinePlayer player, String slot) {
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect== null) return "";
         
         return PlainTextComponentSerializer.plainText().serialize(effect.getName().toComponent());
     }
 
-    public String getEffectName(UUID uuid, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
+    public String getEffectName(OfflinePlayer player, String slot) {
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return "";
         
         return effect.getName().toString();

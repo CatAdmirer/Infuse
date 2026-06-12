@@ -28,8 +28,8 @@ public class ClearEffects implements Listener, CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target != null) {
-            dataManager.removeEffect(target.getUniqueId(), "1");
-            dataManager.removeEffect(target.getUniqueId(), "2");
+            dataManager.removeEffect(target, "1");
+            dataManager.removeEffect(target, "2");
         }
         
         return true;

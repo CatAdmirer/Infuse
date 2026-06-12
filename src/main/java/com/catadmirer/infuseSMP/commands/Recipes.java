@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
 public class Recipes implements CommandExecutor, Listener {
     private static Infuse plugin;
@@ -28,6 +29,7 @@ public class Recipes implements CommandExecutor, Listener {
         Recipes.plugin = plugin;
     }
 
+    @NullMarked
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player player) {

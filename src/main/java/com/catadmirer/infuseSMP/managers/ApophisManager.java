@@ -17,8 +17,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class ApophisManager {
+public class ApophisManager implements Listener {
     private static final MiniMessage mm = MiniMessage.miniMessage();
     private final Infuse plugin;
     
@@ -46,7 +47,7 @@ public class ApophisManager {
             FileWriter writer = new FileWriter(disguiseFile);
             Optional<ProfileProperty> textures = target.getPlayerProfile().getProperties().stream().filter(property -> "textures".equals(property.getName())).findFirst();
 
-            // Writing the urls to disk
+            // Writing the URLs to disk
             writer.write(mm.serialize(target.displayName()));
             writer.write("\n");
             if (textures.isEmpty()) {
@@ -87,7 +88,7 @@ public class ApophisManager {
         Player target = event.getPlayer();
 
         if (!target.isOnline()) {
-            Infuse.LOGGER.warn("Could not remove {0}'s disguise as they are not online.", target.getName());
+            Infuse.LOGGER.warn("Could not remove {}'s disguise as they are not online.", target.getName());
             return;
         }
 
@@ -124,13 +125,13 @@ public class ApophisManager {
             profile.setProperty(new ProfileProperty("textures", value, signature));
 
             target.setPlayerProfile(profile);
-        } catch (FileNotFoundException err) {}
+        } catch (FileNotFoundException err) {
+            Infuse.LOGGER.error("Could not find {}.", disguiseFile.getPath(), err);
+        }
 
         // Deleting the disguise file
         if (disguiseFile.exists()) {
             disguiseFile.delete();
         }
-
-        return;
     }
 }

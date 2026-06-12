@@ -64,9 +64,6 @@ public class H2DataManager implements DataManager {
     }
 
     @Override
-    public void save() {}
-
-    @Override
     public int getExistingCount(InfuseEffect effect) {
         String sql = "SELECT crafted FROM crafted_effects WHERE effect = ?;";
 

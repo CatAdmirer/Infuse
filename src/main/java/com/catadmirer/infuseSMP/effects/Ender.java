@@ -181,6 +181,11 @@ public class Ender extends InfuseEffect {
             if (cursedUUID == damagedUUID) continue;
 
             Player player = Bukkit.getPlayer(cursedUUID);
+            if (player == null) {
+                cursedPlayers.remove(cursedUUID);
+                continue;
+            }
+
             player.damage(event.getDamage(), fakeSource);
         }
     }

@@ -73,9 +73,7 @@ public class Feather extends InfuseEffect {
 
         CooldownManager.setTimes(playerUUID, "feather", duration, cooldown);
 
-        owner.getScheduler().runDelayed(plugin, t -> {
-            CooldownManager.setDuration(playerUUID, "feathermace", 5L);
-        }, null, 10);
+        owner.getScheduler().runDelayed(plugin, _ -> CooldownManager.setDuration(playerUUID, "feathermace", 5L), null, 10);
     }
 
     @Override
@@ -121,9 +119,7 @@ public class Feather extends InfuseEffect {
                 Vector knockback = new Vector(0, 1, 0);
                 target.setVelocity(target.getVelocity().add(knockback));
                 Location anchor = target.getLocation();
-                Bukkit.getRegionScheduler().run(plugin, anchor, (task) -> {
-                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false));
-                });
+                Bukkit.getRegionScheduler().run(plugin, anchor, _ -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0, false, false, false)));
             }
 
             world.spawnParticle(Particle.CLOUD, loc, 50, 0, 0, 0, 2);
@@ -176,9 +172,7 @@ public class Feather extends InfuseEffect {
         if (!event.getAction().isRightClick()) return;
 
         Location anchor = player.getLocation();
-        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, (task) -> {
-            player.setCooldown(Material.WIND_CHARGE, 5);
-        }, 1L);
+        Bukkit.getRegionScheduler().runDelayed(plugin, anchor, _ -> player.setCooldown(Material.WIND_CHARGE, 5), 1L);
     }
 
     @EventHandler

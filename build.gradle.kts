@@ -49,4 +49,5 @@ tasks.processResources {
 tasks.register("resetAndRun") {
     delete("run/plugins/$rootProject.name")
     finalizedBy("runServer")
+    description = "Resets the plugin's data directory and then runs a server"
 }

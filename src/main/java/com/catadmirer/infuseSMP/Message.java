@@ -9,7 +9,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class Message {
     private String message;
-    private List<String> placeholders;
+    private final List<String> placeholders;
 
     public Message(MessageType messageType) {
         message = MessageConfig.getMessage(messageType);
@@ -53,7 +53,7 @@ public class Message {
             throw new IllegalStateException("Not all placeholders have been registered.");
         }
 
-        return MiniMessage.miniMessage().deserialize("<i:false>" + toString());
+        return MiniMessage.miniMessage().deserialize("<i:false>" + this);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Message {
         return MiniMessage.miniMessage().deserialize("<i:false>" + message);
     }
 
-    public static enum MessageType {
+    public enum MessageType {
         EFFECT_BROADCAST(List.of("player", "item", "x", "y", "z", "dimension"), "🧪 %player% is cooking up the %item%<reset> at %x%, %y%, %z%... %dimension%"),
         DISCORD_BROADCAST(List.of("player", "item", "x", "y", "z", "dimension"), "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
         EFFECT_FINISHED(List.of("item"), "%item% has been brewed!"),

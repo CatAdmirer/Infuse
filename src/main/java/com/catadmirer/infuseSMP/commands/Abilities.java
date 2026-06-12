@@ -8,9 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
-import java.util.UUID;
-
+@NullMarked
 public class Abilities implements CommandExecutor {
     private final Infuse plugin;
 
@@ -24,8 +24,6 @@ public class Abilities implements CommandExecutor {
             return true;
         }
 
-        final UUID playerUUID = player.getUniqueId();
-
         // Finding which slot to activate the spark for.
         String slot;
         if (label.contains("lspark")) {
@@ -38,7 +36,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
+        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(player, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {

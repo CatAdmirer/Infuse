@@ -36,7 +36,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Getting the mapping from the slot
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
 
         // Handling an invalid or empty mapping
         if (effect == null) {
@@ -55,7 +55,7 @@ public class DrainCommand implements CommandExecutor, Listener {
         }
 
         // Removing the effect from the player
-        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getDataManager().removeEffect(player, slot);
         Message msg = new Message(MessageType.DRAIN_SUCCESS);
         msg.applyPlaceholder("effect_name", effect.getName());
         player.sendMessage(msg.toComponent());

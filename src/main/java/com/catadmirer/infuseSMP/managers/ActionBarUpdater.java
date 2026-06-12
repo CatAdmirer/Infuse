@@ -36,7 +36,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             String rightPad = "";
 
             // Loading info for the first effect
-            effect = plugin.getDataManager().getEffect(uuid, "1");
+            effect = plugin.getDataManager().getEffect(player, "1");
             if (effect != null) {
                 leftEmoji = effect.getIcon() + "\ue904";
 
@@ -55,7 +55,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             }
 
             // Loading info for the second effect
-            effect = plugin.getDataManager().getEffect(uuid, "2");
+            effect = plugin.getDataManager().getEffect(player, "2");
             if (effect != null) {
                 rightEmoji = effect.getIcon() + "\ue904";
 
@@ -92,9 +92,9 @@ public class ActionBarUpdater extends BukkitRunnable {
 
             String placeholder = plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
 
-            String lSide = "";
+            String lSide;
             // Loading info for the first effect
-            effect = plugin.getDataManager().getEffect(uuid, "1");
+            effect = plugin.getDataManager().getEffect(player, "1");
             if (effect == null) {
                 lSide = " " + placeholder + "\ue904";
             } else {
@@ -113,7 +113,7 @@ public class ActionBarUpdater extends BukkitRunnable {
 
             // Loading info for the second effect
             String rSide;
-            effect = plugin.getDataManager().getEffect(uuid, "2");
+            effect = plugin.getDataManager().getEffect(player, "2");
             if (effect == null) {
                 rSide = "<white>" + placeholder + "\ue904 ";
             } else {

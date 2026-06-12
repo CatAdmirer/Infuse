@@ -225,6 +225,7 @@ public class Emerald extends InfuseEffect {
         orb.setExperience(newAmount);
     }
 
+    @SuppressWarnings("unchecked")
     @EventHandler
     public void emeraldEnchantBonus(PrepareItemEnchantEvent event) {
         ItemStack item = event.getItem();
@@ -278,15 +279,15 @@ public class Emerald extends InfuseEffect {
                 if (!list.isEmpty()) {
                     EnchantmentInstance enchantmentinstance = (EnchantmentInstance) list.get(random.nextInt(list.size()));
 
-                    Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment = null;
+                    Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment;
                     int level;
 
                     Class<EnchantmentInstance> clazz = EnchantmentInstance.class;
 
                     if (!clazz.isRecord()) {
                         // Handling pre-1.21.5
-                        enchantment = (Holder) clazz.getField("enchantment").get(enchantmentinstance);
-                        level = (int) clazz.getField("level").get(enchantmentinstance);
+                        enchantment = (Holder) clazz.getDeclaredField("enchantment").get(enchantmentinstance);
+                        level = (int) clazz.getDeclaredField("level").get(enchantmentinstance);
                     } else {
                         RecordComponent[] components = clazz.getRecordComponents();
                         enchantment = (Holder) components[0].getAccessor().invoke(enchantmentinstance);

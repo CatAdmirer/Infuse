@@ -15,11 +15,6 @@ public interface DataManager {
     void load();
 
     /**
-     * Writes the config to the file.
-     */
-    void save();
-
-    /**
      * Gets the number of effects that exist.
      * 
      * @param effect The effect to count
