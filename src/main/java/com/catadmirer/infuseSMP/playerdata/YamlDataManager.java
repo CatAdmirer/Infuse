@@ -24,25 +24,20 @@ public class YamlDataManager implements DataManager {
     private final YamlConfiguration config;
 
     public YamlDataManager(Infuse plugin) {
-        this.plugin = plugin;     
+        this.plugin = plugin;
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
 
     @Override
     public void load() {
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
-            return;
-        }
-
         // Creating the file if it doesn't exist.
         createFile();
 
         // Loading the config
         try {
             config.load(dataFile);
-            Infuse.LOGGER.info("Successfully loaded {}", dataFile.getName());
+            Infuse.LOGGER.info("Successfully loaded YAML data!");
         } catch (InvalidConfigurationException err) {
             Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
         } catch (IOException err) {
@@ -52,12 +47,6 @@ public class YamlDataManager implements DataManager {
     }
 
     public void save() {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
-            return;
-        }
-
         // Creating the file if it doesn't exist.
         createFile();
 
@@ -73,22 +62,7 @@ public class YamlDataManager implements DataManager {
 
     /** Creates the config file. If it doesn't exist, it loads the default config. */
     public void createFile() {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
-            return;
-        }
-
-        // Creating the file if it doesn't exist.
-        if (!dataFile.exists()) {
-            try {
-                dataFile.getParentFile().mkdirs();
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                Infuse.LOGGER.error("Could not create {}.  Make sure the user has the right permissions.", dataFile.getName());
-            }
-        }
-
+        plugin.saveResource("config.yml", false);
     }
 
     @Override
