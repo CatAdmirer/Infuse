@@ -142,12 +142,6 @@ public class YamlDataManager implements DataManager {
     }
 
     @Override
-    public void removeEffect(OfflinePlayer player, String slot) {
-        config.set(player.getUniqueId() + "." + slot, null);
-        save();
-    }
-
-    @Override
     public void setControlMode(OfflinePlayer player, String defaultMode) {
         config.set(player.getUniqueId() + ".controls", defaultMode);
         save();
