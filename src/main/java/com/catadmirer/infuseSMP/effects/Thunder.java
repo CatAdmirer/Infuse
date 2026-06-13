@@ -146,7 +146,7 @@ public class Thunder extends InfuseEffect {
      * This is a recursive function that runs up to 10 times to strike nearby entities with lightning.
      * The function should be called with a list containing only the attacking entity.
      * 
-     * @param targets The list of targets that have been hit by the lightning bolt, with the exception of the first entry which is the attacker.
+     * @param targets The list of targets that have been hit by the lightning bolt, except for the first entry which is the attacker.
      * 
      * @throws InvalidParameterException If the <code>targets</code> parameter is null or empty.
      */
@@ -176,8 +176,8 @@ public class Thunder extends InfuseEffect {
         }
     }
 
-    //// Listeners ////
-    //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
+    // Listeners //
+    // These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
 
     /**
      * Tracking the number of hits a player has.
@@ -253,7 +253,7 @@ public class Thunder extends InfuseEffect {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     @EventHandler

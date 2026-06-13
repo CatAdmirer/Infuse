@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,8 +28,8 @@ public class ClearEffects implements Listener, CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target != null) {
-            dataManager.removeEffect(target.getUniqueId(), "1");
-            dataManager.removeEffect(target.getUniqueId(), "2");
+            dataManager.removeEffect(target, "1");
+            dataManager.removeEffect(target, "2");
         }
         
         return true;

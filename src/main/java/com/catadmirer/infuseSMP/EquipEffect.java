@@ -60,11 +60,11 @@ public class EquipEffect implements Listener {
      */
     private boolean equipEffect(Player player, InfuseEffect effect, String slot) {
         // Checking for an effect in the slot.
-        InfuseEffect currentEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect currentEffect = plugin.getDataManager().getEffect(player, slot);
         if (currentEffect != null) return false;
         
         // Equipping the effect to the slot.
-        plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
+        plugin.getDataManager().setEffect(player, slot, effect);
         new EffectEquipEvent(player, effect, slot).callEvent();
 
         Message msg = new Message(MessageType.EFFECT_EQUIPPED);
@@ -111,8 +111,8 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        InfuseEffect effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        InfuseEffect effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        InfuseEffect effect1 = plugin.getDataManager().getEffect(player, "1");
+        InfuseEffect effect2 = plugin.getDataManager().getEffect(player, "2");
         String dropMode = plugin.getMainConfig().effectDrops();
         Random rand = new Random();
         switch (dropMode.toLowerCase()) {
@@ -153,10 +153,10 @@ public class EquipEffect implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, "1");
         if (effect != null) new EffectEquipEvent(player, effect, "1").callEvent();
         
-        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        effect = plugin.getDataManager().getEffect(player, "2");
         if (effect != null) new EffectEquipEvent(player, effect, "2").callEvent();
     }
 
@@ -168,11 +168,11 @@ public class EquipEffect implements Listener {
      */
     private void dropEffect(Player player, String slot) {
         // Getting the equipped effect from the data file.
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return;
 
         // Removing the effect from the player.
-        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getDataManager().removeEffect(player, slot);
         new EffectUnequipEvent(player, effect, slot).callEvent();
 
         // Dropping the effect item at the player's location

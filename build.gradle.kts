@@ -15,6 +15,7 @@ repositories {
 dependencies {
     compileOnly(libs.placeholderapi)
     paperweight.paperDevBundle("${libs.versions.minecraft.get()}+")
+    compileOnly(libs.h2)
 }
 
 tasks.runServer {
@@ -38,7 +39,8 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
     val props = mapOf("version" to version,
-                        "mcVersion" to libs.versions.minecraft.get())
+                        "mcVersion" to libs.versions.minecraft.get(),
+                        "h2Version" to libs.versions.h2.get())
     filesMatching("plugin.yml") {
         expand(props)
     }
@@ -47,4 +49,5 @@ tasks.processResources {
 tasks.register("resetAndRun") {
     delete("run/plugins/$rootProject.name")
     finalizedBy("runServer")
+    description = "Resets the plugin's data directory and then runs a server"
 }

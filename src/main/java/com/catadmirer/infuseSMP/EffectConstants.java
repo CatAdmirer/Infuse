@@ -19,16 +19,16 @@ public class EffectConstants {
             case EffectIds.EMERALD -> Material.LIME_STAINED_GLASS_PANE;
             case EffectIds.ENDER -> Material.PURPLE_STAINED_GLASS_PANE;
             case EffectIds.FEATHER -> Material.WHITE_STAINED_GLASS_PANE;
-            case EffectIds.FIRE -> Material.ORANGE_STAINED_GLASS_PANE;
-            case EffectIds.FROST -> Material.LIGHT_BLUE_STAINED_GLASS_PANE;
-            case EffectIds.HASTE -> Material.ORANGE_STAINED_GLASS_PANE;
-            case EffectIds.HEART -> Material.RED_STAINED_GLASS_PANE;
+            case EffectIds.FIRE,
+                 EffectIds.HASTE -> Material.ORANGE_STAINED_GLASS_PANE;
+            case EffectIds.FROST,
+                 EffectIds.SPEED -> Material.LIGHT_BLUE_STAINED_GLASS_PANE;
+            case EffectIds.HEART,
+                 EffectIds.REGEN,
+                 EffectIds.STRENGTH,
+                 EffectIds.THIEF -> Material.RED_STAINED_GLASS_PANE;
             case EffectIds.INVIS -> Material.LIGHT_GRAY_STAINED_GLASS_PANE;
             case EffectIds.OCEAN -> Material.BLUE_STAINED_GLASS_PANE;
-            case EffectIds.REGEN -> Material.RED_STAINED_GLASS_PANE;
-            case EffectIds.SPEED -> Material.LIGHT_BLUE_STAINED_GLASS_PANE;
-            case EffectIds.STRENGTH -> Material.RED_STAINED_GLASS_PANE;
-            case EffectIds.THIEF -> Material.RED_STAINED_GLASS_PANE;
             case EffectIds.THUNDER -> Material.YELLOW_STAINED_GLASS_PANE;
             default -> null;
         };
@@ -88,21 +88,21 @@ public class EffectConstants {
      */
     public static BossBar.Color ritualColor(int effectId) {
         return switch (effectId) {
-            case EffectIds.APOPHIS -> BossBar.Color.PURPLE;
+            case EffectIds.APOPHIS,
+                 EffectIds.ENDER,
+                 EffectIds.INVIS -> BossBar.Color.PURPLE;
             case EffectIds.EMERALD -> BossBar.Color.GREEN;
-            case EffectIds.ENDER -> BossBar.Color.PURPLE;
             case EffectIds.FEATHER -> BossBar.Color.WHITE;
-            case EffectIds.FIRE -> BossBar.Color.RED;
-            case EffectIds.FROST -> BossBar.Color.BLUE;
-            case EffectIds.HASTE -> BossBar.Color.YELLOW;
-            case EffectIds.HEART -> BossBar.Color.RED;
-            case EffectIds.INVIS -> BossBar.Color.PURPLE;
-            case EffectIds.OCEAN -> BossBar.Color.BLUE;
+            case EffectIds.FIRE,
+                 EffectIds.HEART,
+                 EffectIds.STRENGTH,
+                 EffectIds.THIEF -> BossBar.Color.RED;
+            case EffectIds.FROST,
+                 EffectIds.OCEAN -> BossBar.Color.BLUE;
+            case EffectIds.HASTE,
+                 EffectIds.SPEED,
+                 EffectIds.THUNDER -> BossBar.Color.YELLOW;
             case EffectIds.REGEN -> BossBar.Color.PINK;
-            case EffectIds.SPEED -> BossBar.Color.YELLOW;
-            case EffectIds.STRENGTH -> BossBar.Color.RED;
-            case EffectIds.THIEF -> BossBar.Color.RED;
-            case EffectIds.THUNDER -> BossBar.Color.YELLOW;
             default -> null;
         };
     }

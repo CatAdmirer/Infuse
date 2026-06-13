@@ -132,9 +132,7 @@ public class Regen extends InfuseEffect {
                 meta.setFood(foodComp);
             });
         } else {
-            event.getItem().editMeta(meta -> {
-                meta.setFood(null);
-            });
+            event.getItem().editMeta(meta -> meta.setFood(null));
         }
     }
 

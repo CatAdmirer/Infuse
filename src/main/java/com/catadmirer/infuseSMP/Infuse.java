@@ -6,6 +6,9 @@ import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
+import com.catadmirer.infuseSMP.playerdata.H2DataManager;
+import com.catadmirer.infuseSMP.playerdata.YamlDataManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -41,7 +44,7 @@ public class Infuse extends JavaPlugin implements Listener {
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
 
-    private final DataManager dataManager;
+    private DataManager dataManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
@@ -54,7 +57,6 @@ public class Infuse extends JavaPlugin implements Listener {
     public Infuse() {
         new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
-        this.dataManager = new DataManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
         this.particleManager = new ParticleManager(this);
@@ -74,13 +76,26 @@ public class Infuse extends JavaPlugin implements Listener {
         
         // Loading the config
         mainConfig.load();
-        
-        // Loading the data manager
-        dataManager.load();
 
         // Applying config updates
         MessageConfig.applyUpdates();
         mainConfig.applyUpdates();
+        
+        // Loading the data manager
+        // If no valid data manager is found, disable the plugin
+        dataManager = switch (mainConfig.storageMode().toLowerCase()) {
+            case "h2" -> new H2DataManager(this);
+            case "yaml" -> new YamlDataManager(this);
+            default -> null;
+        };
+
+        if (dataManager == null) {
+            LOGGER.error("Could not read a valid storage type from the config!  Disabling Infuse.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        dataManager.load();
         dataManager.applyUpdates();
 
         // Initializing the recipe manager
@@ -139,7 +154,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         getCommand("draw").setExecutor(new Draw());
 
-        getCommand("controls").setExecutor((sender, command, label, args) -> {
+        getCommand("controls").setExecutor((sender, _, _, args) -> {
             // Making sure only players can run the command
             if (!(sender instanceof Player player)) {
                 sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
@@ -162,11 +177,11 @@ public class Infuse extends JavaPlugin implements Listener {
             }
 
             // Setting the control mode for the player
-            dataManager.setControlMode(player.getUniqueId(), choice);
+            dataManager.setControlMode(player, choice);
             player.addAttachment(this, "ability.use", choice.equals("command"));
             return true;
         });
-        getCommand("controls").setTabCompleter((sender, command, label, args) -> {
+        getCommand("controls").setTabCompleter((_, _, _, args) -> {
             if (args.length == 1) {
                 return Stream.of("command", "offhand").filter(opt -> opt.startsWith(args[0])).toList();
             }
@@ -242,9 +257,7 @@ public class Infuse extends JavaPlugin implements Listener {
 
         if (dropHead) {
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
-            playerHead.editMeta(SkullMeta.class, meta -> {
-                meta.setOwningPlayer(player);
-            });
+            playerHead.editMeta(SkullMeta.class, meta -> meta.setOwningPlayer(player));
             player.getWorld().dropItem(player.getLocation(), playerHead);
         }
     }
@@ -261,9 +274,7 @@ public class Infuse extends JavaPlugin implements Listener {
             .uri(URI.create("https://api.modrinth.com/v2/project/infusesmp/version"))
             .build();
 
-        HttpClient client = HttpClient.newHttpClient();
-
-        try {
+        try (HttpClient client = HttpClient.newHttpClient()) {
             HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
             // Handling http error codes
@@ -303,9 +314,8 @@ public class Infuse extends JavaPlugin implements Listener {
         InfuseEffect.getRegisteredEffects().values().stream().map(recipeManager::getRecipeKey).forEach(player::discoverRecipe);
         
         // Telling the player their current control mode
-        String controlMode = dataManager.getControlMode(player.getUniqueId());
-        if (controlMode == null) controlMode = "Offhand";
-        boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
+        String controlMode = dataManager.getControlMode(player);
+        boolean offhandEnabled = controlMode.equalsIgnoreCase("offhand");
         player.addAttachment(this, "ability.use", !offhandEnabled);
 
         Message msg = new Message(MessageType.JOIN_ABILITY_NOTIFY);

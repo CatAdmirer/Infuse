@@ -71,8 +71,7 @@ public class EffectCraftManager implements Listener {
                 .header("Content-Type", "application/json")
                 .POST(BodyPublishers.ofString(payload)).build();
 
-        HttpClient client = HttpClient.newHttpClient();
-        try {
+        try (HttpClient client = HttpClient.newHttpClient()) {
             HttpResponse<Void> response = client.send(request, BodyHandlers.discarding());
 
             // Checking the response status code
@@ -80,7 +79,7 @@ public class EffectCraftManager implements Listener {
             if (status == 200) {
                 Infuse.LOGGER.info("Message sent to Discord!");
             } else {
-                Infuse.LOGGER.info("Error sending message to Discord: " + status);
+                Infuse.LOGGER.error("Error sending message to Discord: {}", status);
             }
         } catch (IOException err) {
             Infuse.LOGGER.error("Could not send webhook message to discord.", err);
@@ -108,6 +107,10 @@ public class EffectCraftManager implements Listener {
 
         // Making sure the brewing stand is still placed
         Location brewerLocation = event.getInventory().getLocation();
+        if (brewerLocation == null) {
+            return;
+        }
+
         if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
             event.setCancelled(true);
             return;
@@ -158,9 +161,7 @@ public class EffectCraftManager implements Listener {
         }
 
         // Removing the ingredients
-        event.getInventory().forEach(item -> {
-            item.subtract(1);
-        });
+        event.getInventory().forEach(item -> item.subtract(1));
 
         // Closing the inventory
         player.closeInventory();
@@ -383,11 +384,7 @@ public class EffectCraftManager implements Listener {
         @EventHandler
         public void onBrewingStandExplode(EntityExplodeEvent event) {
             List<Block> blocks = event.blockList();
-            for (Block block : blocks) {
-                if (block.getLocation().equals(brewerLocation)) {
-                    blocks.remove(block);
-                }
-            }
+            blocks.removeIf(block -> block.getLocation().equals(brewerLocation));
         }
 
         @EventHandler(priority = EventPriority.LOW)

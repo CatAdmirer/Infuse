@@ -30,8 +30,8 @@ public class GlobalLoop extends BukkitRunnable {
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             // Getting the player's equipped effects
-            InfuseEffect lEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-            InfuseEffect rEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+            InfuseEffect lEffect = plugin.getDataManager().getEffect(player, "1");
+            InfuseEffect rEffect = plugin.getDataManager().getEffect(player, "2");
 
             // Applying passive effects to the player
             if (lEffect != null) {

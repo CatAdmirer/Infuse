@@ -69,9 +69,7 @@ public class InventoryUtils {
     public static void lockInventory(Inventory inventory) {
         for (ItemStack item : inventory.getContents()) {
             if (item == null) continue;
-            item.editMeta(meta -> {
-                meta.setMaxStackSize(1);
-            });
+            item.editMeta(meta -> meta.setMaxStackSize(1));
         }
     }
 }

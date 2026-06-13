@@ -17,7 +17,7 @@ public class ParticleManager {
     }
 
     public void spawnEffectParticles(Player player, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return;
 
         // Handling special particles for ender effect

@@ -27,6 +27,15 @@ player_head_drops: true
 
 enable_discord_broadcasts: false
 
+# Sets where the data will be stored.
+# IMPORTANT: Data is not transferred between nodes.  To move data to different storage types, export it to YAML then import it.
+# (Exported data is the same format as the YAML storage mode, so no exporting is needed if you already use the YAML config.)
+# This config IS NOT UPDATED when you use `/infuse reload`.  You need to RESTART THE SERVER to change this config
+# Supported values:
+# - "H2"
+# - "YAML"
+storage_mode: YAML
+
 discord_webhook_url: ""
 
 brewing_gui: true

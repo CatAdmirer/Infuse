@@ -159,7 +159,7 @@ public abstract class InfuseEffect implements Listener {
      *
      * @param item The item to check.
      *
-     * @return Whether or not the item was created by this effect.
+     * @return Whether the item was created by this effect.
      */
     public boolean itemMatches(@Nullable ItemStack item) {
         if (item == null) return false;
@@ -187,7 +187,7 @@ public abstract class InfuseEffect implements Listener {
 
     /**
      * Deserializes an InfuseEffect from an int
-     *
+     * <p>
      * The first two digits of an infuse effect are the effect id.  IDs 0-12 are taken by the base Effects.
      * If the number is >= 100, then the effect will be converted to its augmented form.
      *

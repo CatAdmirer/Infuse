@@ -169,8 +169,6 @@ public class Strength extends InfuseEffect {
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
         
         // TODO: Test if this can be removed
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            player.setCooldown(Material.SHIELD, 200);
-        }, 20L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> player.setCooldown(Material.SHIELD, 200), 20L);
     }
 }

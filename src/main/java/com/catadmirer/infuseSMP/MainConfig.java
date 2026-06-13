@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +23,6 @@ public class MainConfig {
 
     /**
      * Reloads the configuration.
-     *
-     * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
         // Not doing anything if the plugin isn't enabled
@@ -48,8 +45,7 @@ public class MainConfig {
         } catch (InvalidConfigurationException e) {
             Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
-            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
-            e.printStackTrace();
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName(), e);
         }
 
         return false;
@@ -57,8 +53,6 @@ public class MainConfig {
 
     /**
      * Writes the config to the file.
-     * 
-     * @return Whether or not the config was successfully written.
      */
     public boolean save() {
         // Not doing anything if the plugin isn't enabled
@@ -150,9 +144,8 @@ public class MainConfig {
 
     /**
      * Gets the amount of each effect that can be crafted
-     * 
+     *
      * @param effect The effect to check
-     * 
      * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
      */
     public int getCraftLimit(InfuseEffect effect) {
@@ -224,22 +217,6 @@ public class MainConfig {
         return Math.clamp((float) config.getDouble("emerald.percent_xp_to_share"), 0, 1);
     }
 
-    public void applyUpdates() {
-        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
-        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
-        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
-        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
-        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
-        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
-        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
-        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
-        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
-        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
-        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
-
-        save();
-    }
-
     public int emeraldLootingLevel() {
         return config.getInt("emerald.enchantment.looting_level");
     }
@@ -254,5 +231,35 @@ public class MainConfig {
 
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
+    }
+
+    public String storageMode() {
+        return config.getString("storage_mode", "yaml");
+    }
+
+    public void applyUpdates() {
+        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
+        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
+        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
+        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
+        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
+        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
+        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
+        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
+        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
+        if (!config.contains("storage_mode")) {
+            config.set("storage_mode", "YAML");
+            config.setComments("storage_mode", List.of("# Sets where the data will be stored.",
+                    "# IMPORTANT: Data is not transferred between nodes.  To move data to different storage types, export it to YAML then import it.",
+                    "# (Exported data is the same format as the YAML storage mode, so no exporting is needed if you already use the YAML config.)",
+                    "# This config IS NOT UPDATED when you use `/infuse reload`.  You need to RESTART THE SERVER to change this config",
+                    "# Supported values:",
+                    "# - \"H2\"",
+                    "# - \"YAML\""));
+        }
+
+        save();
     }
 }

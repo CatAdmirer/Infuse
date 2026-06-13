@@ -52,8 +52,8 @@ public class MessageConfig {
      * Creating the config file. If it doesn't exist, it loads the default config. If the file does
      * exist, it will only replace it if the parameter is true.
      * 
-     * @param replace Whether or not to replace the config file with the default configs.
-     * @return Whether or not the file was created successfully.
+     * @param replace Whether to replace the config file with the default configs.
+     * @return Whether the file was created successfully.
      */
     public static boolean createFile(Plugin plugin, boolean replace) {
         // Creating the file if it doesn't exist.

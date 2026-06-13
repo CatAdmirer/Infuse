@@ -259,6 +259,7 @@ public class Frost extends InfuseEffect {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!attacker.hasPotionEffect(PotionEffectType.UNLUCK)) return;
         PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
+        if (effect == null) return;
         if (effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
             target.setFreezeTicks(200);
         }

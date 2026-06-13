@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class HitTracker implements Listener {
     private final Infuse plugin;
     private final Map<UUID,Integer> hitTracker = new HashMap<>();
-    Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
+    final Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
 
     public HitTracker(Infuse plugin) {
         this.plugin = plugin;
@@ -89,7 +89,7 @@ public class HitTracker implements Listener {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     /**
