@@ -51,18 +51,6 @@ public class WorldGuardAPI {
         return OCEAN_ENABLED;
     }
 
-    public static boolean isFlagEnabled(Location loc, StateFlag flag) {
-        if (loc.getWorld() == null) return true;
-
-        final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        if (container == null) return true;
-
-        final RegionManager manager = container.get(BukkitAdapter.adapt(loc.getWorld()));
-        if (manager == null) return true;
-
-        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(null, flag);
-    }
-
     public static boolean isFlagEnabled(Player player, Location loc, StateFlag flag) {
         if (loc.getWorld() == null) return true;
 
