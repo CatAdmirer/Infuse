@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 
 @NullMarked
 public class H2DataManager implements DataManager {
-    private final DataCache cache;
+    private DataCache cache;
     private final DataSource dataSource;
 
     public H2DataManager(Infuse plugin) {
@@ -31,6 +31,7 @@ public class H2DataManager implements DataManager {
             Infuse.LOGGER.error("Could not load the H2 driver", err);
         }
 
+        // Creating an empty cache
         cache = new DataCache();
 
         // Creating the JDBC DataSource
@@ -49,16 +50,71 @@ public class H2DataManager implements DataManager {
         final String createTrustTable = "CREATE TABLE IF NOT EXISTS trusts(truster UUID NOT NULL, trusted UUID NOT NULL);";
         final String createCraftedTable = "CREATE TABLE IF NOT EXISTS crafted_effects(effect INTEGER PRIMARY KEY NOT NULL, crafted INTEGER NOT NULL);";
 
+        final String getAllTrusts = "SELECT * FROM trusts;";
+        final String getAllPlayerData = "SELECT * FROM player_data;";
+        final String getAllCrafted = "SELECT * FROM crafted_effects;";
+
         try (Connection conn = dataSource.getConnection()) {
             // Creating the tables if they don't exist
-            Statement stmt = conn.createStatement();
-            stmt.execute(createPlayerDataTable);
-            stmt.execute(createTrustTable);
-            stmt.execute(createCraftedTable);
-            stmt.close();
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute(createPlayerDataTable);
+                stmt.execute(createTrustTable);
+                stmt.execute(createCraftedTable);
+            }
 
             // Commiting any changes
             conn.commit();
+
+            // Clearing any cached data
+            cache = new DataCache();
+
+            // Loading data into the cache
+            try (Statement stmt = conn.createStatement()) {
+                // Mirroring trusts
+                ResultSet results = stmt.executeQuery(getAllTrusts);
+                while (results.next()) {
+                    UUID player = results.getObject(1, UUID.class);
+                    UUID trusted = results.getObject(2, UUID.class);
+
+                    Set<UUID> playerTrusts = cache.allTrusts.computeIfAbsent(player, _ -> new HashSet<>());
+                    playerTrusts.add(trusted);
+                    cache.allTrusts.put(player, playerTrusts);
+                }
+
+                results.close();
+
+                // Mirroring player data
+                results = stmt.executeQuery(getAllPlayerData);
+                while (results.next()) {
+                    UUID player = results.getObject(1, UUID.class);
+
+                    int lEffect = results.getInt(2);
+                    if (!results.wasNull()) {
+                        cache.leftEffects.put(player, lEffect);
+                    }
+
+                    int rEffect = results.getInt(3);
+                    if (!results.wasNull()) {
+                        cache.rightEffects.put(player, rEffect);
+                    }
+
+                    boolean offhandControl = results.getBoolean(4);
+                    cache.controlModes.put(player, offhandControl);
+                }
+
+                results.close();
+
+                // Mirroring crafted effect counts
+                results = stmt.executeQuery(getAllCrafted);
+                while (results.next()) {
+                    int effectId = results.getInt(1);
+                    int crafted = results.getInt(2);
+
+                    cache.craftedCounts.put(effectId, crafted);
+                }
+
+                results.close();
+            }
 
             Infuse.LOGGER.info("Successfully loaded H2 database!");
         } catch (SQLException err) {
