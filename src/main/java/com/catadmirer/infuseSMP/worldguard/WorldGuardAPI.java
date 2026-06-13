@@ -4,11 +4,9 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -28,11 +26,14 @@ public class WorldGuardAPI {
 
         try {
             WorldGuard.getInstance().getFlagRegistry().registerAll(List.of(this.USE_SPARKS, this.SPARK_PASSTHROUGH, this.OCEAN_ENABLED));
-            enabled = true;
         } catch (FlagConflictException ex) {
             Infuse.LOGGER.warn("A flag has conflicted with another plugin! Disabling worldguard hook...");
             enabled = false;
+            return;
         }
+
+        enabled = true;
+        Infuse.LOGGER.info("Successfully loaded custom WorldGuard flags.");
     }
 
     public static boolean isEnabled() {
@@ -51,16 +52,10 @@ public class WorldGuardAPI {
         return OCEAN_ENABLED;
     }
 
-    public static boolean isFlagEnabled(Player player, Location loc, StateFlag flag) {
-        if (loc.getWorld() == null) return true;
-
-        final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        if (container == null) return true;
-
-        final RegionManager manager = container.get(BukkitAdapter.adapt(loc.getWorld()));
-        if (manager == null) return true;
-
-        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(WorldGuardPlugin.inst().wrapPlayer(player), flag);
+    public static boolean isFlagEnabled(Player player, StateFlag flag) {
+        final ApplicableRegionSet set = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(player.getLocation()));
+        return set.queryState(WorldGuardPlugin.inst().wrapPlayer(player), flag) != StateFlag.State.DENY;
     }
+
 
 }

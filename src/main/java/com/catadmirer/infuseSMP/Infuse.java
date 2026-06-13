@@ -8,7 +8,6 @@ import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.worldguard.WorldGuardAPI;
 import com.catadmirer.infuseSMP.worldguard.handlers.OceanEnabledHandler;
-import com.catadmirer.infuseSMP.worldguard.handlers.UseSparkHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -120,14 +119,13 @@ public class Infuse extends JavaPlugin implements Listener {
             LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
         }
 
+        // Registering the WorldGuard custom handler for 1/3 of the custom flags
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && WorldGuardAPI.isEnabled()) {
-
             final SessionManager session = WorldGuard.getInstance().getPlatform().getSessionManager();
             try {
                 session.registerHandler(OceanEnabledHandler.getFactory(), null);
-                session.registerHandler(UseSparkHandler.getFactory(), null);
             } catch (Exception ex) {
-                LOGGER.error("There has been a issue with registering one or multiple of the handlers. Flag features may not work.");
+                LOGGER.warn("There has been a issue with registering a WorldGuard handler. Custom Flag 'Ocean_Enable' may not work.");
             }
 
             LOGGER.info("Worldguard hook successfully Enabled!");
