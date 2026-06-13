@@ -75,22 +75,14 @@ public class EffectManager implements Listener {
         EffectEquipEvent event = new EffectEquipEvent(player, effect, slot);
         if (!event.callEvent()) return;
 
-        // Unequipping the effect and updating the player data
-        currentEffect.unequip(player);
-        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
-        
-        // Equipping the effect in the slot.
-        plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
-        new EffectEquipEvent(player, effect, slot).callEvent();
-
-        // Activating the effect
+        // Equipping the effect and updating the player data
         effect.equip(player);
+        plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
 
+        // Notifying the player
         Message msg = new Message(MessageType.EFFECT_EQUIPPED);
         msg.applyPlaceholder("effect_name", effect.getName());
         player.sendMessage(msg.toComponent());
-
-        return true;
     }
 
     public void unequipEffect(Player player, String slot) {
