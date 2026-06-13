@@ -84,7 +84,7 @@ public class EffectManager implements Listener {
      * @param effect The effect to give the player.
      * @param slot The slot to equip the effect into.
      */
-    private void equipEffect(Player player, InfuseEffect effect, String slot) {
+    public void equipEffect(Player player, InfuseEffect effect, String slot) {
         // Checking for an effect in the slot.
         InfuseEffect currentEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         if (currentEffect != null) return;
