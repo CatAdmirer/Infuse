@@ -6,16 +6,18 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-
-import java.util.List;
-import java.util.Random;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Random;
 
 public class EffectManager implements Listener {
     private final Infuse plugin;
@@ -193,6 +195,37 @@ public class EffectManager implements Listener {
     }
 
     /**
+     * Handles logic for when a player joins the server.
+     * <p>
+     * It gives the player their starting effect if they haven't played before, and also enables the abilities for any effects the player has.
+     */
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        // Giving the player their starting effects if they haven't joined before
+        if (!player.hasPlayedBefore() && plugin.getMainConfig().joinEffectsEnabled()) {
+            List<InfuseEffect> effects = plugin.getMainConfig().joinEffects();
+            if (effects.isEmpty()) return;
+            InfuseEffect effect = effects.get(new Random().nextInt(effects.size()));
+            equipEffect(player, effect, "1");
+        }
+
+        // Enabling each effect
+        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        if (effect != null) {
+            EffectEquipEvent e = new EffectEquipEvent(player, effect, "1");
+            if (e.callEvent()) effect.equip(player);
+        }
+
+        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        if (effect != null) {
+            EffectEquipEvent e = new EffectEquipEvent(player, effect, "2");
+            if (e.callEvent()) effect.equip(player);
+        }
+    }
+
+    /**
      * Handling when players drink an infuse potion.
      * 
      * @param event The consume event.
@@ -279,8 +312,8 @@ public class EffectManager implements Listener {
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
         new EffectUnequipEvent(player, effect, slot).callEvent();
 
-        // Dropping the effect item at the player's location
-        player.getWorld().dropItemNaturally(player.getLocation(), effect.createItem());
+        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        if (effect != null) effect.unequip(player);
     }
 
     /** Used to tell the unequip function what to do with the effect item when a player removes their effect. */
