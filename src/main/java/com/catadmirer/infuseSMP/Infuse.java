@@ -40,6 +40,7 @@ public class Infuse extends JavaPlugin implements Listener {
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
 
     private final DataManager dataManager;
+    private final EffectManager effectManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
@@ -53,6 +54,7 @@ public class Infuse extends JavaPlugin implements Listener {
         new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
+        this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
         this.particleManager = new ParticleManager(this);
@@ -203,9 +205,9 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
-        Bukkit.getPluginManager().registerEvents(new EffectManager(this), this);
+        Bukkit.getPluginManager().registerEvents(effectManager, this);
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffects(dataManager), this);
+        Bukkit.getPluginManager().registerEvents(new ClearEffects(effectManager), this);
 
         // Registering events for all the effects
         Bukkit.getPluginManager().registerEvents(new Emerald(), this);
@@ -367,5 +369,9 @@ public class Infuse extends JavaPlugin implements Listener {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public EffectManager getEffectManager() {
+        return effectManager;
     }
 }
