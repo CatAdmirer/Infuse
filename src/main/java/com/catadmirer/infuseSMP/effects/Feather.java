@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
+import com.catadmirer.infuseSMP.worldguard.WorldGuardAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -111,12 +112,12 @@ public class Feather extends InfuseEffect {
             Location loc = player.getLocation();
             World world = player.getWorld();
 
-            for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-
+            // TODO: figure out some stuff for stuff like this.
+            for (Entity entity : WorldGuardAPI.getAllEntitiesWhereFlagIsAllowed(player, radius, WorldGuardAPI.getUseSparksFlag())) {
                 if (!(entity instanceof LivingEntity target)) continue;
                 if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
-                int damage = 8;
+                final int damage = 8;
                 target.damage(damage);
                 Vector knockback = new Vector(0, 1, 0);
                 target.setVelocity(target.getVelocity().add(knockback));

@@ -72,6 +72,8 @@ public class Message {
         DISCORD_BROADCAST(List.of("player", "item", "x", "y", "z", "dimension"), "%player% is cooking up the %item% at %x%, %y%, %z% in %dimension% @everyone"),
         EFFECT_FINISHED(List.of("item"), "%item% has been brewed!"),
 
+        REGION_SPARK_USE_DISABLED(List.of(), "The current region that you are currently inside of has sparks disabled."),
+
         REGULAR_BROADCAST(List.of("item", "x", "y", "z", "dimension"), "🧪 A %item%<reset> has been crafted at <#90D5FF><b>%x%, %y%, %z%... %dimension%"),
 
         SLOT_EMPTY(List.of("slot"), "<red>You don't have any effect equipped in slot %slot%."),

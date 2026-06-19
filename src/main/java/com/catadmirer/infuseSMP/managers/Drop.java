@@ -23,6 +23,7 @@ public class Drop implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
         InfuseEffect effect = InfuseEffect.fromItem(item);

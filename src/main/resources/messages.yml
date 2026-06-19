@@ -10,6 +10,9 @@ discord_broadcast: "%player% is cooking up the %item% at %x%, %y%, %z% in %dimen
 effect_finished: "%item% has been brewed!"
 regular_broadcast: "🧪 A %item%<reset> has been crafted at <#90D5FF><b>%x%, %y%, %z%... %dimension%"
 
+# This is for if you have WorldGuard installed.
+region_spark_use_disabled: "The current region that you are currently inside of has sparks disabled."
+
 # %slot% = Number 1/2 (Which slot they're using)
 
 slot_empty: "<red>You don't have any effect equipped in slot %slot%."

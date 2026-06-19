@@ -5,6 +5,8 @@ import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.DataManager;
 
 import java.util.UUID;
+
+import com.catadmirer.infuseSMP.worldguard.WorldGuardAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +34,12 @@ public class PlayerSwapHandItemsListener implements Listener {
             // Getting the effect equipped in each slot
             InfuseEffect lEffect = dataManager.getEffect(player.getUniqueId(), "1");
             InfuseEffect rEffect = dataManager.getEffect(player.getUniqueId(), "2");
+
+            // If WorldGuardAPI is enabled, this will check if they can use it in the current region they are in.
+            if (!(WorldGuardAPI.isFlagEnabled(player, WorldGuardAPI.getUseSparksFlag()))) {
+                player.sendMessage(new Message(Message.MessageType.REGION_SPARK_USE_DISABLED).toComponent());
+                return;
+            }
 
             // Activating the left effect's spark if the player was sneaking and the effect wasn't on cooldown.
             if (lEffect != null && !player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, lEffect.getKey())) {
