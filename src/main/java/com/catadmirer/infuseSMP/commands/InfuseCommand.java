@@ -133,7 +133,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                plugin.getDataManager().setEffect(new EffectSlot(target, effect, args[3]));
+                plugin.getDataManager().setEffect(target.getUniqueId(), args[3], effect);
                 msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
                 msg.applyPlaceholder("slot", slot);
                 msg.applyPlaceholder("player_name", target.getName());
