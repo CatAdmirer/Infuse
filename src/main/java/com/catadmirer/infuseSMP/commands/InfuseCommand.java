@@ -210,7 +210,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 player.addAttachment(plugin, "ability.use", !offhandEnabled);
 
                 msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
-                msg.applyPlaceholder("controlMode", choice);
+                msg.applyPlaceholder("control_mode", choice);
                 player.sendMessage(msg.toComponent());
                 break;
             default:
