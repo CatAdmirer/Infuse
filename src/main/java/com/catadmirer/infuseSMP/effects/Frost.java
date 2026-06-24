@@ -22,7 +22,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -50,7 +49,9 @@ public class Frost extends InfuseEffect {
     }
 
     @Override
-    public void equip(Player owner) {}
+    public void equip(Player owner) {
+        changeToSnow(owner);
+    }
 
     @Override
     public void unequip(Player owner) {}
@@ -172,12 +173,6 @@ public class Frost extends InfuseEffect {
 
     //// Listeners ////
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
-        changeToSnow(event.getPlayer());
-    }
 
     @EventHandler
     public void onCancelSwim(EntityToggleGlideEvent event) {

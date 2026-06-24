@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +51,10 @@ public class Thief extends InfuseEffect {
 
     @Override
     public void unequip(Player owner) {
+        if (disguisedPlayers.containsKey(owner.getUniqueId())) {
+            removeDisguise(owner);
+        }
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.listPlayer(owner);
         }
@@ -218,19 +221,6 @@ public class Thief extends InfuseEffect {
         // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
         if (plugin.getDataManager().hasEffect(killer, this)) {
             disguise(killer, deadPlayer);
-        }
-    }
-
-    /**
-     * Removing an active disguise if a disguised player leaves.
-     * 
-     * @param event The {@link PlayerQuitEvent} to handle
-     */
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (disguisedPlayers.containsKey(player.getUniqueId())) {
-            removeDisguise(player);
         }
     }
 
