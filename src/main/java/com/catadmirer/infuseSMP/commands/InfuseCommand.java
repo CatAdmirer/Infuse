@@ -133,7 +133,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                plugin.getDataManager().setEffect(target.getUniqueId(), args[3], effect);
+                plugin.getEffectManager().setEffect(target, effect, args[3]);
                 msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
                 msg.applyPlaceholder("slot", slot);
                 msg.applyPlaceholder("player_name", target.getName());
@@ -159,8 +159,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Removing the effects from the player
-                plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
-                plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
+                plugin.getEffectManager().unequipEffect(target, "1");
+                plugin.getEffectManager().unequipEffect(target, "2");
                 msg = new Message(MessageType.INFUSE_CLEAREFFECTS_SUCCESS);
                 msg.applyPlaceholder("player_name", target.getName());
                 player.sendMessage(msg.toComponent());
