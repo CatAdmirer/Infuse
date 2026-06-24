@@ -187,7 +187,7 @@ public class EffectManager implements Listener {
      * @param event The consume event.
      */
     @EventHandler
-    public void onPlayerConsume(PlayerItemConsumeEvent event) {
+    public void onDrinkEffect(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
@@ -197,19 +197,20 @@ public class EffectManager implements Listener {
         // Skipping if the effect is not found.
         if (effect == null) return;
 
-        // Skipping if the player's inventory is full.
-        if (player.getInventory().firstEmpty() == -1) {
-            event.setCancelled(true);
-            player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
-            return;
-        }
-         
         // Equipping the effect
         EquipResult result = this.equipEffect(player, effect, "1", false);
 
         // Equipping the slot in the players other slot
         if (result.type == EquipResultType.FAIL) {
-            this.drainEffect(player, "2");
+            // Drain slot 2 if an effect is equipped there
+            if (plugin.getDataManager().getEffect(player.getUniqueId(), "2") != null) {
+                result = this.drainEffect(player, "2");
+
+                // If the drain failed or was cancelled, exit
+                if (result.type == EquipResultType.CANCELLED) return;
+                if (result.type == EquipResultType.FAIL) return;
+            }
+
             result = this.equipEffect(player, effect, "2", false);
         }
 
