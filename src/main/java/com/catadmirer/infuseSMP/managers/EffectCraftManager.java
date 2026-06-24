@@ -16,6 +16,7 @@ import java.util.List;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -171,9 +172,8 @@ public class EffectCraftManager implements Listener {
         // Starting the ritual for the augmented effect
         // Creating the bossbar
         Component itemName = effect.getName().toComponent();
-        ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
-                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1,
-                effect.getRitualColor(), BossBar.Overlay.PROGRESS);
+        Component bossbarName = Component.text("🧪 ").append(itemName.decorate(TextDecoration.BOLD)).append(Component.text(" 🧪").decoration(TextDecoration.BOLD, false)).color(itemName.color());
+        ritualBossBar = BossBar.bossBar(bossbarName, 1, effect.getRitualColor(), BossBar.Overlay.PROGRESS);
 
         // Adding every player online to the bossbar
         for (Player p : Bukkit.getOnlinePlayers()) {
