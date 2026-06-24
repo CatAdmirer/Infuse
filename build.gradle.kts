@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.catadmirer"
-version = "2.4.5-beta2"
+version = "2.4.5-beta3"
 
 var javaVersion = 25;
 
