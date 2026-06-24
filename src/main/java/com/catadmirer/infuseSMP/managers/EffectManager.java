@@ -137,12 +137,7 @@ public class EffectManager implements Listener {
         EquipResult result = unequipEffect(player, slot);
 
         // Checking if an effect was removed
-        if (result.type == EquipResultType.FAIL) {
-            Message msg = new Message(MessageType.EFFECT_NONE_EQUIPPED);
-            msg.applyPlaceholder("slot", slot);
-            player.sendMessage(msg.toComponent());
-            return result;
-        }
+        if (result.type == EquipResultType.FAIL) return result;
 
         // Skipping if the unequip event was canceled
         if (result.type == EquipResultType.CANCELLED) {
