@@ -167,13 +167,13 @@ public class Emerald extends InfuseEffect {
         Infuse.LOGGER.debug("[Emerald] Target has emerald effect");
         Infuse.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
 
-        new FoodAndExpLock(event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
+        new FoodAndExpLock(plugin, event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
 
-    public class FoodAndExpLock implements Listener {
+    public static class FoodAndExpLock implements Listener {
         private final Player player;
 
-        public FoodAndExpLock(Player player, double durationSeconds) {
+        public FoodAndExpLock(Infuse plugin, Player player, double durationSeconds) {
             this.player = player;
 
             Bukkit.getPluginManager().registerEvents(this, plugin);
