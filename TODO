@@ -11,7 +11,7 @@ Add separate recipes for the augmented and regular versions of each effect
 - For convenience, add a quick way to keep two recipes the same (maybe define recipe then state applicable effects for that recipe)
 
 Add a config to disable in certain worlds
-
+Add a config to make villagers immune to abilities
 
 Infuse Revamp Revamp
 - Armor has animations to show durability
