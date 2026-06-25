@@ -4,15 +4,15 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -82,42 +82,54 @@ public class Strength extends InfuseEffect {
     @EventHandler
     public void extraDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
-
-        // Skipping players without the strength effect
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        // Boosting damage based on the attacker's health.
+        // Damage boost
         double damage = event.getDamage();
-        double health = attacker.getHealth();
-        if (health < 2) {
-            event.setDamage(damage + 3);
-        } else if (health < 4) {
-            event.setDamage(damage + 2);
-        } else if (health < 6) {
-            event.setDamage(damage + 1);
-        }
-    }
+        damage += (attacker.getAttribute(Attribute.MAX_HEALTH).getValue() - attacker.getHealth()) * 0.3;
 
-    /** Automatically crits while the strength spark is active */
-    @EventHandler
-    public void strengthSparkAutoCrit(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player player)) return;
+        // Spark auto-crit
+        if (!event.isCritical() && CooldownManager.isEffectActive(attacker.getUniqueId(), "strength")) {
+            // crit dmg boost
+            damage *= 1.35;
 
-        // Fabricating crits if the spark is active, and if it wasn't already a critical hit.
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "strength") && !event.isCritical()) {
-            // Changing the damage to that of a crit.
-            double originalDamage = event.getDamage();
-            double critDamage = originalDamage * 1.35;
-            event.setDamage(critDamage);
-            
             // Playing the crit noise and spawning crit particles.
             Entity hitEntity = event.getEntity();
             hitEntity.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 1);
             hitEntity.getWorld().spawnParticle(Particle.CRIT, hitEntity.getLocation().add(0, hitEntity.getHeight() / 2, 0), 10);
         }
+
+        // non-player target double dmg
+        if (!(event.getEntity() instanceof Player)) damage *= 2;
+
+        // Storing the adjusted damage
+        event.setDamage(damage);
+
+        // Shield stuffs
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        // Making sure the player was blocking
+        if (!player.isBlocking()) return;
+
+        // Making sure the attacker is using an axe
+        if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
+
+        // Playing noise and stunning the opponent
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
+
+        // Extending shield cooldown
+        player.setCooldown(Material.SHIELD, 200);
+
+        // Damaging the shield
+        player.getInventory().getItemInMainHand().damage(20, attacker);
+
+        // TODO: Test if the player will still count as blocking after this damage event.
+
+        // Halving the damage
+        event.setDamage(event.getDamage() / 2);
     }
 
-    /** Boosts the piercing level of any arrow to 100 for players with the strength effect. */
+    /** Boosts the piercing level of any arrow to 1 for players with the strength effect. */
     @EventHandler
     public void strengthHighPiercing(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
@@ -127,47 +139,14 @@ public class Strength extends InfuseEffect {
 
         // Increasing the piercing level of the shot arrow.
         if (event.getProjectile() instanceof Arrow arrow) {
-            arrow.setPierceLevel(100);
+            arrow.setPierceLevel(1);
         }
     }
 
-    /** Doubles damage against mobs for players with the strength effect. */
     @EventHandler
-    public void strengthDoubleDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player attacker)) return;
-        if (!(event.getEntity() instanceof LivingEntity entity)) return;
+    public void strengthTenHitEvent(TenHitEvent event) {
+        if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
 
-        // Not dealing double damage to other players
-        if (entity instanceof Player) return;
-
-        // Making sure the attacker has the strength effect
-        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-
-        // Doubling the damage of the attack
-        event.setDamage(event.getDamage() * 2);
-    }
-
-    /** Lengthens the shield cooldown of opponents when their shield is disabled by someone with the strength effect. */
-    @EventHandler
-    public void strengthLengthenShieldCooldown(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!(event.getDamager() instanceof Player attacker)) return;
-
-        // Making sure the player was blocking
-        if (!player.isBlocking()) return;
-        
-        // Making sure the attacker is using an axe
-        if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
-
-        // Making sure the attacker has the strength effect
-        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-
-        // Playing noise and stunning the opponent
-        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-        
-        // TODO: Test if this can be removed
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            player.setCooldown(Material.SHIELD, 200);
-        }, 20L);
+        // TODO: Reveal armor durability
     }
 }
