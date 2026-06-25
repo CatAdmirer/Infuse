@@ -100,7 +100,7 @@ public abstract class InfuseEffect implements Listener {
     public abstract void unequip(Player owner);
 
     @Deprecated()
-    public abstract void applyPassives(Player owner);
+    public void applyPassives(Player owner) {}
     public abstract void activateSpark(Player owner);
 
     public abstract InfuseEffect getRegularVersion();

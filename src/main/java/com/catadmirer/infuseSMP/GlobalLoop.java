@@ -48,7 +48,7 @@ public class GlobalLoop extends BukkitRunnable {
             // Making sure the apophis boost has been removed
             if (!plugin.getDataManager().hasEffect(player, new Apophis())) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
-                playerHealth.removeModifier(Apophis.apophisBoost);
+                playerHealth.removeModifier(Apophis.APOPHIS_BOOST);
             }
 
             // Making sure the heart boost has been removed

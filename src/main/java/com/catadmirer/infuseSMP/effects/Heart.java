@@ -58,9 +58,6 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public void applyPassives(Player owner) {}
-
-    @Override
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
 

@@ -55,9 +55,6 @@ public class Invis extends InfuseEffect {
     }
 
     @Override
-    public void applyPassives(Player owner) {}
-
-    @Override
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;

@@ -44,9 +44,6 @@ public class Thunder extends InfuseEffect {
     public void unequip(Player owner) {}
 
     @Override
-    public void applyPassives(Player owner) {}
-
-    @Override
     public void activateSpark(Player owner) {
         UUID uuid = owner.getUniqueId();
 
