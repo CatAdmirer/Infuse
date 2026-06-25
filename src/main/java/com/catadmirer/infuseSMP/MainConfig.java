@@ -227,20 +227,24 @@ public class MainConfig {
         return Math.clamp((float) config.getDouble("emerald.percent_xp_to_share"), 0, 1);
     }
 
-    public void applyUpdates() {
-        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
-        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
-        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
-        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
-        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
-        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
-        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
-        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
-        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
-        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
-        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
+    public int apophisExpPerHit() {
+        return config.getInt("apophis.xp_stolen_per_hit");
+    }
 
-        save();
+    public float apophisExpPercent() {
+        return Math.clamp((float) config.getDouble("apophis.xp_stolen_percent"), 0, 1);
+    }
+
+    public float apophisPercentExpToShare() {
+        return Math.clamp((float) config.getDouble("apophis.percent_xp_to_share"), 0, 1);
+    }
+
+    public double apophisLockDurationSeconds() {
+        return config.getDouble("apophis.lock_duration_seconds", 10);
+    }
+
+    public int apophisLootingLevel() {
+        return config.getInt("apophis.enchantment.looting_level");
     }
 
     public int emeraldLootingLevel() {
@@ -257,5 +261,26 @@ public class MainConfig {
 
     public int hasteUnbreakingLevel() {
         return config.getInt("haste.enchantment.unbreaking_level");
+    }
+
+    public void applyUpdates() {
+        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
+        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
+        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
+        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
+        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
+        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
+        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
+        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
+        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
+        if (!config.contains("apophis.percent_xp_to_share")) config.set("apophis.percent_xp_to_share", 0.5);
+        if (!config.contains("apophis.xp_stolen_per_hit")) config.set("apophis.xp_stolen_per_hit", 15);
+        if (!config.contains("apophis.xp_stolen_percent")) config.set("apophis.xp_stolen_percent", 1);
+        if (!config.contains("apophis.enchantment.looting_level")) config.set("apophis.enchantment.looting_level", 5);
+        if (!config.contains("apophis.lock_duration_seconds")) config.set("apophis.lock_duration_seconds", 10);
+
+        save();
     }
 }

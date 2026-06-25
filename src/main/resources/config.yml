@@ -88,12 +88,18 @@ invis:
     augmented: 25
 
 apophis:
+  xp_stolen_per_hit: 15
+  xp_stolen_percent: 1
+  percent_xp_to_share: 0.5
+  lock_duration_seconds: 10
   cooldown:
     default: 125
     augmented: 75
   duration:
     default: 15
     augmented: 18
+  enchantment:
+    looting_level: 5
 
 emerald:
   xp_stolen_per_hit: 15
