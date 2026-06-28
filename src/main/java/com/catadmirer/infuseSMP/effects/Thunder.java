@@ -78,11 +78,9 @@ public class Thunder extends InfuseEffect {
                 while (true) {
                     long nearbyPlayers = world.getNearbyEntities(owner.getLocation(), radius, radius, radius).stream().filter(p -> p instanceof Player).count();
                     double tmp = baseRadius + radiusBoostPerPlayer * nearbyPlayers;
-                    if (tmp == radius) {
-                        break;
-                    } else {
-                        radius = tmp;
-                    }
+                    if (tmp == radius) break;
+
+                    radius = tmp;
                 }
 
                 // Striking all players within the radius
