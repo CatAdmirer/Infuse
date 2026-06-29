@@ -1,5 +1,9 @@
-name: Build Infuse versions
+name: Build & publish Infuse to maven
 on: [push]
+
+env:
+  MAVEN_USERNAME: infuse
+  MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
 
 jobs:
   build-21:
@@ -18,8 +22,7 @@ jobs:
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v6
       - name: "Running build"
-        run: ./gradlew build
-      - run: ls ./build/libs
+        run: ./gradlew publish
   build-25:
     runs-on: ubuntu-latest
     env:
@@ -36,5 +39,4 @@ jobs:
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v6
       - name: "Running build"
-        run: ./gradlew build
-      - run: ls ./build/libs
+        run: ./gradlew publish

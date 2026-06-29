@@ -2,6 +2,7 @@ import java.util.Objects
 
 plugins {
     `java-library`
+    `maven-publish`
     alias(libs.plugins.paperweight)
     alias(libs.plugins.run.paper)
 }
@@ -52,4 +53,24 @@ tasks.processResources {
 tasks.register("resetAndRun") {
     delete("run/plugins/$rootProject.name")
     finalizedBy("runServer")
+}
+
+publishing {
+  publications {
+    create<MavenPublication>("mavenJava") {
+      from(components["java"])
+            
+      artifactId = "infuse-$minecraftVersion"
+    }
+  }
+  repositories {
+    maven {
+      name = "turbo-maven"
+      url = uri("https://maven.turbojax.org/releases/")
+      credentials {
+        username = System.getenv("MAVEN_USERNAME")
+        password = System.getenv("MAVEN_PASSWORD")
+      }
+    }
+  }
 }
