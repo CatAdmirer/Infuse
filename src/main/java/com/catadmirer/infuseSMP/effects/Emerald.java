@@ -311,9 +311,9 @@ public class Emerald extends InfuseEffect {
         int expPerHit = plugin.getMainConfig().emeraldExpPerHit();
 
         // Updating the xp of the players
-        damaged.setTotalExperience(exp - expPerHit);
+        damaged.setTotalExperience(Math.max(exp - expPerHit, 0));
 
-        int toGain = (int) (expPerHit * plugin.getMainConfig().emeraldExpPercent());
+        int toGain = (int) (Math.min(expPerHit, exp) * plugin.getMainConfig().emeraldExpPercent());
         attacker.setTotalExperience(attacker.getTotalExperience() + toGain);
 
         // Calling the exp change event to allow for sharing if the spark is active
