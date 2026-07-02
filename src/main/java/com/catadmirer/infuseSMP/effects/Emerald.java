@@ -128,13 +128,19 @@ public class Emerald extends InfuseEffect {
 
     @EventHandler
     public void enchantHeldItem(PlayerItemHeldEvent event) {
+        Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent triggered");
+
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isSword(item)) {
-            ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
-        }
+        Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent is for an emerald user");
+
+        ItemStack item = player.getInventory().getItem(event.getNewSlot());
+        if (!ItemUtil.isSword(item)) return;
+
+        Infuse.LOGGER.debug("[Emerald] Emerald user is holding a sword.  Enchanting with looting.");
+
+        ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
     }
 
     @EventHandler
