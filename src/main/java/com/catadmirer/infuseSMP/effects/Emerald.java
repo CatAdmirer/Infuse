@@ -68,7 +68,7 @@ public class Emerald extends InfuseEffect {
     @Override
     public void equip(Player owner) {
         // Applying the potion effect to the player
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 2, false, false));
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
     }
 
     @Override
