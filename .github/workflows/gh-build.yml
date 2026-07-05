@@ -85,7 +85,10 @@ jobs:
         run: ./gradlew publish
   # Publishing to modrinth
   publish:
-    needs: tag_version
+    needs:
+      - tag_version
+      - build-21
+      - build-25
     runs-on: ubuntu-latest
     steps:
       - name: Publishing build for 1.21.x
