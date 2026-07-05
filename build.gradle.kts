@@ -64,8 +64,8 @@ publishing {
   publications {
     create<MavenPublication>("mavenJava") {
       from(components["java"])
-            
-      artifactId = "infuse-$minecraftVersion"
+      version = "$version-$javaVersion"
+      artifactId = "infuse"
     }
   }
   repositories {
