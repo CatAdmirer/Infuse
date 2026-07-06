@@ -53,6 +53,8 @@ public class InfusePlaceholders extends PlaceholderExpansion {
                 return getEffectName(uuid, "1");
             case "second_effect_name":
                 return getEffectName(uuid, "2");
+            case "controls":
+                return plugin.getDataManager().getControlMode(uuid);
         }
 
         return null;
