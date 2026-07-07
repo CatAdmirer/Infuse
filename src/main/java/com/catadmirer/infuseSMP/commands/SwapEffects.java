@@ -26,10 +26,15 @@ public class SwapEffects implements CommandExecutor {
         // Getting the equipped effects
         InfuseEffect effect1 = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
         InfuseEffect effect2 = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        if (effect1 == null && effect2 == null) {
+            player.sendMessage(new Message(MessageType.SWAP_NO_EFFECTS).toComponent());
+            return true;
+        }
 
         // Swapping the effects
         plugin.getDataManager().setEffect(player.getUniqueId(), "1", effect2);
         plugin.getDataManager().setEffect(player.getUniqueId(), "2", effect1);
+
         player.sendMessage(new Message(MessageType.SWAP_SUCCESS).toComponent());
         return true;
     }
