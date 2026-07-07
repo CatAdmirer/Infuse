@@ -21,7 +21,7 @@ withdraw_invalid: "<red>Invalid usage. Use /ldrain or /rdrain"
 # %target% = The person they're running it on
 
 trust_console_usage: "<red>Only players can use this command."
-trust_incorrect_usage: "<red>Usage: /%label% %player%"
+trust_incorrect_usage: "<red>Usage: /%label% <player>"
 trust_no_player: "<red>Player not found."
 trust_self: "<red>You always trust yourself. Surely..."
 trust_added: "<green>You now trust %target%."
