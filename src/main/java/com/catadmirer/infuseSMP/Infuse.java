@@ -51,7 +51,6 @@ public class Infuse extends JavaPlugin implements Listener {
     }
 
     public Infuse() {
-        new ApophisManager(this);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);

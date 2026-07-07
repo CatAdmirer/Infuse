@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.catadmirer"
-version = "2.4.5-beta5"
+version = "2.4.5-beta6"
 
 var javaVersion = Integer.parseInt(Objects.requireNonNullElse(System.getenv("INFUSE_JVM"), "25"))
 var minecraftVersion = Objects.requireNonNullElse(System.getenv("INFUSE_MINECRAFT"), "26.1.2")

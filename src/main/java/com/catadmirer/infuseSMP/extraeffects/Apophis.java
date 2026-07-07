@@ -10,9 +10,13 @@ import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -48,17 +52,32 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class Apophis extends InfuseEffect {
     public static final NamespacedKey LOOTING_KEY = new NamespacedKey("infuse", "apophis_looting");
     public static final NamespacedKey APOPHIS_BOOST = new NamespacedKey("infuse", "apophis_boost");
     public static final NamespacedKey APOPHIS_SPARK_BOOST = new NamespacedKey("infuse", "apophis_spark_boost");
+
+    private static final MiniMessage mm = MiniMessage.miniMessage();
+    private static final Component APOPHIS_NAME = Component.text("Apophis", NamedTextColor.DARK_PURPLE);
+
+    private static final ProfileProperty APOPHIS_SKIN = new ProfileProperty(
+        "textures",
+        "ewogICJ0aW1lc3RhbXAiIDogMTcxNzg4NTA2MDQwNywKICAicHJvZmlsZUlkIiA6ICJlZGUyYzdhMGFjNjM0MTNiYjA5ZDNmMGJlZTllYzhlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0aGVEZXZKYWRlIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MwOTBmY2NjMjBmMWM3ZWMyMDBkNGVkMDUxMjQwNjM3ZmRmNjE5ZDg1Nzg0NWZhNWRmNWJkMzM1MWJiMjBkOCIKICAgIH0KICB9Cn0=",
+        "mBgGwS28lqNz7rJCysD9SElJpA5q+34uTZK68JFXIFzuoN31KQg2VHjVDz+/nAr0yXdRwOrgL5rnRb2NbKBPyKSWdcB8A1nVHeNMpoJ5c5CzEERyOROUiTRxge/MIhYL7Fkj67fkh7Sc/l7BwDAf7/7OIgiAIleUTLZ9COnIN15gylTBldOo3JOka8TTNrI1i4QmnMsbgT0luQZzrUMRtZxIHNwx+26IevzCE+hpNdwiYqnDVZdayDLPVy1vv+i3C7AJGd9b7/2/qv0YmWxvT3uKrPR8+9fbSWltGx9ikrdXO17FrGc5u0gqmPWAaSSWw/NJmMhPenILh7/MvXA8mO2m7JeuhnM/EYzdOMB3qzvkUEVddFIngPl6LNE8XG1R+APFBsbpnpybB7dQphSud5DNfuZijqLDd735kykYlRMzw5VVGf7fONheLzSV42XRsIU+5IazHvmAZ4pxr72+r9bbS9vRW38ZgQIy6p8r4tLv9jfmqmcS9lEn1CAgDLAqZWGzIWeIgOdDsrWH4ia/1gj6oZVefRCr2dAS84NsOQUdoJDbS8G0+ArN+CWgnlcwOJCS6MB5kBmQl2FPvwLcSnnRcS66XKfH28Bu2/J3Hu5zRWbONuOLQTbYFxwftUtvS1IORKBCfWvlJTx5G/mz1KOGW89iOCpW8jdx8EmzpRI="
+    );
 
     private final Infuse plugin;
 
@@ -81,6 +100,9 @@ public class Apophis extends InfuseEffect {
         owner.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, -1, 9, false, false));
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 2, false, false));
         owner.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, -1, 2, false, false));
+
+        // Disguise player
+        disguise(owner);
     }
 
     @Override
@@ -98,6 +120,9 @@ public class Apophis extends InfuseEffect {
 
             ItemUtil.removeSpecialEnchant(item, LOOTING_KEY, Enchantment.LOOTING);
         }
+
+        // Removing the player's disguise
+        removeDisguise(owner);
     }
 
     @Override
@@ -230,6 +255,101 @@ public class Apophis extends InfuseEffect {
                 ++this.tick;
             }
         }).runTaskTimer(plugin, 0, 1);
+    }
+
+    /**
+     * Creates the disguise file for a player.  If the file exists, nothing happens.
+     *
+     * @param owner A player to disguisr
+     */
+    public void initDisguise(Player owner) {
+        UUID uuid = owner.getUniqueId();
+
+        // Getting the disguise file for the player
+        File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
+        disguiseFile.getParentFile().mkdirs();
+
+        // Skipping players who already have a disguise file
+        if (disguiseFile.exists()) return;
+
+        try {
+            FileWriter writer = new FileWriter(disguiseFile);
+            Optional<ProfileProperty> textures = owner.getPlayerProfile().getProperties().stream().filter(property -> "textures".equals(property.getName())).findFirst();
+
+            // Writing the urls to disk
+            writer.write(mm.serialize(owner.displayName()));
+            writer.write("\n");
+            if (textures.isEmpty()) {
+                writer.write("null\nnull");
+            } else {
+                writer.write(textures.get().getValue());
+                writer.write("\n");
+                writer.write(String.valueOf(textures.get().getSignature()));
+            }
+
+            writer.flush();
+            writer.close();
+        } catch (IOException err) {
+            Infuse.LOGGER.error("Failed to write to {}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
+        }
+    }
+
+    public void disguise(Player owner) {
+        // Making sure the disguise file is created
+        initDisguise(owner);
+
+        // Changing the player's skin
+        PlayerProfile profile = owner.getPlayerProfile();
+        profile.setProperty(APOPHIS_SKIN);
+        owner.setPlayerProfile(profile);
+
+        // Hiding the player's name
+        owner.displayName(APOPHIS_NAME);
+        owner.playerListName(APOPHIS_NAME);
+    }
+
+    public void removeDisguise(Player owner) {
+        UUID uuid = owner.getUniqueId();
+
+        // Getting the player's skin info from the disguise file
+        File disguiseFile = new File(plugin.getDataFolder(), "data/ApophisPlayers/" + uuid + ".yml");
+
+        try (Scanner scanner = new Scanner(disguiseFile)) {
+            PlayerProfile profile = owner.getPlayerProfile();
+            String value = "";
+            String signature = "";
+
+            // Getting the player's name
+            if (scanner.hasNextLine()) {
+                String read = scanner.nextLine();
+                owner.displayName(mm.deserialize(read));
+                owner.playerListName(mm.deserialize(read));
+            }
+
+            // Getting the property value
+            if (scanner.hasNextLine()) {
+                value = scanner.nextLine();
+            }
+
+            // Getting the property signature
+            if (scanner.hasNextLine()) {
+                signature = scanner.nextLine();
+                if (signature.equals("null")) {
+                    signature = null;
+                }
+            }
+
+            profile.setProperty(new ProfileProperty("textures", value, signature));
+
+            owner.setPlayerProfile(profile);
+        } catch (FileNotFoundException err) {}
+
+        // Deleting the disguise file
+        if (disguiseFile.exists()) {
+            disguiseFile.delete();
+        }
+
+        return;
     }
 
     //// Listeners ////
