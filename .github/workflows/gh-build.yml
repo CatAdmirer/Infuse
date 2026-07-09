@@ -9,6 +9,8 @@ jobs:
   # Getting version number
   tag_version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       full_version: ${{ steps.version_finder.outputs.full_version }}
     steps:
