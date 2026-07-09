@@ -9,8 +9,8 @@ plugins {
 group = "com.catadmirer"
 version = "2.4.5-beta6"
 
-var javaVersion = Integer.parseInt(Objects.requireNonNullElse(System.getenv("INFUSE_JVM"), "21"))
-var minecraftVersion = Objects.requireNonNullElse(System.getenv("INFUSE_MINECRAFT"), "1.21.11")
+var javaVersion = Integer.parseInt(Objects.requireNonNullElse(System.getenv("INFUSE_JVM"), "25"))
+var minecraftVersion = Objects.requireNonNullElse(System.getenv("INFUSE_MINECRAFT"), "26.1.2")
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
