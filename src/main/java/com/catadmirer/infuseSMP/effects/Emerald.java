@@ -213,9 +213,9 @@ public class Emerald extends InfuseEffect {
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
 
-        double multiplier = 2;
+        double multiplier = plugin.getMainConfig().emeraldMultiplierStandard();
         if (CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) {
-            multiplier = 4;
+            multiplier = plugin.getMainConfig().emeraldMultiplierUseEffect();
         }
 
         int newAmount = (int) Math.round(amount * multiplier);

@@ -176,6 +176,7 @@ public class Thunder extends InfuseEffect {
      *
      * @param event A {@link TenHitEvent}.
      */
+    @EventHandler
     public void onTenHitEvent(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
@@ -200,10 +201,7 @@ public class Thunder extends InfuseEffect {
 
         // Only summoning lightning if the target is a living entity
         if (!(event.getEntity() instanceof LivingEntity target)) return;
-
-        if (target instanceof Player p) {
-            if (plugin.getDataManager().isTrusted(attacker, p)) return;
-        }
+        if (target instanceof Player p && plugin.getDataManager().isTrusted(attacker, p)) return;
 
         strikeLighting(target, attacker);
     }
