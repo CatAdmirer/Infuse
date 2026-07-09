@@ -30,7 +30,7 @@ jobs:
           fi
         
           # Putting together the version
-          FULL_VERSION="${VERSION}-${CHANNEL}{BUILD_NUMBER}"
+          FULL_VERSION="${VERSION}-${CHANNEL}${BUILD_NUMBER}"
         
           # Saving the full version
           echo "full_version=${FULL_VERSION}" >> $GITHUB_OUTPUT
