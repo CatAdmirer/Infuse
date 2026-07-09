@@ -26,7 +26,7 @@ jobs:
         
           # Check for existing build
           if git tag | grep -E "${VERSION}-${CHANNEL}[0-9]+$" >/dev/null; then
-            BUILD_NUMBER=$(($(git tag | grep -E "${VERSION}-${CHANNEL}[0-9]+$" | sed 's/.*-${CHANNEL}//' | sort -n | tail -1) + 1))
+            BUILD_NUMBER=$(($(git tag | grep -E "${VERSION}-${CHANNEL}[0-9]+$" | sed "s/.*-${CHANNEL}//" | sort -n | tail -1) + 1))
           fi
         
           # Putting together the version
@@ -35,8 +35,16 @@ jobs:
           # Saving the full version
           echo "full_version=${FULL_VERSION}" >> $GITHUB_OUTPUT
           echo "FULL_VERSION=${FULL_VERSION}" >> $GITHUB_ENV
-      - name: Tagging the latest commit
-        run: git tag "${FULL_VERSION}"
+      - name: ️ Tagging the latest commit
+        uses: actions/github-script@v9
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.version_finder.outputs.full_version }}',
+              sha: context.sha
+            });
   # Building for java 21
   build-21:
     runs-on: ubuntu-latest
