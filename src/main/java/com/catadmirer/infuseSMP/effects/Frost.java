@@ -86,7 +86,7 @@ public class Frost extends InfuseEffect {
         CooldownManager.setTimes(playerUUID, "frost", duration, cooldown);
 
         Location center = owner.getLocation();
-        double radius = 5;
+        final double radius = plugin.getMainConfig().frostSparkRadius();
         World world = owner.getWorld();
         final Set<Player> affectedPlayers = new HashSet<>();
 
@@ -138,7 +138,7 @@ public class Frost extends InfuseEffect {
     }
 
     public void changeToSnow(Player player) {
-        int frostSnowRadius = 3;
+        final int frostSnowRadius = plugin.getMainConfig().frostPassiveSnowChangingRadius();
 
         Location center = player.getLocation();
 
@@ -194,7 +194,7 @@ public class Frost extends InfuseEffect {
         Vector direction = player.getLocation().getDirection().normalize();
         if (inFrost) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-            double boostStrength = 0.6;
+            final double boostStrength = plugin.getMainConfig().frostPassiveWalkSpeed();
             Vector newVelocity = direction.multiply(boostStrength);
             player.setVelocity(newVelocity);
         } else {

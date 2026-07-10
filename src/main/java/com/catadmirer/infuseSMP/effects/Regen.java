@@ -88,7 +88,8 @@ public class Regen extends InfuseEffect {
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
         if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
-            for (Entity loopentity : player.getNearbyEntities(5, 5, 5)) {
+            final double radius = plugin.getMainConfig().regenSparkHealTrustedRadius();
+            for (Entity loopentity : player.getNearbyEntities(radius, radius, radius)) {
                 if (loopentity instanceof Player otherplayer) {
                     if (plugin.getDataManager().isTrusted(player, otherplayer)) {
                         otherplayer.heal(event.getDamage()/2);

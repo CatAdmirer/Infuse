@@ -104,6 +104,11 @@ public class Recipes implements CommandExecutor, Listener {
             return;
         }
 
+        if (plugin.getRecipeManager().getRecipe(effect).getChoiceMap().isEmpty()) {
+            player.sendMessage(new Message(MessageType.RECIPE_NOT_FOUND).toComponent());
+            return;
+        }
+
         // Opening the recipe gui
         Inventory recipeGui = new RecipeGUI(plugin.getRecipeManager(), effect).getInventory();
         player.closeInventory();

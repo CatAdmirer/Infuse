@@ -88,7 +88,7 @@ public class Message {
         EFFECT_NONE_EQUIPPED("slot"),
         WITHDRAW_INVALID,
         TRUST_CONSOLE_USAGE,
-        TRUST_INCORRECT_USAGE("label", "player"),
+        TRUST_INCORRECT_USAGE("label"),
         TRUST_NO_PLAYER,
         TRUST_SELF,
         TRUST_ADDED("target"),

@@ -195,7 +195,7 @@ public class MainConfig {
         return config.getInt("speed.dashMultiplier");
     }
 
-    public double speedPlayerVelocityMultiplier() {
+    public int speedPlayerVelocityMultiplier() {
         return config.getInt("speed.playerVelocityMultiplier");
     }
 
@@ -263,23 +263,119 @@ public class MainConfig {
         return config.getInt("haste.enchantment.unbreaking_level");
     }
 
+    public double emeraldMultiplierStandard() {
+        return config.getDouble("emerald.multiplier-xp.standard");
+    }
+
+    public double emeraldMultiplierUseEffect() {
+        return config.getDouble("emerald.multiplier-xp.use-effect");
+    }
+
+    public double enderPassiveRadius() {
+        return config.getDouble("ender.passive.radius");
+    }
+
+    public int enderSparkMaxDistance() {
+        return config.getInt("ender.spark.max-distance");
+    }
+
+    public double featherLandRadius() {
+        return config.getDouble("feather.land.radius");
+    }
+
+    public double featherLandDamage() {
+        return config.getDouble("feather.land.damage");
+    }
+
+    public double firePassiveWalkSpeed() {
+        return config.getDouble("fire.passive.walk-speed");
+    }
+
+    public double fireSparkRadius() {
+        return config.getDouble("fire.spark.radius");
+    }
+
+    public double fireSparkExplosionRadius() {
+        return config.getDouble("fire.spark.explosion-radius");
+    }
+
+    public int frostPassiveSnowChangingRadius() {
+        return config.getInt("frost.passive.snow-changing-radius");
+    }
+
+    public double frostPassiveWalkSpeed() {
+        return config.getDouble("frost.passive.walk-speed");
+    }
+
+    public double frostSparkRadius() {
+        return config.getDouble("frost.spark.radius");
+    }
+
+    public int oceanPassiveDrownStrength() {
+        return config.getInt("ocean.passive.drown-strength");
+    }
+
+    public int oceanPassiveDrownDamage() {
+        return config.getInt("ocean.passive.drown-damage");
+    }
+
+    public int oceanSparkDrownStrength() {
+        return config.getInt("ocean.spark.drown-strength");
+    }
+
+    public int oceanSparkDrownDamage() {
+        return config.getInt("ocean.spark.drown-damage");
+    }
+
+    public double regenSparkHealTrustedRadius() {
+        return config.getDouble("regen.spark.heal-trusted-radius");
+    }
+
     public void applyUpdates() {
         if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
         if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
         if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
+
         if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
         if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
         if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
         if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
+
         if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
+
         if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
         if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
         if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
+
         if (!config.contains("apophis.percent_xp_to_share")) config.set("apophis.percent_xp_to_share", 0.5);
         if (!config.contains("apophis.xp_stolen_per_hit")) config.set("apophis.xp_stolen_per_hit", 15);
         if (!config.contains("apophis.xp_stolen_percent")) config.set("apophis.xp_stolen_percent", 1);
         if (!config.contains("apophis.enchantment.looting_level")) config.set("apophis.enchantment.looting_level", 5);
         if (!config.contains("apophis.lock_duration_seconds")) config.set("apophis.lock_duration_seconds", 10);
+
+        if (!config.contains("emerald.multiplier-xp.standard")) config.set("emerald.multiplier.standard", 2);
+        if (!config.contains("emerald.multiplier-xp.use-effect")) config.set("emerald.multiplier.use-effect", 4);
+
+        if (!config.contains("ender.passive.radius")) config.set("ender.passive.radius", 10);
+        if (!config.contains("ender.spark.max-distance")) config.set("ender.spark.max-distance", 15);
+
+        if (!config.contains("feather.land.radius")) config.set("feather.land.radius", 4);
+        if (!config.contains("feather.land.damage")) config.set("feather.land.damage", 8);
+
+        if (!config.contains("fire.passive.walk-speed")) config.set("fire.passive.walk-speed", 0.6);
+        if (!config.contains("fire.spark.radius")) config.set("fire.spark.radius", 5);
+        if (!config.contains("fire.spark.explosion-radius")) config.set("fire.spark.explosion-radius", 5);
+
+        if (!config.contains("frost.passive.snow-changing-radius")) config.set("frost.passive.snow-changing-radius", 3);
+        if (!config.contains("frost.passive.walk-speed")) config.set("frost.passive.walk-speed", 0.6);
+        if (!config.contains("frost.spark.radius")) config.set("frost.spark.radius", 5);
+
+        if (!config.contains("ocean.passive.drown-strength")) config.set("ocean.passive.drown-strength", 5);
+        if (!config.contains("ocean.passive.drown-damage")) config.set("ocean.passive.drown-damage", 1);
+        if (!config.contains("ocean.spark.drown-strength")) config.set("ocean.spark.drown-strength", 20);
+        if (!config.contains("ocean.spark.drown-damage")) config.set("ocean.spark.drown-damage", 2);
+
+        if (!config.contains("regen.spark.heal-trusted-radius")) config.set("regen.spark.heal-trusted-radius", 5);
 
         save();
     }

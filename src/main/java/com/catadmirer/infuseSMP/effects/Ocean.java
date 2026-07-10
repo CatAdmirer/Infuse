@@ -45,11 +45,11 @@ public class Ocean extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         // Boosting the strength and damage of the passive drowning if the spark is active
-        int drownStrength = 5;
-        int drownDamage = 1;
+        int drownStrength = plugin.getMainConfig().oceanPassiveDrownStrength();
+        int drownDamage = plugin.getMainConfig().oceanPassiveDrownDamage();
         if (CooldownManager.isEffectActive(owner.getUniqueId(), "ocean"))  {
-            drownStrength = 20;
-            drownDamage = 2;
+            drownStrength = plugin.getMainConfig().oceanSparkDrownStrength();
+            drownDamage = plugin.getMainConfig().oceanSparkDrownDamage();
         }
         
         for (Player otherPlayer : owner.getWorld().getPlayers()) {
