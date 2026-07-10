@@ -1,5 +1,3 @@
-import java.util.Objects
-
 plugins {
     `java-library`
     `maven-publish`
@@ -8,10 +6,9 @@ plugins {
 }
 
 group = "com.catadmirer"
-version = "2.4.5-beta7"
 
-var javaVersion = Integer.parseInt(Objects.requireNonNullElse(System.getenv("INFUSE_JVM"), "25"))
-var minecraftVersion = Objects.requireNonNullElse(System.getenv("INFUSE_MINECRAFT"), "26.1.2")
+val javaVersion = (project.property("javaVersion") as String).toInt()
+val minecraftVersion: String by project
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -44,7 +41,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
     val props = mapOf("version" to version,
-                        "mcVersion" to minecraftVersion)
+        "mcVersion" to minecraftVersion)
     filesMatching("plugin.yml") {
         expand(props)
     }
