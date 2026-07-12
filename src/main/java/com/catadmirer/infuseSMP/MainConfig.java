@@ -1,14 +1,14 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MainConfig {
     public final File file;
@@ -85,6 +85,10 @@ public class MainConfig {
         }
 
         return false;
+    }
+
+    public List<String> getBlacklistedWorlds(String effect) {
+        return config.getStringList(effect + ".blacklisted-worlds").stream().filter(Objects::nonNull).toList();
     }
 
     public String lang() {
@@ -331,6 +335,14 @@ public class MainConfig {
         return config.getDouble("regen.spark.heal-trusted-radius");
     }
 
+    public double thunderSparkBaseRadius() {
+        return config.getDouble("thunder.spark.base-radius");
+    }
+
+    public double thunderSparkPerPlayerBoostRadius() {
+        return config.getDouble("thunder.spark.per-player-boost-radius");
+    }
+
     public void applyUpdates() {
         if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
         if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
@@ -376,6 +388,15 @@ public class MainConfig {
         if (!config.contains("ocean.spark.drown-damage")) config.set("ocean.spark.drown-damage", 2);
 
         if (!config.contains("regen.spark.heal-trusted-radius")) config.set("regen.spark.heal-trusted-radius", 5);
+
+        if (!config.contains("thunder.spark.base-radius")) config.set("thunder.spark.base-radius", 10);
+        if (!config.contains("thunder.spark.per-player-boost-radius")) config.set("thunder.spark.per-player-boost-radius", 0.3);
+
+        final List<String> blacklisted_worlds = new ArrayList<>();
+        blacklisted_worlds.add("Example World");
+        InfuseEffect.getRegisteredEffects().values().forEach(effect -> {
+            if (!config.contains(effect.getKey() + ".blacklisted-worlds")) config.set(effect.getKey() + ".blacklisted-worlds", blacklisted_worlds);
+        });
 
         save();
     }

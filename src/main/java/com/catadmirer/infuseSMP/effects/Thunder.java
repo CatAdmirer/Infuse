@@ -48,6 +48,8 @@ public class Thunder extends InfuseEffect {
         UUID uuid = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(uuid, "thunder")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
+
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         
         // Applying cooldowns and durations for the effect
@@ -59,9 +61,8 @@ public class Thunder extends InfuseEffect {
         long durationTicks = duration * 20;
         World world = owner.getWorld();
 
-        // TODO: make configs
-        double baseRadius = 10;
-        double radiusBoostPerPlayer = 0.3;
+        final double baseRadius = plugin.getMainConfig().thunderSparkBaseRadius();
+        final double radiusBoostPerPlayer = plugin.getMainConfig().thunderSparkPerPlayerBoostRadius();
 
         // Starting the lightning storm
         new BukkitRunnable() {
@@ -72,6 +73,7 @@ public class Thunder extends InfuseEffect {
                     this.cancel();
                     return;
                 }
+                if (isLocationBlocked(owner.getLocation())) return;
 
                 // Calculating the radius
                 double radius = baseRadius;
@@ -143,6 +145,7 @@ public class Thunder extends InfuseEffect {
         if (targets.isEmpty()) throw new InvalidParameterException("targets list needs to have the attacker in the front");
 
         Player attacker = targets.getFirst();
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         // TODO: make config
         double radius = 3;
@@ -180,6 +183,7 @@ public class Thunder extends InfuseEffect {
     public void onTenHitEvent(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         Player target = event.getTarget();
 
@@ -198,6 +202,7 @@ public class Thunder extends InfuseEffect {
         // Making sure the shooter has the thunder effect
         if (!(trident.getShooter() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         // Only summoning lightning if the target is a living entity
         if (!(event.getEntity() instanceof LivingEntity target)) return;

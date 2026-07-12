@@ -43,6 +43,8 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
+
         speedLevels.put(owner.getUniqueId(), 0);
         owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, false, false, false));
     }
@@ -56,6 +58,8 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
+
         UUID uuid = owner.getUniqueId();
         long lastHit = lastHitTime.getOrDefault(uuid, 0L);
         if (System.currentTimeMillis() - lastHit > 1000L) {
@@ -70,6 +74,7 @@ public class Speed extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xD1A44B));
@@ -153,6 +158,7 @@ public class Speed extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
         long pullTimeMs = System.currentTimeMillis() - startTime;
@@ -167,6 +173,7 @@ public class Speed extends InfuseEffect {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         UUID uuid = player.getUniqueId();
         long currentTime = System.currentTimeMillis();

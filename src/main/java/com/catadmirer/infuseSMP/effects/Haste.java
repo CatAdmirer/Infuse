@@ -53,6 +53,8 @@ public class Haste extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         //todo: Move to PlayerItemHeldEvent listener
+        if (isLocationBlocked(owner.getLocation())) return;
+
         ItemStack item = owner.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
             ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
@@ -66,6 +68,7 @@ public class Haste extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -143,7 +146,7 @@ public class Haste extends InfuseEffect {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         ItemStack offHand = player.getInventory().getItemInOffHand();
-        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, this)) {
+        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, this) && !isLocationBlocked(player.getLocation())) {
             if (!(event.getDamager() instanceof Player attacker)) return;
             if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 

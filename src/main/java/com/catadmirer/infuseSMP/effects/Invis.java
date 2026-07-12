@@ -46,6 +46,7 @@ public class Invis extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, -1, 0, false, false));
     }
 
@@ -57,7 +58,9 @@ public class Invis extends InfuseEffect {
     @Override
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
+
         if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -172,6 +175,7 @@ public class Invis extends InfuseEffect {
         Player killer = victim.getKiller();
 
         if (killer == null) return;
+        if (isLocationBlocked(killer.getLocation())) return;
 
         String victimName;
         if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, this)) {
@@ -197,6 +201,7 @@ public class Invis extends InfuseEffect {
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
         if (!plugin.getDataManager().hasEffect(shooter, this)) return;
+        if (isLocationBlocked(shooter.getLocation())) return;
         if (!(event.getEntity() instanceof Arrow)) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
         
@@ -208,6 +213,7 @@ public class Invis extends InfuseEffect {
     public void onTenHits(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         Player target = event.getTarget();
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
@@ -218,6 +224,7 @@ public class Invis extends InfuseEffect {
     public void onEntityTarget(EntityTargetEvent event) {
         if (!(event.getTarget() instanceof Player target)) return;
         if (!plugin.getDataManager().hasEffect(target, this)) return;
+        if (isLocationBlocked(target.getLocation())) return;
 
         event.setCancelled(true);
     }

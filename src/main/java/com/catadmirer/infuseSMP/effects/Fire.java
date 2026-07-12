@@ -42,6 +42,7 @@ public class Fire extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, -1, 0, false, false));
     }
 
@@ -55,6 +56,7 @@ public class Fire extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "fire")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
@@ -184,7 +186,7 @@ public class Fire extends InfuseEffect {
         Player player = event.getPlayer();
         boolean inLava = player.isInLava();
         Vector direction = player.getLocation().getDirection().normalize();
-        if (inLava && plugin.getDataManager().hasEffect(player, this)) {
+        if (inLava && plugin.getDataManager().hasEffect(player, this) && !isLocationBlocked(player.getLocation())) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
             double boostStrength = plugin.getMainConfig().firePassiveWalkSpeed();
             Vector newVelocity = direction.multiply(boostStrength);
@@ -196,6 +198,7 @@ public class Fire extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
             projectile.setFireTicks(100);
@@ -207,6 +210,7 @@ public class Fire extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
         Material blockType = player.getLocation().getBlock().getType();
         if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
             event.setCancelled(true);
@@ -217,6 +221,7 @@ public class Fire extends InfuseEffect {
     public void fireCombustTarget(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         event.getTarget().setFireTicks(100);
     }

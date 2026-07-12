@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import net.kyori.adventure.bossbar.BossBar;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class InfuseEffect implements Listener {
+    private static final Infuse plugin = Infuse.getInstance();
+
     private static final Map<Integer,InfuseEffect> REGISTERED_EFFECTS = new HashMap<>();
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
@@ -208,5 +211,9 @@ public abstract class InfuseEffect implements Listener {
         InfuseEffect effect = REGISTERED_EFFECTS.get(id);
 
         return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
+    }
+
+    public boolean isLocationBlocked(Location location) {
+        return plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w));
     }
 }

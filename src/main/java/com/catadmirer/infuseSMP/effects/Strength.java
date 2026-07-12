@@ -45,6 +45,7 @@ public class Strength extends InfuseEffect {
 
         // Skipping players on cooldown
         if (CooldownManager.isOnCooldown(uuid, "strength")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         // Playing sounds
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -83,6 +84,7 @@ public class Strength extends InfuseEffect {
     public void extraDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         // Damage boost
         double damage = event.getDamage();
@@ -136,6 +138,7 @@ public class Strength extends InfuseEffect {
 
         // Making sure the shooter has the strength effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         // Increasing the piercing level of the shot arrow.
         if (event.getProjectile() instanceof Arrow arrow) {
@@ -146,6 +149,7 @@ public class Strength extends InfuseEffect {
     @EventHandler
     public void strengthTenHitEvent(TenHitEvent event) {
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
+        if (isLocationBlocked(event.getAttacker().getLocation())) return;
 
         // TODO: Reveal armor durability
     }

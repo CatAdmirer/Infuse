@@ -67,6 +67,7 @@ public class Emerald extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         // Applying the potion effect to the player
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
     }
@@ -90,6 +91,7 @@ public class Emerald extends InfuseEffect {
 
         // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         // Applying effects for the emerald spark
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -132,6 +134,7 @@ public class Emerald extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent is for an emerald user");
 
@@ -215,6 +218,7 @@ public class Emerald extends InfuseEffect {
         Player player = event.getPlayer();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
@@ -241,6 +245,7 @@ public class Emerald extends InfuseEffect {
         // Making sure the enchanter has the emerald effect
         Player player = event.getEnchanter();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         EnchantmentOffer[] offers = event.getOffers();
         Random random = new Random(player.getEnchantmentSeed());
@@ -311,6 +316,7 @@ public class Emerald extends InfuseEffect {
         if (!(event.getEntity() instanceof Player damaged)) return;
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();
@@ -332,6 +338,7 @@ public class Emerald extends InfuseEffect {
 
         // Making sure the player has the emerald effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         ItemStack consumedItem = event.getItem();
 
@@ -358,6 +365,7 @@ public class Emerald extends InfuseEffect {
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();

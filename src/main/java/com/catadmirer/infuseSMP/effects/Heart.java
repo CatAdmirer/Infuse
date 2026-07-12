@@ -45,6 +45,8 @@ public class Heart extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
+
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
         attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
         owner.heal(10);
@@ -62,6 +64,7 @@ public class Heart extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -146,6 +149,7 @@ public class Heart extends InfuseEffect {
     public void heartShowTargetHealth(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         this.showAndUpdateHealthAboveEntity(event.getTarget());
     }
@@ -154,6 +158,7 @@ public class Heart extends InfuseEffect {
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         ItemStack item = event.getItem();
         if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {

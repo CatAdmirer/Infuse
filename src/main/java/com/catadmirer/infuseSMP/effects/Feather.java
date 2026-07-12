@@ -56,6 +56,7 @@ public class Feather extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xBEA3CA));
@@ -103,7 +104,7 @@ public class Feather extends InfuseEffect {
         final Player player = event.getPlayer();
         final double radius = plugin.getMainConfig().featherLandRadius();
 
-        if (player.isOnGround() && CooldownManager.isEffectActive(player.getUniqueId(), "feathermace")) {
+        if (player.isOnGround() && CooldownManager.isEffectActive(player.getUniqueId(), "feathermace") && !isLocationBlocked(player.getLocation())) {
             CooldownManager.setDuration(player.getUniqueId(), "feathermace", 0L);
             Location loc = player.getLocation();
             World world = player.getWorld();
@@ -142,6 +143,7 @@ public class Feather extends InfuseEffect {
         Player target = event.getAttacker();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
         Location chargeLocation = player.getLocation().add(0, 1, 0);
@@ -158,6 +160,7 @@ public class Feather extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         event.setCancelled(true);
     }
@@ -166,6 +169,7 @@ public class Feather extends InfuseEffect {
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType() != Material.WIND_CHARGE) return;
@@ -191,6 +195,7 @@ public class Feather extends InfuseEffect {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (isLocationBlocked(attacker.getLocation())) return;
 
         double fallDistance = attacker.getFallDistance();
         if (fallDistance < 7) return;

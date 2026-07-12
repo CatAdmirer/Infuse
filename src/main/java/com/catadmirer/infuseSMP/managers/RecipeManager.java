@@ -49,7 +49,7 @@ public class RecipeManager {
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (!isRecipeEnabled(effect)) continue;
+            if (isRecipeEnabled(effect)) continue;
             ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
             
             Bukkit.addRecipe(recipe);

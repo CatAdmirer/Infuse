@@ -50,6 +50,7 @@ public class Frost extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         changeToSnow(owner);
     }
 
@@ -58,6 +59,8 @@ public class Frost extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
+
         if (!(owner.getVelocity().lengthSquared() < 0.01)) {
             if (owner.isInPowderedSnow()) {
                 owner.setGliding(true);
@@ -75,6 +78,7 @@ public class Frost extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "frost")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         owner.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 300, 0));
@@ -138,8 +142,9 @@ public class Frost extends InfuseEffect {
     }
 
     public void changeToSnow(Player player) {
-        final int frostSnowRadius = plugin.getMainConfig().frostPassiveSnowChangingRadius();
+        if (isLocationBlocked(player.getLocation())) return;
 
+        final int frostSnowRadius = plugin.getMainConfig().frostPassiveSnowChangingRadius();
         Location center = player.getLocation();
 
         for (int dx = -frostSnowRadius; dx <= frostSnowRadius; dx++) {
@@ -179,6 +184,7 @@ public class Frost extends InfuseEffect {
         if (event.isGliding()) return;
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         if (player.isInPowderedSnow()) {
             event.setCancelled(true);
@@ -189,6 +195,7 @@ public class Frost extends InfuseEffect {
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         Vector direction = player.getLocation().getDirection().normalize();

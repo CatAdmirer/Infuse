@@ -36,6 +36,7 @@ public class Regen extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, -1, 0, false, false));
     }
 
@@ -48,6 +49,7 @@ public class Regen extends InfuseEffect {
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "regen")) return;
+        if (isLocationBlocked(owner.getLocation())) return;
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
@@ -85,6 +87,7 @@ public class Regen extends InfuseEffect {
     public void regenRegenerateOnHit(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
         if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
@@ -103,6 +106,7 @@ public class Regen extends InfuseEffect {
     public void consume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         float sat = player.getSaturation();
         player.setSaturation(sat + 6);
@@ -123,7 +127,7 @@ public class Regen extends InfuseEffect {
         if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
 
         // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
-        if (plugin.getDataManager().hasEffect(player, this)) {
+        if (plugin.getDataManager().hasEffect(player, this) && !isLocationBlocked(player.getLocation())) {
             event.getItem().editMeta(meta -> {
                 FoodComponent foodComp = meta.getFood();
                 foodComp.setCanAlwaysEat(true);
@@ -139,6 +143,7 @@ public class Regen extends InfuseEffect {
     @EventHandler
     public void onTenthAttack(TenHitEvent event) {
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
+        if (isLocationBlocked(event.getAttacker().getLocation())) return;
 
         int currentFood = event.getTarget().getFoodLevel();
         event.getTarget().setFoodLevel(currentFood - 2);
@@ -148,6 +153,7 @@ public class Regen extends InfuseEffect {
     public void regenPreserveHunger(FoodLevelChangeEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
 
         event.setFoodLevel(20);
     }

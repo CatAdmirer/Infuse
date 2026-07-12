@@ -32,6 +32,7 @@ public class Ocean extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (isLocationBlocked(owner.getLocation())) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, -1, 0, false, false));
         owner.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, -1, 0, false, false));
     }
@@ -45,6 +46,8 @@ public class Ocean extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         // Boosting the strength and damage of the passive drowning if the spark is active
+        if (isLocationBlocked(owner.getLocation())) return;
+
         int drownStrength = plugin.getMainConfig().oceanPassiveDrownStrength();
         int drownDamage = plugin.getMainConfig().oceanPassiveDrownDamage();
         if (CooldownManager.isEffectActive(owner.getUniqueId(), "ocean"))  {
@@ -69,6 +72,7 @@ public class Ocean extends InfuseEffect {
         UUID playerUUID = caster.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ocean")) return;
+        if (isLocationBlocked(caster.getLocation())) return;
 
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 

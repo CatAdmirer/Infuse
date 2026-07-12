@@ -11,8 +11,13 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
+
 public class GlobalLoop extends BukkitRunnable {
     private final Infuse plugin;
+
+    private static final HashSet<UUID> lEffectDisabled = new HashSet<>();
+    private static final HashSet<UUID> rEffectDisabled = new HashSet<>();
 
     public GlobalLoop(Infuse plugin) {
         this.plugin = plugin;
@@ -30,19 +35,39 @@ public class GlobalLoop extends BukkitRunnable {
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             // Getting the player's equipped effects
-            InfuseEffect lEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-            InfuseEffect rEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+            final InfuseEffect lEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+            final InfuseEffect rEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
 
             // Applying passive effects to the player
             if (lEffect != null) {
-                lEffect.applyPassives(player);
                 plugin.getParticleManager().spawnEffectParticles(player, "1");
+
+                final boolean blocked = lEffect.isLocationBlocked(player.getLocation());
+                if (blocked && !(lEffectDisabled.contains(player.getUniqueId()))) {
+                    lEffect.unequip(player);
+                    lEffectDisabled.add(player.getUniqueId());
+                } else if (!(blocked) && lEffectDisabled.contains(player.getUniqueId())) {
+                    lEffect.equip(player);
+                    lEffectDisabled.remove(player.getUniqueId());
+                }
+
+                if (!(blocked) && !(lEffectDisabled.contains(player.getUniqueId()))) lEffect.applyPassives(player);
             }
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                rEffect.applyPassives(player);
                 plugin.getParticleManager().spawnEffectParticles(player, "2");
+
+                final boolean blocked = rEffect.isLocationBlocked(player.getLocation());
+                if (blocked && !(rEffectDisabled.contains(player.getUniqueId()))) {
+                    rEffect.unequip(player);
+                    rEffectDisabled.add(player.getUniqueId());
+                } else if (!(blocked) && rEffectDisabled.contains(player.getUniqueId())) {
+                    rEffect.equip(player);
+                    rEffectDisabled.remove(player.getUniqueId());
+                }
+
+                if (!(blocked) && !(rEffectDisabled.contains(player.getUniqueId()))) rEffect.applyPassives(player);
             }
 
             // Making sure the apophis boost has been removed
