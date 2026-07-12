@@ -93,10 +93,9 @@ public class EffectCraftManager implements Listener {
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         // Safe to assume the crafted item is the correct augmented/regular form due to the PrepareItemCraftEvent Listener
-        ItemStack craftedItem = event.getInventory().getResult();
-        InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
-        HumanEntity player = event.getWhoClicked();
-
+        final ItemStack craftedItem = event.getInventory().getResult();
+        final InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
+        final HumanEntity player = event.getWhoClicked();
         // Making sure the item being crafted is an Infuse effect
         if (effect == null) return;
 
@@ -108,8 +107,9 @@ public class EffectCraftManager implements Listener {
         }
 
         // Making sure the brewing stand is still placed
-        Location brewerLocation = event.getInventory().getLocation();
-        if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
+        final Location brewerLocation = event.getInventory().getLocation();
+        if (brewerLocation == null || brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
+            player.sendMessage(new Message(MessageType.EFFECT_NO_BREWING).toComponent());
             event.setCancelled(true);
             return;
         }

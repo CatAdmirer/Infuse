@@ -52,6 +52,22 @@ public class Message {
         return mm.deserialize("<i:false>" + message);
     }
 
+    public String toString() {
+        if (!placeholders.isEmpty()) {
+            throw new IllegalStateException("Not all placeholders have been registered.");
+        }
+
+        return mm.stripTags(message);
+    }
+
+    public List<String> toStringList() {
+        if (!placeholders.isEmpty()) {
+            throw new IllegalStateException("Not all placeholders have been registered.");
+        }
+
+        return List.of(mm.stripTags(message).split("\n"));
+    }
+
     /**
      * Helper function that allows minimessage translation for an arbitrary string.
      *
@@ -72,7 +88,7 @@ public class Message {
         EFFECT_NONE_EQUIPPED("slot"),
         WITHDRAW_INVALID,
         TRUST_CONSOLE_USAGE,
-        TRUST_INCORRECT_USAGE("label", "player"),
+        TRUST_INCORRECT_USAGE("label"),
         TRUST_NO_PLAYER,
         TRUST_SELF,
         TRUST_ADDED("target"),

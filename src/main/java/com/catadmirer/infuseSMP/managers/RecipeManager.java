@@ -66,10 +66,16 @@ public class RecipeManager {
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
 
         effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
+
         ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection(baseKey + ".ingredients");
         for (String key : ingredientsConfig.getKeys(false)) {
             char ingredientLabel = key.charAt(0);
+
             String materialName = ingredientsConfig.getString(key);
+            if (materialName == null) {
+                Infuse.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
+            }
+
             Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());
             effectRecipe.setIngredient(ingredientLabel, ingredientMaterial);
         }

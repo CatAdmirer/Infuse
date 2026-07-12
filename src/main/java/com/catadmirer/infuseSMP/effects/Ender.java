@@ -58,7 +58,7 @@ public class Ender extends InfuseEffect {
 
     @Deprecated()
     public void applyPassives(Player owner) {
-        double radius = 10;
+        final double radius = plugin.getMainConfig().enderPassiveRadius();
 
         Collection<Entity> nearbyEntities = owner.getWorld().getNearbyEntities(owner.getLocation(), radius, radius, radius);
         for (Entity entity : nearbyEntities) {
@@ -85,7 +85,7 @@ public class Ender extends InfuseEffect {
         // Teleporting the player in the direction they're looking
         Location startLoc = owner.getEyeLocation();
         Vector direction = startLoc.getDirection().normalize();
-        int maxDistance = 15;
+        final int maxDistance = plugin.getMainConfig().enderSparkMaxDistance();
 
         Location targetLoc = null;
 

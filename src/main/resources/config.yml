@@ -114,6 +114,9 @@ emerald:
     augmented: 35
   enchantment:
     looting_level: 5
+  multiplier-xp:
+    standard: 2
+    use-effect: 4
 
 ender:
   cooldown:
@@ -122,6 +125,11 @@ ender:
   duration:
     default: 15
     augmented: 20
+  passive:
+    radius: 10
+  spark:
+    # WARNING: The higher this value is, the more it can impact server performance.
+    max-distance: 15
 
 feather:
   cooldown:
@@ -130,6 +138,9 @@ feather:
   duration:
     default: 2
     augmented: 2
+  land:
+    radius: 4
+    damage: 8
 
 fire:
   cooldown:
@@ -138,6 +149,12 @@ fire:
   duration:
     default: 5
     augmented: 6
+  passive:
+    # How fast should they be able to walk while in lava?
+    walk-speed: 0.6
+  spark:
+    radius: 5
+    explosion-radius: 5
 
 frost:
   cooldown:
@@ -146,6 +163,13 @@ frost:
   duration:
     default: 15
     augmented: 20
+  passive:
+    # WARNING: The higher this value is, the more it can impact server performance.
+    snow-changing-radius: 3
+    # How fast should they be able to walk in powdered snow?
+    walk-speed: 0.6
+  spark:
+    radius: 5
 
 haste:
   cooldown:
@@ -174,6 +198,12 @@ ocean:
   duration:
     default: 15
     augmented: 20
+  passive:
+    drown-strength: 5
+    drown-damage: 1
+  spark:
+    drown-strength: 20
+    drown-damage: 2
 
 regen:
   cooldown:
@@ -182,6 +212,8 @@ regen:
   duration:
     default: 15
     augmented: 30
+  spark:
+    heal-trusted-radius: 5
 
 speed:
   dashMultiplier: 20

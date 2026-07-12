@@ -58,7 +58,8 @@ public class Fire extends InfuseEffect {
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
-        for (Entity entity : owner.getNearbyEntities(5, 5, 5)) {
+        final double radius = plugin.getMainConfig().fireSparkRadius();
+        for (Entity entity : owner.getNearbyEntities(radius, radius, radius)) {
             if (entity instanceof LivingEntity && entity != owner) {
                 entity.setFireTicks(100);
             }
@@ -136,7 +137,7 @@ public class Fire extends InfuseEffect {
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5;
+        final double explosionRadius = plugin.getMainConfig().fireSparkExplosionRadius();
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
                 target.setVelocity(new Vector(0, 2, 0));
@@ -185,7 +186,7 @@ public class Fire extends InfuseEffect {
         Vector direction = player.getLocation().getDirection().normalize();
         if (inLava && plugin.getDataManager().hasEffect(player, this)) {
             if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
-            double boostStrength = 0.6;
+            double boostStrength = plugin.getMainConfig().firePassiveWalkSpeed();
             Vector newVelocity = direction.multiply(boostStrength);
             player.setVelocity(newVelocity);
         }

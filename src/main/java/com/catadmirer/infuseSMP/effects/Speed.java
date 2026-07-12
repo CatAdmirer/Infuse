@@ -44,7 +44,6 @@ public class Speed extends InfuseEffect {
     @Override
     public void equip(Player owner) {
         speedLevels.put(owner.getUniqueId(), 0);
-
         owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, false, false, false));
     }
 
@@ -75,7 +74,7 @@ public class Speed extends InfuseEffect {
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xD1A44B));
         final Vector direction = owner.getEyeLocation().getDirection().normalize();
-        double playerVelocityMultiplier = plugin.getMainConfig().speedPlayerVelocityMultiplier();
+        double playerVelocityMultiplier = plugin.getMainConfig().speedDashMultiplier();
         owner.setVelocity(direction.clone().multiply(playerVelocityMultiplier));
         final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(0xE6DCAA), 1.5F);
         final Location[] previousLocation = new Location[]{owner.getLocation().clone()};
@@ -144,7 +143,7 @@ public class Speed extends InfuseEffect {
         if (lvl < 0) lvl = 0;
 
         owner.removePotionEffect(PotionEffectType.SPEED);
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, lvl, false, false, false));
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, lvl * plugin.getMainConfig().speedPlayerVelocityMultiplier(), false, false, false));
     }
 
     //// Listeners ////
@@ -160,6 +159,7 @@ public class Speed extends InfuseEffect {
         double adjustedPullTimeMs = pullTimeMs * 1.8;
         float pullFraction = (float)Math.min(adjustedPullTimeMs / 1000, 1);
         event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(pullFraction));
+
         bowPullStartTime.remove(player.getUniqueId());
     }
 

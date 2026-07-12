@@ -1,13 +1,14 @@
 plugins {
     `java-library`
+    `maven-publish`
     alias(libs.plugins.paperweight)
     alias(libs.plugins.run.paper)
 }
 
 group = "com.catadmirer"
-version = "2.4.5-beta4"
 
-var javaVersion = 25;
+val javaVersion = (project.property("javaVersion") as String).toInt()
+val minecraftVersion: String by project
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -16,14 +17,14 @@ repositories {
 
 dependencies {
     compileOnly(libs.placeholderapi)
-    paperweight.paperDevBundle("${libs.versions.minecraft.get()}+")
+    paperweight.paperDevBundle("${minecraftVersion}+")
 }
 
 tasks.runServer {
     // Configure the Minecraft version for our task.
     // This is the only required configuration besides applying the plugin.
     // Your plugin's jar (or shadowJar if present) will be used automatically.
-    minecraftVersion(libs.versions.minecraft.get())
+    minecraftVersion(minecraftVersion)
     jvmArgs("-Dlog4j.configurationFile=log4j2.xml")
 }
 
@@ -40,7 +41,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
     val props = mapOf("version" to version,
-                        "mcVersion" to libs.versions.minecraft.get())
+        "mcVersion" to minecraftVersion)
     filesMatching("plugin.yml") {
         expand(props)
     }
@@ -49,4 +50,24 @@ tasks.processResources {
 tasks.register("resetAndRun") {
     delete("run/plugins/$rootProject.name")
     finalizedBy("runServer")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            version = "$version-$javaVersion"
+            artifactId = "infuse"
+        }
+    }
+    repositories {
+        maven {
+            name = "turbo-maven"
+            url = uri("https://maven.turbojax.org/releases/")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
 }

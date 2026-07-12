@@ -35,6 +35,9 @@ public class HitTracker implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof Player target)) return;
 
+        // Skipping the hit if the attacker trusts the target
+        if (plugin.getDataManager().isTrusted(attacker, target)) return;
+
         Infuse.LOGGER.debug("{} has hit {}", attacker.getName(), target.getName());
 
         // Making sure it counts as a normal hit
