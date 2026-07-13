@@ -62,15 +62,18 @@ public class GlobalLoop extends BukkitRunnable {
                 plugin.getParticleManager().spawnEffectParticles(player, "2");
 
                 final boolean blocked = rEffect.isLocationBlocked(player.getLocation());
-                if (blocked && !(rEffectDisabled.contains(player.getUniqueId()))) {
+                boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
+                if (blocked && !isBlocked) {
                     rEffect.unequip(player);
                     rEffectDisabled.add(player.getUniqueId());
-                } else if (!(blocked) && rEffectDisabled.contains(player.getUniqueId())) {
+                    isBlocked = true;
+                } else if (!blocked && isBlocked) {
                     rEffect.equip(player);
                     rEffectDisabled.remove(player.getUniqueId());
+                    isBlocked = false;
                 }
 
-                if (!(blocked) && !(rEffectDisabled.contains(player.getUniqueId()))) rEffect.applyPassives(player);
+                if (!isBlocked) rEffect.applyPassives(player);
             }
 
             // Making sure the apophis boost has been removed
