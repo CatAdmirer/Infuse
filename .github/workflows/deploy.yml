@@ -164,5 +164,5 @@ jobs:
           changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
           game-versions: 1.21.4 - 26.1.2
-          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-21/infuse-${{ needs.data_collector.outputs.full_version }}.jar
+          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}/infuse-${{ needs.data_collector.outputs.full_version }}.jar
       - run: echo "Published infuse-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.4-26.1.2" >> $GITHUB_STEP_SUMMARY
