@@ -66,7 +66,8 @@ public class EffectManager implements Listener {
         }
 
         // Equipping the effect and updating the player data
-        effect.equip(player);
+        // If the player is in a blocked location, the effect is equipped but not activated.
+        if (!effect.isLocationBlocked(player.getLocation())) effect.equip(player);
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);
@@ -280,10 +281,10 @@ public class EffectManager implements Listener {
 
         // Enabling each effect
         InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null) effect.equip(player);
+        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
 
         effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null) effect.equip(player);
+        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
     }
 
     /** Unequips a player's effects when they leave the game. */
