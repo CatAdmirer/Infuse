@@ -63,6 +63,11 @@ jobs:
               echo "$CHANGELOG"
               echo EOF
           } >> "$GITHUB_OUTPUT"
+  # Tagging the latest version
+  tag-release:
+    runs-on: ubuntu-latest
+    needs: data_collector
+    steps:
       - name: Tagging latest version
         uses: actions/github-script@v9
         with:
@@ -71,7 +76,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `refs/tags/${{ steps.full_version_finder.outputs.result }}`,
+              ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
               sha: context.sha
             });
   # Building for java 21
