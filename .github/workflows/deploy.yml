@@ -126,7 +126,7 @@ jobs:
       - name: Creating a changelog
         id: make_changelog
         run: |
-          CHANGELOG="$(git log --pretty=format:'%s' "${{ needs.data_collector.outputs.prev_version }}..")"
+          CHANGELOG="$(git log --pretty=format:'%s  ' "${{ needs.data_collector.outputs.prev_version }}..")"
           {
               echo 'result<<EOF'
               echo "$CHANGELOG"
