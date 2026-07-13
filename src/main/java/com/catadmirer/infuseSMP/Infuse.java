@@ -44,7 +44,6 @@ public class Infuse extends JavaPlugin implements Listener {
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
-    private final ParticleManager particleManager;
 
     public static Infuse getInstance() {
         return instance;
@@ -56,7 +55,6 @@ public class Infuse extends JavaPlugin implements Listener {
         this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
-        this.particleManager = new ParticleManager(this);
     }
 
     public void onEnable() {
@@ -191,10 +189,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
         // Finalizing the message
         LOGGER.info("Infuse Plugin has been disabled!");
-    }
-
-    public ParticleManager getParticleManager() {
-        return particleManager;
     }
 
     private void registerEvents() {

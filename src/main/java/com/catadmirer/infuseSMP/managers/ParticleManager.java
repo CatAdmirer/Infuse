@@ -10,34 +10,31 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 
 public class ParticleManager {
-    private final Infuse plugin;
-
-    public ParticleManager(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
-    public void spawnEffectParticles(Player player, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
-        if (effect == null) return;
+    public static void spawnEffectParticles(Player player, InfuseEffect effect) {
+        if (effect == null)
+            return;
 
         // Handling special particles for ender effect
         // TODO: Decide whether or not to keep this
         if (effect.getId() == EffectIds.ENDER) {
-            player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5, 0.3, 0);
+            player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5,
+                    0.3, 0);
             return;
         }
 
-        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, 0.3, 0.5, 0.3, 0.1, Color.fromARGB(effect.getPotionColor().getRGB()));
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, 0.3, 0.5, 0.3,
+                0.1, Color.fromARGB(effect.getPotionColor().getRGB()));
     }
 
     /**
      * Spawns a cloud of effect particles around the player.
      *
      * @param player The player to spawn entity effect particles on.
-     * @param color The color the particles should be.
+     * @param color  The color the particles should be.
      */
     public static void spawnEffectCloud(Player player, Color color) {
-        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 30, 0.5, 0.6, 0.5, 0, color);
+        player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 30, 0.5, 0.6, 0.5, 0,
+                color);
     }
 
     public static void drawLine(Location start, Location end) {
