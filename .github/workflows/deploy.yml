@@ -27,19 +27,19 @@ jobs:
         run: |
           VERSION=$(cat gradle.properties | grep "version=" | cut -d= -f2)
           echo "result=$VERSION" >> $GITHUB_OUTPUT
-          echo "Version: $VERSION"
+          echo "Version: $VERSION  " >> $GITHUB_STEP_SUMMARY
       - name: Finding channel
         id: channel_finder
         run: |
           CHANNEL=$(cat gradle.properties | grep "channel=" | cut -d= -f2)
           echo "result=$CHANNEL" >> $GITHUB_OUTPUT
-          echo "Channel: $CHANNEL"
+          echo "Channel: $CHANNEL  " >> $GITHUB_STEP_SUMMARY
       - name: Finding previous version
         id: prev_version_finder
         run: |
           PREV_VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
           echo "result=$PREV_VERSION" >> $GITHUB_OUTPUT
-          echo "Previous Version: $PREV_VERSION"
+          echo "Previous Version: $PREV_VERSION  " >> $GITHUB_STEP_SUMMARY
       - name: Finding the new version
         id: full_version_finder
         run: |
@@ -51,9 +51,10 @@ jobs:
             BUILD_NUMBER=$(($(git tag | grep -E "${VERSION}-${CHANNEL}[0-9]+$" | sed "s/.*-${CHANNEL}//" | sort -n | tail -1) + 1))
           fi
           
+          echo "Build #$BUILD_NUMBER  " >> $GITHUB_STEP_SUMMARY
           FULL_VERSION="${VERSION}-${CHANNEL}${BUILD_NUMBER}"
           echo "result=$FULL_VERSION" >> $GITHUB_OUTPUT
-          echo "Full Version: $FULL_VERSION"
+          echo "Full Version: $FULL_VERSION  " >> $GITHUB_STEP_SUMMARY
       - name: Creating the changelog
         id: changelog
         run: |
@@ -63,6 +64,8 @@ jobs:
               echo "$CHANGELOG"
               echo EOF
           } >> "$GITHUB_OUTPUT"
+          echo "# Changelog:  " >> $GITHUB_STEP_SUMMARY 
+          echo "$CHANGELOG" >>  $GITHUB_STEP_SUMMARY
   # Tagging the latest version
   tag-release:
     runs-on: ubuntu-latest
