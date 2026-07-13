@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -122,6 +123,11 @@ public class Infuse extends JavaPlugin implements Listener {
 
     /** Registers the commands for the plugin. */
     private void registerCommands() {
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, e -> {
+            e.registrar().register(SparkCommand.build(this, true));
+            e.registrar().register(SparkCommand.build(this, false));
+        });
+
         getCommand("trust").setExecutor(new TrustCommand(dataManager));
         getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
@@ -132,9 +138,6 @@ public class Infuse extends JavaPlugin implements Listener {
 
         getCommand("ldrain").setExecutor(new DrainCommand(this));
         getCommand("rdrain").setExecutor(new DrainCommand(this));
-
-        getCommand("rspark").setExecutor(new Abilities(this));
-        getCommand("lspark").setExecutor(new Abilities(this));
 
         getCommand("draw").setExecutor(new Draw());
 
