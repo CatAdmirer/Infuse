@@ -15,6 +15,7 @@ jobs:
       channel: ${{ steps.channel_finder.outputs.result }}
       prev_version: ${{ steps.prev_version_finder.outputs.result }}
       full_version: ${{ steps.full_version_finder.outputs.result }}
+      changelog: ${{ steps.changelog.outputs.result }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -53,6 +54,15 @@ jobs:
           FULL_VERSION="${VERSION}-${CHANNEL}${BUILD_NUMBER}"
           echo "result=$FULL_VERSION" >> $GITHUB_OUTPUT
           echo "Full Version: $FULL_VERSION"
+      - name: Creating the changelog
+        id: changelog
+        run: |
+          CHANGELOG="$(git log --pretty=format:'%s  ' "${{ needs.data_collector.outputs.prev_version }}..")"
+          {
+              echo 'result<<EOF'
+              echo "$CHANGELOG"
+              echo EOF
+          } >> "$GITHUB_OUTPUT"
       - name: Tagging latest version
         uses: actions/github-script@v9
         with:
@@ -110,37 +120,12 @@ jobs:
         run: ./gradlew build
       - name: "Publishing build"
         run: ./gradlew publish
-  # Creating the changelog
-  changelog:
-    needs:
-      - data_collector
-    outputs:
-      changelog: ${{ steps.make_changelog.outputs.result }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: "dev/2.4.5"
-      - name: Creating a changelog
-        id: make_changelog
-        run: |
-          CHANGELOG="$(git log --pretty=format:'%s  ' "${{ needs.data_collector.outputs.prev_version }}..")"
-          {
-              echo 'result<<EOF'
-              echo "$CHANGELOG"
-              echo EOF
-          } >> "$GITHUB_OUTPUT"
-          echo "Changelog:"
-          echo "$CHANGELOG"
   # Publishing to modrinth
   publish:
     needs:
       - data_collector
       - build-21
       - build-25
-      - changelog
     runs-on: ubuntu-latest
     steps:
       - name: Publishing build for 1.21.x
@@ -150,7 +135,7 @@ jobs:
           project: x1wqx4cm
           version: ${{ needs.data_collector.outputs.full_version }}
           channel: ${{ needs.data_collector.outputs.channel }}
-          changelog: ${{ needs.changelog.outputs.changelog }}
+          changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
           game-versions: 1.21.4 - 1.21.11
           files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-21/infuse-${{ needs.data_collector.outputs.full_version }}-21.jar
@@ -161,7 +146,7 @@ jobs:
           project: x1wqx4cm
           version: ${{ needs.data_collector.outputs.full_version }}
           channel: ${{ needs.data_collector.outputs.channel }}
-          changelog: ${{ needs.changelog.outputs.changelog }}
+          changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
           game-versions: 26.1.x
           files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-25/infuse-${{ needs.data_collector.outputs.full_version }}-25.jar
