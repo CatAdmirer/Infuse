@@ -8,8 +8,6 @@ env:
 jobs:
   data_collector:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       version: ${{ steps.version_finder.outputs.result }}
       channel: ${{ steps.channel_finder.outputs.result }}
@@ -70,6 +68,8 @@ jobs:
   tag-release:
     runs-on: ubuntu-latest
     needs: data_collector
+    permissions:
+      contents: write
     steps:
       - name: Tagging latest version
         uses: actions/github-script@v9
