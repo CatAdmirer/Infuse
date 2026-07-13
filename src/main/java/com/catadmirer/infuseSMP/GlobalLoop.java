@@ -42,16 +42,19 @@ public class GlobalLoop extends BukkitRunnable {
             if (lEffect != null) {
                 plugin.getParticleManager().spawnEffectParticles(player, "1");
 
-                final boolean blocked = lEffect.isLocationBlocked(player.getLocation());
-                if (blocked && !(lEffectDisabled.contains(player.getUniqueId()))) {
+                final boolean shouldBlock = lEffect.isLocationBlocked(player.getLocation());
+                boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
+                if (shouldBlock && !isBlocked) {
                     lEffect.unequip(player);
                     lEffectDisabled.add(player.getUniqueId());
-                } else if (!(blocked) && lEffectDisabled.contains(player.getUniqueId())) {
+                    isBlocked = true;
+                } else if (!shouldBlock && isBlocked) {
                     lEffect.equip(player);
                     lEffectDisabled.remove(player.getUniqueId());
+                    isBlocked = false;
                 }
 
-                if (!(blocked) && !(lEffectDisabled.contains(player.getUniqueId()))) lEffect.applyPassives(player);
+                if (!isBlocked) lEffect.applyPassives(player);
             }
 
             // Applying passive effects to the player
