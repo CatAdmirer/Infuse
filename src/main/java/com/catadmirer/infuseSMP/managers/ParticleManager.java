@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.Ender;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -24,6 +25,12 @@ public class ParticleManager {
 
         player.getWorld().spawnParticle(Particle.ENTITY_EFFECT, player.getLocation().add(0, 1, 0), 2, 0.3, 0.5, 0.3,
                 0.1, Color.fromARGB(effect.getPotionColor().getRGB()));
+    }
+
+    public static void spawnCursedParticles(Player player) {
+        if (!Ender.cursedPlayers.contains(player.getUniqueId())) return;
+
+        player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.01);
     }
 
     /**
