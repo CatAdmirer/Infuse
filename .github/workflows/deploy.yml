@@ -58,7 +58,7 @@ jobs:
       - name: Creating the changelog
         id: changelog
         run: |
-          CHANGELOG="$(git log --pretty=format:'%s  ' "${{ needs.data_collector.outputs.prev_version }}..")"
+          CHANGELOG="$(git log --pretty=format:'%s  ' "${{ steps.prev_version_finder.outputs.result }}..")"
           {
               echo 'result<<EOF'
               echo "$CHANGELOG"
@@ -125,6 +125,7 @@ jobs:
   # Publishing to maven
   maven-publish:
     needs:
+      - data_collector
       - test-builds
     runs-on: ubuntu-latest
     steps:
