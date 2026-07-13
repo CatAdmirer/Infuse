@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compileOnly(libs.placeholderapi)
-    paperweight.paperDevBundle("${minecraftVersion}-+")
+    paperweight.paperDevBundle("${minecraftVersion}+")
 }
 
 tasks.runServer {
