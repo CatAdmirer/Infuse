@@ -82,10 +82,49 @@ jobs:
               ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
               sha: context.sha
             });
-  # Building for java 21
-  build-21:
+  # Building for multiple minecraft versions.
+  # These builds are not published.  They are made just so that we can make sure the plugin will work on each version we want to support.
+  test-builds:
     runs-on: ubuntu-latest
     needs: data_collector
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+      - name: Setup Java 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: temurin
+      - name: Setup Java 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: temurin
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Modifying gradle.properties
+        run: |
+          sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
+          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.4/" gradle.properties
+      - name: "Building for 1.21.4"
+        run: ./gradlew build
+      - name: Modifying gradle.properties
+        run: |
+          sed -i "s/javaVersion=.*/javaVersion=25/" gradle.properties
+          sed -i "s/minecraftVersion=.*/minecraftVersion=26.1/" gradle.properties
+      - name: "Building for 26.1"
+        run: ./gradlew build
+      - name: Modifying gradle.properties
+        run: |
+          sed -i "s/javaVersion=.*/javaVersion=25/" gradle.properties
+          sed -i "s/minecraftVersion=.*/minecraftVersion=26.2/" gradle.properties
+      - name: "Building for 26.2"
+        run: ./gradlew build
+  # Publishing to maven
+  maven-publish:
+    needs:
+      - test-builds
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -100,40 +139,14 @@ jobs:
         run: |
           sed -i "s/version=.*/version=${{ needs.data_collector.outputs.full_version }}/" gradle.properties
           sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
-          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.11/" gradle.properties
-      - name: "Running build"
-        run: ./gradlew build
-      - name: "Publishing build"
-        run: ./gradlew publish
-  # Building for java 25
-  build-25:
-    runs-on: ubuntu-latest
-    needs: data_collector
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v6
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          java-version: '25'
-          distribution: temurin
-      - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v6
-      - name: Modifying gradle.properties
-        run: |
-          sed -i "s/version=.*/version=${{ needs.data_collector.outputs.full_version }}/" gradle.properties
-          sed -i "s/javaVersion=.*/javaVersion=25/" gradle.properties
-          sed -i "s/minecraftVersion=.*/minecraftVersion=26.1.2/" gradle.properties
-      - name: "Running build"
-        run: ./gradlew build
+          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.4/" gradle.properties
       - name: "Publishing build"
         run: ./gradlew publish
   # Publishing to modrinth
-  publish:
+  modrinth-publish:
     needs:
       - data_collector
-      - build-21
-      - build-25
+      - maven-publish
     runs-on: ubuntu-latest
     steps:
       - name: Publishing build for 1.21.x
@@ -145,16 +158,6 @@ jobs:
           channel: ${{ needs.data_collector.outputs.channel }}
           changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
-          game-versions: 1.21.4 - 1.21.11
-          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-21/infuse-${{ needs.data_collector.outputs.full_version }}-21.jar
-      - name: Publishing build for 26.1.x
-        uses: cloudnode-pro/modrinth-publish@v2
-        with:
-          token: ${{ secrets.MODRINTH_TOKEN }}
-          project: x1wqx4cm
-          version: ${{ needs.data_collector.outputs.full_version }}
-          channel: ${{ needs.data_collector.outputs.channel }}
-          changelog: ${{ needs.data_collector.outputs.changelog }}
-          loaders: '["paper", "purpur"]'
-          game-versions: 26.1.x
-          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-25/infuse-${{ needs.data_collector.outputs.full_version }}-25.jar
+          game-versions: 1.21.4 - 26.1.2
+          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}-21/infuse-${{ needs.data_collector.outputs.full_version }}.jar
+      - run: echo "Published infuse-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.4-26.1.2" >> $GITHUB_STEP_SUMMARY

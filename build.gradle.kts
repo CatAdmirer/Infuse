@@ -56,7 +56,6 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            version = "$version-$javaVersion"
             artifactId = "infuse"
         }
     }
