@@ -53,7 +53,7 @@ public class TrustCommand {
             caster.sendMessage(msg.toComponent());
             return 1;
         } catch (CommandSyntaxException err) {
-            sender.sendMessage(err.getMessage());
+            sender.sendMessage(err.componentMessage());
             return 1;
         }
 
