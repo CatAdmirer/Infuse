@@ -23,6 +23,10 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
     public InfuseEffect parse(StringReader reader) throws CommandSyntaxException {
         String key = reader.readUnquotedString();
 
+        if (!InfuseEffect.isRegistered(key)) {
+            throw ERROR_NO_EFFECT_FOUND.create(key);
+        }
+        
         InfuseEffect effect = InfuseEffect.fromString(key);
 
         if (effect == null) throw ERROR_NO_EFFECT_FOUND.create(key);

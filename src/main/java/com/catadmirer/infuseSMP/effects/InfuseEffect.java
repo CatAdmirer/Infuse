@@ -45,6 +45,25 @@ public abstract class InfuseEffect implements Listener {
         return REGISTERED_EFFECTS.containsKey(effect.id);
     }
 
+    public static boolean isRegistered(String key) {
+        if (key == null) return false;
+
+        // Checking if the effect is augmented
+        boolean augmented = key.startsWith("aug_");
+        if (augmented) {
+            key = key.substring(4);
+        }
+
+        // Searching for a matching registered effect
+        for (InfuseEffect effect : REGISTERED_EFFECTS.values()) {
+            if (!effect.getKey().equals(key)) continue;
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean register(InfuseEffect effect) {
         if (effect.id > 100) {
             Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
