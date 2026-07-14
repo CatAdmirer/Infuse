@@ -40,7 +40,10 @@ public class SelectStringArgumentType implements CustomArgumentType<String,Strin
     
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        allowedStrings.forEach(builder::suggest);
+        allowedStrings.stream()
+            .filter(s -> s.contains(builder.getRemaining()))
+            .sorted()
+            .forEach(builder::suggest);
 
         return builder.buildFuture();
     }

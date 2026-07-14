@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.util;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.mojang.brigadier.LiteralMessage;
@@ -31,10 +32,13 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        InfuseEffect.getRegisteredEffects().forEach((i, e) -> {
-            builder.suggest(e.getRegularVersion().getKey());
-            builder.suggest(e.getAugmentedVersion().getKey());
-        });
+        InfuseEffect.getRegisteredEffects().values()
+            .stream()
+            .flatMap(e -> Stream.of(e.getRegularVersion(), e.getAugmentedVersion()))
+            .map(InfuseEffect::toString)
+            .filter(s -> s.contains(builder.getRemaining()))
+            .sorted()
+            .forEach(builder::suggest);
 
         return builder.buildFuture();
     }
