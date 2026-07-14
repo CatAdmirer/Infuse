@@ -126,10 +126,11 @@ public class Infuse extends JavaPlugin implements Listener {
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, e -> {
             e.registrar().register(SparkCommand.build(this, true));
             e.registrar().register(SparkCommand.build(this, false));
+
+            e.registrar().register(TrustCommand.build(dataManager, true));
+            e.registrar().register(TrustCommand.build(dataManager, false));
         });
 
-        getCommand("trust").setExecutor(new TrustCommand(dataManager));
-        getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
         getCommand("swap").setExecutor(new SwapEffects(this));
         

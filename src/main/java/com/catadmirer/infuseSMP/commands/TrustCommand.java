@@ -3,82 +3,94 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.managers.DataManager;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TrustCommand implements CommandExecutor {
-    private final DataManager dataManager;
+import java.util.List;
 
-    public TrustCommand(DataManager dataManager) {
-        this.dataManager = dataManager;
+public class TrustCommand {
+    private final DataManager dataManager;
+    private final boolean trust;
+
+    public static LiteralCommandNode<CommandSourceStack> build(DataManager manager, boolean trust) {
+        TrustCommand cmd = new TrustCommand(manager, trust);
+
+        return Commands.literal(trust ? "trust" : "untrust")
+            .then(Commands.argument("target", ArgumentTypes.players()).executes(cmd::trust))
+            .executes(cmd::trust)
+            .build();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    private TrustCommand(DataManager dataManager, boolean trust) {
+        this.dataManager = dataManager;
+        this.trust = trust;
+    }
+
+    public int trust(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
         // Limiting this command to only players.
         if (!(sender instanceof Player caster)) {
             sender.sendMessage(new Message(MessageType.TRUST_CONSOLE_USAGE).toComponent());
-            return true;
+            return 1;
         }
 
-        // Validating the number of args
-        if (args.length != 1) {
+        // Getting the targets
+        List<Player> targets;
+        try {
+            PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
+            targets = resolver.resolve(ctx.getSource());
+        } catch (IllegalArgumentException err) {
             Message msg = new Message(MessageType.TRUST_INCORRECT_USAGE);
-            msg.applyPlaceholder("label", label);
+            msg.applyPlaceholder("label", trust ? "trust" : "untrust");
             caster.sendMessage(msg.toComponent());
-            return true;
+            return 1;
+        } catch (CommandSyntaxException err) {
+            sender.sendMessage(err.getMessage());
+            return 1;
         }
 
-        // Getting the target to trust/untrust
-        Player target = Bukkit.getPlayerExact(args[0]);
-        if (target == null) {
-            caster.sendMessage(new Message(MessageType.TRUST_NO_PLAYER).toComponent());
-            return true;
+        targets.remove(caster);
+
+        if (trust) {
+            targets.forEach(t -> addTrust(caster, t));
+        } else {
+            targets.forEach(t -> removeTrust(caster, t));
         }
 
-        // Preventing the caster from trusting/untrusting themself.
-        if (caster.getUniqueId().equals(target.getUniqueId())) {
-            caster.sendMessage(new Message(MessageType.TRUST_SELF).toComponent());
-            return true;
-        }
+        return 1;
+    }
 
-        // Making the caster trust the target.
-        if (label.equalsIgnoreCase("trust")) {
-            // Preventing duplicate trust entries
-            if (dataManager.getTrusted(caster).contains(target)) {
-                Message msg = new Message(MessageType.TRUST_ALREADY_TRUSTED);
-                msg.applyPlaceholder("target", target.getName());
-                caster.sendMessage(msg.toComponent());
-                return true;
-            }
+    public void addTrust(Player caster, Player target) {
+        // Preventing duplicate trust entries
+        Message msg = new Message(MessageType.TRUST_ALREADY_TRUSTED);
 
+        if (!dataManager.getTrusted(caster).contains(target)) {
             dataManager.addTrust(caster, target);
-            Message msg = new Message(MessageType.TRUST_ADDED);
-            msg.applyPlaceholder("target", target.getName());
-            caster.sendMessage(msg.toComponent());
-            return true;
+            msg = new Message(MessageType.TRUST_ADDED);
         }
 
-        // Making the caster untrust the target.
-        if (label.equalsIgnoreCase("untrust")) {
-            // Handling if the player already didnt trust the target
-            if (!dataManager.getTrusted(caster).contains(target)) {
-                Message msg = new Message(MessageType.TRUST_NOT_TRUSTED);
-                msg.applyPlaceholder("target", target.getName());
-                caster.sendMessage(msg.toComponent());
-                return true;
-            }
-            
+        msg.applyPlaceholder("target", target.getName());
+        caster.sendMessage(msg.toComponent());
+    }
+
+    public void removeTrust(Player caster, Player target) {
+        // Removing trust
+        Message msg = new Message(MessageType.TRUST_NOT_TRUSTED);
+
+        if (dataManager.getTrusted(caster).contains(target)) {
             dataManager.removeTrust(caster, target);
-            Message msg = new Message(MessageType.TRUST_REMOVED);
-            msg.applyPlaceholder("target", target.getName());
-            caster.sendMessage(msg.toComponent());
-            return true;
+            msg = new Message(MessageType.TRUST_REMOVED);
         }
 
-        return false;
+        msg.applyPlaceholder("target", target.getName());
+        caster.sendMessage(msg.toComponent());
     }
 }
