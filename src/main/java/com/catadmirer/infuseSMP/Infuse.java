@@ -137,10 +137,10 @@ public class Infuse extends JavaPlugin implements Listener {
             e.registrar().register(ClearEffectsCommand.build(effectManager));
 
             e.registrar().register(InfuseCommand.build(this));
+            
+            e.registrar().register(RecipesCommand.build(this));
         });
 
-        getCommand("recipes").setExecutor(new Recipes(this));
-        
         getCommand("ldrain").setExecutor(new DrainCommand(this));
         getCommand("rdrain").setExecutor(new DrainCommand(this));
 
@@ -207,7 +207,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new GUI(this), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
-        Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
+        Bukkit.getPluginManager().registerEvents(new RecipesCommand(this), this);
         Bukkit.getPluginManager().registerEvents(effectManager, this);
         Bukkit.getPluginManager().registerEvents(this, this);
 
