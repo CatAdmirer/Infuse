@@ -129,10 +129,11 @@ public class Infuse extends JavaPlugin implements Listener {
 
             e.registrar().register(TrustCommand.build(dataManager, true));
             e.registrar().register(TrustCommand.build(dataManager, false));
+
+            e.registrar().register(SwapCommand.build(this));
         });
 
         getCommand("recipes").setExecutor(new Recipes(this));
-        getCommand("swap").setExecutor(new SwapEffects(this));
         
         getCommand("infuse").setExecutor(new InfuseCommand(this));
         getCommand("infuse").setTabCompleter(new InfuseCommand(this));
