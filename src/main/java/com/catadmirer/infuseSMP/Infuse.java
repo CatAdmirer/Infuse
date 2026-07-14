@@ -18,8 +18,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.List;
-import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -143,44 +141,12 @@ public class Infuse extends JavaPlugin implements Listener {
 
             e.registrar().register(DrainCommand.build(this, true));
             e.registrar().register(DrainCommand.build(this, false));
+
+            e.registrar().register(ControlsCommand.build(this));
         });
 
         getCommand("draw").setExecutor(new Draw());
 
-        getCommand("controls").setExecutor((sender, a, b, args) -> {
-            // Making sure only players can run the command
-            if (!(sender instanceof Player player)) {
-                sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
-                return true;
-            }
-
-            // Making sure the command has an argument
-            if (args.length != 1) {
-                player.sendMessage(new Message(MessageType.CONTROLS_USAGE).toComponent());
-                return true;
-            }
-
-            // Getting the selected control mode
-            String choice = args[0].toLowerCase();
-
-            // Validating the control mode string
-            if (!choice.equals("offhand") && !choice.equals("command")) {
-                player.sendMessage(new Message(MessageType.CONTROLS_INVALID_PARAM).toComponent());
-                return true;
-            }
-
-            // Setting the control mode for the player
-            dataManager.setControlMode(player.getUniqueId(), choice);
-            player.addAttachment(this, "ability.use", choice.equals("command"));
-            return true;
-        });
-        getCommand("controls").setTabCompleter((a, b, c, args) -> {
-            if (args.length == 1) {
-                return Stream.of("command", "offhand").filter(opt -> opt.startsWith(args[0])).toList();
-            }
-
-            return List.of();
-        });
     }
 
     public void onDisable() {
