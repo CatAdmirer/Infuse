@@ -12,11 +12,15 @@ val minecraftVersion: String by project
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://maven.enginehub.org/repo/")
+
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
     compileOnly(libs.placeholderapi)
+    compileOnly(libs.worldguard)
+
     paperweight.paperDevBundle("${minecraftVersion}+")
 }
 

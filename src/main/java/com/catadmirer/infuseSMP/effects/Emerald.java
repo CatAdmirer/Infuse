@@ -6,6 +6,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
@@ -92,6 +93,7 @@ public class Emerald extends InfuseEffect {
         // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
         if (isLocationBlocked(owner.getLocation())) return;
+        if (WorldGuardImpl.isEnabled() && !(WorldGuardImpl.isFlagEnabled(owner, WorldGuardImpl.getUseSparks()))) return;
 
         // Applying effects for the emerald spark
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -317,6 +319,7 @@ public class Emerald extends InfuseEffect {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (isLocationBlocked(attacker.getLocation())) return;
+        if (WorldGuardImpl.isEnabled() && (!(WorldGuardImpl.isFlagEnabled(attacker, WorldGuardImpl.getUseSparks()) || !(WorldGuardImpl.isFlagEnabled(damaged, WorldGuardImpl.getSparkPassthrough()))))) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();

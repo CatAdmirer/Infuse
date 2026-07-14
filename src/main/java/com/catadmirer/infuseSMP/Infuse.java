@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.google.gson.Gson;
@@ -57,6 +58,19 @@ public class Infuse extends JavaPlugin implements Listener {
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
         this.particleManager = new ParticleManager(this);
+    }
+
+    public void onLoad() {
+        if (instance != null) return;
+
+        if (!(WorldGuardImpl.canEnable())) {
+            LOGGER.info("WorldGuard is not installed! Hook has been disabled");
+            WorldGuardImpl.setEnabled(false);
+            return;
+        }
+
+        WorldGuardImpl.setEnabled(true);
+        WorldGuardImpl.load();
     }
 
     public void onEnable() {

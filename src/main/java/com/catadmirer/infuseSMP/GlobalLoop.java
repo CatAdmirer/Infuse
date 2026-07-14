@@ -44,6 +44,7 @@ public class GlobalLoop extends BukkitRunnable {
 
                 final boolean shouldBlock = lEffect.isLocationBlocked(player.getLocation());
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
+
                 if (shouldBlock && !isBlocked) {
                     lEffect.unequip(player);
                     lEffectDisabled.add(player.getUniqueId());
