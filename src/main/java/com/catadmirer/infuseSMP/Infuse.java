@@ -32,6 +32,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class Infuse extends JavaPlugin implements Listener {
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
 
+    @Nullable
     public static Infuse getInstance() {
         return instance;
     }
