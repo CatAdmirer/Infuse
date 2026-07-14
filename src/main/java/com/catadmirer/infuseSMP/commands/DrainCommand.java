@@ -3,8 +3,6 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
