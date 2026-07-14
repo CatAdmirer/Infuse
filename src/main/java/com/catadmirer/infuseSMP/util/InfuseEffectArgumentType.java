@@ -6,13 +6,16 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-public class InfuseEffectArgumentType implements ArgumentType<InfuseEffect> {
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
+
+public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect,String> {
     private static final DynamicCommandExceptionType ERROR_NO_EFFECT_FOUND = new DynamicCommandExceptionType(s -> new LiteralMessage("\"" + s + "\" is not a registered effect key."));
 
     @Override
@@ -34,5 +37,10 @@ public class InfuseEffectArgumentType implements ArgumentType<InfuseEffect> {
         });
 
         return builder.buildFuture();
+    }
+
+    @Override
+    public ArgumentType<String> getNativeType() {
+        return StringArgumentType.word();
     }
 }
