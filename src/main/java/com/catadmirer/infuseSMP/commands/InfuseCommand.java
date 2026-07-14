@@ -5,7 +5,6 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
-import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.CustomArgumentTypes;
 import com.mojang.brigadier.context.CommandContext;
@@ -27,7 +26,7 @@ public class InfuseCommand {
         return Commands.literal("infuse")
             .then(Commands.literal("gui").executes(cmd::gui))
             .then(Commands.literal("reload").executes(cmd::reload))
-            .then(Commands.literal("recipes").executes(cmd::recipes))
+            .then(Commands.literal("recipes").forward(RecipesCommand.build(plugin), null, false))
             .then(Commands.literal("giveeffect")
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
@@ -55,9 +54,7 @@ public class InfuseCommand {
                 )
             )
             .then(Commands.literal("controls")
-                .then(Commands.argument("choice", CustomArgumentTypes.CONTROL_MODE)
-                    .executes(cmd::controls)
-                )
+                .forward(ControlsCommand.build(plugin), null, false)
             )
             .then(Commands.literal("help").executes(cmd::help))
             .build();
@@ -103,19 +100,6 @@ public class InfuseCommand {
         return 1;
     }
 
-    public int recipes(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (!(sender instanceof Player player)) {
-            // TODO: Better logging
-            return 1;
-        }
-
-        player.openInventory(new RecipeListGUI().getInventory());
-
-        return 1;
-    }
-    
     public int giveEffect(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
@@ -272,31 +256,6 @@ public class InfuseCommand {
         CooldownManager.removeAllCooldowns(target.getUniqueId());
         Message msg = new Message(MessageType.INFUSE_COOLDOWN_SUCCESS);
         msg.applyPlaceholder("player_name", target.getName());
-        player.sendMessage(msg.toComponent());
-
-        return 1;
-    }
-    
-    public int controls(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (!(sender instanceof Player player)) {
-            // TODO: Better logging
-            return 1;
-        }
-
-        // Getting the control mode.
-        String choice = ctx.getArgument("choice", String.class).toLowerCase();
-
-        // Setting the control mode for the user.
-        plugin.getDataManager().setControlMode(player.getUniqueId(), choice);
-
-        // Assigning the permission for offhand use if the user chose offhand mode
-        boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
-        player.addAttachment(plugin, "ability.use", !offhandEnabled);
-
-        Message msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
-        msg.applyPlaceholder("control_mode", choice);
         player.sendMessage(msg.toComponent());
 
         return 1;
