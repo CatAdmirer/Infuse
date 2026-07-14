@@ -140,10 +140,10 @@ public class Infuse extends JavaPlugin implements Listener {
             e.registrar().register(InfuseCommand.build(this));
             
             e.registrar().register(RecipesCommand.build(this));
-        });
 
-        getCommand("ldrain").setExecutor(new DrainCommand(this));
-        getCommand("rdrain").setExecutor(new DrainCommand(this));
+            e.registrar().register(DrainCommand.build(this, true));
+            e.registrar().register(DrainCommand.build(this, false));
+        });
 
         getCommand("draw").setExecutor(new Draw());
 
