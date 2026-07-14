@@ -6,6 +6,7 @@ import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.util.GUI;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -204,7 +205,7 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new HitTracker(this), this);
 
         // Registering events for all the listeners
-        Bukkit.getPluginManager().registerEvents(new GUI(this), this);
+        Bukkit.getPluginManager().registerEvents(new GUI(), this);
         Bukkit.getPluginManager().registerEvents(new Drop(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new RecipesCommand(this), this);

@@ -1,31 +1,17 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.util;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NonNull;
 
-public class GUI implements Listener, CommandExecutor {
-    private final Infuse plugin;
-    
-    public GUI(Infuse plugin) {
-        this.plugin = plugin;
-    }
-
+public class GUI implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         HumanEntity player = event.getWhoClicked();
@@ -54,20 +40,5 @@ public class GUI implements Listener, CommandExecutor {
                 event.setCancelled(true);
             }
         }
-    }
-
-    public boolean onCommand(@NonNull CommandSender sender, Command command, @NonNull String label, String @NonNull [] args) {
-        if (command.getName().equalsIgnoreCase("infuses")) {
-            // Opening the gui for players only.
-            if (sender instanceof Player player) {
-                player.openInventory(new EffectChooser(plugin).getInventory());
-            } else {
-                sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
-            }
-
-            return true;
-        }
-        
-        return false;
     }
 }
