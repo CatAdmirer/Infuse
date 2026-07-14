@@ -37,16 +37,15 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jspecify.annotations.Nullable;
 
 public class EffectCraftManager implements Listener {
     private final Infuse plugin;
@@ -55,14 +54,15 @@ public class EffectCraftManager implements Listener {
 
     public EffectCraftManager(Infuse plugin) {
         this.plugin = plugin;
-
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (ritualBossBar == null) return;
-        event.getPlayer().showBossBar(ritualBossBar);
+    public static boolean isRitual() {
+        return ritualBossBar != null;
+    }
+
+    @Nullable
+    public static BossBar getBar() {
+        return ritualBossBar;
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
@@ -288,15 +288,6 @@ public class EffectCraftManager implements Listener {
 
     public static void removeBeam() {
         ritualBeam = null;
-    }
-
-    /** Prevents infuse effects from being crafted in a crafter. */
-    @EventHandler
-    public void onCrafter(CrafterCraftEvent event) {
-        ItemStack result = event.getResult();
-        if (result.getType() == Material.POTION) {
-            event.setCancelled(true);
-        }
     }
 
     /** Consulting the recipe manager to determine what to craft */
