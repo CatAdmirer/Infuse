@@ -133,6 +133,8 @@ public class Infuse extends JavaPlugin implements Listener {
             e.registrar().register(TrustCommand.build(dataManager, false));
 
             e.registrar().register(SwapCommand.build(this));
+
+            e.registrar().register(ClearEffectsCommand.build(effectManager));
         });
 
         getCommand("recipes").setExecutor(new Recipes(this));
@@ -209,7 +211,6 @@ public class Infuse extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new Recipes(this), this);
         Bukkit.getPluginManager().registerEvents(effectManager, this);
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new ClearEffects(effectManager), this);
 
         // Registering events for all the effects
         Bukkit.getPluginManager().registerEvents(new Emerald(), this);
