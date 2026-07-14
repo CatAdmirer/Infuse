@@ -6,13 +6,12 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.kyori.adventure.text.Component;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,49 +20,26 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class Recipes implements CommandExecutor, Listener {
-    private static Infuse plugin;
+public class RecipesCommand implements Listener {
+    private final Infuse plugin;
 
-    public Recipes(Infuse plugin) {
-        Recipes.plugin = plugin;
+    public static LiteralCommandNode<CommandSourceStack> build(Infuse plugin) {
+        RecipesCommand cmd = new RecipesCommand(plugin);
+
+        return Commands.literal("recipes")
+            .executes(cmd::openRecipeGUI)
+            .build();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player player) {
+    public RecipesCommand(Infuse plugin) {
+        this.plugin = plugin;
+    }
+
+    public int openRecipeGUI(CommandContext<CommandSourceStack> ctx) {
+        if (ctx.getSource().getSender() instanceof Player player) {
             player.openInventory(new RecipeListGUI().getInventory());
-            return true;
         }
-
-        return false;
-    }
-
-    /**
-     * Create a potion effect with the effect limits for lore rather than the default lore.
-     *
-     * @param effect The {@link InfuseEffect} to create.
-     * 
-     * @return The effect item with modified lore.
-     */
-    public static ItemStack createPotionWithModifiedLore(InfuseEffect effect) {
-        // Only regular effects should be put here
-        if (effect.isAugmented()) return null;
-
-        // Creating the potion from the effect
-        ItemStack potionItem = effect.createItem();
-
-        int augLeft = plugin.getMainConfig().getCraftLimit(effect.getAugmentedVersion()) - plugin.getDataManager().getExistingCount(effect.getAugmentedVersion());
-        int regLeft = plugin.getMainConfig().getCraftLimit(effect.getRegularVersion()) - plugin.getDataManager().getExistingCount(effect.getRegularVersion());
-
-        potionItem.editMeta(meta -> {
-            List<Component> lore = new ArrayList<>();
-            lore.add(Message.toComponent("<gray>Augmented Limit: <aqua>" + augLeft));
-            lore.add(Message.toComponent("<gray>Regular Limit: <aqua>" + regLeft));
-            meta.lore(lore);
-            potionItem.setItemMeta(meta);
-        });
-
-        return potionItem;
+        return 1;
     }
 
     /**
