@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,16 @@ public class Infuse extends JavaPlugin {
     private final RecipeManager recipeManager;
     private final HitTracker hitTracker;
 
+    @NonNull
     public static Infuse getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Infuse has not been enabled yet.  Cannot get an instance.");
+        }
+
+        if (!instance.isEnabled()) {
+             throw new IllegalStateException("Infuse is disabled.  You cannot get an instance of the plugin right now");
+        }
+
         return instance;
     }
 
