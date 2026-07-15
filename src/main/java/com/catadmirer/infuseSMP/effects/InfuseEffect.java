@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class InfuseEffect implements Listener {
-    private static final Infuse plugin = Infuse.getInstance();
+    private static Infuse plugin = Infuse.getInstance();
 
     private static final Map<Integer,InfuseEffect> REGISTERED_EFFECTS = new HashMap<>();
 
@@ -216,6 +216,7 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public boolean isLocationBlocked(Location location) {
+        if (plugin == null) plugin = Infuse.getInstance();
         return plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w));
     }
 }

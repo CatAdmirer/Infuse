@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.implementations;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -15,49 +16,56 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
 public class WorldGuardImpl {
 
     private static boolean enabled = false;
 
-    private static StateFlag USE_SPARKS;
-    private static StateFlag SPARK_PASSTHROUGH;
+    private static final Map<String, StateFlag> flags = new HashMap<>();
 
     public static void load() {
         final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
 
-        try {
-            final StateFlag flag = new StateFlag("use-sparks", true);
-            registry.register(flag);
-            USE_SPARKS = flag;
-        } catch (FlagConflictException ex) {
-            final Flag<?> existing = registry.get("use-sparks");
-            if (existing instanceof StateFlag exist) {
-                USE_SPARKS = exist;
-                Infuse.LOGGER.warn("The flag 'use-sparks' may be buggy, this is due to another plugin already registering this as a custom flag.");
-            } else {
-                Infuse.LOGGER.error("The flag 'use-sparks' has failed to register, another plugin is currently conflicting. disabling WorldGuard hook.");
-                setEnabled(false);
-                USE_SPARKS = null;
-            }
-        }
+        InfuseEffect.getRegisteredEffects().values().stream().map(s -> new StateFlag("allow-" + s.getKey(), true)).forEach(flag -> {
+            final String name = flag.getName().toLowerCase();
+            try {
+                registry.register(flag);
+                flags.put(name.replace("allow-", ""), flag);
+            } catch (FlagConflictException ex) {
+                final Flag<?> existing = registry.get(flag.getName());
 
-        try {
-            final StateFlag flag = new StateFlag("spark-passthrough", true);
-            registry.register(flag);
-            SPARK_PASSTHROUGH = flag;
-        } catch (FlagConflictException ex) {
-            final Flag<?> existing = registry.get("spark-passthrough");
-            if (existing instanceof StateFlag exist) {
-                SPARK_PASSTHROUGH = exist;
-                Infuse.LOGGER.warn("The flag 'spark-passthrough' may be buggy, this is due to another plugin already registering this as a custom flag.");
-            } else {
-                Infuse.LOGGER.error("The flag 'spark-passthrough' has failed to register, another plugin is currently conflicting. disabling WorldGuard hook.");
-                setEnabled(false);
-                SPARK_PASSTHROUGH = null;
+                if (existing instanceof StateFlag exist) {
+                    Infuse.LOGGER.warn("The flag 'allow-%s' may be buggy, this is due to another plugin already registering this as a custom flag.".formatted(name));
+                    flags.put(name.replace("allow-", ""), exist);
+                } else {
+                    Infuse.LOGGER.error("The flag 'allow-%s' has failed to register, another plugin is currently conflicting. This flag will not work.".formatted(name));
+                    flags.put(name.replace("allow-", ""), null);
+                }
             }
-        }
+        });
 
-        if (enabled && USE_SPARKS != null && SPARK_PASSTHROUGH != null) Infuse.LOGGER.info("[INFUSE] Successfully hooked into WorldGuard and registered the custom flags.");
+        Stream.of("use-sparks", "spark-passthrough").map(s -> new StateFlag(s, true)).forEach(flag -> {
+            final String name = flag.getName().toLowerCase();
+            try {
+                registry.register(flag);
+                flags.put(name, flag);
+            } catch (FlagConflictException ex) {
+                final Flag<?> existing = registry.get(flag.getName());
+
+                if (existing instanceof StateFlag exist) {
+                    Infuse.LOGGER.warn("The flag 'allow-%s' may be buggy, this is due to another plugin already registering this as a custom flag.".formatted(name));
+                    flags.put(name, exist);
+                } else {
+                    Infuse.LOGGER.error("The flag 'allow-%s' has failed to register, another plugin is currently conflicting. This flag will not work.".formatted(name));
+                    flags.put(name, null);
+                }
+            }
+        });
+
+        if (enabled) Infuse.LOGGER.info("[Infuse] Successfully hooked into WorldGuard and registered the custom flags.");
     }
 
     public static boolean canEnable() {
@@ -72,8 +80,11 @@ public class WorldGuardImpl {
         WorldGuardImpl.enabled = enabled;
     }
 
-    public static boolean isFlagEnabled(LivingEntity entity, StateFlag flag) {
+    public static boolean isFlagEnabled(LivingEntity entity, String flagName) {
         if (!enabled) return true;
+
+        final StateFlag flag = flags.get(flagName.toLowerCase());
+        if (flag == null) return true;
 
         final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         if (container == null) return true;
@@ -89,8 +100,11 @@ public class WorldGuardImpl {
         }
     }
 
-    public static boolean isFlagEnabled(Location loc, StateFlag flag) {
+    public static boolean isFlagEnabled(Location loc, String flagName) {
         if (!enabled) return true;
+
+        final StateFlag flag = flags.get(flagName.toLowerCase());
+        if (flag == null) return true;
 
         final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         if (container == null) return true;
@@ -101,11 +115,4 @@ public class WorldGuardImpl {
         return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(null, flag);
     }
 
-    public static StateFlag getUseSparks() {
-        return USE_SPARKS;
-    }
-
-    public static StateFlag getSparkPassthrough() {
-        return SPARK_PASSTHROUGH;
-    }
 }

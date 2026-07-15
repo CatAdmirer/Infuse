@@ -57,7 +57,7 @@ public class Emerald extends InfuseEffect {
 
     private final Infuse plugin;
 
-    public Emerald() {
+    public  Emerald() {
         this(false);
     }
 
@@ -93,7 +93,7 @@ public class Emerald extends InfuseEffect {
         // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
         if (isLocationBlocked(owner.getLocation())) return;
-        if (WorldGuardImpl.isEnabled() && !(WorldGuardImpl.isFlagEnabled(owner, WorldGuardImpl.getUseSparks()))) return;
+        if (!(WorldGuardImpl.isFlagEnabled(owner, "use-sparks"))) return;
 
         // Applying effects for the emerald spark
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -318,8 +318,10 @@ public class Emerald extends InfuseEffect {
         if (!(event.getEntity() instanceof Player damaged)) return;
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+
         if (isLocationBlocked(attacker.getLocation())) return;
-        if (WorldGuardImpl.isEnabled() && (!(WorldGuardImpl.isFlagEnabled(attacker, WorldGuardImpl.getUseSparks()) || !(WorldGuardImpl.isFlagEnabled(damaged, WorldGuardImpl.getSparkPassthrough()))))) return;
+        if (!(WorldGuardImpl.isFlagEnabled(attacker, "use-sparks") || !(WorldGuardImpl.isFlagEnabled(damaged, "spark-passthrough")))) return;
+        if (!(WorldGuardImpl.isFlagEnabled(attacker, "emerald")) || !(WorldGuardImpl.isFlagEnabled(damaged, "emerald"))) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();
@@ -369,6 +371,7 @@ public class Emerald extends InfuseEffect {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
         if (isLocationBlocked(player.getLocation())) return;
+        if (!(WorldGuardImpl.isFlagEnabled(player, "emerald"))) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();
