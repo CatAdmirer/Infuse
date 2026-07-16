@@ -2,6 +2,8 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
+
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -213,6 +215,10 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public boolean isLocationBlocked(Location location) {
+        if (WorldGuardImpl.isEnabled()) {
+            if (!WorldGuardImpl.isFlagEnabled(location, "allow-" + key)) return true;
+        }
+
         return plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w));
     }
 }
