@@ -5,7 +5,7 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
@@ -17,15 +17,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-
 public class WorldGuardImpl {
 
     private static boolean enabled = false;
-
-    private static final Map<String, StateFlag> flags = new HashMap<>();
 
     public static void load() {
         final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
@@ -59,38 +53,25 @@ public class WorldGuardImpl {
     }
 
     public static boolean isFlagEnabled(LivingEntity entity, String flagName) {
-        if (!enabled) return true;
+        return isFlagEnabled(entity.getLocation(), flagName, null);
+    }
 
-        final StateFlag flag = flags.get(flagName.toLowerCase());
-        if (flag == null) return true;
-
-        final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        if (container == null) return true;
-
-        final Location loc = entity.getLocation();
-        final RegionManager manager = container.get(BukkitAdapter.adapt(loc.getWorld()));
-        if (manager == null) return true;
-
-        if (entity instanceof final Player player) {
-            return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(WorldGuardPlugin.inst().wrapPlayer(player), flag);
-        } else {
-            return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(null, flag);
-        }
+    public static boolean isFlagEnabled(Player player, String flagName) {
+        return isFlagEnabled(player.getLocation(), flagName, WorldGuardPlugin.inst().wrapPlayer(player));
     }
 
     public static boolean isFlagEnabled(Location loc, String flagName) {
+        return isFlagEnabled(loc, flagName, null);
+    }
+
+    public static boolean isFlagEnabled(Location loc, String flagName, RegionAssociable assoc) {
         if (!enabled) return true;
 
-        final StateFlag flag = flags.get(flagName.toLowerCase());
-        if (flag == null) return true;
-
+        final StateFlag flag = new StateFlag(flagName.toLowerCase(), true);
         final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        if (container == null) return true;
-
         final RegionManager manager = container.get(BukkitAdapter.adapt(loc.getWorld()));
         if (manager == null) return true;
 
-        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(null, flag);
+        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(assoc, flag);
     }
-
 }
