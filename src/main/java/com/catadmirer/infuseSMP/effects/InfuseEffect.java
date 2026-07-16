@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,12 +17,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class InfuseEffect implements Listener {
-    private static Infuse plugin = Infuse.getInstance();
-
     private static final Map<Integer,InfuseEffect> REGISTERED_EFFECTS = new HashMap<>();
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
@@ -34,6 +30,7 @@ public abstract class InfuseEffect implements Listener {
     protected final boolean augmented;
     protected final Color potionColor;
     protected final BossBar.Color ritualColor;
+    protected final Infuse plugin = Infuse.getInstance();
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
         this.key = key;
@@ -216,7 +213,6 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public boolean isLocationBlocked(Location location) {
-        if (plugin == null) plugin = Infuse.getInstance();
         return plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w));
     }
 }

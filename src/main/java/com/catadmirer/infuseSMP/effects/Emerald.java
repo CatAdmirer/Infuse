@@ -55,15 +55,12 @@ import java.util.UUID;
 public class Emerald extends InfuseEffect {
     public static final NamespacedKey LOOTING_KEY = new NamespacedKey("infuse", "emerald_looting");
 
-    private final Infuse plugin;
-
-    public  Emerald() {
+    public Emerald() {
         this(false);
     }
 
     public Emerald(boolean augmented) {
         super("emerald", EffectIds.EMERALD, augmented, EffectConstants.potionColor(EffectIds.EMERALD), EffectConstants.ritualColor(EffectIds.EMERALD));
-        plugin = Infuse.getInstance();
     }
 
     @Override

@@ -7,20 +7,11 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 @NullMarked
-public class EffectManager implements Listener {
+public class EffectManager {
     private final Infuse plugin;
 
     public EffectManager(Infuse plugin) {
@@ -180,124 +171,6 @@ public class EffectManager implements Listener {
         plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);
-    }
-
-    /**
-     * Handling when players drink an infuse potion.
-     * 
-     * @param event The consume event.
-     */
-    @EventHandler
-    public void onDrinkEffect(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        ItemStack item = event.getItem();
-
-        // Getting the effect from the item
-        InfuseEffect effect = InfuseEffect.fromItem(item);
-
-        // Skipping if the effect is not found.
-        if (effect == null) return;
-
-        // Equipping the effect
-        EquipResult result = this.equipEffect(player, effect, "1", false);
-
-        // Equipping the slot in the players other slot
-        if (result.type == EquipResultType.FAIL) {
-            // Drain slot 2 if an effect is equipped there
-            if (plugin.getDataManager().getEffect(player.getUniqueId(), "2") != null) {
-                result = this.drainEffect(player, "2");
-
-                // If the drain failed or was cancelled, exit
-                if (result.type == EquipResultType.CANCELLED) return;
-                if (result.type == EquipResultType.FAIL) return;
-            }
-
-            result = this.equipEffect(player, effect, "2", false);
-        }
-
-        // Skipping the rest of the logic if the equip event was cancelled
-        if (result.type == EquipResultType.CANCELLED) return;
-
-        // Notifying the player
-        Message msg = new Message(MessageType.EFFECT_EQUIPPED);
-        msg.applyPlaceholder("effect_name", effect.getName());
-        player.sendMessage(msg.toComponent());
-
-        // Removing the effect from the player
-        event.setItem(event.getItem().subtract(1));
-    }
-
-    /**
-     * Event handler to remove an effect from the players inventory if they die.
-     * 
-     * @param event The server PlayerDeathEvent
-     */
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        EquipResult result;
-        Player player = event.getEntity();
-        String dropMode = plugin.getMainConfig().effectDrops();
-        switch (dropMode.toLowerCase()) {
-            case "random" -> {
-                String slot = (Math.random() > 0.5) ? "1" : "2";
-
-                result = dropEffect(player, slot);
-                if (result.type == EquipResultType.FAIL) {
-                    dropEffect(player, slot.equals("1") ? "2" : "1");
-                }
-            }
-            case "prefer_1" -> {
-                result = dropEffect(player, "1");
-                if (result.type == EquipResultType.FAIL) {
-                    dropEffect(player, "2");
-                }
-            }
-            case "prefer_2" -> {
-                result = dropEffect(player, "2");
-                if (result.type == EquipResultType.FAIL) {
-                    dropEffect(player, "1");
-                }
-            }
-            case "only_1" -> dropEffect(player, "1");
-            case "only_2" -> dropEffect(player, "2");
-            case "none" -> {}
-        }
-    }
-
-    /** Activates the player's effects and assigns them a starting effect if they haven't played before. */
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        // Giving the player their starting effects if they haven't joined before
-        if (plugin.getMainConfig().joinEffectsEnabled() && !player.hasPlayedBefore()) {
-            List<InfuseEffect> effects = plugin.getMainConfig().joinEffects();
-            if (effects.isEmpty()) return;
-
-            InfuseEffect effect = effects.get((int) (Math.random() * effects.size()));
-            equipEffect(player, effect, "1", false);
-            return;
-        }
-
-        // Enabling each effect
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
-
-        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
-    }
-
-    /** Unequips a player's effects when they leave the game. */
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        // Deactivating the player's effects
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null) effect.unequip(player);
-
-        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null) effect.unequip(player);
     }
 
     /**

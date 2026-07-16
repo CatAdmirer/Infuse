@@ -1,11 +1,11 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.effects.Ender;
 import com.catadmirer.infuseSMP.effects.Heart;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.managers.ParticleManager;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -38,10 +38,12 @@ public class GlobalLoop extends BukkitRunnable {
             final InfuseEffect lEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
             final InfuseEffect rEffect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
 
+            ParticleManager.spawnEffectParticles(player, lEffect);
+            ParticleManager.spawnEffectParticles(player, rEffect);
+            ParticleManager.spawnCursedParticles(player);
+
             // Applying passive effects to the player
             if (lEffect != null) {
-                plugin.getParticleManager().spawnEffectParticles(player, "1");
-
                 final boolean shouldBlock = lEffect.isLocationBlocked(player.getLocation());
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
 
@@ -60,8 +62,6 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                plugin.getParticleManager().spawnEffectParticles(player, "2");
-
                 final boolean blocked = rEffect.isLocationBlocked(player.getLocation());
                 boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
                 if (blocked && !isBlocked) {
@@ -87,11 +87,6 @@ public class GlobalLoop extends BukkitRunnable {
             if (!plugin.getDataManager().hasEffect(player, new Heart())) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
                 playerHealth.removeModifier(Heart.heartBoost);
-            }
-
-            // Spawning particles on cursed players
-            if (Ender.cursedPlayers.contains(player.getUniqueId())) {
-                player.getWorld().spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.01);
             }
         }
     }

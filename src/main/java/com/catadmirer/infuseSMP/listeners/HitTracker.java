@@ -1,5 +1,6 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.effects.Thunder;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
@@ -109,7 +110,8 @@ public class HitTracker implements Listener {
      * 
      * @param event A {@link PlayerQuitEvent}
      */
-    public void onPlayerLeave(PlayerQuitEvent event) {
+    @EventHandler
+    public void removeFromHitTracker(PlayerQuitEvent event) {
         hitTracker.remove(event.getPlayer().getUniqueId());
     }
 }

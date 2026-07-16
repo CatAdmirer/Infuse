@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -28,16 +27,12 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 
 public class Fire extends InfuseEffect {
-    private final Infuse plugin;
-
     public Fire() {
         this(false);
     }
 
     public Fire(boolean augmented) {
         super("fire", EffectIds.FIRE, augmented, EffectConstants.potionColor(EffectIds.FIRE), EffectConstants.ritualColor(EffectIds.FIRE));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

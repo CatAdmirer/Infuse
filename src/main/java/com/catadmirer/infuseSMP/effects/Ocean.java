@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Location;
@@ -18,16 +17,12 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 
 public class Ocean extends InfuseEffect {
-    private final Infuse plugin;
-
     public Ocean() {
         this(false);
     }
 
     public Ocean(boolean augmented) {
         super("ocean", EffectIds.OCEAN, augmented, EffectConstants.potionColor(EffectIds.OCEAN), EffectConstants.ritualColor(EffectIds.OCEAN));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

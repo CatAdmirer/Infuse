@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
@@ -30,16 +29,12 @@ import java.util.UUID;
 public class Thief extends InfuseEffect {
     private static final Map<UUID, DisguiseData> disguisedPlayers = new HashMap<>();
 
-    private final Infuse plugin;
-
     public Thief() {
         this(false);
     }
 
     public Thief(boolean augmented) {
         super("thief", EffectIds.THIEF, augmented, EffectConstants.potionColor(EffectIds.THIEF), EffectConstants.ritualColor(EffectIds.THIEF));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

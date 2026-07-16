@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.*;
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Bukkit;
@@ -25,16 +27,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class Thunder extends InfuseEffect {
-    private final Infuse plugin;
-
     public Thunder() {
         this(false);
     }
 
     public Thunder(boolean augmented) {
         super("thunder", EffectIds.THUNDER, augmented, EffectConstants.potionColor(EffectIds.THUNDER), EffectConstants.ritualColor(EffectIds.THUNDER));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
