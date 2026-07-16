@@ -27,8 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Infuse extends JavaPlugin {
-    private static Infuse instance;
-
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
 
     private final DataManager dataManager;
@@ -40,15 +38,7 @@ public class Infuse extends JavaPlugin {
 
     @NonNull
     public static Infuse getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Infuse has not been enabled yet.  Cannot get an instance.");
-        }
-
-        if (!instance.isEnabled()) {
-             throw new IllegalStateException("Infuse is disabled.  You cannot get an instance of the plugin right now");
-        }
-
-        return instance;
+        return JavaPlugin.getPlugin(Infuse.class);
     }
 
     public Infuse() {
@@ -62,12 +52,7 @@ public class Infuse extends JavaPlugin {
 
     public void onEnable() {
         // Making sure the plugin hasn't been initialized twice
-        if (instance != null) {
-            throw new IllegalStateException("Plugin already initialized!");
-        }
-
-        // Loading the Infuse plugin instance
-        instance = this;
+        if (this.isEnabled()) return;
 
         // Registering the vanilla effects
         registerEffects();
@@ -178,9 +163,6 @@ public class Infuse extends JavaPlugin {
     }
 
     public void onDisable() {
-        // Resetting the instance
-        instance = null;
-
         // Stopping the passive effect loop
         loop.stop();
 
