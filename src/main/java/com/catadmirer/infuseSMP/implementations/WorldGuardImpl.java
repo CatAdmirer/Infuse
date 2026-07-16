@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -29,41 +30,18 @@ public class WorldGuardImpl {
     public static void load() {
         final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
 
-        InfuseEffect.getRegisteredEffects().values().stream().map(s -> new StateFlag("allow-" + s.getKey(), true)).forEach(flag -> {
-            final String name = flag.getName().toLowerCase();
-            try {
-                registry.register(flag);
-                flags.put(name.replace("allow-", ""), flag);
-            } catch (FlagConflictException ex) {
-                final Flag<?> existing = registry.get(flag.getName());
-
-                if (existing instanceof StateFlag exist) {
-                    Infuse.LOGGER.warn("The flag 'allow-%s' may be buggy, this is due to another plugin already registering this as a custom flag.".formatted(name));
-                    flags.put(name.replace("allow-", ""), exist);
-                } else {
-                    Infuse.LOGGER.error("The flag 'allow-%s' has failed to register, another plugin is currently conflicting. This flag will not work.".formatted(name));
-                    flags.put(name.replace("allow-", ""), null);
-                }
-            }
-        });
-
-        Stream.of("use-sparks", "spark-passthrough").map(s -> new StateFlag(s, true)).forEach(flag -> {
-            final String name = flag.getName().toLowerCase();
-            try {
-                registry.register(flag);
-                flags.put(name, flag);
-            } catch (FlagConflictException ex) {
-                final Flag<?> existing = registry.get(flag.getName());
-
-                if (existing instanceof StateFlag exist) {
-                    Infuse.LOGGER.warn("The flag 'allow-%s' may be buggy, this is due to another plugin already registering this as a custom flag.".formatted(name));
-                    flags.put(name, exist);
-                } else {
-                    Infuse.LOGGER.error("The flag 'allow-%s' has failed to register, another plugin is currently conflicting. This flag will not work.".formatted(name));
-                    flags.put(name, null);
-                }
-            }
-        });
+        Stream.concat(
+                InfuseEffect.getRegisteredEffects().values().stream().map(e -> "allow-" + e.getKey()),
+                Stream.of("use-sparks", "spark-passthrough"))
+            .map(s -> new StateFlag(s, true))
+            .forEach(
+                flag -> {
+                    try {
+                        registry.register(flag);
+                    } catch (FlagConflictException err) {
+                        Infuse.LOGGER.warn("Another plugin has already registered the flag \"%s\".  Cannot register the flag.".formatted(flag.getName()));
+                    }
+                });
 
         if (enabled) Infuse.LOGGER.info("[Infuse] Successfully hooked into WorldGuard and registered the custom flags.");
     }
