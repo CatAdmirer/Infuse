@@ -177,7 +177,7 @@ public class Speed extends InfuseEffect {
 
         lastHitTime.put(uuid, currentTime);
         speedLevels.put(uuid, speedLevels.getOrDefault(uuid, 0) + 1);
-        if (event.getEntity() instanceof LivingEntity target) {
+        if (event.getEntity() instanceof LivingEntity target && !(isLocationBlocked(target.getLocation()))) {
             int currentNoDamageTicks = target.getNoDamageTicks();
             target.setNoDamageTicks(currentNoDamageTicks / 2);
         }

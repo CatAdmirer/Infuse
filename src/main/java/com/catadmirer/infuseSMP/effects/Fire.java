@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +58,7 @@ public class Fire extends InfuseEffect {
 
         final double radius = plugin.getMainConfig().fireSparkRadius();
         for (Entity entity : owner.getNearbyEntities(radius, radius, radius)) {
-            if (entity instanceof LivingEntity && entity != owner) {
+            if (entity instanceof LivingEntity && entity != owner && WorldGuardImpl.isFlagEnabled((LivingEntity) entity, "spark-passthrough")) {
                 entity.setFireTicks(100);
             }
         }

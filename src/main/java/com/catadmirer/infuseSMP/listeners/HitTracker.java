@@ -32,6 +32,9 @@ public class HitTracker implements Listener {
      */
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
+        // Making sure the event isn't cancelled before going through with the event
+        if (event.isCancelled()) return;
+
         // Making sure both entities are players
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof Player target)) return;
@@ -102,7 +105,7 @@ public class HitTracker implements Listener {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     /**

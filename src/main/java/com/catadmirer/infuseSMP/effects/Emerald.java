@@ -90,7 +90,6 @@ public class Emerald extends InfuseEffect {
         // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
         if (isLocationBlocked(owner.getLocation())) return;
-        if (!(WorldGuardImpl.isFlagEnabled(owner, "use-sparks"))) return;
 
         // Applying effects for the emerald spark
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -317,8 +316,7 @@ public class Emerald extends InfuseEffect {
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
         if (isLocationBlocked(attacker.getLocation())) return;
-        if (!(WorldGuardImpl.isFlagEnabled(attacker, "use-sparks") || !(WorldGuardImpl.isFlagEnabled(damaged, "spark-passthrough")))) return;
-        if (!(WorldGuardImpl.isFlagEnabled(attacker, "emerald")) || !(WorldGuardImpl.isFlagEnabled(damaged, "emerald"))) return;
+        if (!(WorldGuardImpl.isFlagEnabled(damaged, "spark-passthrough"))) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();
@@ -367,8 +365,7 @@ public class Emerald extends InfuseEffect {
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
-        if (isLocationBlocked(player.getLocation())) return;
-        if (!(WorldGuardImpl.isFlagEnabled(player, "emerald"))) return;
+        if (isLocationBlocked(player.getLocation()) || !(WorldGuardImpl.isFlagEnabled(player, "spark-passthrough"))) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();

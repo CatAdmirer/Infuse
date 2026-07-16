@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -237,10 +238,11 @@ public class Ender extends InfuseEffect {
         if (!(event.getEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
+
         if (isLocationBlocked(shooter.getLocation())) return;
+        if (!(WorldGuardImpl.isFlagEnabled(target, "spark-passthrough"))) return;
 
         cursePlayer(target.getUniqueId(), 1200);
-
         event.setDamage(0);
     }
 
@@ -251,7 +253,9 @@ public class Ender extends InfuseEffect {
         if (!(event.getHitEntity() instanceof Player target)) return;
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
+
         if (isLocationBlocked(shooter.getLocation())) return;
+        if (!(WorldGuardImpl.isFlagEnabled(target, "spark-passthrough"))) return;
 
         cursePlayer(target.getUniqueId(), 1200);
     }

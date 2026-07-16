@@ -5,7 +5,9 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.association.RegionAssociable;
+import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
@@ -67,11 +69,13 @@ public class WorldGuardImpl {
     public static boolean isFlagEnabled(Location loc, String flagName, RegionAssociable assoc) {
         if (!enabled) return true;
 
-        final StateFlag flag = new StateFlag(flagName.toLowerCase(), true);
+        final Flag<?> flag = WorldGuard.getInstance().getFlagRegistry().get(flagName.toLowerCase());
+        if (!(flag instanceof StateFlag)) return true;
+
         final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         final RegionManager manager = container.get(BukkitAdapter.adapt(loc.getWorld()));
         if (manager == null) return true;
 
-        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(assoc, flag);
+        return manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc)).testState(assoc, (StateFlag) flag);
     }
 }

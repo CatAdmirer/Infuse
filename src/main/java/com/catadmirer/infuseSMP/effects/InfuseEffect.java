@@ -215,10 +215,12 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public boolean isLocationBlocked(Location location) {
+        if (plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w))) return true;
+
         if (WorldGuardImpl.isEnabled()) {
-            if (!WorldGuardImpl.isFlagEnabled(location, "allow-" + key)) return true;
+            return !(WorldGuardImpl.isFlagEnabled(location, "use-sparks")) || !(WorldGuardImpl.isFlagEnabled(location, "allow-" + this.key));
         }
 
-        return plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w));
+        return false;
     }
 }

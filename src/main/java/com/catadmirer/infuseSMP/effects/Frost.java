@@ -6,6 +6,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.Bukkit;
@@ -93,6 +94,7 @@ public class Frost extends InfuseEffect {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.equals(owner) && !plugin.getDataManager().isTrusted(player, owner)
                     && player.getWorld().equals(world)
+                    && WorldGuardImpl.isFlagEnabled(player, "spark-passthrough")
                     && player.getLocation().distance(center) <= radius) {
                 affectedPlayers.add(player);
                 AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
@@ -154,6 +156,9 @@ public class Frost extends InfuseEffect {
 
                     // Skipping if there is a block above this one
                     if (powderSnowBlock.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
+
+                    // Skipping if the block's location is in a blocked region.
+                    if (isLocationBlocked(powderSnowBlock.getLocation())) return;
 
                     // Changing the block to regular snow
                     powderSnowBlock.setType(Material.SNOW_BLOCK);
@@ -223,6 +228,7 @@ public class Frost extends InfuseEffect {
         Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
         
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
+        if (isLocationBlocked(event.getAttacker().getLocation())) return;
 
         Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
 

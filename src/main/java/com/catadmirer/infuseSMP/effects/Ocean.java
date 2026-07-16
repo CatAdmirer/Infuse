@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -51,7 +52,7 @@ public class Ocean extends InfuseEffect {
         }
         
         for (Player otherPlayer : owner.getWorld().getPlayers()) {
-            if (otherPlayer.equals(owner)) continue;
+            if (otherPlayer.equals(owner) || isLocationBlocked(otherPlayer.getLocation())) continue;
             if (otherPlayer.getLocation().distance(owner.getLocation()) <= 5) {
                 int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
                 otherPlayer.setRemainingAir(newAir);
@@ -121,6 +122,7 @@ public class Ocean extends InfuseEffect {
                     if (p.equals(caster)) continue;
                     if (plugin.getDataManager().isTrusted(caster, p)) continue;
                     if (p.getLocation().distance(holderLoc) > radius) continue;
+                    if (isLocationBlocked(p.getLocation()) || !(WorldGuardImpl.isFlagEnabled(p, "spark-passthrough"))) continue;
 
                     Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
                     if (direction.lengthSquared() > 0.0001) {

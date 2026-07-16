@@ -4,6 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
 import org.bukkit.Bukkit;
@@ -106,6 +107,7 @@ public class Feather extends InfuseEffect {
 
             for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
                 if (!(entity instanceof LivingEntity target)) continue;
+                if (!(WorldGuardImpl.isFlagEnabled(target, "spark-passthrough"))) continue;
                 if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
                 final double damage = plugin.getMainConfig().featherLandDamage();

@@ -71,6 +71,7 @@ public class Thunder extends InfuseEffect {
                     this.cancel();
                     return;
                 }
+
                 if (isLocationBlocked(owner.getLocation())) return;
 
                 // Calculating the radius
@@ -87,6 +88,7 @@ public class Thunder extends InfuseEffect {
                 for (Entity entity : world.getNearbyEntities(owner.getLocation(), radius, radius, radius)) {
                     if (!(entity instanceof Player target)) continue;
                     if (plugin.getDataManager().isTrusted(target, owner)) continue;
+                    if (isLocationBlocked(target.getLocation())) continue;
 
                     strikeLighting(target, owner);
                 }
@@ -151,8 +153,9 @@ public class Thunder extends InfuseEffect {
         // Finding the next target.
         for (Entity entity : targets.getLast().getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof Player target)) continue;
-            if (plugin.getDataManager().isTrusted(attacker, target)) continue;
             if (targets.contains(target)) continue;
+            if (plugin.getDataManager().isTrusted(attacker, target)) continue;
+            if (isLocationBlocked(target.getLocation())) continue;
 
             // Target found!  Striking them then searching for the next target after 1 second.
             strikeLighting(target, attacker);

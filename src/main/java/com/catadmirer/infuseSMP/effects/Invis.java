@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -114,7 +115,7 @@ public class Invis extends InfuseEffect {
                     }
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !plugin.getDataManager().isTrusted(p, owner)) {
+                        if (p.getWorld().equals(world) && p.getLocation().distance(center) <= radius && !plugin.getDataManager().isTrusted(p, owner) && WorldGuardImpl.isFlagEnabled(p, "spark-passthrough")) {
                             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
                         }
                     }
@@ -189,6 +190,7 @@ public class Invis extends InfuseEffect {
         Message msg = new Message(MessageType.DEATH_MESSAGE);
         msg.applyPlaceholder("victim", victimName);
         msg.applyPlaceholder("killer", killerName);
+
         event.deathMessage(msg.toComponent());
     }
 
