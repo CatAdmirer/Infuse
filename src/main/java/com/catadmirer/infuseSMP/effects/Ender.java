@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import net.kyori.adventure.text.Component;
@@ -36,7 +35,6 @@ import java.util.UUID;
 public class Ender extends InfuseEffect {
     public static final Component fireballName = Component.text("Cursing Projectile");
     public static final Set<UUID> cursedPlayers = new HashSet<>();
-    private final Infuse plugin;
 
     public Ender() {
         this(false);
@@ -44,8 +42,6 @@ public class Ender extends InfuseEffect {
 
     public Ender(boolean augmented) {
         super("ender", EffectIds.ENDER, augmented, EffectConstants.potionColor(EffectIds.ENDER), EffectConstants.ritualColor(EffectIds.ENDER));
-
-        this.plugin = Infuse.getInstance();
     }
 
     public void equip(Player owner) {

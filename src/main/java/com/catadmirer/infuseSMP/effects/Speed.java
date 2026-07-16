@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
@@ -29,16 +28,12 @@ public class Speed extends InfuseEffect {
     private static final Map<UUID, Long> lastHitTime = new HashMap<>();
     private static final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
-    private final Infuse plugin;
-
     public Speed() {
         this(false);
     }
 
     public Speed(boolean augmented) {
         super("speed", EffectIds.SPEED, augmented, EffectConstants.potionColor(EffectIds.SPEED), EffectConstants.ritualColor(EffectIds.SPEED));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

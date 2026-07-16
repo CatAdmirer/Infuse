@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -31,7 +30,6 @@ import java.util.UUID;
 public class Heart extends InfuseEffect {
     public static final NamespacedKey heartBoost = new NamespacedKey("infuse", "heart_boost");
     public static final NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "heart_spark_boost");
-    private final Infuse plugin;
 
     public Heart() {
         this(false);
@@ -39,8 +37,6 @@ public class Heart extends InfuseEffect {
 
     public Heart(boolean augmented) {
         super("heart", EffectIds.HEART, augmented, EffectConstants.potionColor(EffectIds.HEART), EffectConstants.ritualColor(EffectIds.HEART));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

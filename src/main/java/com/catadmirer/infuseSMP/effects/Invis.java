@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
@@ -32,16 +31,12 @@ import java.util.UUID;
 public class Invis extends InfuseEffect {
     public static final MiniMessage mm = MiniMessage.miniMessage();
 
-    private final Infuse plugin;
-
     public Invis() {
         this(false);
     }
 
     public Invis(boolean augmented) {
         super("invis", EffectIds.INVIS, augmented, EffectConstants.potionColor(EffectIds.INVIS), EffectConstants.ritualColor(EffectIds.INVIS));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

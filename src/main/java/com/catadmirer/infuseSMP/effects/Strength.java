@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -21,16 +20,12 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import java.util.UUID;
 
 public class Strength extends InfuseEffect {
-    private final Infuse plugin;
-
     public Strength() {
         this(false);
     }
 
     public Strength(boolean augmented) {
         super("strength", EffectIds.STRENGTH, augmented, EffectConstants.potionColor(EffectIds.STRENGTH), EffectConstants.ritualColor(EffectIds.STRENGTH));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

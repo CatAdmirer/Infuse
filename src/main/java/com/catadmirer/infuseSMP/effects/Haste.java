@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -28,16 +27,12 @@ public class Haste extends InfuseEffect {
     private static final NamespacedKey efficiencyKey = new NamespacedKey("infuse", "haste_efficiency");
     private static final NamespacedKey unbreakingKey = new NamespacedKey("infuse", "haste_unbreaking");
 
-    private final Infuse plugin;
-
     public Haste() {
         this(false);
     }
 
     public Haste(boolean augmented) {
         super("haste", EffectIds.HASTE, augmented, EffectConstants.potionColor(EffectIds.HASTE), EffectConstants.ritualColor(EffectIds.HASTE));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override

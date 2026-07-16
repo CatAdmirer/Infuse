@@ -29,6 +29,7 @@ public abstract class InfuseEffect implements Listener {
     protected final boolean augmented;
     protected final Color potionColor;
     protected final BossBar.Color ritualColor;
+    protected final Infuse plugin = Infuse.getInstance();
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
         this.key = key;
