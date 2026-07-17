@@ -36,6 +36,7 @@ public class Infuse extends JavaPlugin {
     private final GlobalLoop loop;
     private final RecipeManager recipeManager;
     private final HitTracker hitTracker;
+    private boolean enabled = false;
 
     @NonNull
     public static Infuse getInstance() {
@@ -52,6 +53,8 @@ public class Infuse extends JavaPlugin {
     }
 
     public void onLoad() {
+        registerEffects();
+
         if (!(WorldGuardImpl.canEnable())) {
             LOGGER.info("WorldGuard is not installed! Hook has been disabled");
             WorldGuardImpl.setEnabled(false);
@@ -64,10 +67,12 @@ public class Infuse extends JavaPlugin {
 
     public void onEnable() {
         // Making sure the plugin hasn't been initialized twice
-        //if (this.isEnabled()) return;
+        if (enabled) {
+            throw new IllegalArgumentException("Infuse plugin has already been enabled!");
+        }
 
         // Registering the vanilla effects
-        registerEffects();
+        //registerEffects();
 
         // Loading the message translator
         new MessageTranslator().loadAll();
@@ -110,6 +115,7 @@ public class Infuse extends JavaPlugin {
 
         // Logging the success message
         LOGGER.info("Infuse Plugin has been enabled!");
+        this.enabled = true;
     }
 
     public MainConfig getMainConfig() {

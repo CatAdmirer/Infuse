@@ -68,6 +68,9 @@ public class Emerald extends InfuseEffect {
         if (isLocationBlocked(owner.getLocation())) return;
         // Applying the potion effect to the player
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
+
+        if (!(ItemUtil.isSword(owner.getInventory().getItemInMainHand()))) return;
+        ItemUtil.applySpecialEnchantment(owner.getInventory().getItemInMainHand(), LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -98,6 +100,26 @@ public class Haste extends InfuseEffect {
 
     //// Listeners ////
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
+
+    @EventHandler
+    public void enchantHeldItem(PlayerItemHeldEvent event) {
+        Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent triggered");
+
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (isLocationBlocked(player.getLocation())) return;
+
+        Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
+
+        ItemStack item = player.getInventory().getItem(event.getNewSlot());
+        if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
+            Infuse.LOGGER.debug("[Haste] Haste user is holding a sword/axe/shove/hoe.  Enchanting with fortune, efficiency and unbreaking.");
+
+            ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
+            ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());
+            ItemUtil.applySpecialEnchantment(item, unbreakingKey, Enchantment.UNBREAKING, plugin.getMainConfig().hasteUnbreakingLevel());
+        }
+    }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
