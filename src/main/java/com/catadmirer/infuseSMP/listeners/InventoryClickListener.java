@@ -28,6 +28,7 @@ public class InventoryClickListener implements Listener {
     public void clickEffectChooser(InventoryClickEvent event) {
         HumanEntity player = event.getWhoClicked();
         Inventory inventory = event.getClickedInventory();
+
         if (inventory == null) return;
         if (!(inventory.getHolder() instanceof EffectChooser)) return;
 
@@ -50,7 +51,7 @@ public class InventoryClickListener implements Listener {
         if (!(inventory.getHolder() instanceof AugOrRegChooser)) return;
 
         ItemStack item = event.getCurrentItem();
-        if (item.getType() == Material.POTION) return;
+        if (item == null || item.getType() == Material.POTION) return;
 
         event.setCancelled(true);
     }

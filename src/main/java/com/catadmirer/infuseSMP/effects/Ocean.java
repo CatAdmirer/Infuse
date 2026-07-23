@@ -50,7 +50,8 @@ public class Ocean extends InfuseEffect {
             drownStrength = plugin.getMainConfig().oceanSparkDrownStrength();
             drownDamage = plugin.getMainConfig().oceanSparkDrownDamage();
         }
-        
+
+        // TODO: Make this use packets for air bubbles
         for (Player otherPlayer : owner.getWorld().getPlayers()) {
             if (otherPlayer.equals(owner) || isLocationBlocked(otherPlayer.getLocation())) continue;
             if (otherPlayer.getLocation().distance(owner.getLocation()) <= 5) {

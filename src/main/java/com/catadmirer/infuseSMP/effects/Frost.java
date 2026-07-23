@@ -24,6 +24,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -35,7 +36,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Frost extends InfuseEffect {
+
     private final static Set<UUID> frozenAttackers = new HashSet<>();
+    private final static Set<Location> frozenSnow = new HashSet<>();
 
     public Frost() {
         this(false);
@@ -162,19 +165,28 @@ public class Frost extends InfuseEffect {
 
                     // Changing the block to regular snow
                     powderSnowBlock.setType(Material.SNOW_BLOCK);
+                    frozenSnow.add(powderSnowBlock.getLocation());
 
-                    // This may cause powdered snow to permanently become snow if the server shuts down.
                     Bukkit.getScheduler().runTaskTimer(plugin, task -> {
                         // Skipping if the player is too close to the block
                         if (powderSnowBlock.getLocation().distance(player.getLocation()) <= frostSnowRadius) return;
+                        // Skipping if the player has broke the snow block when it has been changed
+                        if (!(powderSnowBlock.getType().equals(Material.SNOW_BLOCK))) return;
 
                         // Resetting the block to powdered snow
                         powderSnowBlock.setType(Material.POWDER_SNOW);
+                        frozenSnow.remove(powderSnowBlock.getLocation());
                         task.cancel();
                     }, 10, 10);
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+        if (!(event.getPlugin().getName().equalsIgnoreCase(plugin.getName()))) return;
+        frozenSnow.forEach(snow -> snow.getBlock().setType(Material.POWDER_SNOW));
     }
 
     //// Listeners ////

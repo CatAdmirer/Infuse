@@ -6,6 +6,7 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -104,11 +105,8 @@ public class EffectManager {
         // Making sure the player has inventory space for the drained item if is meant to be given to them.
         if (player.getInventory().firstEmpty() == -1) {
             player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
-            return result;
+            return new EquipResult(EquipResultType.FAIL);
         }
-
-        // Giving the player the item
-        player.getInventory().addItem(result.effect.createItem());
 
         // Sending the success message
         Message msg = new Message(MessageType.DRAIN_SUCCESS);
