@@ -33,11 +33,6 @@ public class DataManager {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -64,12 +59,6 @@ public class DataManager {
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -96,12 +85,6 @@ public class DataManager {
      * @return Whether or not the file was created successfully.
      */
     public boolean createFile(boolean replace) {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         if (!dataFile.exists()) {
             try {

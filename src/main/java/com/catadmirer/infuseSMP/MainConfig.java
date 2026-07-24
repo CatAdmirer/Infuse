@@ -27,12 +27,6 @@ public class MainConfig {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        // Not doing anything if the plugin isn't enabled
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("{} not loaded, cannot load {}.", plugin.getName(), file.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -42,7 +36,7 @@ public class MainConfig {
         // Loading the config
         try {
             config.load(file);
-            Infuse.LOGGER.info("Successfully loaded config.yml");
+            Infuse.LOGGER.info("Successfully loaded {}", file.getName());
             return true;
         } catch (InvalidConfigurationException e) {
             Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
@@ -60,12 +54,6 @@ public class MainConfig {
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
-        // Not doing anything if the plugin isn't enabled
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("{} not loaded, cannot save {}.", plugin.getName(), file.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         if (!file.exists()) {
             try {

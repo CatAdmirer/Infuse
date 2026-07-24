@@ -51,9 +51,6 @@ public class Infuse extends JavaPlugin {
     }
 
     public void onEnable() {
-        // Making sure the plugin hasn't been initialized twice
-        if (this.isEnabled()) return;
-
         // Registering the vanilla effects
         registerEffects();
 
