@@ -124,9 +124,8 @@ jobs:
               ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
               sha: context.sha
             });
-  # Publishing to maven
-  maven-publish:
-    if: false
+  # Publishing to maven and modrinth
+  publish:
     needs:
       - data_collector
       - test-builds
