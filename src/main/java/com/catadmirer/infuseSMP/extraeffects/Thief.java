@@ -191,10 +191,12 @@ public class Thief extends InfuseEffect {
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        // Hiding thief users when they join
         if (plugin.getDataManager().hasEffect(player, this)) {
             Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
         }
 
+        // Hiding any online thief users from the player that joined.
         for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
             if (!plugin.getDataManager().hasEffect(otherPlayer, this)) continue;
 
