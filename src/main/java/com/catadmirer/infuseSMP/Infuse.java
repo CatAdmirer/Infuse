@@ -80,9 +80,6 @@ public class Infuse extends JavaPlugin {
         mainConfig.applyUpdates();
         dataManager.applyUpdates();
 
-        // Initializing the recipe manager
-        new EffectCraftManager(this);
-
         // Registering infuse commands
         this.registerCommands();
 
@@ -196,6 +193,7 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityDropItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EntityPickupItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(hitTracker, this);
+        Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ItemDespawnListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);

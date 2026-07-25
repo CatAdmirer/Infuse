@@ -48,13 +48,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.Nullable;
 
 public class EffectCraftManager implements Listener {
-    private final Infuse plugin;
+    private final Infuse plugin = Infuse.getInstance();
     private static BossBar ritualBossBar;
     private static EnderCrystal ritualBeam;
-
-    public EffectCraftManager(Infuse plugin) {
-        this.plugin = plugin;
-    }
 
     public static boolean isRitual() {
         return ritualBossBar != null;
