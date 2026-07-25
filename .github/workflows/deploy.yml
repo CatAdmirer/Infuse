@@ -113,17 +113,16 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Tagging latest version
-        uses: actions/github-script@v9
+      - name: Checkout sources
+        uses: actions/checkout@v6
         with:
-          script: |
-            // Tagging release
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
-              sha: context.sha
-            });
+          ref: "dev/2.4.5"
+      - name: Tagging latest version
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag "${{ needs.data_collector.outputs.full_version }}"
+          git push origin "${{ needs.data_collector.outputs.full_version }}"
   # Publishing to maven and modrinth
   publish:
     needs:
