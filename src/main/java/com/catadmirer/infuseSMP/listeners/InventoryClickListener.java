@@ -79,7 +79,7 @@ public class InventoryClickListener implements Listener {
     public void recipeListGUIHandler(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         if (inventory == null) return;
-        if (!(inventory instanceof RecipeListGUI)) return;
+        if (!(inventory.getHolder() instanceof RecipeListGUI)) return;
 
         event.setCancelled(true);
 
