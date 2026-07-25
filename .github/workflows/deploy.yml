@@ -89,8 +89,8 @@ jobs:
       - name: Modifying gradle.properties
         run: |
           sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
-          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.4/" gradle.properties
-      - name: "Building for 1.21.4"
+          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.11/" gradle.properties
+      - name: "Building for 1.21.11"
         run: ./gradlew build
       - name: Modifying gradle.properties
         run: |
@@ -146,7 +146,7 @@ jobs:
         run: |
           sed -i "s/version=.*/version=${{ needs.data_collector.outputs.full_version }}/" gradle.properties
           sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
-          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.4/" gradle.properties
+          sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.11/" gradle.properties
       - name: "Publishing build"
         run: ./gradlew publish
   # Publishing to modrinth
@@ -165,6 +165,6 @@ jobs:
           channel: ${{ needs.data_collector.outputs.channel }}
           changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
-          game-versions: 1.21.4 - 26.1.2
+          game-versions: 1.21.11 - 26.1.2
           files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}/infuse-${{ needs.data_collector.outputs.full_version }}.jar
       - run: echo "Published infuse-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.4-26.1.2" >> $GITHUB_STEP_SUMMARY
