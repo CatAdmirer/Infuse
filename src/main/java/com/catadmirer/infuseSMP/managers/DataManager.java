@@ -17,12 +17,10 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class DataManager {
-    private final Infuse plugin;
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public DataManager(Infuse plugin) {   
-        this.plugin = plugin;     
+    public DataManager(Infuse plugin) {
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
@@ -33,11 +31,6 @@ public class DataManager {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -60,16 +53,10 @@ public class DataManager {
 
     /**
      * Writes the config to the file.
-     * 
+     *
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -91,17 +78,11 @@ public class DataManager {
     /**
      * Creating the config file. If it doesn't exist, it loads the default config. If the file does
      * exist, it will only replace it if the parameter is true.
-     * 
+     *
      * @param replace Whether or not to replace the config file with the default configs.
      * @return Whether or not the file was created successfully.
      */
     public boolean createFile(boolean replace) {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         if (!dataFile.exists()) {
             try {
@@ -117,12 +98,12 @@ public class DataManager {
     }
 
     public int getExistingCount(InfuseEffect effect) {
-        return config.getInt("existing-effects." + effect.getKey(), 0);
+        return config.getInt("existing-effects." + effect.getPlainKey(), 0);
     }
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
-        config.set("existing-effects." + effect.getKey(), crafted);
-        
+        config.set("existing-effects." + effect.getPlainKey(), crafted);
+
         save();
     }
 
@@ -182,7 +163,7 @@ public class DataManager {
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented) {
-        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");        
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, String slot) {
@@ -237,8 +218,6 @@ public class DataManager {
             FileOutputStream fileOut = new FileOutputStream(dataFile);
             fileOut.write(inputBuffer.toString().getBytes());
             fileOut.close();
-        } catch (IOException err) {
-            
-        }
+        } catch (IOException err) {}
     }
 }

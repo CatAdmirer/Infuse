@@ -7,7 +7,7 @@ public class LimitedRunnable extends BukkitRunnable {
     private final IntConsumer task;
     private final int iterations;
     private int iteration = 0;
-    
+
     public LimitedRunnable(int iterations, Runnable task) {
         this(iterations, i -> task.run());
     }

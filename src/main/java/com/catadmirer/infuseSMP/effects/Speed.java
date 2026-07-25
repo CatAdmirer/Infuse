@@ -2,10 +2,11 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -29,20 +30,18 @@ public class Speed extends InfuseEffect {
     private static final Map<UUID, Long> lastHitTime = new HashMap<>();
     private static final Map<UUID, Long> bowPullStartTime = new HashMap<>();
 
-    private final Infuse plugin;
-
     public Speed() {
         this(false);
     }
 
     public Speed(boolean augmented) {
         super("speed", EffectIds.SPEED, augmented, EffectConstants.potionColor(EffectIds.SPEED), EffectConstants.ritualColor(EffectIds.SPEED));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
     public void equip(Player owner) {
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+
         speedLevels.put(owner.getUniqueId(), 0);
         owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, false, false, false));
     }
@@ -56,6 +55,8 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+
         UUID uuid = owner.getUniqueId();
         long lastHit = lastHitTime.getOrDefault(uuid, 0L);
         if (System.currentTimeMillis() - lastHit > 1000L) {
@@ -70,6 +71,8 @@ public class Speed extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xD1A44B));
@@ -153,6 +156,7 @@ public class Speed extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
         long pullTimeMs = System.currentTimeMillis() - startTime;
@@ -167,6 +171,7 @@ public class Speed extends InfuseEffect {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         UUID uuid = player.getUniqueId();
         long currentTime = System.currentTimeMillis();

@@ -2,11 +2,12 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -21,16 +22,12 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import java.util.UUID;
 
 public class Strength extends InfuseEffect {
-    private final Infuse plugin;
-
     public Strength() {
         this(false);
     }
 
     public Strength(boolean augmented) {
         super("strength", EffectIds.STRENGTH, augmented, EffectConstants.potionColor(EffectIds.STRENGTH), EffectConstants.ritualColor(EffectIds.STRENGTH));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -45,10 +42,12 @@ public class Strength extends InfuseEffect {
 
         // Skipping players on cooldown
         if (CooldownManager.isOnCooldown(uuid, "strength")) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
 
         // Playing sounds
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        
+
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
@@ -83,13 +82,14 @@ public class Strength extends InfuseEffect {
     public void extraDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         // Damage boost
         double damage = event.getDamage();
         damage += (attacker.getAttribute(Attribute.MAX_HEALTH).getValue() - attacker.getHealth()) * 0.3;
 
         // Spark auto-crit
-        if (!event.isCritical() && CooldownManager.isEffectActive(attacker.getUniqueId(), "strength")) {
+        if (!event.isCritical() && CooldownManager.isEffectActive(attacker.getUniqueId(), "strength") && RegionBlocker.getInstance().isEffectAllowed(event.getEntity(), this)) {
             // crit dmg boost
             damage *= 1.35;
 
@@ -136,6 +136,7 @@ public class Strength extends InfuseEffect {
 
         // Making sure the shooter has the strength effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         // Increasing the piercing level of the shot arrow.
         if (event.getProjectile() instanceof Arrow arrow) {
@@ -145,7 +146,10 @@ public class Strength extends InfuseEffect {
 
     @EventHandler
     public void strengthTenHitEvent(TenHitEvent event) {
-        if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
+        Player attacker = event.getAttacker();
+
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         // TODO: Reveal armor durability
     }

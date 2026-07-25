@@ -8,9 +8,9 @@ import org.bukkit.Material;
 public class EffectConstants {
     /**
      * Gets the {@link Material} to use in the background of this effect's {@link AugOrRegChooser} menu.
-     * 
+     *
      * @param effectId The id of the infuse effect.
-     * 
+     *
      * @return the {@link Material} for the effect.
      */
     public static Material menuBackgroundColor(int effectId) {
@@ -36,9 +36,9 @@ public class EffectConstants {
 
     /**
      * Gets the {@link Color} for this effect's potion and related text.
-     * 
+     *
      * @param effectId The id of the infuse effect.
-     * 
+     *
      * @return the {@link Color} for the effect.
      */
     public static Color potionColor(int effectId) {
@@ -64,9 +64,9 @@ public class EffectConstants {
 
     /**
      * Gets the {@link BossBar.Color} for this effect's ritual.
-     * 
+     *
      * @param effectId The id of the infuse effect.
-     * 
+     *
      * @return the {@link BossBar.Color} for the effect.
      */
     public static BossBar.Color ritualColor(int effectId) {

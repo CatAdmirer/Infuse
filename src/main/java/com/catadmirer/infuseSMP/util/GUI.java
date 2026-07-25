@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.util;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
