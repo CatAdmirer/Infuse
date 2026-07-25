@@ -126,6 +126,7 @@ jobs:
             });
   # Publishing to maven
   maven-publish:
+    if: false
     needs:
       - data_collector
       - test-builds
@@ -147,16 +148,12 @@ jobs:
           sed -i "s/version=.*/version=${{ needs.data_collector.outputs.full_version }}/" gradle.properties
           sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
           sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.11/" gradle.properties
-      - name: "Publishing build"
+      - name: Building Infuse
+        run: ./gradlew build
+      - name: "Publishing build to maven"
         run: ./gradlew publish
-  # Publishing to modrinth
-  modrinth-publish:
-    needs:
-      - data_collector
-      - maven-publish
-    runs-on: ubuntu-latest
-    steps:
-      - name: Publishing build for 1.21.x
+      - name: Publishing build to modrinth
+        if: always()
         uses: cloudnode-pro/modrinth-publish@v2
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
@@ -166,5 +163,5 @@ jobs:
           changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
           game-versions: 1.21.11 - 26.1.2
-          files: https://maven.turbojax.org/releases/com/catadmirer/infuse/${{ needs.data_collector.outputs.full_version }}/infuse-${{ needs.data_collector.outputs.full_version }}.jar
-      - run: echo "Published infuse-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.4-26.1.2" >> $GITHUB_STEP_SUMMARY
+          files: build/libs/InfuseSMP-${{ needs.data_collector.outputs.full_version }}.jar
+      - run: echo "Published InfuseSMP-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.11-26.1.2" >> $GITHUB_STEP_SUMMARY
