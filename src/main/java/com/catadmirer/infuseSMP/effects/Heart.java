@@ -4,8 +4,9 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ public class Heart extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
         attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
@@ -61,8 +62,8 @@ public class Heart extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
-        if (!WorldGuardImpl.canUseSpark(owner)) return;
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -147,7 +148,7 @@ public class Heart extends InfuseEffect {
     public void heartShowTargetHealth(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         this.showAndUpdateHealthAboveEntity(event.getTarget());
     }
@@ -156,7 +157,7 @@ public class Heart extends InfuseEffect {
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         ItemStack item = event.getItem();
         if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {

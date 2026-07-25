@@ -5,8 +5,9 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -42,7 +43,7 @@ public class Invis extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, -1, 0, false, false));
     }
 
@@ -56,8 +57,8 @@ public class Invis extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
-        if (WorldGuardImpl.canUseSpark(owner)) return;
-        if (WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -75,13 +76,13 @@ public class Invis extends InfuseEffect {
         for (Player player : world.getPlayers()) {
             if (player.getLocation().distance(owner.getLocation()) > radius) continue;
             if (!plugin.getDataManager().isTrusted(owner, player)) continue;
-            if (WorldGuardImpl.isEffectAllowed(player, this)) continue;
+            if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) continue;
 
             vanishedPlayers.add(player);
         }
 
         for (Player vanished : vanishedPlayers) {
-            if (WorldGuardImpl.isEffectAllowed(vanished, this)) continue;
+            if (!RegionBlocker.getInstance().isEffectAllowed(vanished, this)) continue;
 
             for (Player other : Bukkit.getOnlinePlayers()) {
                 if (other.equals(vanished)) continue;
@@ -122,8 +123,8 @@ public class Invis extends InfuseEffect {
                     for (Player p : world.getPlayers()) {
                         if (p.getLocation().distance(center) > radius) continue;
                         if (plugin.getDataManager().isTrusted(p, owner)) continue;
-                        if (!WorldGuardImpl.canBeTargetedBySpark(p)) continue;
-                        if (!WorldGuardImpl.isEffectAllowed(p, Invis.this)) continue;
+                        if (!RegionBlocker.getInstance().canBeTargetedBySpark(p)) continue;
+                        if (!RegionBlocker.getInstance().isEffectAllowed(p, Invis.this)) continue;
 
                         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false));
                     }
@@ -179,7 +180,7 @@ public class Invis extends InfuseEffect {
         Player killer = victim.getKiller();
 
         if (killer == null) return;
-        if (!WorldGuardImpl.isEffectAllowed(killer, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(killer, this)) return;
 
         String victimName;
         if (plugin.getMainConfig().invisHideDeaths() && plugin.getDataManager().hasEffect(killer, this)) {
@@ -206,10 +207,10 @@ public class Invis extends InfuseEffect {
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
         if (!plugin.getDataManager().hasEffect(shooter, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(shooter, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(shooter, this)) return;
         if (!(event.getEntity() instanceof Arrow)) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
-        if (!WorldGuardImpl.isEffectAllowed(target, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
 
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
         this.spawnBlackParticles(target, 4);
@@ -219,10 +220,10 @@ public class Invis extends InfuseEffect {
     public void onTenHits(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         Player target = event.getTarget();
-        if (!WorldGuardImpl.isEffectAllowed(target, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
         this.spawnBlackParticles(target, 4);
     }
@@ -231,7 +232,7 @@ public class Invis extends InfuseEffect {
     public void onEntityTarget(EntityTargetEvent event) {
         if (!(event.getTarget() instanceof Player target)) return;
         if (!plugin.getDataManager().hasEffect(target, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(target, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
 
         event.setCancelled(true);
     }

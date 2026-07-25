@@ -5,9 +5,10 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -51,7 +52,7 @@ public class Haste extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         //todo: Move to PlayerItemHeldEvent listener
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         ItemStack item = owner.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
@@ -66,8 +67,8 @@ public class Haste extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
-        if (!WorldGuardImpl.canUseSpark(owner)) return;
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -109,7 +110,7 @@ public class Haste extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
 
@@ -169,7 +170,7 @@ public class Haste extends InfuseEffect {
         if (!player.isBlocking()) return;
         // TODO: Handle if player blocks with main hand
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 

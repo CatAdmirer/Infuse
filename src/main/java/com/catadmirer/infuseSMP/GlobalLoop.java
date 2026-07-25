@@ -3,9 +3,8 @@ package com.catadmirer.infuseSMP;
 import com.catadmirer.infuseSMP.effects.Heart;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
-
+import com.catadmirer.infuseSMP.util.RegionBlocker;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -45,7 +44,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (lEffect != null) {
-                final boolean shouldBlock = !WorldGuardImpl.isEffectAllowed(player, lEffect);
+                final boolean shouldBlock = !RegionBlocker.getInstance().isEffectAllowed(player, lEffect);
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
 
                 if (shouldBlock && !isBlocked) {
@@ -63,7 +62,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                final boolean shouldBlock = !WorldGuardImpl.isEffectAllowed(player, rEffect);
+                final boolean shouldBlock = !RegionBlocker.getInstance().isEffectAllowed(player, rEffect);
                 boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
                 if (shouldBlock && !isBlocked) {
                     rEffect.unequip(player);

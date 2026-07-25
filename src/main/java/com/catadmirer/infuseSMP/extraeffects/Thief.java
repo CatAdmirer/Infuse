@@ -5,8 +5,8 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -40,7 +40,7 @@ public class Thief extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.unlistPlayer(owner);
@@ -60,7 +60,7 @@ public class Thief extends InfuseEffect {
 
     @Override
     public void activateSpark(Player owner) {
-        if (!WorldGuardImpl.canUseSpark(owner)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
 
         UUID playerUUID = owner.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "thief")) return;
@@ -237,8 +237,8 @@ public class Thief extends InfuseEffect {
 
         if (killer == null) return;
         if (!plugin.getDataManager().hasEffect(killer, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(killer, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(deadPlayer, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(killer, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(deadPlayer, this)) return;
 
         disguise(killer, deadPlayer);
     }
@@ -248,11 +248,11 @@ public class Thief extends InfuseEffect {
         if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!WorldGuardImpl.canBeTargetedBySpark(victim)) return;
+        if (!RegionBlocker.getInstance().canBeTargetedBySpark(victim)) return;
 
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
-        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
 
         InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
         InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");

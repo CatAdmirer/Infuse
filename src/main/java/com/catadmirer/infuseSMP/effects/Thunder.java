@@ -4,8 +4,9 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -47,8 +48,8 @@ public class Thunder extends InfuseEffect {
         UUID uuid = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(uuid, "thunder")) return;
-        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
-        if (!WorldGuardImpl.canUseSpark(owner)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -88,7 +89,7 @@ public class Thunder extends InfuseEffect {
                 for (Entity entity : world.getNearbyEntities(owner.getLocation(), radius, radius, radius)) {
                     if (!(entity instanceof Player target)) continue;
                     if (plugin.getDataManager().isTrusted(target, owner)) continue;
-                    if (!WorldGuardImpl.canBeTargetedBySpark(target)) continue;
+                    if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
 
                     strikeLighting(target, owner);
                 }
@@ -145,7 +146,7 @@ public class Thunder extends InfuseEffect {
         if (targets.isEmpty()) throw new InvalidParameterException("targets list needs to have the attacker in the front");
 
         Player attacker = targets.getFirst();
-        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         // TODO: make config
         double radius = 3;
@@ -155,7 +156,7 @@ public class Thunder extends InfuseEffect {
             if (!(entity instanceof Player target)) continue;
             if (targets.contains(target)) continue;
             if (plugin.getDataManager().isTrusted(attacker, target)) continue;
-            if (!WorldGuardImpl.isEffectAllowed(entity, this)) return;
+            if (!RegionBlocker.getInstance().isEffectAllowed(entity, this)) return;
 
             // Target found!  Striking them then searching for the next target after 1 second.
             strikeLighting(target, attacker);
@@ -184,10 +185,10 @@ public class Thunder extends InfuseEffect {
     public void onTenHitEvent(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         Player target = event.getTarget();
-        if (!WorldGuardImpl.isEffectAllowed(target, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
 
         // Striking the attacked player
         strikeLighting(target, attacker);
@@ -204,12 +205,12 @@ public class Thunder extends InfuseEffect {
         // Making sure the shooter has the thunder effect
         if (!(trident.getShooter() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
 
         // Only summoning lightning if the target is a living entity
         if (!(event.getEntity() instanceof LivingEntity target)) return;
         if (target instanceof Player p && plugin.getDataManager().isTrusted(attacker, p)) return;
-        if (!WorldGuardImpl.isEffectAllowed(target, this)) return;
+        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
 
         strikeLighting(target, attacker);
     }

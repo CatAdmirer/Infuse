@@ -6,8 +6,7 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
-
+import com.catadmirer.infuseSMP.util.RegionBlocker;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -60,7 +59,7 @@ public class EffectManager {
 
         // Equipping the effect and updating the player data
         // If the player is in a blocked location, the effect is equipped but not activated.
-        if (WorldGuardImpl.isEffectAllowed(player, effect)) effect.equip(player);
+        if (RegionBlocker.getInstance().isEffectAllowed(player, effect)) effect.equip(player);
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);
