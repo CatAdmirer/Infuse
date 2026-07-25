@@ -56,8 +56,7 @@ public class Infuse extends JavaPlugin {
         registerEffects();
 
         if (WorldGuardImpl.canEnable()) {
-            WorldGuardImpl.setEnabled(true);
-            WorldGuardImpl.load();
+            WorldGuardImpl.enable();
         } else {
             LOGGER.info("WorldGuard is not installed! Hook has been disabled");
         }

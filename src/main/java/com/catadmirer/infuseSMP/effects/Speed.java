@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
 import org.bukkit.Bukkit;
@@ -38,7 +39,7 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         speedLevels.put(owner.getUniqueId(), 0);
         owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, false, false, false));
@@ -53,7 +54,7 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         UUID uuid = owner.getUniqueId();
         long lastHit = lastHitTime.getOrDefault(uuid, 0L);
@@ -69,7 +70,8 @@ public class Speed extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+        if (!WorldGuardImpl.canUseSpark(owner)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xD1A44B));
@@ -153,7 +155,7 @@ public class Speed extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
         long pullTimeMs = System.currentTimeMillis() - startTime;
@@ -168,7 +170,7 @@ public class Speed extends InfuseEffect {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         UUID uuid = player.getUniqueId();
         long currentTime = System.currentTimeMillis();
@@ -177,7 +179,7 @@ public class Speed extends InfuseEffect {
 
         lastHitTime.put(uuid, currentTime);
         speedLevels.put(uuid, speedLevels.getOrDefault(uuid, 0) + 1);
-        if (event.getEntity() instanceof LivingEntity target && !(isLocationBlocked(target.getLocation()))) {
+        if (event.getEntity() instanceof LivingEntity target) {
             int currentNoDamageTicks = target.getNoDamageTicks();
             target.setNoDamageTicks(currentNoDamageTicks / 2);
         }

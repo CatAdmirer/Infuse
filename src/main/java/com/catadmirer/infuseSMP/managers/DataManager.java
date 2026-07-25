@@ -98,11 +98,11 @@ public class DataManager {
     }
 
     public int getExistingCount(InfuseEffect effect) {
-        return config.getInt("existing-effects." + effect.getKey(), 0);
+        return config.getInt("existing-effects." + effect.getPlainKey(), 0);
     }
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
-        config.set("existing-effects." + effect.getKey(), crafted);
+        config.set("existing-effects." + effect.getPlainKey(), crafted);
 
         save();
     }

@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP;
 import com.catadmirer.infuseSMP.effects.Heart;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
 
 import org.bukkit.Bukkit;
@@ -44,7 +45,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (lEffect != null) {
-                final boolean shouldBlock = lEffect.isLocationBlocked(player.getLocation());
+                final boolean shouldBlock = !WorldGuardImpl.isEffectAllowed(player, lEffect);
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
 
                 if (shouldBlock && !isBlocked) {
@@ -62,13 +63,13 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                final boolean blocked = rEffect.isLocationBlocked(player.getLocation());
+                final boolean shouldBlock = !WorldGuardImpl.isEffectAllowed(player, rEffect);
                 boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
-                if (blocked && !isBlocked) {
+                if (shouldBlock && !isBlocked) {
                     rEffect.unequip(player);
                     rEffectDisabled.add(player.getUniqueId());
                     isBlocked = true;
-                } else if (!blocked && isBlocked) {
+                } else if (!shouldBlock && isBlocked) {
                     rEffect.equip(player);
                     rEffectDisabled.remove(player.getUniqueId());
                     isBlocked = false;

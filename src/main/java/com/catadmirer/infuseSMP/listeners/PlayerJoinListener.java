@@ -11,6 +11,7 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.EffectCraftManager;
 
 public class PlayerJoinListener implements Listener {
@@ -60,10 +61,10 @@ public class PlayerJoinListener implements Listener {
 
         // Enabling each effect
         InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
+        if (effect != null && !WorldGuardImpl.isEffectAllowed(player, effect)) effect.equip(player);
 
         effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null && !effect.isLocationBlocked(player.getLocation())) effect.equip(player);
+        if (effect != null && !WorldGuardImpl.isEffectAllowed(player, effect)) effect.equip(player);
     }
 
     @EventHandler

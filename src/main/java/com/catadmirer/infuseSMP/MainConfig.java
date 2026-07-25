@@ -150,10 +150,10 @@ public class MainConfig {
      * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
      */
     public int getCraftLimit(InfuseEffect effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getKey());
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
 
         if (craftLimits.size() != 2) {
-            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getKey());
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
             Infuse.LOGGER.error("Returning default limits");
 
             return effect.isAugmented() ? 1 : 3;
@@ -175,11 +175,11 @@ public class MainConfig {
     }
 
     public long cooldown(InfuseEffect effect) {
-        return config.getLong(effect.getKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.getPlainKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
     public long duration(InfuseEffect effect) {
-        return config.getLong(effect.getKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.getPlainKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
     public int speedDashMultiplier() {
@@ -382,7 +382,7 @@ public class MainConfig {
         final List<String> blacklisted_worlds = new ArrayList<>();
         blacklisted_worlds.add("Example World");
         InfuseEffect.getRegisteredEffects().values().forEach(effect -> {
-            if (!config.contains(effect.getKey() + ".blacklisted-worlds")) config.set(effect.getKey() + ".blacklisted-worlds", blacklisted_worlds);
+            if (!config.contains(effect.getPlainKey() + ".blacklisted-worlds")) config.set(effect.getPlainKey() + ".blacklisted-worlds", blacklisted_worlds);
         });
 
         save();

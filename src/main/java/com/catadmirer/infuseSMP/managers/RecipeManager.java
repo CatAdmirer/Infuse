@@ -57,11 +57,11 @@ public class RecipeManager {
     }
 
     public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getKey() + ".enabled", false);
+        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getKey();
+        String baseKey = mapping.getPlainKey();
         NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
 
@@ -104,7 +104,7 @@ public class RecipeManager {
     }
 
     public NamespacedKey getRecipeKey(InfuseEffect effect) {
-        return new NamespacedKey(plugin, effect.getKey());
+        return new NamespacedKey(plugin, effect.getPlainKey());
     }
 
     /**

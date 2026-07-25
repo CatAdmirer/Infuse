@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import org.bukkit.Bukkit;
@@ -50,7 +51,7 @@ public class Haste extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         //todo: Move to PlayerItemHeldEvent listener
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         ItemStack item = owner.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
@@ -65,7 +66,8 @@ public class Haste extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.canUseSpark(owner)) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -107,7 +109,7 @@ public class Haste extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
 
@@ -163,12 +165,15 @@ public class Haste extends InfuseEffect {
     public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         ItemStack offHand = player.getInventory().getItemInOffHand();
-        if (offHand.getType() == Material.SHIELD && player.isBlocking() && plugin.getDataManager().hasEffect(player, this) && !isLocationBlocked(player.getLocation())) {
-            if (!(event.getDamager() instanceof Player attacker)) return;
-            if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
+        if (offHand.getType() != Material.SHIELD) return;
+        if (!player.isBlocking()) return;
+        // TODO: Handle if player blocks with main hand
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.setCooldown(Material.SHIELD, 50), 20L);
-        }
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> player.setCooldown(Material.SHIELD, 50), 20L);
     }
 }

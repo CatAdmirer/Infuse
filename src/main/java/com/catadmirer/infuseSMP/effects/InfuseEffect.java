@@ -2,13 +2,11 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.bossbar.BossBar;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -74,8 +72,12 @@ public abstract class InfuseEffect implements Listener {
         return id;
     }
 
-    public String getKey() {
+    public String getPlainKey() {
         return key;
+    }
+
+    public String getKey() {
+        return toString();
     }
 
     public boolean isAugmented() {
@@ -134,7 +136,7 @@ public abstract class InfuseEffect implements Listener {
 
         // Searching for a matching registered effect
         for (InfuseEffect effect : REGISTERED_EFFECTS.values()) {
-            if (!effect.getKey().equals(key)) continue;
+            if (!effect.getPlainKey().equals(key)) continue;
 
             return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
         }
@@ -216,15 +218,5 @@ public abstract class InfuseEffect implements Listener {
         InfuseEffect effect = REGISTERED_EFFECTS.get(id);
 
         return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
-    }
-
-    public boolean isLocationBlocked(Location location) {
-        if (plugin.getMainConfig().getBlacklistedWorlds(this.key).stream().anyMatch(w -> location.getWorld().getName().equals(w))) return true;
-
-        if (WorldGuardImpl.isEnabled()) {
-            return !(WorldGuardImpl.isFlagEnabled(location, "use-sparks")) || !(WorldGuardImpl.isFlagEnabled(location, "allow-" + this.key));
-        }
-
-        return false;
     }
 }

@@ -65,7 +65,7 @@ public class Emerald extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
         // Applying the potion effect to the player
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
 
@@ -92,7 +92,8 @@ public class Emerald extends InfuseEffect {
 
         // Making sure the player isn't on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
-        if (isLocationBlocked(owner.getLocation())) return;
+        if (!WorldGuardImpl.canUseSpark(owner)) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         // Applying effects for the emerald spark
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -135,7 +136,7 @@ public class Emerald extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent is for an emerald user");
 
@@ -170,6 +171,8 @@ public class Emerald extends InfuseEffect {
         Infuse.LOGGER.debug("[Emerald] Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(event.getTarget(), this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(event.getAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Emerald] Target has emerald effect");
         Infuse.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
@@ -219,7 +222,7 @@ public class Emerald extends InfuseEffect {
         Player player = event.getPlayer();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
@@ -247,7 +250,7 @@ public class Emerald extends InfuseEffect {
         // Making sure the enchanter has the emerald effect
         Player player = event.getEnchanter();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         EnchantmentOffer[] offers = event.getOffers();
         Random random = new Random(player.getEnchantmentSeed());
@@ -319,8 +322,8 @@ public class Emerald extends InfuseEffect {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        if (isLocationBlocked(attacker.getLocation())) return;
-        if (!(WorldGuardImpl.isFlagEnabled(damaged, "spark-passthrough"))) return;
+        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(damaged, this)) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();
@@ -342,7 +345,7 @@ public class Emerald extends InfuseEffect {
 
         // Making sure the player has the emerald effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (isLocationBlocked(player.getLocation())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         ItemStack consumedItem = event.getItem();
 
@@ -369,11 +372,13 @@ public class Emerald extends InfuseEffect {
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "emerald")) return;
-        if (isLocationBlocked(player.getLocation()) || !(WorldGuardImpl.isFlagEnabled(player, "spark-passthrough"))) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();
+
             if (trustedPlayer == null) continue;
+            if (!WorldGuardImpl.isEffectAllowed(trustedPlayer, this)) continue;
 
             int toGain = (int) (event.getAmount() * plugin.getMainConfig().emeraldPercentExpToShare());
             trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);
