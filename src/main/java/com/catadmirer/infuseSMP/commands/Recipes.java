@@ -35,7 +35,7 @@ public class Recipes implements CommandExecutor {
      * Create a potion effect with the effect limits for lore rather than the default lore.
      *
      * @param effect The {@link InfuseEffect} to create.
-     * 
+     *
      * @return The effect item with modified lore.
      */
     public static ItemStack createPotionWithModifiedLore(InfuseEffect effect) {

@@ -71,7 +71,7 @@ public class TrustCommand implements CommandExecutor {
                 caster.sendMessage(msg.toComponent());
                 return true;
             }
-            
+
             dataManager.removeTrust(caster, target);
             Message msg = new Message(MessageType.TRUST_REMOVED);
             msg.applyPlaceholder("target", target.getName());

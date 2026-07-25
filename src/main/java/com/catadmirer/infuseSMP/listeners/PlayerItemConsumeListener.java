@@ -22,7 +22,7 @@ public class PlayerItemConsumeListener implements Listener {
 
     /**
      * Handling when players drink an infuse potion.
-     * 
+     *
      * @param event The consume event.
      */
     @EventHandler

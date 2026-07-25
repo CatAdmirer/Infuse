@@ -43,7 +43,7 @@ public class Strength extends InfuseEffect {
 
         // Playing sounds
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        
+
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);

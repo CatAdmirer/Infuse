@@ -111,10 +111,10 @@ public class Regen extends InfuseEffect {
 
         // Filtering an empty hand
         if (event.getItem() == null) return;
-        
+
         // Filtering inedible items
         if (!event.getItem().getType().isEdible()) return;
-        
+
         // Filtering always edible items
         if (new ItemStack(event.getItem().getType()).getData(DataComponentTypes.FOOD).canAlwaysEat()) return;
 

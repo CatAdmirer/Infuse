@@ -214,7 +214,7 @@ public class Frost extends InfuseEffect {
         Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
         Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
         Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
-        
+
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Frost] Attacker has frost effect");

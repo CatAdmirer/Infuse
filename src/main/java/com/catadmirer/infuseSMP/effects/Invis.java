@@ -174,7 +174,7 @@ public class Invis extends InfuseEffect {
         } else {
             victimName = mm.serialize(victim.displayName());
         }
-        
+
         String killerName;
         if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, this)) {
             killerName = "<gray><obf>Someone";
@@ -194,7 +194,7 @@ public class Invis extends InfuseEffect {
         if (!plugin.getDataManager().hasEffect(shooter, this)) return;
         if (!(event.getEntity() instanceof Arrow)) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
-        
+
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
         this.spawnBlackParticles(target, 4);
     }

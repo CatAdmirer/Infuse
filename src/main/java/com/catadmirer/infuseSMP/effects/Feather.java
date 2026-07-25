@@ -177,7 +177,7 @@ public class Feather extends InfuseEffect {
     public void onWindChargeLaunch(ProjectileLaunchEvent event) {
         if (!(event.getEntity() instanceof WindCharge windCharge)) return;
         if (!(windCharge.getShooter() instanceof Player player)) return;
-        
+
         Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
         windCharge.setVelocity(direction);
     }

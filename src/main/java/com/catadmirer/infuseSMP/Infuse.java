@@ -59,7 +59,7 @@ public class Infuse extends JavaPlugin {
 
         // Loading the config
         mainConfig.load();
-        
+
         // Loading the data manager
         dataManager.load();
 
@@ -111,7 +111,7 @@ public class Infuse extends JavaPlugin {
         getCommand("untrust").setExecutor(new TrustCommand(dataManager));
         getCommand("recipes").setExecutor(new Recipes(this));
         getCommand("swap").setExecutor(new SwapEffects(this));
-        
+
         getCommand("infuse").setExecutor(new InfuseCommand(this));
         getCommand("infuse").setTabCompleter(new InfuseCommand(this));
 

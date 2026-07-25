@@ -19,7 +19,7 @@ public class PlayerJoinListener implements Listener {
     public PlayerJoinListener(Infuse plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void giveRecipes(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -31,7 +31,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void tellControlMode(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        
+
         // Telling the player their current control mode
         String controlMode = plugin.getDataManager().getControlMode(player.getUniqueId());
         if (controlMode == null) controlMode = "Offhand";
@@ -69,7 +69,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!EffectCraftManager.isRitual()) return;
-        
+
         event.getPlayer().showBossBar(EffectCraftManager.getBar());
     }
 }

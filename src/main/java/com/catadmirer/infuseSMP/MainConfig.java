@@ -50,7 +50,7 @@ public class MainConfig {
 
     /**
      * Writes the config to the file.
-     * 
+     *
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
@@ -141,9 +141,9 @@ public class MainConfig {
 
     /**
      * Gets the amount of each effect that can be crafted
-     * 
+     *
      * @param effect The effect to check
-     * 
+     *
      * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
      */
     public int getCraftLimit(InfuseEffect effect) {

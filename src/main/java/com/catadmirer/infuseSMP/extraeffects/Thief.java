@@ -186,7 +186,7 @@ public class Thief extends InfuseEffect {
 
     //// Listeners ////
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
-    
+
     // Hiding thief effect users from players who recently joined
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
@@ -207,7 +207,7 @@ public class Thief extends InfuseEffect {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player deadPlayer = event.getEntity();
-        
+
         // If a disguised player dies, revert their disguise
         if (disguisedPlayers.containsKey(deadPlayer.getUniqueId())) removeDisguise(deadPlayer);
 

@@ -162,7 +162,6 @@ public abstract class InfuseEffect implements Listener {
         if (augmented) {
             item.setData(DataComponentTypes.ITEM_MODEL, AUG_KEY);
         }
-        
 
         return item;
     }

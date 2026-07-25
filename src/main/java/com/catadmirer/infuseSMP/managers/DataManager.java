@@ -220,8 +220,6 @@ public class DataManager {
             FileOutputStream fileOut = new FileOutputStream(dataFile);
             fileOut.write(inputBuffer.toString().getBytes());
             fileOut.close();
-        } catch (IOException err) {
-            
-        }
+        } catch (IOException err) {}
     }
 }

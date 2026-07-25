@@ -33,7 +33,7 @@ public class RecipeManager {
 
     /**
      * Manager functionality for when the plugin is reloaded.
-     * 
+     *
      * In this case, it unregisters all the recipes then adds them back.
      */
     public void reload() {
@@ -51,7 +51,7 @@ public class RecipeManager {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
             if (!isRecipeEnabled(effect)) continue;
             ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
-            
+
             Bukkit.addRecipe(recipe);
         }
     }
@@ -110,14 +110,14 @@ public class RecipeManager {
     /**
      * Gets the item to craft from an official Infuse recipe.
      * This makes it easier to determine whether an infuse recipe should craft an augmented or regular effect.
-     * 
+     *
      * @param recipe The infuse {@link Recipe} to determine the result for.
-     * 
+     *
      * @return The corresponding {@link ItemStack} for the recipe, or null if the craft limit has been reached or the recipe is not an infuse recipe.
      */
     public ItemStack getItemToCraft(Recipe recipe) {
         ItemStack item = recipe.getResult();
-        
+
         // The returned EffectMapping should always be the regular form
         InfuseEffect effect = InfuseEffect.fromItem(item);
         if (effect == null) return null;

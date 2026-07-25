@@ -46,7 +46,7 @@ public class Ocean extends InfuseEffect {
             drownStrength = plugin.getMainConfig().oceanSparkDrownStrength();
             drownDamage = plugin.getMainConfig().oceanSparkDrownDamage();
         }
-        
+
         for (Player otherPlayer : owner.getWorld().getPlayers()) {
             if (otherPlayer.equals(owner)) continue;
             if (otherPlayer.getLocation().distance(owner.getLocation()) <= 5) {

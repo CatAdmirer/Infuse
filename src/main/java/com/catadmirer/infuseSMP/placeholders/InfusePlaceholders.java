@@ -88,14 +88,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     public String getEffectRaw(UUID uuid, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect== null) return "";
-        
+
         return PlainTextComponentSerializer.plainText().serialize(effect.getName().toComponent());
     }
 
     public String getEffectName(UUID uuid, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
         if (effect == null) return "";
-        
+
         return effect.getName().toString();
     }
 }

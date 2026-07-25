@@ -9,9 +9,9 @@ import io.papermc.paper.datacomponent.item.TooltipDisplay;
 public class InventoryUtils {
     /**
      * Creates a decorative item with no name.
-     * 
+     *
      * @param material The material to make the item with.
-     * 
+     *
      * @return A decorative item with no name.
      */
     public static ItemStack createNoName(Material material) {
@@ -22,7 +22,7 @@ public class InventoryUtils {
 
     /**
      * Fills an inventory with a certain item.
-     * 
+     *
      * @param inventory The inventory to fill.
      * @param item The item to fill the inventory with.
      */
@@ -34,7 +34,7 @@ public class InventoryUtils {
 
     /**
      * Putting an item into multiple slots of an inventory.
-     * 
+     *
      * @param inventory The inventory to place the item into.
      * @param slots The list of slots to place the item.
      * @param item The item to put into the inventory
@@ -46,7 +46,7 @@ public class InventoryUtils {
     /**
      * Utility function that fills all empty slots of an inventory with red stained glass panes with
      * empty names.
-     * 
+     *
      * @param inventory The inventory to fill with panes.
      */
     public static void fillRemainingSlots(Inventory inventory) {
@@ -61,7 +61,7 @@ public class InventoryUtils {
 
     /**
      * "Locks" an inventory by setting the stack size for each item to 1.
-     * 
+     *
      * @param inventory The inventory to lock.
      */
     public static void lockInventory(Inventory inventory) {
