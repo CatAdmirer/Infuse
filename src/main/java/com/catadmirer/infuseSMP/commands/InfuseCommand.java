@@ -30,7 +30,7 @@ public class InfuseCommand {
             .then(Commands.literal("giveeffect")
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
-                        .executes(cmd::giveEffect)
+                        .executes(c -> cmd.giveEffect(c, c.getArgument("target", PlayerSelectorArgumentResolver.class), c.getArgument("effect", InfuseEffect.class)))
                     )
                 )
             )
@@ -38,19 +38,19 @@ public class InfuseCommand {
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
                         .then(Commands.argument("slot", CustomArgumentTypes.SLOT)
-                            .executes(cmd::setEffect)
+                            .executes(c -> cmd.setEffect(c, c.getArgument("target", PlayerSelectorArgumentResolver.class), c.getArgument("effect", InfuseEffect.class), c.getArgument("slot", String.class)))
                         )
                     )
                 )
             )
             .then(Commands.literal("cleareffects")
                 .then(Commands.argument("target", ArgumentTypes.player())
-                    .executes(cmd::clearEffects)
+                    .executes(c -> cmd.clearEffects(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
                 )
             )
             .then(Commands.literal("cooldown")
                 .then(Commands.argument("target", ArgumentTypes.player())
-                    .executes(cmd::cooldown)
+                    .executes(c -> cmd.cooldown(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
                 )
             )
             .then(Commands.literal("controls")
@@ -100,7 +100,7 @@ public class InfuseCommand {
         return 1;
     }
 
-    public int giveEffect(CommandContext<CommandSourceStack> ctx) {
+    public int giveEffect(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver, InfuseEffect effect) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
@@ -112,8 +112,6 @@ public class InfuseCommand {
             player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
             return 1;
         }
-
-        PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
 
         Player target;
         try {
@@ -128,7 +126,6 @@ public class InfuseCommand {
             return 1;
         }
 
-        InfuseEffect effect = ctx.getArgument("effect", InfuseEffect.class);
         if (effect == null) {
             player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
             return 1;
@@ -144,7 +141,7 @@ public class InfuseCommand {
         return 1;
     }
     
-    public int setEffect(CommandContext<CommandSourceStack> ctx) {
+    public int setEffect(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver, InfuseEffect effect, String slot) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
@@ -156,9 +153,7 @@ public class InfuseCommand {
             player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
             return 1;
         }
-        
-        // Getting the player and making sure they are online.
-        PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
+
         Player target;
         
         try {
@@ -168,16 +163,11 @@ public class InfuseCommand {
             return 1;
         }
         
-        // Getting the effect key and verifying its integrity.
-        InfuseEffect effect = ctx.getArgument("effect", InfuseEffect.class);
         if (effect == null) {
             player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
             return 1;
         }
         
-        // Getting the slot to put the effect into and validating it.
-        String slot = ctx.getArgument("slot", String.class);
-
         // Setting the effect
         plugin.getEffectManager().setEffect(target, effect, slot);
         Message msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
@@ -189,7 +179,7 @@ public class InfuseCommand {
         return 1;
     }
     
-    public int clearEffects(CommandContext<CommandSourceStack> ctx) {
+    public int clearEffects(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
@@ -203,9 +193,7 @@ public class InfuseCommand {
         }
 
         // Getting the player and making sure they are online
-        PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
         Player target;
-        
         try {
             target = resolver.resolve(ctx.getSource()).getFirst();
         } catch (CommandSyntaxException err) {
@@ -223,7 +211,7 @@ public class InfuseCommand {
         return 1;
     }
     
-    public int cooldown(CommandContext<CommandSourceStack> ctx) {
+    public int cooldown(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
@@ -237,9 +225,7 @@ public class InfuseCommand {
         }
 
         // Getting the player and making sure they are online
-        PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
         Player target;
-        
         try {
             target = resolver.resolve(ctx.getSource()).getFirst();
         } catch (CommandSyntaxException err) {

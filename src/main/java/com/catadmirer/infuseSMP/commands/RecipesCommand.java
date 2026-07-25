@@ -1,8 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;

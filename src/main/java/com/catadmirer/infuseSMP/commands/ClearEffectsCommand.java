@@ -15,16 +15,16 @@ public class ClearEffectsCommand {
 
     public static LiteralCommandNode<CommandSourceStack> build(EffectManager effectManager) {
         ClearEffectsCommand cmd = new ClearEffectsCommand(effectManager);
-        return Commands.literal("cleareffects").then(Commands.argument("target", ArgumentTypes.player()).executes(cmd::clearEffects)).build();
+        return Commands.literal("cleareffects").then(Commands.argument("target", ArgumentTypes.player()).executes(c -> cmd.clearEffects(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))).build();
     }
 
     public ClearEffectsCommand(EffectManager effectManager) {
         this.effectManager = effectManager;
     }
 
-    public int clearEffects(CommandContext<CommandSourceStack> ctx) {
+    public int clearEffects(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
         try {
-            Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
+            Player target = resolver.resolve(ctx.getSource()).getFirst();
             effectManager.unequipEffect(target, "1");
             effectManager.unequipEffect(target, "2");
         } catch (CommandSyntaxException e) {

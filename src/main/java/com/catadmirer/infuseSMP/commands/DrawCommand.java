@@ -21,21 +21,20 @@ public class DrawCommand {
             .then(Commands.argument("l1", ArgumentTypes.finePosition())
                 .then(Commands.argument("l2", ArgumentTypes.finePosition())
                     .then(Commands.argument("count", IntegerArgumentType.integer(0, 500))
-                        .executes(DrawCommand::drawLine)
+                        .executes(c -> drawLine(c, c.getArgument("l1", FinePositionResolver.class), c.getArgument("l2", FinePositionResolver.class), c.getArgument("count", Integer.class)))
                     )
                 )
             )
             .build();
     }
 
-    public static int drawLine(CommandContext<CommandSourceStack> ctx) {
+    public static int drawLine(CommandContext<CommandSourceStack> ctx, FinePositionResolver l1, FinePositionResolver l2, Integer count) {
         CommandSender sender = ctx.getSource().getSender();
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("Only a player can use this command!", NamedTextColor.RED));
             return 1;
         }
 
-        FinePositionResolver l1 = ctx.getArgument("l1", FinePositionResolver.class);
         Location start;
         try {
             start = l1.resolve(ctx.getSource()).toLocation(player.getWorld());
@@ -44,7 +43,6 @@ public class DrawCommand {
             return 1;
         }
         
-        FinePositionResolver l2 = ctx.getArgument("l2", FinePositionResolver.class);
         Location end;
         try {
             end = l2.resolve(ctx.getSource()).toLocation(player.getWorld());
@@ -52,8 +50,6 @@ public class DrawCommand {
             sender.sendMessage(err.componentMessage());
             return 1;
         }
-
-        int count = ctx.getArgument("count", Integer.class);
 
         ParticleManager.drawLine(start, end, count);
 

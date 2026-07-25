@@ -23,8 +23,7 @@ public class TrustCommand {
         TrustCommand cmd = new TrustCommand(manager, trust);
 
         return Commands.literal(trust ? "trust" : "untrust")
-            .then(Commands.argument("target", ArgumentTypes.players()).executes(cmd::trust))
-            .executes(cmd::trust)
+            .then(Commands.argument("target", ArgumentTypes.players()).executes(c -> cmd.trust(c, c.getArgument("target", PlayerSelectorArgumentResolver.class))))
             .build();
     }
 
@@ -33,7 +32,7 @@ public class TrustCommand {
         this.trust = trust;
     }
 
-    public int trust(CommandContext<CommandSourceStack> ctx) {
+    public int trust(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
         CommandSender sender = ctx.getSource().getSender();
 
         // Limiting this command to only players.
@@ -45,13 +44,7 @@ public class TrustCommand {
         // Getting the targets
         List<Player> targets;
         try {
-            PlayerSelectorArgumentResolver resolver = ctx.getArgument("target", PlayerSelectorArgumentResolver.class);
             targets = resolver.resolve(ctx.getSource());
-        } catch (IllegalArgumentException err) {
-            Message msg = new Message(MessageType.TRUST_INCORRECT_USAGE);
-            msg.applyPlaceholder("label", trust ? "trust" : "untrust");
-            caster.sendMessage(msg.toComponent());
-            return 1;
         } catch (CommandSyntaxException err) {
             sender.sendMessage(err.componentMessage());
             return 1;

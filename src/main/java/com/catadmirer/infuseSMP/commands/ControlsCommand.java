@@ -21,7 +21,7 @@ public class ControlsCommand {
 
         return Commands.literal("controls")
             .then(Commands.argument("choice", CustomArgumentTypes.CONTROL_MODE)
-                .executes(cmd::controls)
+                .executes(c -> cmd.controls(c, c.getArgument("choice", String.class)))
             )
             .build();
     }
@@ -30,16 +30,13 @@ public class ControlsCommand {
         this.plugin = plugin;
     }
 
-    public int controls(CommandContext<CommandSourceStack> ctx) {
+    public int controls(CommandContext<CommandSourceStack> ctx, String choice) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
             // TODO: Better logging
             return 1;
         }
-
-        // Getting the control mode.
-        String choice = ctx.getArgument("choice", String.class).toLowerCase();
 
         // Setting the control mode for the user.
         plugin.getDataManager().setControlMode(player.getUniqueId(), choice);
