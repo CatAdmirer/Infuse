@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -74,8 +75,12 @@ public class MainConfig {
         return false;
     }
 
-    public List<String> getBlacklistedWorlds(String effect) {
-        return config.getStringList(effect + ".blacklisted-worlds").stream().filter(Objects::nonNull).toList();
+    public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
+        return config.getStringList(effect.getPlainKey() + ".blacklisted-worlds")
+            .stream()
+            .filter(Objects::nonNull)
+            .map(NamespacedKey::fromString)
+            .toList();
     }
 
     public String lang() {
@@ -404,11 +409,21 @@ public class MainConfig {
         if (!config.contains("apophis.multiplier-xp.standard")) config.set("apophis.multiplier-xp.standard", 2);
         if (!config.contains("apophis.multiplier-xp.use-effect")) config.set("apophis.multiplier-xp.use-effect", 4);
 
-        final List<String> blacklisted_worlds = new ArrayList<>();
-        blacklisted_worlds.add("Example World");
-        InfuseEffect.getRegisteredEffects().values().forEach(effect -> {
-            if (!config.contains(effect.getPlainKey() + ".blacklisted-worlds")) config.set(effect.getPlainKey() + ".blacklisted-worlds", blacklisted_worlds);
-        });
+        if (!config.contains("apophis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("thief.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("emerald.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("ender.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("feather.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("fire.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("frost.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("haste.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("heart.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("invis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("ocean.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("regen.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("speed.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("strength.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("thunder.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
 
         save();
     }
