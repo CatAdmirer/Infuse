@@ -17,12 +17,10 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class DataManager {
-    private final Infuse plugin;
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public DataManager(Infuse plugin) {   
-        this.plugin = plugin;     
+    public DataManager(Infuse plugin) {
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
@@ -55,7 +53,7 @@ public class DataManager {
 
     /**
      * Writes the config to the file.
-     * 
+     *
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
@@ -80,7 +78,7 @@ public class DataManager {
     /**
      * Creating the config file. If it doesn't exist, it loads the default config. If the file does
      * exist, it will only replace it if the parameter is true.
-     * 
+     *
      * @param replace Whether or not to replace the config file with the default configs.
      * @return Whether or not the file was created successfully.
      */
@@ -105,7 +103,7 @@ public class DataManager {
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
         config.set("existing-effects." + effect.getKey(), crafted);
-        
+
         save();
     }
 
@@ -165,7 +163,7 @@ public class DataManager {
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented) {
-        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");        
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");
     }
 
     public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, String slot) {
