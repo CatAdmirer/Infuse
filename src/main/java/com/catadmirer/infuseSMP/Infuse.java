@@ -124,8 +124,6 @@ public class Infuse extends JavaPlugin {
 
             e.registrar().register(SwapCommand.build(this));
 
-            e.registrar().register(ClearEffectsCommand.build(effectManager));
-
             e.registrar().register(InfuseCommand.build(this));
             
             e.registrar().register(RecipesCommand.build(this));
