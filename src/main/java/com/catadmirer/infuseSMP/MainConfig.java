@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
