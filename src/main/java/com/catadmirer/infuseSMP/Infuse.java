@@ -4,10 +4,12 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.util.BasicRegionBlocker;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.WorldGuardRegionBlocker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -55,10 +57,12 @@ public class Infuse extends JavaPlugin {
         // Registering the vanilla effects
         registerEffects();
 
-        if (WorldGuardImpl.canEnable()) {
-            WorldGuardImpl.enable();
+        if (RegionBlocker.canUseWG()) {
+            RegionBlocker.setInstance(new WorldGuardRegionBlocker());
+            LOGGER.info("WorldGuard found!  Enabling region-based effet management.");
         } else {
-            LOGGER.info("WorldGuard is not installed! Hook has been disabled");
+            RegionBlocker.setInstance(new BasicRegionBlocker());
+            LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
         }
     }
 
