@@ -274,7 +274,6 @@ ocean_pulling:
     radius: 5
     strength: 0.3
 
-
 extra_effects:
   Apophis: false
   Thief: false

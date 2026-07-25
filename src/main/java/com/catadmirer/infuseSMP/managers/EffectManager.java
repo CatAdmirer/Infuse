@@ -75,6 +75,8 @@ public class EffectManager {
      */
     public EquipResult drainEffect(Player player, String slot) {
         // Unequipping the effect
+
+        final InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
         EquipResult result = unequipEffect(player, slot);
 
         // Checking if an effect was removed
@@ -105,9 +107,11 @@ public class EffectManager {
         // Making sure the player has inventory space for the drained item if is meant to be given to them.
         if (player.getInventory().firstEmpty() == -1) {
             player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
+            plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
             return new EquipResult(EquipResultType.FAIL);
         }
 
+        player.getInventory().addItem(result.effect.createItem());
         // Sending the success message
         Message msg = new Message(MessageType.DRAIN_SUCCESS);
         msg.applyPlaceholder("effect_name", result.effect.getName());
