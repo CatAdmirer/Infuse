@@ -13,7 +13,9 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class BasicRegionBlocker extends RegionBlocker {
-
+    @Override
+    public void init() {}
+    
     @Override
     public boolean canUseSpark(Player player) {
         return true;
