@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.util;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,11 +14,19 @@ public abstract class RegionBlocker {
 
     public static void setInstance(RegionBlocker instance) {
         RegionBlocker.instance = instance;
+
+        instance.init();
     }
 
     public static RegionBlocker getInstance() {
         return instance;
     }
+
+    public static boolean canUseWG() {
+        return Bukkit.getPluginManager().getPlugin("WorldGuard") != null;
+    }
+
+    public abstract void init();
 
     public abstract boolean canUseSpark(Player player);
 
