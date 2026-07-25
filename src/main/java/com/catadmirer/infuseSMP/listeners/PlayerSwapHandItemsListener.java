@@ -33,14 +33,14 @@ public class PlayerSwapHandItemsListener implements Listener {
             // Activating the left effect's spark if the player was not sneaking and the effect wasn't on cooldown.
             InfuseEffect lEffect = dataManager.getEffect(player.getUniqueId(), "1");
             if (lEffect == null) return;
-            if (CooldownManager.isOnCooldown(playerUUID, lEffect.getKey())) return;
+            if (CooldownManager.isOnCooldown(playerUUID, lEffect.getPlainKey())) return;
             event.setCancelled(true);
             lEffect.activateSpark(player);
         } else {
             // Activating the right effect's spark if the player was sneaking and the effect wasn't on cooldown.
             InfuseEffect rEffect = dataManager.getEffect(player.getUniqueId(), "2");
             if (rEffect == null) return;
-            if (CooldownManager.isOnCooldown(playerUUID, rEffect.getKey())) return;
+            if (CooldownManager.isOnCooldown(playerUUID, rEffect.getPlainKey())) return;
             event.setCancelled(true);
             rEffect.activateSpark(player);
         }

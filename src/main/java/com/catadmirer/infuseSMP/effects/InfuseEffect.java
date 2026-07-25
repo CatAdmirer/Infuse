@@ -72,8 +72,12 @@ public abstract class InfuseEffect implements Listener {
         return id;
     }
 
-    public String getKey() {
+    public String getPlainKey() {
         return key;
+    }
+
+    public String getKey() {
+        return toString();
     }
 
     public boolean isAugmented() {
@@ -132,7 +136,7 @@ public abstract class InfuseEffect implements Listener {
 
         // Searching for a matching registered effect
         for (InfuseEffect effect : REGISTERED_EFFECTS.values()) {
-            if (!effect.getKey().equals(key)) continue;
+            if (!effect.getPlainKey().equals(key)) continue;
 
             return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
         }

@@ -7,6 +7,9 @@ import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.util.BasicRegionBlocker;
+import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.WorldGuardRegionBlocker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -50,10 +53,20 @@ public class Infuse extends JavaPlugin {
         this.hitTracker = new HitTracker(this);
     }
 
-    public void onEnable() {
+    public void onLoad() {
         // Registering the vanilla effects
         registerEffects();
 
+        if (RegionBlocker.canUseWG()) {
+            RegionBlocker.setInstance(new WorldGuardRegionBlocker());
+            LOGGER.info("WorldGuard found!  Enabling region-based effet management.");
+        } else {
+            RegionBlocker.setInstance(new BasicRegionBlocker());
+            LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
+        }
+    }
+
+    public void onEnable() {
         // Loading the message translator
         new MessageTranslator().loadAll();
 
@@ -66,9 +79,6 @@ public class Infuse extends JavaPlugin {
         // Applying config updates
         mainConfig.applyUpdates();
         dataManager.applyUpdates();
-
-        // Initializing the recipe manager
-        new EffectCraftManager(this);
 
         // Registering infuse commands
         this.registerCommands();
@@ -183,6 +193,7 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityDropItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EntityPickupItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(hitTracker, this);
+        Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ItemDespawnListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);

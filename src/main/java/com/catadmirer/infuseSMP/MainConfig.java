@@ -1,14 +1,14 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MainConfig {
     public final File file;
@@ -73,6 +73,14 @@ public class MainConfig {
         }
 
         return false;
+    }
+
+    public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
+        return config.getStringList(effect.getPlainKey() + ".blacklisted-worlds")
+            .stream()
+            .filter(Objects::nonNull)
+            .map(NamespacedKey::fromString)
+            .toList();
     }
 
     public String lang() {
@@ -147,10 +155,10 @@ public class MainConfig {
      * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
      */
     public int getCraftLimit(InfuseEffect effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getKey());
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
 
         if (craftLimits.size() != 2) {
-            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getKey());
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
             Infuse.LOGGER.error("Returning default limits");
 
             return effect.isAugmented() ? 1 : 3;
@@ -172,11 +180,11 @@ public class MainConfig {
     }
 
     public long cooldown(InfuseEffect effect) {
-        return config.getLong(effect.getKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.getPlainKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
     public long duration(InfuseEffect effect) {
-        return config.getLong(effect.getKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.getPlainKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
     }
 
     public int speedDashMultiplier() {
@@ -233,6 +241,25 @@ public class MainConfig {
 
     public int apophisLootingLevel() {
         return config.getInt("apophis.enchantment.looting_level");
+    }
+
+    public double apophisSparkRadius() {
+        return config.getDouble("apophis.spark.radius", 5);
+    }
+
+    public double apophisSparkExplosionRadius() {
+        return config.getDouble("apophis.spark.explosion-radius", 5);
+    }
+
+    public double apophisLavaWalkSpeed() {
+        return config.getDouble("apophis.passive.walk-speed", 0.6);
+    }
+
+    public int apophisXpMultiplierStandard() {
+        return config.getInt("apophis.multiplier-xp.standard", 2);
+    }
+    public int apophisXpMultiplierSpark() {
+        return config.getInt("apophis.multiplier-xp.use-effect", 4);
     }
 
     public int emeraldLootingLevel() {
@@ -319,6 +346,14 @@ public class MainConfig {
         return config.getDouble("regen.spark.heal-trusted-radius");
     }
 
+    public double thunderSparkBaseRadius() {
+        return config.getDouble("thunder.spark.base-radius");
+    }
+
+    public double thunderSparkPerPlayerBoostRadius() {
+        return config.getDouble("thunder.spark.per-player-boost-radius");
+    }
+
     public void applyUpdates() {
         if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
         if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
@@ -364,6 +399,31 @@ public class MainConfig {
         if (!config.contains("ocean.spark.drown-damage")) config.set("ocean.spark.drown-damage", 2);
 
         if (!config.contains("regen.spark.heal-trusted-radius")) config.set("regen.spark.heal-trusted-radius", 5);
+
+        if (!config.contains("thunder.spark.base-radius")) config.set("thunder.spark.base-radius", 10);
+        if (!config.contains("thunder.spark.per-player-boost-radius")) config.set("thunder.spark.per-player-boost-radius", 0.3);
+
+        if (!config.contains("apophis.spark.radius")) config.set("apophis.spark.radius", 5);
+        if (!config.contains("apophis.spark.explosion-radius")) config.set("apophis.spark.explosion-radius", 5);
+        if (!config.contains("apophis.passive.walk-speed")) config.set("apophis.passive.walk-speed", 0.6);
+        if (!config.contains("apophis.multiplier-xp.standard")) config.set("apophis.multiplier-xp.standard", 2);
+        if (!config.contains("apophis.multiplier-xp.use-effect")) config.set("apophis.multiplier-xp.use-effect", 4);
+
+        if (!config.contains("apophis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("thief.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("emerald.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("ender.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("feather.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("fire.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("frost.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("haste.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("heart.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("invis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("ocean.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("regen.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("speed.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("strength.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
+        if (!config.contains("thunder.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
 
         save();
     }

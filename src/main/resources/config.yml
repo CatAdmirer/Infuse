@@ -75,6 +75,10 @@ craft_limits:
   apophis:  [1, 3]
   thief:    [1, 3]
 
+#
+# To blacklist from using a ability in a certain world, in the 'blacklisted-worlds:' in,
+# your chosen effect, add the world's name (The EXACT name) to the list.
+#
 
 # Full cooldown is duration + cooldown
 invis:
@@ -86,6 +90,7 @@ invis:
   duration:
     default: 20
     augmented: 25
+  blacklisted-worlds:
 
 apophis:
   xp_stolen_per_hit: 15
@@ -100,6 +105,16 @@ apophis:
     augmented: 18
   enchantment:
     looting_level: 5
+  spark:
+    radius: 5
+    explosion-radius: 5
+  passive:
+    # How fast should they be able to walk while in lava?
+    walk-speed: 0.6
+  multiplier-xp:
+    standard: 2
+    use-effect: 4
+  blacklisted-worlds:
 
 emerald:
   xp_stolen_per_hit: 15
@@ -117,6 +132,7 @@ emerald:
   multiplier-xp:
     standard: 2
     use-effect: 4
+  blacklisted-worlds:
 
 ender:
   cooldown:
@@ -130,6 +146,7 @@ ender:
   spark:
     # WARNING: The higher this value is, the more it can impact server performance.
     max-distance: 15
+  blacklisted-worlds:
 
 feather:
   cooldown:
@@ -141,6 +158,7 @@ feather:
   land:
     radius: 4
     damage: 8
+  blacklisted-worlds:
 
 fire:
   cooldown:
@@ -155,6 +173,7 @@ fire:
   spark:
     radius: 5
     explosion-radius: 5
+  blacklisted-worlds:
 
 frost:
   cooldown:
@@ -170,6 +189,7 @@ frost:
     walk-speed: 0.6
   spark:
     radius: 5
+  blacklisted-worlds:
 
 haste:
   cooldown:
@@ -182,6 +202,7 @@ haste:
     fortune_level: 5
     efficiency_level: 10
     unbreaking_level: 5
+  blacklisted-worlds:
 
 heart:
   cooldown:
@@ -190,6 +211,7 @@ heart:
   duration:
     default: 60
     augmented: 80
+  blacklisted-worlds:
 
 ocean:
   cooldown:
@@ -204,6 +226,7 @@ ocean:
   spark:
     drown-strength: 20
     drown-damage: 2
+  blacklisted-worlds:
 
 regen:
   cooldown:
@@ -214,6 +237,7 @@ regen:
     augmented: 30
   spark:
     heal-trusted-radius: 5
+  blacklisted-worlds:
 
 speed:
   dashMultiplier: 20
@@ -224,6 +248,7 @@ speed:
   duration:
     default: 1
     augmented: 1
+  blacklisted-worlds:
 
 strength:
   cooldown:
@@ -232,7 +257,7 @@ strength:
   duration:
     default: 15
     augmented: 20
-
+  blacklisted-worlds:
 
 thunder:
   cooldown:
@@ -241,20 +266,22 @@ thunder:
   duration:
     default: 10
     augmented: 10
-
+  spark:
+    base-radius: 10
+    per-player-boost-radius: 0.3
+  blacklisted-worlds:
 
 thief:
   cooldown:
     default: 300
     augmented: 150
-
+  blacklisted-worlds:
 
 ocean_pulling:
   pull:
     interval: 20 # In ticks (20 ticks = 1 second)
     radius: 5
     strength: 0.3
-
 
 extra_effects:
   Apophis: false
