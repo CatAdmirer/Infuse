@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -115,7 +116,7 @@ public class Regen extends InfuseEffect {
         if (!event.getItem().getType().isEdible()) return;
         
         // Filtering always edible items
-        if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
+        if (new ItemStack(event.getItem().getType()).getData(DataComponentTypes.FOOD).canAlwaysEat()) return;
 
         // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
         if (plugin.getDataManager().hasEffect(player, this)) {

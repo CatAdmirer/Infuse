@@ -1,10 +1,10 @@
 package com.catadmirer.infuseSMP.util;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 
 public class InventoryUtils {
     /**
@@ -16,9 +16,7 @@ public class InventoryUtils {
      */
     public static ItemStack createNoName(Material material) {
         ItemStack pane = new ItemStack(material);
-        ItemMeta meta = pane.getItemMeta();
-        meta.displayName(Component.empty());
-        pane.setItemMeta(meta);
+        pane.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().hideTooltip(true));
         return pane;
     }
 
