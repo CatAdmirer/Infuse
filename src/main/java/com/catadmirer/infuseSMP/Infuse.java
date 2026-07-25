@@ -126,12 +126,8 @@ public class Infuse extends JavaPlugin {
 
             e.registrar().register(InfuseCommand.build(this));
             
-            e.registrar().register(RecipesCommand.build(this));
-
             e.registrar().register(DrainCommand.build(this, true));
             e.registrar().register(DrainCommand.build(this, false));
-
-            e.registrar().register(ControlsCommand.build(this));
 
             e.registrar().register(DrawCommand.build());
         });

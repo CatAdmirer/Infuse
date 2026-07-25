@@ -103,6 +103,7 @@ public class Message {
         CONTROLS_INVALID_PARAM,
         INFUSE_INVALID_PARAM,
         INFUSE_INVALID_SLOT("slot"),
+        INFUSE_HELP,
         INFUSE_CONTROLS_USAGE,
         INFUSE_CONTROLS_SUCCESS("control_mode"),
         INFUSE_SETEFFECT_USAGE,

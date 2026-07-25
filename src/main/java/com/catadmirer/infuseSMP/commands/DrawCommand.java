@@ -18,17 +18,17 @@ import org.bukkit.entity.Player;
 public class DrawCommand {
     public static LiteralCommandNode<CommandSourceStack> build() {
         return Commands.literal("draw")
-            .then(Commands.argument("l1", ArgumentTypes.finePosition())
-                .then(Commands.argument("l2", ArgumentTypes.finePosition())
+            .then(Commands.argument("loc1", ArgumentTypes.finePosition())
+                .then(Commands.argument("loc2", ArgumentTypes.finePosition())
                     .then(Commands.argument("count", IntegerArgumentType.integer(0, 500))
-                        .executes(c -> drawLine(c, c.getArgument("l1", FinePositionResolver.class), c.getArgument("l2", FinePositionResolver.class), c.getArgument("count", Integer.class)))
+                        .executes(c -> drawLine(c, c.getArgument("loc1", FinePositionResolver.class), c.getArgument("loc2", FinePositionResolver.class), c.getArgument("count", Integer.class)))
                     )
                 )
             )
             .build();
     }
 
-    public static int drawLine(CommandContext<CommandSourceStack> ctx, FinePositionResolver l1, FinePositionResolver l2, Integer count) {
+    public static int drawLine(CommandContext<CommandSourceStack> ctx, FinePositionResolver loc1, FinePositionResolver loc2, Integer count) {
         CommandSender sender = ctx.getSource().getSender();
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("Only a player can use this command!", NamedTextColor.RED));
@@ -37,7 +37,7 @@ public class DrawCommand {
 
         Location start;
         try {
-            start = l1.resolve(ctx.getSource()).toLocation(player.getWorld());
+            start = loc1.resolve(ctx.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException err) {
             sender.sendMessage(err.componentMessage());
             return 1;
@@ -45,7 +45,7 @@ public class DrawCommand {
         
         Location end;
         try {
-            end = l2.resolve(ctx.getSource()).toLocation(player.getWorld());
+            end = loc2.resolve(ctx.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException err) {
             sender.sendMessage(err.componentMessage());
             return 1;

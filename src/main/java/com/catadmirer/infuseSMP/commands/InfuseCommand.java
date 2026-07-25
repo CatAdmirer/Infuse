@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.CustomArgumentTypes;
 import com.mojang.brigadier.context.CommandContext;
@@ -26,7 +27,7 @@ public class InfuseCommand {
         return Commands.literal("infuse")
             .then(Commands.literal("gui").executes(cmd::gui))
             .then(Commands.literal("reload").executes(cmd::reload))
-            .then(Commands.literal("recipes").forward(RecipesCommand.build(plugin), null, false))
+            .then(Commands.literal("recipes").executes(InfuseCommand::recipes))
             .then(Commands.literal("giveeffect")
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
@@ -54,7 +55,9 @@ public class InfuseCommand {
                 )
             )
             .then(Commands.literal("controls")
-                .forward(ControlsCommand.build(plugin), null, false)
+                .then(Commands.argument("choice", CustomArgumentTypes.CONTROL_MODE)
+                    .executes(c -> cmd.controls(c, c.getArgument("choice", String.class)))
+                )
             )
             .then(Commands.literal("help").executes(cmd::help))
             .build();
@@ -246,8 +249,8 @@ public class InfuseCommand {
 
         return 1;
     }
-    
-    public int help(CommandContext<CommandSourceStack> ctx) {
+
+    public int controls(CommandContext<CommandSourceStack> ctx, String choice) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
@@ -255,8 +258,31 @@ public class InfuseCommand {
             return 1;
         }
 
-        // TODO: Implement
-        sender.sendMessage("/infuse help is not currently implemented.  Please wait for a future update");
+        // Setting the control mode for the user.
+        plugin.getDataManager().setControlMode(player.getUniqueId(), choice);
+
+        // Assigning the permission for offhand use if the user chose offhand mode
+        boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
+        player.addAttachment(plugin, "ability.use", !offhandEnabled);
+
+        Message msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
+        msg.applyPlaceholder("control_mode", choice);
+        player.sendMessage(msg.toComponent());
+
+        return 1;
+    }
+
+    public static int recipes(CommandContext<CommandSourceStack> ctx) {
+        if (ctx.getSource().getSender() instanceof Player player) {
+            player.openInventory(new RecipeListGUI().getInventory());
+        }
+        return 1;
+    }
+    
+    public int help(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        new Message(MessageType.INFUSE_HELP).toComponentList().forEach(sender::sendMessage);
 
         return 1;
     }
