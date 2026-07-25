@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.listeners;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -20,7 +20,7 @@ public class PlayerSwapHandItemsListener implements Listener {
     /**
      * Listens for when the player swaps the items in their main and offhand.
      * When they do so, it will be used to activate their left or right spark based on whether or not they are crouching.
-     * 
+     *
      * @param event The {@link PlayerSwapHandItemsEvent} to process
      */
     @EventHandler

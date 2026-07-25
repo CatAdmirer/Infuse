@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -33,16 +32,12 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 
 public class Feather extends InfuseEffect {
-    private final Infuse plugin;
-
     public Feather() {
         this(false);
     }
 
     public Feather(boolean augmented) {
         super("feather", EffectIds.FEATHER, augmented, EffectConstants.potionColor(EffectIds.FEATHER), EffectConstants.ritualColor(EffectIds.FEATHER));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -182,7 +177,7 @@ public class Feather extends InfuseEffect {
     public void onWindChargeLaunch(ProjectileLaunchEvent event) {
         if (!(event.getEntity() instanceof WindCharge windCharge)) return;
         if (!(windCharge.getShooter() instanceof Player player)) return;
-        
+
         Vector direction = player.getEyeLocation().getDirection().normalize().multiply(2);
         windCharge.setVelocity(direction);
     }

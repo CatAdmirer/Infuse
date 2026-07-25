@@ -2,10 +2,10 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,16 +22,12 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.UUID;
 
 public class Regen extends InfuseEffect {
-    private final Infuse plugin;
-
     public Regen() {
         this(false);
     }
 
     public Regen(boolean augmented) {
         super("regen", EffectIds.REGEN, augmented, EffectConstants.potionColor(EffectIds.REGEN), EffectConstants.ritualColor(EffectIds.REGEN));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -115,12 +111,12 @@ public class Regen extends InfuseEffect {
 
         // Filtering an empty hand
         if (event.getItem() == null) return;
-        
+
         // Filtering inedible items
         if (!event.getItem().getType().isEdible()) return;
-        
+
         // Filtering always edible items
-        if (new ItemStack(event.getItem().getType()).getItemMeta().getFood().canAlwaysEat()) return;
+        if (new ItemStack(event.getItem().getType()).getData(DataComponentTypes.FOOD).canAlwaysEat()) return;
 
         // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
         if (plugin.getDataManager().hasEffect(player, this)) {

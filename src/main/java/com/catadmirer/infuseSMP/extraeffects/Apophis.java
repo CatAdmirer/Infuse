@@ -79,16 +79,12 @@ public class Apophis extends InfuseEffect {
         "mBgGwS28lqNz7rJCysD9SElJpA5q+34uTZK68JFXIFzuoN31KQg2VHjVDz+/nAr0yXdRwOrgL5rnRb2NbKBPyKSWdcB8A1nVHeNMpoJ5c5CzEERyOROUiTRxge/MIhYL7Fkj67fkh7Sc/l7BwDAf7/7OIgiAIleUTLZ9COnIN15gylTBldOo3JOka8TTNrI1i4QmnMsbgT0luQZzrUMRtZxIHNwx+26IevzCE+hpNdwiYqnDVZdayDLPVy1vv+i3C7AJGd9b7/2/qv0YmWxvT3uKrPR8+9fbSWltGx9ikrdXO17FrGc5u0gqmPWAaSSWw/NJmMhPenILh7/MvXA8mO2m7JeuhnM/EYzdOMB3qzvkUEVddFIngPl6LNE8XG1R+APFBsbpnpybB7dQphSud5DNfuZijqLDd735kykYlRMzw5VVGf7fONheLzSV42XRsIU+5IazHvmAZ4pxr72+r9bbS9vRW38ZgQIy6p8r4tLv9jfmqmcS9lEn1CAgDLAqZWGzIWeIgOdDsrWH4ia/1gj6oZVefRCr2dAS84NsOQUdoJDbS8G0+ArN+CWgnlcwOJCS6MB5kBmQl2FPvwLcSnnRcS66XKfH28Bu2/J3Hu5zRWbONuOLQTbYFxwftUtvS1IORKBCfWvlJTx5G/mz1KOGW89iOCpW8jdx8EmzpRI="
     );
 
-    private final Infuse plugin;
-
     public Apophis() {
         this(false);
     }
 
     public Apophis(boolean augmented) {
         super("apophis", EffectIds.APOPHIS, augmented, EffectConstants.potionColor(EffectIds.APOPHIS), EffectConstants.ritualColor(EffectIds.APOPHIS));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -414,7 +410,7 @@ public class Apophis extends InfuseEffect {
         orb.setExperience(newAmount);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
+    @SuppressWarnings({ "UnstableApiUsage", "unchecked" })
     @EventHandler
     public void apophisEnchantBonus(PrepareItemEnchantEvent event) {
         ItemStack item = event.getItem();
@@ -475,11 +471,11 @@ public class Apophis extends InfuseEffect {
 
                     if (!clazz.isRecord()) {
                         // Handling pre-1.21.5
-                        enchantment = (Holder) clazz.getField("enchantment").get(enchantmentinstance);
+                        enchantment = (Holder<net.minecraft.world.item.enchantment.Enchantment>) clazz.getField("enchantment").get(enchantmentinstance);
                         level = (int) clazz.getField("level").get(enchantmentinstance);
                     } else {
                         RecordComponent[] components = clazz.getRecordComponents();
-                        enchantment = (Holder) components[0].getAccessor().invoke(enchantmentinstance);
+                        enchantment = (Holder<net.minecraft.world.item.enchantment.Enchantment>) components[0].getAccessor().invoke(enchantmentinstance);
                         level = (int) components[1].getAccessor().invoke(enchantmentinstance);
                     }
                     offers[k] = new EnchantmentOffer(CraftEnchantment.minecraftHolderToBukkit(enchantment), level, cost);

@@ -41,7 +41,9 @@ public class Message {
             throw new IllegalStateException("Not all placeholders have been registered.");
         }
 
-        return Stream.of(("<i:false>" + message).split("\n")).map(mm::deserialize).toList();
+        return Stream.of(message.split("\n"))
+            .map(e -> "<i:false>" + e)
+            .map(mm::deserialize).toList();
     }
 
     public Component toComponent() {

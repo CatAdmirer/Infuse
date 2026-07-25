@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.*;
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import org.bukkit.Bukkit;
@@ -25,16 +27,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class Thunder extends InfuseEffect {
-    private final Infuse plugin;
-
     public Thunder() {
         this(false);
     }
 
     public Thunder(boolean augmented) {
         super("thunder", EffectIds.THUNDER, augmented, EffectConstants.potionColor(EffectIds.THUNDER), EffectConstants.ritualColor(EffectIds.THUNDER));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -49,7 +47,7 @@ public class Thunder extends InfuseEffect {
 
         if (CooldownManager.isOnCooldown(uuid, "thunder")) return;
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        
+
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
@@ -118,7 +116,7 @@ public class Thunder extends InfuseEffect {
 
     /**
      * Custom lightning bolt for the thunder effect.
-     * 
+     *
      * @param target The entity to hit with a lightning bolt.
      * @param attacker The entity to attribute the damage to.
      */
@@ -134,7 +132,7 @@ public class Thunder extends InfuseEffect {
      * The function should be called with a list containing only the attacking entity.
      *
      * @param targets The list of targets that have been hit by the lightning bolt, except for the first entry which is the attacker.
-     * 
+     *
      * @throws InvalidParameterException If the <code>targets</code> parameter is null or empty.
      */
     private void chainLightning(List<Player> targets) {

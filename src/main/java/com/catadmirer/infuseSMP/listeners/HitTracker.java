@@ -1,5 +1,6 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.effects.Thunder;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
@@ -26,7 +27,7 @@ public class HitTracker implements Listener {
 
     /**
      * Tracking the number of hits a player has.
-     * 
+     *
      * @param event A {@link EntityDamageByEntityEvent}
      */
     @EventHandler
@@ -93,7 +94,7 @@ public class HitTracker implements Listener {
             Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
-        
+
         // Running the decay task if it is still around
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             Runnable decayTask = decayQueue.peek();
@@ -106,10 +107,11 @@ public class HitTracker implements Listener {
 
     /**
      * Removes players from the hit tracker when they leave.
-     * 
+     *
      * @param event A {@link PlayerQuitEvent}
      */
-    public void onPlayerLeave(PlayerQuitEvent event) {
+    @EventHandler
+    public void removeFromHitTracker(PlayerQuitEvent event) {
         hitTracker.remove(event.getPlayer().getUniqueId());
     }
 }

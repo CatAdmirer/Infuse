@@ -2,13 +2,16 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemLore;
+import io.papermc.paper.datacomponent.item.PotionContents;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
@@ -29,6 +32,7 @@ public abstract class InfuseEffect implements Listener {
     protected final boolean augmented;
     protected final Color potionColor;
     protected final BossBar.Color ritualColor;
+    protected final Infuse plugin = Infuse.getInstance();
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
         this.key = key;
@@ -144,17 +148,21 @@ public abstract class InfuseEffect implements Listener {
      */
     public ItemStack createItem() {
         ItemStack item = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) item.getItemMeta();
-        meta.customName(getName().toComponent());
-        meta.lore(getLore().toComponentList());
-        meta.setColor(org.bukkit.Color.fromARGB(potionColor.getRGB()));
-        meta.getPersistentDataContainer().set(EFFECT_KEY, PersistentDataType.STRING, toString());
+
+        // Adjusting item data
+        item.setData(DataComponentTypes.CUSTOM_NAME, getName().toComponent());
+        item.setData(DataComponentTypes.LORE, ItemLore.lore(getLore().toComponentList()));
+        item.editPersistentDataContainer(c -> {
+            c.set(EFFECT_KEY, PersistentDataType.STRING, toString());
+        });
+
+        item.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.POTION_CONTENTS));
+        item.setData(DataComponentTypes.POTION_CONTENTS, PotionContents.potionContents().customColor(org.bukkit.Color.fromARGB(potionColor.getRGB())));
 
         if (augmented) {
-            meta.setItemModel(AUG_KEY);
+            item.setData(DataComponentTypes.ITEM_MODEL, AUG_KEY);
         }
 
-        item.setItemMeta(meta);
         return item;
     }
 
@@ -168,17 +176,15 @@ public abstract class InfuseEffect implements Listener {
     public boolean itemMatches(@Nullable ItemStack item) {
         if (item == null) return false;
         if (item.getType() != Material.POTION) return false;
-        if (!item.hasItemMeta()) return false;
 
-        return key.equals(item.getItemMeta().getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING));
+        return key.equals(item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING));
     }
 
     public static InfuseEffect fromItem(ItemStack item) {
         if (item == null) return null;
         if (item.getType() != Material.POTION) return null;
-        if (!item.hasItemMeta()) return null;
 
-        String key = item.getItemMeta().getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING);
+        String key = item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING);
         if (key == null) return null;
 
         return fromString(key);

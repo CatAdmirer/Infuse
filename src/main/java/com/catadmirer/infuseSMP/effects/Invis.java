@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
@@ -32,16 +31,12 @@ import java.util.UUID;
 public class Invis extends InfuseEffect {
     public static final MiniMessage mm = MiniMessage.miniMessage();
 
-    private final Infuse plugin;
-
     public Invis() {
         this(false);
     }
 
     public Invis(boolean augmented) {
         super("invis", EffectIds.INVIS, augmented, EffectConstants.potionColor(EffectIds.INVIS), EffectConstants.ritualColor(EffectIds.INVIS));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -105,7 +100,7 @@ public class Invis extends InfuseEffect {
                         double rad = Math.toRadians(angle);
                         double baseX = center.getX() + radius * Math.cos(rad);
                         double baseZ = center.getZ() + radius * Math.sin(rad);
-                        DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
+                        DustOptions dustOptions = new DustOptions(Color.BLACK, 4);
 
                         for(int i = 0; i < 1; ++i) {
                             double offsetX = (Math.random() - 0.5) * 0.3;
@@ -179,7 +174,7 @@ public class Invis extends InfuseEffect {
         } else {
             victimName = mm.serialize(victim.displayName());
         }
-        
+
         String killerName;
         if (plugin.getMainConfig().invisHideKills() && plugin.getDataManager().hasEffect(killer, this)) {
             killerName = "<gray><obf>Someone";
@@ -199,7 +194,7 @@ public class Invis extends InfuseEffect {
         if (!plugin.getDataManager().hasEffect(shooter, this)) return;
         if (!(event.getEntity() instanceof Arrow)) return;
         if (!(event.getHitEntity() instanceof Player target)) return;
-        
+
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
         this.spawnBlackParticles(target, 4);
     }

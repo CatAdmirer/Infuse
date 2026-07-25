@@ -15,7 +15,7 @@ public class SwapEffects implements CommandExecutor {
     public SwapEffects(Infuse plugin) {
         this.plugin = plugin;
     }
-    
+
     // Defining the command for swapping effects...
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {

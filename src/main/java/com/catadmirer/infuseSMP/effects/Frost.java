@@ -36,16 +36,12 @@ import java.util.UUID;
 public class Frost extends InfuseEffect {
     private final static Set<UUID> frozenAttackers = new HashSet<>();
 
-    private final Infuse plugin;
-
     public Frost() {
         this(false);
     }
 
     public Frost(boolean augmented) {
         super("frost", EffectIds.FROST, augmented, EffectConstants.potionColor(EffectIds.FROST), EffectConstants.ritualColor(EffectIds.FROST));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
@@ -218,7 +214,7 @@ public class Frost extends InfuseEffect {
         Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
         Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
         Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
-        
+
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
