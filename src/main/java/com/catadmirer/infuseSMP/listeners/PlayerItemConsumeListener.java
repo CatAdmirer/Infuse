@@ -22,7 +22,7 @@ public class PlayerItemConsumeListener implements Listener {
 
     /**
      * Handling when players drink an infuse potion.
-     * 
+     *
      * @param event The consume event.
      */
     @EventHandler
@@ -41,6 +41,7 @@ public class PlayerItemConsumeListener implements Listener {
 
         // Equipping the slot in the players other slot
         if (result.type() == EquipResultType.FAIL) {
+            // Drain slot 2 if an effect is equipped there
             if (plugin.getDataManager().getEffect(player.getUniqueId(), "2") != null) {
                 result = plugin.getEffectManager().drainEffect(player, "2");
 

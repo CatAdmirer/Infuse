@@ -171,7 +171,7 @@ public class Ender extends InfuseEffect {
 
         // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
         if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
-        
+
         // Making the fake damageSource
         DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
 

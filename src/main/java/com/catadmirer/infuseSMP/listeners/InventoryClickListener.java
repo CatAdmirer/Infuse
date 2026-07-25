@@ -58,7 +58,7 @@ public class InventoryClickListener implements Listener {
 
     /**
      * Preventing players from clicking items in a {@link RecipeGUI} inventory.
-     * 
+     *
      * @param event The {@link InventoryClickEvent} to listen for.
      */
     @EventHandler
@@ -72,7 +72,7 @@ public class InventoryClickListener implements Listener {
 
     /**
      * Inventory click handler for the RecipeListGUI inventory
-     * 
+     *
      * @param event an InventoryClickEvent
      */
     @EventHandler

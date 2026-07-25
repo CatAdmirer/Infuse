@@ -15,7 +15,7 @@ public class EntityDeathListener implements Listener {
     public EntityDeathListener(DataManager dataManager) {
         this.dataManager = dataManager;
     }
-    
+
     @EventHandler
     public void lowerCraftLimitOnDestroy(EntityDeathEvent event) {
         if (!(event.getEntity() instanceof Item itemEntity)) return;

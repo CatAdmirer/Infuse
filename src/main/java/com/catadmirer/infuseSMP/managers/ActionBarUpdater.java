@@ -101,7 +101,6 @@ public class ActionBarUpdater extends BukkitRunnable {
                 key = effect.getKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    
                     lSide = "<b><#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft) + "</b><white> \ue905" + effect.getActiveIcon();
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
@@ -137,7 +136,6 @@ public class ActionBarUpdater extends BukkitRunnable {
             int diff = lSize - rSize;
             Component spacing = Component.text("\ue904\ue904\ue904\ue904".repeat(Math.abs(diff)));
 
-            
             if (diff > 0) {
                 msg = msg.append(spacing);
             } else {

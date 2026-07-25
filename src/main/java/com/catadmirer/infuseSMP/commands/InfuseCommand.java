@@ -23,7 +23,7 @@ import org.jspecify.annotations.NonNull;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
     private final Infuse plugin;
-    
+
     public InfuseCommand(Infuse plugin) {
         this.plugin = plugin;
     }
@@ -103,19 +103,19 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
-                
+
                 if (args.length != 4) {
                     player.sendMessage(new Message(MessageType.INFUSE_SETEFFECT_USAGE).toComponent());
                     return true;
                 }
-                
+
                 // Getting the player and making sure they are online.
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
                     player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
-                
+
                 // Getting the effect key and verifying its integrity.
                 effectKey = args[2].toLowerCase();
                 effect = InfuseEffect.fromString(effectKey);
@@ -123,7 +123,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                     return true;
                 }
-                
+
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];
                 if (!slot.equals("1") && !slot.equals("2")) {
@@ -176,7 +176,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(new Message(MessageType.INFUSE_COOLDOWN_USAGE).toComponent());
                     return true;
                 }
-                
+
                 // Getting the player and making sure they are online
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
@@ -227,14 +227,14 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command, @NonNull String alias, String[] args) {
         if (args.length == 1) {
             List<String> completions = new ArrayList<>(Arrays.asList("recipes", "controls"));
-            
+
             if (sender.isOp()) {
                 completions.addAll(Arrays.asList("gui", "reload", "giveEffect", "setEffect", "clearEffects", "cooldown"));
             }
 
             return completions.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).sorted().toList();
         }
-        
+
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
                 case "controls":
@@ -247,7 +247,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
             }
         }
-        
+
         if (args.length == 3) {
             switch(args[0].toLowerCase()) {
                 case "giveeffect":
@@ -256,7 +256,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return InfuseEffect.getRegisteredEffects().values().stream().map(InfuseEffect::toString).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
-        
+
         if (args.length == 4 && args[0].equalsIgnoreCase("setEffect") && sender.isOp()) {
             return Stream.of("1", "2").filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
         }

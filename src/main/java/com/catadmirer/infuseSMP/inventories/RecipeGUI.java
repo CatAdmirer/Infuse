@@ -20,7 +20,7 @@ public class RecipeGUI implements InventoryHolder {
         inventory = Bukkit.createInventory(this, 45, Component.text("Recipes"));
 
         ShapedRecipe recipe = manager.getRecipe(effect);
-        
+
         // Loading the ingredients into the gui
         int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
         int slotIndex = 0;
@@ -28,7 +28,7 @@ public class RecipeGUI implements InventoryHolder {
             for (char ch : row.toCharArray()) {
                 RecipeChoice recipeChoice = recipe.getChoiceMap().get(ch);
                 if (!(recipeChoice instanceof MaterialChoice matChoice)) continue;
-                
+
                 ItemStack ingredient = matChoice.getItemStack();
                 inventory.setItem(ingredientSlots[slotIndex], ingredient);
                 slotIndex++;

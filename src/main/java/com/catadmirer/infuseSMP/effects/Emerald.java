@@ -233,6 +233,7 @@ public class Emerald extends InfuseEffect {
         orb.setExperience(newAmount);
     }
 
+    @SuppressWarnings({ "UnstableApiUsage", "unchecked" })
     @EventHandler
     public void emeraldEnchantBonus(PrepareItemEnchantEvent event) {
         ItemStack item = event.getItem();
@@ -294,11 +295,11 @@ public class Emerald extends InfuseEffect {
 
                     if (!clazz.isRecord()) {
                         // Handling pre-1.21.5
-                        enchantment = (Holder) clazz.getField("enchantment").get(enchantmentinstance);
+                        enchantment = (Holder<net.minecraft.world.item.enchantment.Enchantment>) clazz.getField("enchantment").get(enchantmentinstance);
                         level = (int) clazz.getField("level").get(enchantmentinstance);
                     } else {
                         RecordComponent[] components = clazz.getRecordComponents();
-                        enchantment = (Holder) components[0].getAccessor().invoke(enchantmentinstance);
+                        enchantment = (Holder<net.minecraft.world.item.enchantment.Enchantment>) components[0].getAccessor().invoke(enchantmentinstance);
                         level = (int) components[1].getAccessor().invoke(enchantmentinstance);
                     }
                     offers[k] = new EnchantmentOffer(CraftEnchantment.minecraftHolderToBukkit(enchantment), level, cost);

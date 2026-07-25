@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 
 public class GUI implements CommandExecutor {
     private final Infuse plugin;
-    
+
     public GUI(Infuse plugin) {
         this.plugin = plugin;
     }
@@ -28,7 +28,7 @@ public class GUI implements CommandExecutor {
 
             return true;
         }
-        
+
         return false;
     }
 }

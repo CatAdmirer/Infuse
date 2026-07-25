@@ -14,7 +14,7 @@ public class PlayerQuitListener implements Listener {
     public PlayerQuitListener(Infuse plugin) {
         this.plugin = plugin;
     }
-    
+
     /** Unequips a player's effects when they leave the game. */
     @EventHandler
     public void deactivateEffects(PlayerQuitEvent event) {

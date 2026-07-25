@@ -16,10 +16,10 @@ public class ClearEffects implements CommandExecutor {
     public ClearEffects(EffectManager effectManager) {
         this.effectManager = effectManager;
     }
-    
+
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         if (!command.getName().equalsIgnoreCase("cleareffects")) return false;
-        
+
         if (args.length != 1) {
             sender.sendMessage(new Message(MessageType.INFUSE_CLEAREFFECTS_USAGE).toComponent());
             return true;
@@ -30,7 +30,7 @@ public class ClearEffects implements CommandExecutor {
             effectManager.unequipEffect(target, "1");
             effectManager.unequipEffect(target, "2");
         }
-        
+
         return true;
     }
 }

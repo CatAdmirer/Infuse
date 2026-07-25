@@ -146,7 +146,7 @@ public class EffectCraftManager implements Listener {
             formattedMessage.applyPlaceholder("y", brewerLocation.getBlockY());
             formattedMessage.applyPlaceholder("z", brewerLocation.getBlockZ());
             formattedMessage.applyPlaceholder("dimension", worldName);
-            
+
             Bukkit.broadcast(formattedMessage.toComponent());
             return;
         }
@@ -167,7 +167,7 @@ public class EffectCraftManager implements Listener {
         player.closeInventory();
 
         // Cancelling the event
-        event.setCancelled(true);        
+        event.setCancelled(true);
 
         // Starting the ritual for the augmented effect
         // Creating the bossbar
@@ -194,7 +194,7 @@ public class EffectCraftManager implements Listener {
             startLoc.setY(-100);
             Location targetLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             targetLoc.setY(500);
-            
+
             ritualBeam = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
             ritualBeam.setShowingBottom(false);
             ritualBeam.setInvulnerable(true);

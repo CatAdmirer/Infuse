@@ -27,7 +27,7 @@ public class HitTracker implements Listener {
 
     /**
      * Tracking the number of hits a player has.
-     * 
+     *
      * @param event A {@link EntityDamageByEntityEvent}
      */
     @EventHandler
@@ -97,7 +97,7 @@ public class HitTracker implements Listener {
             Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
-        
+
         // Running the decay task if it is still around
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             Runnable decayTask = decayQueue.peek();
@@ -110,7 +110,7 @@ public class HitTracker implements Listener {
 
     /**
      * Removes players from the hit tracker when they leave.
-     * 
+     *
      * @param event A {@link PlayerQuitEvent}
      */
     @EventHandler

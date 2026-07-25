@@ -34,7 +34,7 @@ public class PlayerDeathListener implements Listener {
 
     /**
      * Event handler to remove an effect from the players inventory if they die.
-     * 
+     *
      * @param event The server PlayerDeathEvent
      */
     @EventHandler
