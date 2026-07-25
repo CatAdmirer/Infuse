@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.effects.Emerald.FoodAndExpLock;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.implementations.WorldGuardImpl;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
@@ -37,15 +38,21 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -89,13 +96,19 @@ public class Apophis extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
+
+        // Applying the potion effect to the player
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, -1, 0, false, false));
+
+        if (ItemUtil.isSword(owner.getInventory().getItemInMainHand())) {
+            ItemUtil.applySpecialEnchantment(owner.getInventory().getItemInMainHand(), LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().apophisLootingLevel());
+        }
+
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
         attribute.addModifier(new AttributeModifier(APOPHIS_BOOST, 10, Operation.ADD_NUMBER));
         owner.heal(10);
-
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, -1, 9, false, false));
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 2, false, false));
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, -1, 2, false, false));
 
         // Disguise player
         disguise(owner);
@@ -103,19 +116,20 @@ public class Apophis extends InfuseEffect {
 
     @Override
     public void unequip(Player owner) {
-        AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
-        attribute.removeModifier(APOPHIS_BOOST);
-
-        owner.removePotionEffect(PotionEffectType.LUCK);
+        // Removing the potion effects
         owner.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
         owner.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-
+        
         // Removing enchanted items from the owner's inventory
         for (ItemStack item : owner.getInventory()) {
             if (item == null || item.getType() == Material.AIR) continue;
 
             ItemUtil.removeSpecialEnchant(item, LOOTING_KEY, Enchantment.LOOTING);
         }
+
+        AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
+        attribute.removeModifier(APOPHIS_BOOST);
+        attribute.removeModifier(APOPHIS_SPARK_BOOST);
 
         // Removing the player's disguise
         removeDisguise(owner);
@@ -127,25 +141,10 @@ public class Apophis extends InfuseEffect {
 
         // Stopping if the spark is on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "apophis")) return;
+        if (!WorldGuardImpl.canUseSpark(owner)) return;
+        if (!WorldGuardImpl.isEffectAllowed(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
-        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, 600, 254));
-
-        for (Entity entity : owner.getNearbyEntities(5, 5, 5)) {
-            if (entity instanceof LivingEntity && entity != owner) {
-                entity.setFireTicks(100);
-            }
-        }
-
-        // particles
-        spawnSparkEffect(owner);
-        Bukkit.getScheduler().runTaskLater(plugin, t -> owner.getWorld().spawnParticle(Particle.EXPLOSION, owner.getLocation(), 1), 20L);
-
-        AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
-        if (attribute.getModifier(APOPHIS_SPARK_BOOST) == null) {
-            attribute.addModifier(new AttributeModifier(APOPHIS_SPARK_BOOST, 10, Operation.ADD_NUMBER));
-            owner.heal(10);
-        }
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
@@ -153,7 +152,30 @@ public class Apophis extends InfuseEffect {
 
         CooldownManager.setTimes(playerUUID, "apophis", duration, cooldown);
 
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, (int) duration * 20, 4));
+
+        AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
+        attribute.addModifier(new AttributeModifier(APOPHIS_SPARK_BOOST, 10, Operation.ADD_NUMBER));
+        owner.heal(10);
+
         Bukkit.getScheduler().runTaskLater(plugin, () -> attribute.removeModifier(APOPHIS_SPARK_BOOST), duration * 20);
+
+        final double radius = plugin.getMainConfig().apophisSparkRadius();
+        for (Entity entity : owner.getNearbyEntities(radius, radius, radius)) {
+            if (!(entity instanceof LivingEntity)) continue;
+            if (entity == owner) continue;
+            if (!WorldGuardImpl.canBeTargetedBySpark(entity)) continue;
+            if (!WorldGuardImpl.isEffectAllowed(entity, this)) continue;
+
+            entity.setFireTicks(100);
+        }
+
+        spawnSparkEffect(owner);
+        new BukkitRunnable() {
+            public void run() {
+                owner.getWorld().spawnParticle(Particle.EXPLOSION, owner.getLocation(), 1);
+            }
+        }.runTaskLater(plugin, 20L);
     }
 
     @Override
@@ -192,7 +214,7 @@ public class Apophis extends InfuseEffect {
                 if (this.tick > 0 && this.tick % 20 == 0) {
                     world.playSound(center, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
 
-                    for (int angle = 0; angle < 360; angle += 20) {
+                    for(int angle = 0; angle < 360; angle += 20) {
                         double rad = Math.toRadians(angle);
                         double offsetX = 5 * Math.cos(rad);
                         double offsetZ = 5 * Math.sin(rad);
@@ -201,20 +223,22 @@ public class Apophis extends InfuseEffect {
                     }
 
                     for (Player target : world.getPlayers()) {
-                        if (!target.equals(caster) && target.getLocation().distance(center) <= 5) {
-                            target.damage(8, caster);
-                        }
+                        if (target.equals(caster)) continue;
+                        if (target.getLocation().distance(center) > 5) continue;
+                        if (!WorldGuardImpl.canBeTargetedBySpark(target)) continue;
+                        if (!WorldGuardImpl.isEffectAllowed(target, Apophis.this)) continue;
+                        target.damage(8, caster);
                     }
                 }
 
-                this.tick++;
+                ++this.tick;
             }
         }).runTaskTimer(plugin, 0L, 1L);
     }
 
     private void startDarkRedDustEffect(final Location startLoc, Player caster) {
         final World world = startLoc.getWorld();
-        double explosionRadius = 5;
+        final double explosionRadius = plugin.getMainConfig().apophisSparkExplosionRadius();
         for (Player target : world.getPlayers()) {
             if (!target.equals(caster) && target.getLocation().distance(startLoc) <= explosionRadius) {
                 target.setVelocity(new Vector(0, 2, 0));
@@ -231,9 +255,7 @@ public class Apophis extends InfuseEffect {
                     return;
                 }
 
-                double baseRadius = 5;
-                double spreadFactor = this.tick * 0.1;
-                double circleRadius = baseRadius + spreadFactor;
+                double circleRadius = explosionRadius + this.tick * 0.1;
                 double particleHeightOffset = this.tick * 3;
                 if (particleHeightOffset > 30) {
                     this.cancel();
@@ -250,7 +272,7 @@ public class Apophis extends InfuseEffect {
 
                 ++this.tick;
             }
-        }).runTaskTimer(plugin, 0, 1);
+        }).runTaskTimer(plugin, 0L, 1L);
     }
 
     /**
@@ -348,18 +370,137 @@ public class Apophis extends InfuseEffect {
         return;
     }
 
+    private void showAndUpdateHealthAboveEntity(Entity player) {
+        Location ploc = player.getLocation().add(0, 2.5, 0);
+
+        TextDisplay as = (TextDisplay) ploc.getWorld().spawn(ploc, TextDisplay.class);
+
+        as.setGravity(false);
+        as.setCustomNameVisible(true);
+        as.customName();
+        updateHealthDisplay(as, (LivingEntity) player);
+        player.addPassenger(as);
+        final BukkitRunnable updateTask = new BukkitRunnable() {
+            public void run() {
+                if (!player.isDead() && player.isValid()) {
+                    Apophis.this.updateHealthDisplay(as, (LivingEntity) player);
+                } else {
+                    this.cancel();
+                    as.setCustomNameVisible(false);
+                    as.customName(null);
+                }
+            }
+        };
+
+        updateTask.runTaskTimer(plugin, 0L, 10L);
+        (new BukkitRunnable() {
+            public void run() {
+                updateTask.cancel();
+                as.setCustomNameVisible(false);
+                as.customName(null);
+                player.removePassenger(as);
+            }
+        }).runTaskLater(plugin, 200L);
+    }
+
+    private void updateHealthDisplay(TextDisplay entity, LivingEntity player) {
+        if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
+            entity.customName(Message.toComponent(String.format("<yellow><b>%.1f ❤", player.getHealth()) + player.getAbsorptionAmount()));
+        } else {
+            entity.customName(Message.toComponent(String.format("<red><b>%.1f ❤", player.getHealth())));
+        }
+    }
+
     //// Listeners ////
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
 
     @EventHandler
-    public void enchantHeldItem(PlayerItemHeldEvent event) {
+    public void onMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Vector direction = player.getLocation().getDirection().normalize();
+
+        if (!player.isInLava()) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
+
+        double boostStrength = plugin.getMainConfig().apophisLavaWalkSpeed();
+        Vector newVelocity = direction.multiply(boostStrength);
+        player.setVelocity(newVelocity);
+    }
+
+    @EventHandler
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+
+        if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
+            projectile.setFireTicks(100);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != DamageCause.FALL) return;
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+        Material blockType = player.getLocation().getBlock().getType();
+        if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void apophisCombustTarget(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(event.getTarget(), this)) return;
+
+        event.getTarget().setFireTicks(100);
+    }
+
+    @EventHandler
+    public void apophisShowTargetHealth(TenHitEvent event) {
+        Player attacker = event.getAttacker();
+        if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+
+        this.showAndUpdateHealthAboveEntity(event.getTarget());
+    }
+
+    @EventHandler
+    public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isSword(item)) {
-            ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().apophisLootingLevel());
+        ItemStack item = event.getItem();
+        if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4));
+        } else {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
         }
+    }
+
+    @EventHandler
+    public void enchantHeldItem(PlayerItemHeldEvent event) {
+        Infuse.LOGGER.debug("[Apophis] PlayerItemHeldEvent triggered");
+
+        Player player = event.getPlayer();
+        if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
+
+        Infuse.LOGGER.debug("[Apophis] PlayerItemHeldEvent is for an apophis user");
+
+        ItemStack item = player.getInventory().getItem(event.getNewSlot());
+        if (!ItemUtil.isSword(item)) return;
+
+        Infuse.LOGGER.debug("[Apophis] Apophis user is holding a sword.  Enchanting with looting.");
+
+        ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().apophisLootingLevel());
     }
 
     @EventHandler
@@ -385,6 +526,8 @@ public class Apophis extends InfuseEffect {
         Infuse.LOGGER.debug("[Apophis] Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(event.getTarget(), this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(event.getAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Apophis] Target has apophis effect");
         Infuse.LOGGER.debug("[Apophis] Locking attacker's food and Exp");
@@ -397,13 +540,14 @@ public class Apophis extends InfuseEffect {
         Player player = event.getPlayer();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
 
-        double multiplier = 2;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "apophis")) {
-            multiplier = 4;
+        double multiplier = plugin.getMainConfig().apophisXpMultiplierStandard();
+        if (CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) {
+            multiplier = plugin.getMainConfig().apophisXpMultiplierSpark();
         }
 
         int newAmount = (int) Math.round(amount * multiplier);
@@ -424,6 +568,7 @@ public class Apophis extends InfuseEffect {
         // Making sure the enchanter has the apophis effect
         Player player = event.getEnchanter();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         EnchantmentOffer[] offers = event.getOffers();
         Random random = new Random(player.getEnchantmentSeed());
@@ -495,14 +640,17 @@ public class Apophis extends InfuseEffect {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
+        if (!WorldGuardImpl.isEffectAllowed(attacker, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(damaged, this)) return;
+
         // Getting configs
         int exp = damaged.getTotalExperience();
         int expPerHit = plugin.getMainConfig().apophisExpPerHit();
 
         // Updating the xp of the players
-        damaged.setTotalExperience(exp - expPerHit);
+        damaged.setTotalExperience(Math.max(exp - expPerHit, 0));
 
-        int toGain = (int) (expPerHit * plugin.getMainConfig().apophisExpPercent());
+        int toGain = (int) (Math.min(expPerHit, exp) * plugin.getMainConfig().apophisExpPercent());
         attacker.setTotalExperience(attacker.getTotalExperience() + toGain);
 
         // Calling the exp change event to allow for sharing if the spark is active
@@ -515,6 +663,7 @@ public class Apophis extends InfuseEffect {
 
         // Making sure the player has the apophis effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         ItemStack consumedItem = event.getItem();
 
@@ -523,7 +672,7 @@ public class Apophis extends InfuseEffect {
 
         // Getting the chance for the item to not be consumed
         double chance = 0.5;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "apophis")) chance = 0.75;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) chance = 0.75;
 
         // Rolling the dice
         if (Math.random() > chance) return;
@@ -540,11 +689,14 @@ public class Apophis extends InfuseEffect {
     @EventHandler
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        if (!CooldownManager.isEffectActive(player.getUniqueId(), "apophis")) return;
+        if (!CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) return;
+        if (!WorldGuardImpl.isEffectAllowed(player, this)) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();
+
             if (trustedPlayer == null) continue;
+            if (!WorldGuardImpl.isEffectAllowed(trustedPlayer, this)) continue;
 
             int toGain = (int) (event.getAmount() * plugin.getMainConfig().apophisPercentExpToShare());
             trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);

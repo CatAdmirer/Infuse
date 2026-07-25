@@ -105,6 +105,15 @@ apophis:
     augmented: 18
   enchantment:
     looting_level: 5
+  spark:
+    radius: 5
+    explosion-radius: 5
+  passive:
+    # How fast should they be able to walk while in lava?
+    walk-speed: 0.6
+  multiplier-xp:
+    standard: 2
+    use-effect: 4
   blacklisted-worlds:
 
 emerald:

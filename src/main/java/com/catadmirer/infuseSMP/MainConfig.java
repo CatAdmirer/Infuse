@@ -238,6 +238,25 @@ public class MainConfig {
         return config.getInt("apophis.enchantment.looting_level");
     }
 
+    public double apophisSparkRadius() {
+        return config.getDouble("apophis.spark.radius", 5);
+    }
+
+    public double apophisSparkExplosionRadius() {
+        return config.getDouble("apophis.spark.explosion-radius", 5);
+    }
+
+    public double apophisLavaWalkSpeed() {
+        return config.getDouble("apophis.passive.walk-speed", 0.6);
+    }
+
+    public int apophisXpMultiplierStandard() {
+        return config.getInt("apophis.multiplier-xp.standard", 2);
+    }
+    public int apophisXpMultiplierSpark() {
+        return config.getInt("apophis.multiplier-xp.use-effect", 4);
+    }
+
     public int emeraldLootingLevel() {
         return config.getInt("emerald.enchantment.looting_level");
     }
@@ -378,6 +397,12 @@ public class MainConfig {
 
         if (!config.contains("thunder.spark.base-radius")) config.set("thunder.spark.base-radius", 10);
         if (!config.contains("thunder.spark.per-player-boost-radius")) config.set("thunder.spark.per-player-boost-radius", 0.3);
+
+        if (!config.contains("apophis.spark.radius")) config.set("apophis.spark.radius", 5);
+        if (!config.contains("apophis.spark.explosion-radius")) config.set("apophis.spark.explosion-radius", 5);
+        if (!config.contains("apophis.passive.walk-speed")) config.set("apophis.passive.walk-speed", 0.6);
+        if (!config.contains("apophis.multiplier-xp.standard")) config.set("apophis.multiplier-xp.standard", 2);
+        if (!config.contains("apophis.multiplier-xp.use-effect")) config.set("apophis.multiplier-xp.use-effect", 4);
 
         final List<String> blacklisted_worlds = new ArrayList<>();
         blacklisted_worlds.add("Example World");
