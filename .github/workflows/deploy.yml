@@ -64,24 +64,6 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "# Changelog:  " >> $GITHUB_STEP_SUMMARY 
           echo "$CHANGELOG" >>  $GITHUB_STEP_SUMMARY
-  # Tagging the latest version
-  tag-release:
-    runs-on: ubuntu-latest
-    needs: data_collector
-    permissions:
-      contents: write
-    steps:
-      - name: Tagging latest version
-        uses: actions/github-script@v9
-        with:
-          script: |
-            // Tagging release
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
-              sha: context.sha
-            });
   # Building for multiple minecraft versions.
   # These builds are not published.  They are made just so that we can make sure the plugin will work on each version we want to support.
   test-builds:
@@ -122,6 +104,26 @@ jobs:
           sed -i "s/minecraftVersion=.*/minecraftVersion=26.2/" gradle.properties
       - name: "Building for 26.2"
         run: ./gradlew build
+  # Tagging the latest version
+  tag-release:
+    runs-on: ubuntu-latest
+    needs:
+      - data_collector
+      - test-builds
+    permissions:
+      contents: write
+    steps:
+      - name: Tagging latest version
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // Tagging release
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${{ needs.data_collector.outputs.full_version }}`,
+              sha: context.sha
+            });
   # Publishing to maven
   maven-publish:
     needs:
