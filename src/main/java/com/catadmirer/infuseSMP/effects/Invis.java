@@ -100,7 +100,7 @@ public class Invis extends InfuseEffect {
                         double rad = Math.toRadians(angle);
                         double baseX = center.getX() + radius * Math.cos(rad);
                         double baseZ = center.getZ() + radius * Math.sin(rad);
-                        DustOptions dustOptions = new DustOptions(Color.BLACK, 15);
+                        DustOptions dustOptions = new DustOptions(Color.BLACK, 4);
 
                         for(int i = 0; i < 1; ++i) {
                             double offsetX = (Math.random() - 0.5) * 0.3;
