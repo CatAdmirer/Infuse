@@ -283,7 +283,7 @@ public class EffectCraftManager implements Listener {
     }
 
     public static void removeBeam() {
-        if (ritualBeam != null && !(ritualBeam.isDead())) ritualBeam.remove();
+        if (!(ritualBeam.isDead())) ritualBeam.remove();
         ritualBeam = null;
     }
 
