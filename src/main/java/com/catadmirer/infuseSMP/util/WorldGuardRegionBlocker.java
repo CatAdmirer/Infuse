@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public class WorldGuardRegionBlocker extends RegionBlocker {
     private static final SetFlag<InfuseEffect> ALLOWED_EFFECTS = new SetFlag<>("allowed-effects", new EffectFlag(null));
     private static final StateFlag USE_SPARKS = new StateFlag("use-sparks", true);
-    private static final StateFlag SPARK_PASSTHROUGH = new StateFlag("spark_passthrough", true);
+    private static final StateFlag SPARK_PASSTHROUGH = new StateFlag("spark-passthrough", true);
 
     @Override
     public void init() {
