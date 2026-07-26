@@ -169,7 +169,7 @@ jobs:
               },
               {
                 "project_id": "lKEzGugV",
-                "dependency_type": "optional
+                "dependency_type": "optional"
               }
             ]
           files: build/libs/InfuseSMP-${{ needs.data_collector.outputs.full_version }}.jar
