@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.util.regions;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 

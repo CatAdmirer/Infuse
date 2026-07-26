@@ -7,7 +7,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

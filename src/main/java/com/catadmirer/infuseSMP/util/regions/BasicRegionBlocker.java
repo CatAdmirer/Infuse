@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.util.regions;
 
 import java.util.List;
 import java.util.Set;
