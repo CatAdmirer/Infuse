@@ -16,6 +16,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Set;
@@ -72,8 +73,10 @@ public class WorldGuardRegionBlocker extends RegionBlocker {
         return getBlockedEffects(loc, null);
     }
 
+    @NonNull
     private Set<InfuseEffect> getBlockedEffects(Location loc, RegionAssociable assoc) {
-        return queryValue(loc, BLOCKED_EFFECTS, assoc);
+        Set<InfuseEffect> effects = queryValue(loc, BLOCKED_EFFECTS, assoc);
+        return effects == null ? Set.of() : effects;
     }
 
     @Override
