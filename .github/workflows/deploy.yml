@@ -161,5 +161,16 @@ jobs:
           changelog: ${{ needs.data_collector.outputs.changelog }}
           loaders: '["paper", "purpur"]'
           game-versions: 1.21.11 - 26.1.2
+          dependencies: |-
+            [
+              {
+                "project_id": "DKY9btbd",
+                "dependency_type": "optional"
+              },
+              {
+                "project_id": "lKEzGugV",
+                "dependency_type": "optional
+              }
+            ]
           files: build/libs/InfuseSMP-${{ needs.data_collector.outputs.full_version }}.jar
       - run: echo "Published InfuseSMP-${{ needs.data_collector.outputs.full_version }}.jar to modrinth for versions 1.21.11-26.1.2" >> $GITHUB_STEP_SUMMARY
