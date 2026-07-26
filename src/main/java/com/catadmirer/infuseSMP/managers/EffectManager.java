@@ -59,7 +59,7 @@ public class EffectManager {
 
         // Equipping the effect and updating the player data
         // If the player is in a blocked location, the effect is equipped but not activated.
-        if (RegionBlocker.getInstance().isEffectAllowed(player, effect)) effect.equip(player);
+        if (!RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
         plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);

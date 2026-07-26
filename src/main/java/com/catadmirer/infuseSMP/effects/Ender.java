@@ -58,7 +58,7 @@ public class Ender extends InfuseEffect {
     public void applyPassives(Player owner) {
         final double radius = plugin.getMainConfig().enderPassiveRadius();
 
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
         Collection<Entity> nearbyEntities = owner.getWorld().getNearbyEntities(owner.getLocation(), radius, radius, radius);
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player nearby)) continue;
@@ -132,7 +132,7 @@ public class Ender extends InfuseEffect {
         UUID uuid = player.getUniqueId();
 
         if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem.getAmount() > 1) {
@@ -172,7 +172,7 @@ public class Ender extends InfuseEffect {
 
         // Making sure the damage source isn't the one made by this plugin (prevents looping curse damage)
         if (event.getDamageSource().getDamageType() == DamageType.CAMPFIRE && event.getDamageSource().getDirectEntity() != null) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(damagedPlayer, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(damagedPlayer, this)) return;
 
         // Making the fake damageSource
         DamageSource fakeSource = DamageSource.builder(DamageType.CAMPFIRE).withDirectEntity(damagedPlayer).build();
@@ -183,7 +183,7 @@ public class Ender extends InfuseEffect {
             if (cursedUUID == damagedUUID) continue;
 
             Player player = Bukkit.getPlayer(cursedUUID);
-            if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) continue;
+            if (RegionBlocker.getInstance().isEffectBlocked(player, this)) continue;
 
             player.damage(event.getDamage(), fakeSource);
         }
@@ -196,7 +196,7 @@ public class Ender extends InfuseEffect {
         if (event.getEntity() instanceof Player) return;
 
         UUID attackerUUID = attacker.getUniqueId();
-        if (CooldownManager.isEffectActive(attackerUUID, "ender") && !RegionBlocker.getInstance().isEffectAllowed(attacker, this)) {
+        if (CooldownManager.isEffectActive(attackerUUID, "ender") && !RegionBlocker.getInstance().isEffectBlocked(attacker, this)) {
             mob.setHealth(0);
         }
     }
@@ -218,7 +218,7 @@ public class Ender extends InfuseEffect {
 
         // Making sure the cursing fireball isn't on cooldown
         if (CooldownManager.isOnCooldown(player.getUniqueId(), "ender_fireball")) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         shootCursingFireball(player);
         event.setCancelled(true);
@@ -230,7 +230,7 @@ public class Ender extends InfuseEffect {
         if (!(event.getDamager() instanceof Player attacker)) return;
 
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
         cursePlayer(target.getUniqueId(), 1200);
     }
@@ -243,8 +243,8 @@ public class Ender extends InfuseEffect {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        if (!RegionBlocker.getInstance().isEffectAllowed(shooter, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(shooter, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
 
         cursePlayer(target.getUniqueId(), 1200);
         event.setDamage(0);
@@ -258,8 +258,8 @@ public class Ender extends InfuseEffect {
         if (!(fireball.getShooter() instanceof Player shooter)) return;
         if (plugin.getDataManager().isTrusted(target, shooter)) return;
 
-        if (!RegionBlocker.getInstance().isEffectAllowed(shooter, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(shooter, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
 
         cursePlayer(target.getUniqueId(), 1200);
     }

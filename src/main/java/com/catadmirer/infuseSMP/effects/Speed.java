@@ -40,7 +40,7 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         speedLevels.put(owner.getUniqueId(), 0);
         owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, false, false, false));
@@ -55,7 +55,7 @@ public class Speed extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         UUID uuid = owner.getUniqueId();
         long lastHit = lastHitTime.getOrDefault(uuid, 0L);
@@ -71,7 +71,7 @@ public class Speed extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
         if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -156,7 +156,7 @@ public class Speed extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         long startTime = bowPullStartTime.getOrDefault(player.getUniqueId(), 0L);
         long pullTimeMs = System.currentTimeMillis() - startTime;
@@ -171,7 +171,7 @@ public class Speed extends InfuseEffect {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         UUID uuid = player.getUniqueId();
         long currentTime = System.currentTimeMillis();

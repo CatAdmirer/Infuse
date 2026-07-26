@@ -40,7 +40,7 @@ public class Thief extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.unlistPlayer(owner);
@@ -237,8 +237,8 @@ public class Thief extends InfuseEffect {
 
         if (killer == null) return;
         if (!plugin.getDataManager().hasEffect(killer, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(killer, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(deadPlayer, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(killer, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(deadPlayer, this)) return;
 
         disguise(killer, deadPlayer);
     }
@@ -252,7 +252,7 @@ public class Thief extends InfuseEffect {
 
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
         InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");

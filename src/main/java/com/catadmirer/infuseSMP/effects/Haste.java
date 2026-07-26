@@ -52,7 +52,7 @@ public class Haste extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         //todo: Move to PlayerItemHeldEvent listener
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         ItemStack item = owner.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
@@ -68,7 +68,7 @@ public class Haste extends InfuseEffect {
 
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
         if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -110,7 +110,7 @@ public class Haste extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
 
@@ -170,7 +170,7 @@ public class Haste extends InfuseEffect {
         if (!player.isBlocking()) return;
         // TODO: Handle if player blocks with main hand
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 

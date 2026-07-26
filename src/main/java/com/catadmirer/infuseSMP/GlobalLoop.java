@@ -44,7 +44,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (lEffect != null) {
-                final boolean shouldBlock = !RegionBlocker.getInstance().isEffectAllowed(player, lEffect);
+                final boolean shouldBlock = RegionBlocker.getInstance().isEffectBlocked(player, lEffect);
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
 
                 if (shouldBlock && !isBlocked) {
@@ -62,7 +62,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                final boolean shouldBlock = !RegionBlocker.getInstance().isEffectAllowed(player, rEffect);
+                final boolean shouldBlock = RegionBlocker.getInstance().isEffectBlocked(player, rEffect);
                 boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
                 if (shouldBlock && !isBlocked) {
                     rEffect.unequip(player);
