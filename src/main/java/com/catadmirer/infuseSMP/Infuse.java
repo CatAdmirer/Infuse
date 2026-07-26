@@ -8,8 +8,8 @@ import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.util.regions.BasicRegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.DualRegionBlocker;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
-import com.catadmirer.infuseSMP.util.regions.WorldGuardRegionBlocker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -58,7 +58,7 @@ public class Infuse extends JavaPlugin {
         registerEffects();
 
         if (RegionBlocker.canUseWG()) {
-            RegionBlocker.setInstance(new WorldGuardRegionBlocker());
+            RegionBlocker.setInstance(new DualRegionBlocker());
             LOGGER.info("WorldGuard found!  Enabling region-based effect management.");
         } else {
             RegionBlocker.setInstance(new BasicRegionBlocker());
