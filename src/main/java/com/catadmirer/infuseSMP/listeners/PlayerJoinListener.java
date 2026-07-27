@@ -5,6 +5,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.EffectCraftManager;
+import com.catadmirer.infuseSMP.managers.RecipeManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player all the infuse recipes
-        InfuseEffect.getRegisteredEffects().values().stream().map(plugin.getRecipeManager()::getRecipeKey).forEach(player::discoverRecipe);
+        RecipeManager.getRegisteredRecipes().forEach(player::discoverRecipe);
     }
 
     @EventHandler
