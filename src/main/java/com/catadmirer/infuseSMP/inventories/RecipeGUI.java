@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 public class RecipeGUI implements InventoryHolder {
     private final Inventory inventory;
 
-    public RecipeGUI(RecipeManager manager, InfuseEffect effect) {
+    public RecipeGUI(InfuseEffect effect) {
+        // TODO: Fix
         inventory = Bukkit.createInventory(this, 45, Component.text("Recipes"));
 
         ShapedRecipe recipe = manager.getRecipe(effect);
