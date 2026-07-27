@@ -74,7 +74,46 @@ error_invalid_command: "<red>Invalid command."
 error_ritual_active: "<red>A ritual is already in progress!"
 error_target_not_found: "<red>Player not found or not online."
 
-emerald_name: "<#009420>Emerald Effect"
+# The structure of an effect's custom name.
+# Placeholders:
+#  - "effect_color": The color for the effect.
+#  - "effect_name": The actual name the effect. (defined below)
+effect_name: "{effect_color}<b>{effect_name}"
+
+#
+# Names for each effect.
+#
+emerald_name: "Emerald Effect"
+aug_emerald_name: "Augmented Emerald Effect"
+ender_name: "Ender Effect"
+aug_ender_name: "Augmented Ender Effect"
+feather_name: "Feather Effect"
+aug_feather_name: "Augmented Feather Effect"
+fire_name: "Fire Effect"
+aug_fire_name: "Augmented Fire Effect"
+frost_name: "Frost Effect"
+aug_frost_name: "Augmented Frost Effect"
+haste_name: "Haste Effect"
+aug_haste_name: "Augmented Haste Effect"
+heart_name: "Heart Effect"
+aug_heart_name: "Augmented Heart Effect"
+invis_name: "Invis Effect"
+aug_invis_name: "Augmented Invis Effect"
+ocean_name: "Ocean Effect"
+aug_ocean_name: "Augmented Ocean Effect"
+regen_name: "Regen Effect"
+aug_regen_name: "Augmented Regen Effect"
+speed_name: "Speed Effect"
+aug_speed_name: "Augmented Speed Effect"
+strength_name: "Strength Effect"
+aug_strength_name: "Augmented Strength Effect"
+thunder_name: "Thunder Effect"
+aug_thunder_name: "Augmented Thunder Effect"
+apophis_name: "Apophis Effect"
+aug_apophis_name: "Augmented Apophis Effect"
+thief_name: "Thief Effect"
+aug_thief_name: "Augmented Thief Effect"
+
 emerald_lore:
   - "<#009420><b>PASSIVE EFFECTS:"
   - "<#009420>$ <dark_gray>Looting 5"
