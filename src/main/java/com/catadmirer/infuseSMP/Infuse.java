@@ -36,7 +36,6 @@ public class Infuse extends JavaPlugin {
     private final EffectManager effectManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
-    private final RecipeManager recipeManager;
     private final HitTracker hitTracker;
 
     @NonNull
@@ -49,7 +48,6 @@ public class Infuse extends JavaPlugin {
         this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
-        this.recipeManager = new RecipeManager(this);
         this.hitTracker = new HitTracker(this);
     }
 
@@ -90,7 +88,7 @@ public class Infuse extends JavaPlugin {
         this.registerEvents();
 
         // Registering the infuse recipes
-        recipeManager.registerRecipes();
+        RecipeManager.registerRecipes();
 
         // Initializing the action bar updater
         new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
@@ -109,10 +107,6 @@ public class Infuse extends JavaPlugin {
 
     public MainConfig getMainConfig() {
         return mainConfig;
-    }
-
-    public RecipeManager getRecipeManager() {
-        return recipeManager;
     }
 
     /** Registers the commands for the plugin. */
