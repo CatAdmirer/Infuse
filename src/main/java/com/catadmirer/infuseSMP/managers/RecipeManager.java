@@ -1,140 +1,292 @@
 package com.catadmirer.infuseSMP.managers;
 
-import java.io.File;
-
-import com.catadmirer.infuseSMP.effects.Ender;
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.ShapedRecipe;
-import com.catadmirer.infuseSMP.Infuse;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class RecipeManager {
-    private final Infuse plugin;
-    private final File recipesFile;
-    private final FileConfiguration recipesConfig;
+    private static final Infuse plugin = Infuse.getInstance();
+    private static final File file = new File(plugin.getDataFolder(), "recipes.yml");
+    private static final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+    private static final Set<NamespacedKey> registered = new HashSet<>();
 
-    public RecipeManager(Infuse plugin) {
-        this.plugin = plugin;
-
-        recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
-        if (!recipesFile.exists()) {
-            plugin.saveResource("recipes.yml", false);
-        }
-
-        recipesConfig = YamlConfiguration.loadConfiguration(recipesFile);
+    static {
+        load();
     }
 
     /**
-     * Manager functionality for when the plugin is reloaded.
+     * Reloads the configuration.
      *
-     * In this case, it unregisters all the recipes then adds them back.
+     * @return Whether the configuration was loaded successfully.
      */
-    public void reload() {
-        // Removing all the infuse recipes
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            Bukkit.removeRecipe(getRecipeKey(effect), true);
+    public static boolean load() {
+        // Creating the file if it doesn't exist.
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            plugin.saveResource(file.getName(), false);
         }
 
-        // Adding back the infuse recipes
-        registerRecipes();
-    }
-
-    /** Registers the recipe for each effect. */
-    public void registerRecipes() {
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (isRecipeEnabled(effect)) continue;
-            ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
-
-            Bukkit.addRecipe(recipe);
-        }
-    }
-
-    public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
-    }
-
-    public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getPlainKey();
-        NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
-        ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
-
-        effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
-
-        ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection(baseKey + ".ingredients");
-        for (String key : ingredientsConfig.getKeys(false)) {
-            char ingredientLabel = key.charAt(0);
-
-            String materialName = ingredientsConfig.getString(key);
-            if (materialName == null) {
-                Infuse.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
-            }
-
-            Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());
-            effectRecipe.setIngredient(ingredientLabel, ingredientMaterial);
+        // Loading the config
+        try {
+            config.load(file);
+            Infuse.LOGGER.info("Successfully loaded {}", file.getName());
+            return true;
+        } catch (InvalidConfigurationException e) {
+            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
+        } catch (IOException e) {
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
+            e.printStackTrace();
         }
 
-        return effectRecipe;
-    }
-
-    public void updateEnderRecipe() {
-        if (plugin.getDataManager().getExistingCount(new Ender(true)) > 0) {
-            ShapedRecipe enderRecipe = getRecipe(new Ender(false));
-            Bukkit.removeRecipe(enderRecipe.getKey(), true);
-
-            String matName = recipesConfig.getString("ender.egg_replacement");
-            Material eggReplacement = Material.valueOf(matName.toUpperCase());
-
-            ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection("ender.ingredients");
-            for (String key : ingredientsConfig.getKeys(false)) {
-                char ingredientLabel = key.charAt(0);
-                if (!ingredientsConfig.getString(key).equals("DRAGON_EGG")) continue;
-
-                enderRecipe.setIngredient(ingredientLabel, eggReplacement);
-            }
-
-            Bukkit.addRecipe(enderRecipe);
-        }
-    }
-
-    public NamespacedKey getRecipeKey(InfuseEffect effect) {
-        return new NamespacedKey(plugin, effect.getPlainKey());
+        return false;
     }
 
     /**
-     * Gets the item to craft from an official Infuse recipe.
-     * This makes it easier to determine whether an infuse recipe should craft an augmented or regular effect.
+     * Writes the config to the file.
      *
-     * @param recipe The infuse {@link Recipe} to determine the result for.
-     *
-     * @return The corresponding {@link ItemStack} for the recipe, or null if the craft limit has been reached or the recipe is not an infuse recipe.
+     * @return Whether or not the config was successfully written.
      */
-    public ItemStack getItemToCraft(Recipe recipe) {
-        ItemStack item = recipe.getResult();
-
-        // The returned EffectMapping should always be the regular form
-        InfuseEffect effect = InfuseEffect.fromItem(item);
-        if (effect == null) return null;
-        if (effect.isAugmented()) return null;
-
-        // Checking if the augmented limit has been reached
-        InfuseEffect augEffect = effect.getAugmentedVersion();
-        if (plugin.getMainConfig().getCraftLimit(augEffect) > plugin.getDataManager().getExistingCount(augEffect)) {
-            return augEffect.createItem();
+    public static boolean save() {
+        // Creating the file if it doesn't exist.
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            plugin.saveResource(file.getName(), false);
         }
 
-        // Checking if the regular limit has been reached
-        if (plugin.getMainConfig().getCraftLimit(effect) > plugin.getDataManager().getExistingCount(effect)) {
-            return effect.createItem();
+        // Saving the config
+        try {
+            config.save(file);
+            Infuse.LOGGER.info("Saved {}", file.getName());
+            return true;
+        } catch (IOException e) {
+            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
         }
 
-        // Craft limits have been reached, return null
+        return false;
+    }
+
+    public static void unregisterRecipes() {
+        registered.forEach(key -> Bukkit.removeRecipe(key));
+        registered.clear();
+    }
+
+    public static void registerRecipes() {
+        InfuseEffect.getRegisteredEffects().values()
+            .stream()
+            .map(RecipeManager::getNextCraftable)
+            .map(e -> {
+                CraftingRecipe recipe = RecipeManager.getRecipe(e);
+
+                if (recipe == null) {
+                    Infuse.LOGGER.error("Recipe for effect {} returned null.  Skipping recipe registration.", e.getKey());
+                }
+
+                return recipe;
+            })
+            .filter(Objects::nonNull)
+            .forEach(RecipeManager::registerRecipe);
+    }
+
+    public static void unregisterRecipe(NamespacedKey recipe) {
+        Bukkit.removeRecipe(recipe);
+        registered.remove(recipe);
+    }
+
+    public static void registerRecipe(CraftingRecipe recipe) {
+        if (Bukkit.addRecipe(recipe)) {
+            registered.add(recipe.getKey());
+        } else {
+            Infuse.LOGGER.info("Failed to register the recipe for the {} effect.", recipe.getKey().asString());
+        }
+    }
+
+    public static @UnmodifiableView Set<NamespacedKey> getRegisteredRecipes() {
+        return Set.copyOf(registered);
+    }
+
+    /**
+     * Handles updating the recipe book when a player crafts an effect.
+     * Adds and removes recipes as needed.
+     * 
+     * @param crafted The effect that was just crafted.
+     */
+    public static void updateRecipes(InfuseEffect crafted) {
+        InfuseEffect next = getNextCraftable(crafted);
+
+        // Removing the recipe if no more effects can be crafted
+        if (next == null) {
+            unregisterRecipe(getRecipeKey(crafted));
+            return;
+        }
+
+        // Next limit not reached, skipping updates
+        if (next.equals(crafted)) return;
+
+        // Unregistering the old recipe
+        unregisterRecipe(getRecipeKey(crafted));
+
+        // Registering the new recipe
+        CraftingRecipe recipe = getRecipe(next);
+        if (recipe == null) {
+            Infuse.LOGGER.error("Recipe for effect {} returned null.  Skipping recipe registration.", next.getKey());
+            return;
+        }
+
+        registerRecipe(recipe);
+    }
+
+    public static NamespacedKey getRecipeKey(InfuseEffect effect) {
+        return new NamespacedKey(plugin, effect.getKey());
+    }
+
+    /**
+     * Checks the DataManager to see if the augmented or regular form of an effect should be crafted.
+     * 
+     * @param effect The effect to check.
+     * @return Null if no more of the effect can be crafted.  Otherwise, the augmented or regular form of the effect.
+     */
+    public static InfuseEffect getNextCraftable(InfuseEffect effect) {
+        effect = effect.getAugmentedVersion();
+
+        int limit = plugin.getMainConfig().getCraftLimit(effect);
+        int existing = plugin.getDataManager().getExistingCount(effect);
+        if (existing < limit) return effect;
+
+        effect = effect.getRegularVersion();
+
+        limit = plugin.getMainConfig().getCraftLimit(effect);
+        existing = plugin.getDataManager().getExistingCount(effect);
+        if (existing < limit) return effect;
+
         return null;
+    }
+
+    /**
+     * Gets the recipe for the specified {@link InfuseEffect}.
+     * 
+     * @param effect An effect.
+     * @return The recipe for the effect or `null` if the recipe could not be read or is not specified.
+     */
+    @Nullable
+    public static CraftingRecipe getRecipe(InfuseEffect effect) {
+        // Making sure the effect's default recipe exists
+        if (!config.contains(effect.getPlainKey())) {
+            Infuse.LOGGER.warn("No recipe defined for effect {}.", effect.getKey());
+            return null;
+        }
+
+        // If the augmented key is present, get that recipe
+        String key = config.contains(effect.getKey()) ? effect.getKey() : effect.getPlainKey();
+
+        String type = config.getString(key + ".type");
+
+        if (type == null) {
+            Infuse.LOGGER.warn("Invalid recipe '{}'.  Missing 'type' key.  Allowed values are 'shaped' or 'shapeless'.", key);
+            return null;
+        }
+
+        // Creating recipes
+        if (type.equals("shaped")) return getShapedRecipe(key, effect);
+        if (type.equals("shapeless")) return getShapelessRecipe(key, effect);
+
+        Infuse.LOGGER.warn("Invalid recipe '{}'.  Invalid 'type' key.  Allowed values are 'shaped' or 'shapeless'.", key);
+        return null;
+    }
+
+    private static ShapedRecipe getShapedRecipe(String key, InfuseEffect effect) {
+        // Making sure the required sections exist
+        if (!config.contains(key + ".shape")) {
+            Infuse.LOGGER.warn("Invalid recipe '{}'.  Missing the 'shape' key.", key);
+            return null;
+        }
+        
+        if (!config.contains(key + ".ingredients")) {
+            Infuse.LOGGER.warn("Invalid recipe '{}'.  Missing the 'ingredients' key.", key);
+            return null;
+        }
+
+        // Parsing shape
+        String[] shape = config.getStringList(key + ".shape").stream().toArray(String[]::new);
+        if (shape.length != 3 || shape[0].length() != 3 || shape[1].length() != 3 || shape[2].length() != 3) {
+            Infuse.LOGGER.warn("Invalid shape config for recipe {}.  It needs to be a list of three strings that are each 3 characters long.", key);
+            return null;
+        }
+
+        ShapedRecipe recipe = new ShapedRecipe(getRecipeKey(effect), effect.createItem());
+        recipe.shape(shape);
+
+        // Parsing ingredients
+        ConfigurationSection ingredients = config.getConfigurationSection(key + ".ingredients");
+        for (String k : ingredients.getKeys(false)) {
+            char ingredientLabel = k.charAt(0);
+            String ingredientKey = ingredients.getString(k);
+
+            Material material = matFromString(ingredientKey);
+            if (material == null) {
+                Infuse.LOGGER.error("Invalid material '{}' for recipe '{}'.", ingredientKey, key);
+                return null;
+            }
+
+            recipe.setIngredient(ingredientLabel, material);
+        }
+
+        return recipe;
+    }
+
+    private static ShapelessRecipe getShapelessRecipe(String key, InfuseEffect effect) {
+        // Making sure the required sections exist
+        if (!config.contains(key + ".ingredients")) {
+            Infuse.LOGGER.warn("Shapeless recipe '{}' is missing the 'ingredients' key.", key);
+            return null;
+        }
+
+        // Creating the recipe object
+        ShapelessRecipe recipe = new ShapelessRecipe(getRecipeKey(effect), effect.createItem());
+
+        // Parsing ingredients
+        List<String> ingredients = config.getStringList(key + ".ingredients");
+        for (String ingredient : ingredients) {
+            Material material = matFromString(ingredient);
+            if (material == null) {
+                Infuse.LOGGER.warn("Invalid material '{}' for recipe '{}'", ingredient, key);
+                return null;
+            }
+
+            recipe.addIngredient(material);
+        }
+
+        return recipe;
+    }
+
+    /**
+     * Converts a string to a Material.
+     * 
+     * @param key A string representation of a {@link Material}.
+     * @return Returns the represented material or null if no material was found in the registry.
+     * @throws IllegalArgumentException Throws if the key could not be converted to a {@link NamespacedKey}.
+     */
+    @Nullable
+    public static Material matFromString(String key) throws IllegalArgumentException {
+        return Registry.MATERIAL.get(NamespacedKey.fromString(key));
     }
 }
