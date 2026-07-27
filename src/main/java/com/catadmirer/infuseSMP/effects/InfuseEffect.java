@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.managers.RecipeManager;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
@@ -11,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Unmodifiable;
@@ -168,6 +170,15 @@ public abstract class InfuseEffect implements Listener {
         }
 
         return item;
+    }
+
+    /**
+     * Created a {@link CraftingRecipe}
+     * @param item
+     * @return
+     */
+    public CraftingRecipe createRecipe() {
+        return RecipeManager.getRecipe(this);
     }
 
     /**
