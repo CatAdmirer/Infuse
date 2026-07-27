@@ -40,7 +40,6 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
@@ -121,6 +120,9 @@ public class EffectCraftManager implements Listener {
 
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
+        
+        // Updating effect recipes
+        RecipeManager.updateRecipes(effect);
 
         // If the effect is not augmented, just craft it
         if (!effect.isAugmented())  {
@@ -242,9 +244,6 @@ public class EffectCraftManager implements Listener {
         ImmortalBrewer brewerListener = new ImmortalBrewer(brewerLocation);
         Bukkit.getPluginManager().registerEvents(brewerListener, plugin);
 
-        // Updating the ender recipe
-        plugin.getRecipeManager().updateEnderRecipe();
-
         // Starting the ritual progress bar
         new BukkitRunnable() {
             float progress = 1.0f;
@@ -285,17 +284,6 @@ public class EffectCraftManager implements Listener {
     public static void removeBeam() {
         if (!(ritualBeam.isDead())) ritualBeam.remove();
         ritualBeam = null;
-    }
-
-    /** Consulting the recipe manager to determine what to craft */
-    @EventHandler
-    public void onPrepareCraft(PrepareItemCraftEvent event) {
-        // Ignoring non-infuse items
-        if (event.getRecipe() == null) return;
-        if (InfuseEffect.fromItem(event.getRecipe().getResult()) == null) return;
-
-        ItemStack toCraft = plugin.getRecipeManager().getItemToCraft(event.getRecipe());
-        event.getInventory().setResult(toCraft);
     }
 
     public static final Component effectCraftingMenu = Component.text("Effect Crafting");
