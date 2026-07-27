@@ -188,7 +188,7 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityPickupItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(hitTracker, this);
         Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryClickListener(), this);
         Bukkit.getPluginManager().registerEvents(new ItemDespawnListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerItemConsumeListener(this), this);
