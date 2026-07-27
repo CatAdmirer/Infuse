@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.RecipeManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,8 +60,13 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
+                // Reloading configs
                 plugin.getMainConfig().load();
-                plugin.getRecipeManager().reload();
+                RecipeManager.load();
+
+                // Re-registering recipes
+                RecipeManager.unregisterRecipes();
+                RecipeManager.registerRecipes();
 
                 player.sendMessage("Infuse configs reloaded");
                 break;
