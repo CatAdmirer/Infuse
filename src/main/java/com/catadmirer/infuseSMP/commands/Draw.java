@@ -9,9 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.catadmirer.infuseSMP.managers.ParticleManager;
+import org.jspecify.annotations.NonNull;
 
 public class Draw implements CommandExecutor {
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("Only a player can use this command!", NamedTextColor.RED));
             return true;
@@ -26,7 +27,7 @@ public class Draw implements CommandExecutor {
         Location end = player.getLocation();
 
         try {
-            start.setX(Double.valueOf(args[0]));
+            start.setX(Double.parseDouble(args[0]));
         } catch (NumberFormatException err) {
             if (!args[0].contains("~")) {
                 System.out.println("Invalid x1 coordinate!");
@@ -37,7 +38,7 @@ public class Draw implements CommandExecutor {
             String offset = args[0].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    start.add(Double.valueOf(offset), 0, 0);
+                    start.add(Double.parseDouble(offset), 0, 0);
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid x1 coordinate!");
                     err2.printStackTrace();
@@ -46,7 +47,7 @@ public class Draw implements CommandExecutor {
         }
 
         try {
-            start.setY(Double.valueOf(args[1]));
+            start.setY(Double.parseDouble(args[1]));
         } catch (NumberFormatException err) {
             if (!args[1].contains("~")) {
                 System.out.println("Invalid y1 coordinate!");
@@ -57,7 +58,7 @@ public class Draw implements CommandExecutor {
             String offset = args[1].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    start.add(0, Double.valueOf(offset), 0);
+                    start.add(0, Double.parseDouble(offset), 0);
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid y1 coordinate!");
                     err2.printStackTrace();
@@ -66,7 +67,7 @@ public class Draw implements CommandExecutor {
         }
 
         try {
-            start.setZ(Double.valueOf(args[2]));
+            start.setZ(Double.parseDouble(args[2]));
         } catch (NumberFormatException err) {
             if (!args[2].contains("~")) {
                 System.out.println("Invalid z1 coordinate!");
@@ -77,7 +78,7 @@ public class Draw implements CommandExecutor {
             String offset = args[2].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    start.add(0, 0, Double.valueOf(offset));
+                    start.add(0, 0, Double.parseDouble(offset));
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid z1 coordinate!");
                     err2.printStackTrace();
@@ -86,7 +87,7 @@ public class Draw implements CommandExecutor {
         }
 
         try {
-            end.setX(Double.valueOf(args[3]));
+            end.setX(Double.parseDouble(args[3]));
         } catch (NumberFormatException err) {
             if (!args[3].contains("~")) {
                 System.out.println("Invalid x2 coordinate!");
@@ -97,7 +98,7 @@ public class Draw implements CommandExecutor {
             String offset = args[3].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    end.add(Double.valueOf(offset), 0, 0);
+                    end.add(Double.parseDouble(offset), 0, 0);
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid x2 coordinate!");
                     err2.printStackTrace();
@@ -106,7 +107,7 @@ public class Draw implements CommandExecutor {
         }
 
         try {
-            end.setY(Double.valueOf(args[4]));
+            end.setY(Double.parseDouble(args[4]));
         } catch (NumberFormatException err) {
             if (!args[4].contains("~")) {
                 System.out.println("Invalid y2 coordinate!");
@@ -117,7 +118,7 @@ public class Draw implements CommandExecutor {
             String offset = args[4].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    end.add(0, Double.valueOf(offset), 0);
+                    end.add(0, Double.parseDouble(offset), 0);
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid y2 coordinate!");
                     err2.printStackTrace();
@@ -126,7 +127,7 @@ public class Draw implements CommandExecutor {
         }
 
         try {
-            end.setZ(Double.valueOf(args[5]));
+            end.setZ(Double.parseDouble(args[5]));
         } catch (NumberFormatException err) {
             if (!args[5].contains("~")) {
                 System.out.println("Invalid z2 coordinate!");
@@ -137,7 +138,7 @@ public class Draw implements CommandExecutor {
             String offset = args[5].substring(1);
             if (!offset.isEmpty()) {
                 try {
-                    end.add(0, 0, Double.valueOf(offset));
+                    end.add(0, 0, Double.parseDouble(offset));
                 } catch (NumberFormatException err2) {
                     System.out.println("Invalid z2 coordinate!");
                     err2.printStackTrace();
@@ -148,7 +149,7 @@ public class Draw implements CommandExecutor {
         int count = 5;
         if (args.length >= 7) {
             try {
-                count = Integer.valueOf(args[6]);
+                count = Integer.parseInt(args[6]);
             } catch (NumberFormatException err) {
                 System.out.println("Invalid particle count");
                 err.printStackTrace();

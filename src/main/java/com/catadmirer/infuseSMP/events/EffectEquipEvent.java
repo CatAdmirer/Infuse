@@ -1,6 +1,6 @@
 package com.catadmirer.infuseSMP.events;
 
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,10 +11,10 @@ public class EffectEquipEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Player player;
-    private final EffectMapping effect;
+    private final InfuseEffect effect;
     private final String slot;
 
-    public EffectEquipEvent(Player player, EffectMapping effect, String slot) {
+    public EffectEquipEvent(Player player, InfuseEffect effect, String slot) {
         this.player = player;
         this.effect = effect;
         this.slot = slot;
@@ -24,7 +24,7 @@ public class EffectEquipEvent extends Event {
         return player;
     }
 
-    public EffectMapping getEffect() {
+    public InfuseEffect getEffect() {
         return effect;
     }
 

@@ -1,6 +1,6 @@
 package com.catadmirer.infuseSMP.inventories;
 
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.RecipeManager;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 public class RecipeGUI implements InventoryHolder {
     private final Inventory inventory;
 
-    public RecipeGUI(RecipeManager manager, EffectMapping effect) {
+    public RecipeGUI(RecipeManager manager, InfuseEffect effect) {
         inventory = Bukkit.createInventory(this, 45, Component.text("Recipes"));
 
         ShapedRecipe recipe = manager.getRecipe(effect);
-        
+
         // Loading the ingredients into the gui
         int[] ingredientSlots = {10, 11, 12, 19, 20, 21, 28, 29, 30};
         int slotIndex = 0;
@@ -28,7 +28,7 @@ public class RecipeGUI implements InventoryHolder {
             for (char ch : row.toCharArray()) {
                 RecipeChoice recipeChoice = recipe.getChoiceMap().get(ch);
                 if (!(recipeChoice instanceof MaterialChoice matChoice)) continue;
-                
+
                 ItemStack ingredient = matChoice.getItemStack();
                 inventory.setItem(ingredientSlots[slotIndex], ingredient);
                 slotIndex++;

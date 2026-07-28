@@ -1,24 +1,26 @@
 package com.catadmirer.infuseSMP.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
+
 public class DataManager {
-    private final Infuse plugin;
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public DataManager(Infuse plugin) {   
-        this.plugin = plugin;     
+    public DataManager(Infuse plugin) {
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
@@ -29,11 +31,6 @@ public class DataManager {
      * @return Whether the configuration was loaded successfully.
      */
     public boolean load() {
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot load {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -56,16 +53,10 @@ public class DataManager {
 
     /**
      * Writes the config to the file.
-     * 
+     *
      * @return Whether or not the config was successfully written.
      */
     public boolean save() {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot save the {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         // If the function returns false, the load function fails too.
         if (!createFile(false)) {
@@ -87,17 +78,11 @@ public class DataManager {
     /**
      * Creating the config file. If it doesn't exist, it loads the default config. If the file does
      * exist, it will only replace it if the parameter is true.
-     * 
+     *
      * @param replace Whether or not to replace the config file with the default configs.
      * @return Whether or not the file was created successfully.
      */
     public boolean createFile(boolean replace) {
-        // Getting a plugin instance to use
-        if (!plugin.isEnabled()) {
-            Infuse.LOGGER.error("Infuse not loaded, cannot create default {}.", dataFile.getName());
-            return false;
-        }
-
         // Creating the file if it doesn't exist.
         if (!dataFile.exists()) {
             try {
@@ -112,13 +97,13 @@ public class DataManager {
         return true;
     }
 
-    public int getExistingCount(EffectMapping effect) {
-        return config.getInt("existing-effects." + effect.getKey(), 0);
+    public int getExistingCount(InfuseEffect effect) {
+        return config.getInt("existing-effects." + effect.getPlainKey(), 0);
     }
 
-    public void setExistingCount(EffectMapping effect, int crafted) {
-        config.set("existing-effects." + effect.getKey(), crafted);
-        
+    public void setExistingCount(InfuseEffect effect, int crafted) {
+        config.set("existing-effects." + effect.getPlainKey(), crafted);
+
         save();
     }
 
@@ -152,19 +137,20 @@ public class DataManager {
         return getTrusted(caster).contains(trusted);
     }
 
-    public void setEffect(UUID playerUUID, String slot, @Nullable EffectMapping effect) {
+    public void setEffect(UUID owner, String slot, InfuseEffect effect) {
+        String key = owner.toString() + "." + slot;
         if (effect == null) {
-            config.set(playerUUID.toString() + "." + slot, null);
+            config.set(key, null);
         } else {
-            config.set(playerUUID.toString() + "." + slot, effect.getKey());
+            config.set(key, effect.toString());
         }
         save();
     }
 
     @Nullable
-    public EffectMapping getEffect(UUID playerUUID, String slot) {
+    public InfuseEffect getEffect(UUID playerUUID, String slot) {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
-        EffectMapping effect = EffectMapping.fromEffectKey(effectKey);
+        InfuseEffect effect = InfuseEffect.fromString(effectKey);
         if (effectKey != null && effect == null) {
             Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
         }
@@ -172,20 +158,20 @@ public class DataManager {
         return effect;
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect) {
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect) {
         return hasEffect(player, effect, false);
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented) {
-        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");        
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented) {
+        return hasEffect(player, effect, differentiateAugmented, "1") || hasEffect(player, effect, differentiateAugmented, "2");
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, String slot) {
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, String slot) {
         return hasEffect(player, effect, false, slot);
     }
 
-    public boolean hasEffect(OfflinePlayer player, EffectMapping effect, boolean differentiateAugmented, String slot) {
-        EffectMapping equippedEffect = getEffect(player.getUniqueId(), slot);
+    public boolean hasEffect(OfflinePlayer player, InfuseEffect effect, boolean differentiateAugmented, String slot) {
+        InfuseEffect equippedEffect = getEffect(player.getUniqueId(), slot);
 
         if (equippedEffect == null) return false;
 
@@ -232,8 +218,6 @@ public class DataManager {
             FileOutputStream fileOut = new FileOutputStream(dataFile);
             fileOut.write(inputBuffer.toString().getBytes());
             fileOut.close();
-        } catch (IOException err) {
-            
-        }
+        } catch (IOException err) {}
     }
 }

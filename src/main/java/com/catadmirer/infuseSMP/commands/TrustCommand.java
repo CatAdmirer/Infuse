@@ -20,13 +20,13 @@ public class TrustCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Limiting this command to only players.
         if (!(sender instanceof Player caster)) {
-            sender.sendMessage(new Message(MessageType.TRUST_CONSOLEUSAGE).toComponent());
+            sender.sendMessage(new Message(MessageType.TRUST_CONSOLE_USAGE).toComponent());
             return true;
         }
 
         // Validating the number of args
         if (args.length != 1) {
-            Message msg = new Message(MessageType.TRUST_INCORRECTUSAGE);
+            Message msg = new Message(MessageType.TRUST_INCORRECT_USAGE);
             msg.applyPlaceholder("label", label);
             caster.sendMessage(msg.toComponent());
             return true;
@@ -35,7 +35,7 @@ public class TrustCommand implements CommandExecutor {
         // Getting the target to trust/untrust
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {
-            caster.sendMessage(new Message(MessageType.TRUST_NOPLAYER).toComponent());
+            caster.sendMessage(new Message(MessageType.TRUST_NO_PLAYER).toComponent());
             return true;
         }
 
@@ -49,7 +49,7 @@ public class TrustCommand implements CommandExecutor {
         if (label.equalsIgnoreCase("trust")) {
             // Preventing duplicate trust entries
             if (dataManager.getTrusted(caster).contains(target)) {
-                Message msg = new Message(MessageType.TRUST_ALREADYTRUSTED);
+                Message msg = new Message(MessageType.TRUST_ALREADY_TRUSTED);
                 msg.applyPlaceholder("target", target.getName());
                 caster.sendMessage(msg.toComponent());
                 return true;
@@ -66,12 +66,12 @@ public class TrustCommand implements CommandExecutor {
         if (label.equalsIgnoreCase("untrust")) {
             // Handling if the player already didnt trust the target
             if (!dataManager.getTrusted(caster).contains(target)) {
-                Message msg = new Message(MessageType.TRUST_NOTTRUSTED);
+                Message msg = new Message(MessageType.TRUST_NOT_TRUSTED);
                 msg.applyPlaceholder("target", target.getName());
                 caster.sendMessage(msg.toComponent());
                 return true;
             }
-            
+
             dataManager.removeTrust(caster, target);
             Message msg = new Message(MessageType.TRUST_REMOVED);
             msg.applyPlaceholder("target", target.getName());

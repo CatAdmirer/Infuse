@@ -2,32 +2,34 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.MessageConfig;
 import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
     private final Infuse plugin;
-    
+
     public InfuseCommand(Infuse plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -37,6 +39,10 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        Player target;
+        String effectKey;
+        InfuseEffect effect;
+        Message msg;
         switch (args[0].toLowerCase()) {
             case "gui":
                 if (!player.isOp()) {
@@ -54,8 +60,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 plugin.getMainConfig().load();
-                MessageConfig.load(plugin);
                 plugin.getRecipeManager().reload();
+
                 player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
@@ -72,24 +78,24 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                Player target = Bukkit.getPlayer(args[1]);
+                target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
                     player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
 
-                String effectKey = args[2].toLowerCase();
-                EffectMapping mapping = EffectMapping.fromEffectKey(effectKey);
-                if (mapping == null) {
+                effectKey = args[2].toLowerCase();
+                effect = InfuseEffect.fromString(effectKey);
+                if (effect == null) {
                     player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                     return true;
                 }
 
-                target.getInventory().addItem(mapping.createItem());
+                target.getInventory().addItem(effect.createItem());
 
-                Message msg = new Message(MessageType.INFUSE_GIVEEFFECT_SUCCESS);
-                msg.applyPlaceholder("effect_color", "<#" + Integer.toHexString(mapping.getColor().getRGB() & 0xffffff) + ">");
-                msg.applyPlaceholder("effect_name", mapping.getName());
+                msg = new Message(MessageType.INFUSE_GIVEEFFECT_SUCCESS);
+                msg.applyPlaceholder("effect_color", "<#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xffffff) + ">");
+                msg.applyPlaceholder("effect_name", effect.getName());
                 target.sendMessage(msg.toComponent());
                 break;
             case "seteffect":
@@ -97,27 +103,27 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
                     return true;
                 }
-                
+
                 if (args.length != 4) {
                     player.sendMessage(new Message(MessageType.INFUSE_SETEFFECT_USAGE).toComponent());
                     return true;
                 }
-                
+
                 // Getting the player and making sure they are online.
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
                     player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
                     return true;
                 }
-                
+
                 // Getting the effect key and verifying its integrity.
                 effectKey = args[2].toLowerCase();
-                mapping = EffectMapping.fromEffectKey(effectKey);
-                if (mapping == null) {
+                effect = InfuseEffect.fromString(effectKey);
+                if (effect == null) {
                     player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
                     return true;
                 }
-                
+
                 // Getting the slot to put the effect into and validating it.
                 String slot = args[3];
                 if (!slot.equals("1") && !slot.equals("2")) {
@@ -128,11 +134,11 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the effect
-                plugin.getDataManager().setEffect(target.getUniqueId(), args[3], mapping);
+                plugin.getEffectManager().setEffect(target, effect, args[3]);
                 msg = new Message(MessageType.INFUSE_SETEFFECT_SUCCESS);
                 msg.applyPlaceholder("slot", slot);
                 msg.applyPlaceholder("player_name", target.getName());
-                msg.applyPlaceholder("effect_name", mapping.getName());
+                msg.applyPlaceholder("effect_name", effect.getName());
                 player.sendMessage(msg.toComponent());
                 break;
             case "cleareffects":
@@ -154,8 +160,8 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Removing the effects from the player
-                plugin.getDataManager().removeEffect(target.getUniqueId(), "1");
-                plugin.getDataManager().removeEffect(target.getUniqueId(), "2");
+                plugin.getEffectManager().unequipEffect(target, "1");
+                plugin.getEffectManager().unequipEffect(target, "2");
                 msg = new Message(MessageType.INFUSE_CLEAREFFECTS_SUCCESS);
                 msg.applyPlaceholder("player_name", target.getName());
                 player.sendMessage(msg.toComponent());
@@ -170,7 +176,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(new Message(MessageType.INFUSE_COOLDOWN_USAGE).toComponent());
                     return true;
                 }
-                
+
                 // Getting the player and making sure they are online
                 target = Bukkit.getPlayer(args[1]);
                 if (target == null || !target.isOnline()) {
@@ -205,7 +211,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 player.addAttachment(plugin, "ability.use", !offhandEnabled);
 
                 msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
-                msg.applyPlaceholder("controlMode", choice);
+                msg.applyPlaceholder("control_mode", choice);
                 player.sendMessage(msg.toComponent());
                 break;
             default:
@@ -218,17 +224,17 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command, @NonNull String alias, String[] args) {
         if (args.length == 1) {
             List<String> completions = new ArrayList<>(Arrays.asList("recipes", "controls"));
-            
+
             if (sender.isOp()) {
                 completions.addAll(Arrays.asList("gui", "reload", "giveEffect", "setEffect", "clearEffects", "cooldown"));
             }
 
             return completions.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).sorted().toList();
         }
-        
+
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
                 case "controls":
@@ -237,20 +243,20 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 case "seteffect":
                 case "cleareffects":
                 case "cooldown":
-                    if (!sender.isOp()) return Arrays.asList();
-                    return Bukkit.getOnlinePlayers().stream().map(p -> p.getName()).filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
+                    if (!sender.isOp()) return List.of();
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).toList();
             }
         }
-        
+
         if (args.length == 3) {
             switch(args[0].toLowerCase()) {
-                case "giveEffect":
-                case "setEffect":
-                    if (!sender.isOp()) return Arrays.asList();
-                    return Stream.of(EffectMapping.values()).map(EffectMapping::getKey).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
+                case "giveeffect":
+                case "seteffect":
+                    if (!sender.isOp()) return List.of();
+                    return InfuseEffect.getRegisteredEffects().values().stream().map(InfuseEffect::toString).filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
             }
         }
-        
+
         if (args.length == 4 && args[0].equalsIgnoreCase("setEffect") && sender.isOp()) {
             return Stream.of("1", "2").filter(key -> key.toLowerCase().startsWith(args[2].toLowerCase())).toList();
         }

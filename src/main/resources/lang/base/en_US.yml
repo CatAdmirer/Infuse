@@ -20,16 +20,16 @@ withdraw_invalid: "<red>Invalid usage. Use /ldrain or /rdrain"
 # %label% = The command they're running
 # %target% = The person they're running it on
 
-trust_consoleusage: "<red>Only players can use this command."
-trust_incorrectusage: "<red>Usage: /%label% <player>"
-trust_noplayer: "<red>Player not found."
+trust_console_usage: "<red>Only players can use this command."
+trust_incorrect_usage: "<red>Usage: /%label% <player>"
+trust_no_player: "<red>Player not found."
 trust_self: "<red>You always trust yourself. Surely..."
 trust_added: "<green>You now trust %target%."
-trust_alreadytrusted: "<green>You already trust %target%."
+trust_already_trusted: "<green>You already trust %target%."
 trust_removed: "<green>You no longer trust %target%."
-trust_nottrusted: "<green>You already didn't trust %target%."
+trust_not_trusted: "<green>You already didn't trust %target%."
 
-effect_nobrewing: "<red>You need to craft this in a brewing stand!"
+effect_no_brewing: "<red>You need to craft this in a brewing stand!"
 death_message: "%victim% was slain by %killer%"
 
 controls_usage: "<red>Usage: /controls <offhand|command>"
@@ -39,21 +39,19 @@ infuse_invalid_param: "<red>Please use the tab completions as a reference."
 infuse_invalid_slot: "<red>Invalid Argument! Could not identify slot %slot%.  Please use \"1\" or \"2\"."
 
 infuse_controls_usage: "<red>Usage: /infuse controls <offhand|command>"
-infuse_controls_success: "<dark_red>Your controls are now %controlMode%"
+infuse_controls_success: "<dark_red>Your controls are now %control_mode%"
 
 infuse_seteffect_usage: "<red>Invalid Argument! Please use /infuse setEffect <player> <aug_fire|ocean> <1|2>"
 infuse_seteffect_success: "<green>Successfully set the effect in slot %slot% of player %player_name% to %effect_name%."
 
 infuse_giveeffect_usage: "<red>Invalid Argument! Please use /infuse giveEffect <player> <aug_fire|ocean>"
-infuse_giveeffect_success: "%effect_color%You recieved the %effect_name%"
+infuse_giveeffect_success: "%effect_color%You received the %effect_name%"
 
 infuse_cleareffects_usage: "<red>Invalid Argument! Please use /infuse clearEffects <player>"
 infuse_cleareffects_success: "<green>Cleared %player_name%'s effects"
 
 infuse_cooldown_usage: "<red>Invalid Argument! Please use /infuse cooldown <player>"
 infuse_cooldown_success: "<green>Removed %player_name%'s cooldown"
-
-cleareffects_usage: "<red>Usage: /infuse clearEffects <player>"
 
 join_ability_notify: "<gray>Your ability mode is set to: %control_mode%"
 

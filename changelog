@@ -19,3 +19,5 @@
 - Made dropped heads match the player they drop from
 - Frost can now stand on powder snow
 - Emerald enchant bonus works
+- Redid effect equip/unequip handling
+- Added support for localization

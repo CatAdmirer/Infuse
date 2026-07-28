@@ -1,65 +1,87 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.managers.EffectMapping;
-import java.util.UUID;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Ocean implements Listener {
-    private static Infuse plugin;
+import java.util.UUID;
 
-    public Ocean(Infuse plugin) {
-        Ocean.plugin = plugin;
+public class Ocean extends InfuseEffect {
+    public Ocean() {
+        this(false);
     }
 
-    public static void applyPassiveEffects(Player player) {
-        if (plugin.getDataManager().hasEffect(player, EffectMapping.OCEAN)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 40, 0, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 40, 0, false, false));
+    public Ocean(boolean augmented) {
+        super("ocean", EffectIds.OCEAN, augmented, EffectConstants.potionColor(EffectIds.OCEAN), EffectConstants.ritualColor(EffectIds.OCEAN));
+    }
+
+    @Override
+    public void equip(Player owner) {
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, -1, 0, false, false));
+        owner.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, -1, 0, false, false));
+    }
+
+    @Override
+    public void unequip(Player owner) {
+        owner.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        owner.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
+    }
+
+    @Override
+    public void applyPassives(Player owner) {
+        // Boosting the strength and damage of the passive drowning if the spark is active
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+
+        int drownStrength = plugin.getMainConfig().oceanPassiveDrownStrength();
+        int drownDamage = plugin.getMainConfig().oceanPassiveDrownDamage();
+        if (CooldownManager.isEffectActive(owner.getUniqueId(), "ocean"))  {
+            drownStrength = plugin.getMainConfig().oceanSparkDrownStrength();
+            drownDamage = plugin.getMainConfig().oceanSparkDrownDamage();
         }
 
-        // Boosting the strength and damage of the passive drowning if the spark is active
-        int drownStrength = 5;
-        int drownDamage = 1;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), "ocean"))  {
-            drownStrength = 20;
-            drownDamage = 2;
-        }
-        
-        for (Player otherPlayer : player.getWorld().getPlayers()) {
-            if (otherPlayer.equals(player)) continue;
-            if (otherPlayer.getLocation().distance(player.getLocation()) <= 5) {
-                int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
-                otherPlayer.setRemainingAir(newAir);
-                if (newAir <= 0) {
-                    otherPlayer.damage(drownDamage);
-                }
+        // TODO: Make this use packets for air bubbles
+        for (Player otherPlayer : owner.getWorld().getPlayers()) {
+            if (otherPlayer.equals(owner)) continue;
+            if (RegionBlocker.getInstance().isEffectBlocked(otherPlayer, this)) continue;
+            if (otherPlayer.getLocation().distance(owner.getLocation()) > 5) continue;
+
+            int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
+            otherPlayer.setRemainingAir(newAir);
+            if (newAir <= 0) {
+                otherPlayer.damage(drownDamage);
             }
         }
     }
 
-    public static void activateSpark(Boolean isAugmented, Player caster) {
+    @Override
+    public void activateSpark(Player caster) {
         UUID playerUUID = caster.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "ocean")) return;
+        if (!RegionBlocker.getInstance().canUseSpark(caster)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(caster, Ocean.this)) return;
 
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         final double radius = 5;
         final World world = caster.getWorld();
         // Applying cooldowns and durations for the effect
-        long cooldown = plugin.getMainConfig().cooldown(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
-        long duration = plugin.getMainConfig().duration(isAugmented ? EffectMapping.AUG_OCEAN : EffectMapping.OCEAN);
+        long cooldown = plugin.getMainConfig().cooldown(this);
+        long duration = plugin.getMainConfig().duration(this);
 
         CooldownManager.setTimes(playerUUID, "ocean", duration, cooldown);
 
@@ -105,6 +127,8 @@ public class Ocean implements Listener {
                     if (p.equals(caster)) continue;
                     if (plugin.getDataManager().isTrusted(caster, p)) continue;
                     if (p.getLocation().distance(holderLoc) > radius) continue;
+                    if (!RegionBlocker.getInstance().canBeTargetedBySpark(p)) continue;
+                    if (RegionBlocker.getInstance().isEffectBlocked(p, Ocean.this)) continue;
 
                     Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
                     if (direction.lengthSquared() > 0.0001) {
@@ -116,5 +140,25 @@ public class Ocean implements Listener {
                 }
             }
         }.runTaskTimer(plugin, 0, plugin.getMainConfig().oceanPullInterval());
+    }
+
+    @Override
+    public InfuseEffect getRegularVersion() {
+        return new Ocean();
+    }
+
+    @Override
+    public InfuseEffect getAugmentedVersion() {
+        return new Ocean(true);
+    }
+
+    @Override
+    public Message getName() {
+        return new Message(augmented ? Message.MessageType.AUG_OCEAN_NAME : Message.MessageType.OCEAN_NAME);
+    }
+
+    @Override
+    public Message getLore() {
+        return new Message(augmented ? Message.MessageType.AUG_OCEAN_LORE : Message.MessageType.OCEAN_LORE);
     }
 }
