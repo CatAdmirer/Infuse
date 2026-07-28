@@ -11,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Recipes implements CommandExecutor {
         Recipes.plugin = plugin;
     }
 
+    @NullMarked
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player player) {
@@ -28,7 +30,7 @@ public class Recipes implements CommandExecutor {
             return true;
         }
 
-        return false;
+        return true;
     }
 
     /**

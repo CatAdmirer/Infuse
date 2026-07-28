@@ -21,10 +21,10 @@ public class PlayerQuitListener implements Listener {
         Player player = event.getPlayer();
 
         // Deactivating the player's effects
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, "1");
         if (effect != null) effect.unequip(player);
 
-        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
+        effect = plugin.getDataManager().getEffect(player, "2");
         if (effect != null) effect.unequip(player);
     }
 }

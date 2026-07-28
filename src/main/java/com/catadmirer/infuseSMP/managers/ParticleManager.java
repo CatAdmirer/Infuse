@@ -79,7 +79,7 @@ public class ParticleManager {
     public static void dropEffect(Infuse plugin, boolean bottomToTop, @NotNull InfuseEffect effect, Location location) {
         final Location base = location.add(0, bottomToTop ? 0 : 2, 0);
         final World world = location.getWorld();
-        Color color = Color.fromRGB(effect.getPotionColor().getRGB());
+        Color color = Color.fromRGB(effect.getPotionColor().getRGB() & 0xFFFFFF);
         final Particle.DustOptions dust = new Particle.DustOptions(color, 0.7F);
         final int points = 16;
         final double radius = 0.6;

@@ -1,17 +1,18 @@
 package com.catadmirer.infuseSMP.listeners;
 
-import java.util.List;
+import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.EffectCraftManager;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.managers.EffectCraftManager;
+import java.util.List;
 
 public class PlayerJoinListener implements Listener {
     private final Infuse plugin;
@@ -33,7 +34,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // Telling the player their current control mode
-        String controlMode = plugin.getDataManager().getControlMode(player.getUniqueId());
+        String controlMode = plugin.getDataManager().getControlMode(player);
         if (controlMode == null) controlMode = "Offhand";
         boolean offhandEnabled = controlMode.equalsIgnoreCase("Offhand");
         player.addAttachment(plugin, "ability.use", !offhandEnabled);
@@ -59,11 +60,11 @@ public class PlayerJoinListener implements Listener {
         }
 
         // Enabling each effect
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null) effect.equip(player);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, "1");
+        if (effect != null && !RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
 
-        effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null) effect.equip(player);
+        effect = plugin.getDataManager().getEffect(player, "2");
+        if (effect != null && !RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
     }
 
     @EventHandler

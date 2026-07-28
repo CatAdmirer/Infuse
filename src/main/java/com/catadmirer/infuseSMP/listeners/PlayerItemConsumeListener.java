@@ -42,7 +42,7 @@ public class PlayerItemConsumeListener implements Listener {
         // Equipping the slot in the players other slot
         if (result.type() == EquipResultType.FAIL) {
             // Drain slot 2 if an effect is equipped there
-            if (plugin.getDataManager().getEffect(player.getUniqueId(), "2") != null) {
+            if (plugin.getDataManager().getEffect(player, "2") != null) {
                 result = plugin.getEffectManager().drainEffect(player, "2");
 
                 // If the drain failed or was cancelled, exit

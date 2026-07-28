@@ -61,6 +61,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
 
                 plugin.getMainConfig().load();
                 plugin.getRecipeManager().reload();
+
                 player.sendMessage("Infuse configs reloaded");
                 break;
             case "recipes":
@@ -203,7 +204,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Setting the control mode for the user.
-                plugin.getDataManager().setControlMode(player.getUniqueId(), choice);
+                plugin.getDataManager().setControlMode(player, choice);
 
                 // Assigning the permission for offhand use if the user chose offhand mode
                 boolean offhandEnabled = choice.equalsIgnoreCase("offhand");

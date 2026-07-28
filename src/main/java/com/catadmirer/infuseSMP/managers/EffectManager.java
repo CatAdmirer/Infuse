@@ -6,6 +6,8 @@ import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -46,7 +48,7 @@ public class EffectManager {
         EffectEquipEvent event = new EffectEquipEvent(player, effect, slot);
         if (!event.callEvent()) return new EquipResult(EquipResultType.CANCELLED, effect);
 
-        InfuseEffect equipped = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect equipped = plugin.getDataManager().getEffect(player, slot);
         if (equipped != null && !override) return new EquipResult(EquipResultType.FAIL);
 
         // Unequipping the old effect
@@ -57,8 +59,9 @@ public class EffectManager {
         }
 
         // Equipping the effect and updating the player data
-        effect.equip(player);
-        plugin.getDataManager().setEffect(player.getUniqueId(), slot, effect);
+        // If the player is in a blocked location, the effect is equipped but not activated.
+        if (!RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
+        plugin.getDataManager().setEffect(player, slot, effect);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);
     }
@@ -73,6 +76,8 @@ public class EffectManager {
      */
     public EquipResult drainEffect(Player player, String slot) {
         // Unequipping the effect
+
+        final InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         EquipResult result = unequipEffect(player, slot);
 
         // Checking if an effect was removed
@@ -103,12 +108,11 @@ public class EffectManager {
         // Making sure the player has inventory space for the drained item if is meant to be given to them.
         if (player.getInventory().firstEmpty() == -1) {
             player.sendMessage(new Message(MessageType.ERROR_INV_FULL).toComponent());
-            return result;
+            plugin.getDataManager().setEffect(player, slot, effect);
+            return new EquipResult(EquipResultType.FAIL);
         }
 
-        // Giving the player the item
         player.getInventory().addItem(result.effect.createItem());
-
         // Sending the success message
         Message msg = new Message(MessageType.DRAIN_SUCCESS);
         msg.applyPlaceholder("effect_name", result.effect.getName());
@@ -158,7 +162,7 @@ public class EffectManager {
      * @param slot The slot to remove the effect from.
      */
     public EquipResult unequipEffect(Player player, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return new EquipResult(EquipResultType.FAIL);
 
         // Calling an EffectUnequipEvent
@@ -167,7 +171,7 @@ public class EffectManager {
 
         // Unequipping the effect and updating the player data
         effect.unequip(player);
-        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+        plugin.getDataManager().removeEffect(player, slot);
 
         return new EquipResult(EquipResultType.SUCCESS, effect);
     }

@@ -31,7 +31,6 @@ public class DrainCommand implements CommandExecutor {
         } else {
             player.sendMessage(new Message(MessageType.WITHDRAW_INVALID).toComponent());
         }
-
         return true;
     }
 }

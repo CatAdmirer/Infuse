@@ -3,10 +3,9 @@ package com.catadmirer.infuseSMP.commands;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-
-import java.util.UUID;
-
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,8 +24,6 @@ public class Abilities implements CommandExecutor {
             return true;
         }
 
-        final UUID playerUUID = player.getUniqueId();
-
         // Finding which slot to activate the spark for.
         String slot;
         if (label.contains("lspark")) {
@@ -39,7 +36,7 @@ public class Abilities implements CommandExecutor {
         }
 
         // Getting the name of the equipped effect.
-        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
+        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(player, slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
@@ -47,6 +44,11 @@ public class Abilities implements CommandExecutor {
             msg.applyPlaceholder("slot", slot);
             player.sendMessage(msg.toComponent());
             return true;
+        }
+
+        // Warning the player that they can't use the spark right now
+        if (!RegionBlocker.getInstance().canUseSpark(player) || RegionBlocker.getInstance().isEffectBlocked(player, equippedEffect)) {
+            sender.sendMessage(Message.toComponent("<red>You cannot activate your spark in this area!"));
         }
 
         equippedEffect.activateSpark(player);

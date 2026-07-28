@@ -2,13 +2,15 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class TrustCommand implements CommandExecutor {
     private final DataManager dataManager;
 
@@ -39,7 +41,7 @@ public class TrustCommand implements CommandExecutor {
             return true;
         }
 
-        // Preventing the caster from trusting/untrusting themself.
+        // Preventing the caster from trusting/untrusting themselves.
         if (caster.getUniqueId().equals(target.getUniqueId())) {
             caster.sendMessage(new Message(MessageType.TRUST_SELF).toComponent());
             return true;

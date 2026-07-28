@@ -7,6 +7,12 @@ import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.playerdata.DataManager;
+import com.catadmirer.infuseSMP.playerdata.H2DataManager;
+import com.catadmirer.infuseSMP.playerdata.YamlDataManager;
+import com.catadmirer.infuseSMP.util.regions.BasicRegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.DualRegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class Infuse extends JavaPlugin {
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
 
-    private final DataManager dataManager;
+    private DataManager dataManager;
     private final EffectManager effectManager;
     private final MainConfig mainConfig;
     private final GlobalLoop loop;
@@ -43,32 +49,52 @@ public class Infuse extends JavaPlugin {
 
     public Infuse() {
         this.mainConfig = new MainConfig(this);
-        this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager(this);
         this.hitTracker = new HitTracker(this);
     }
 
-    public void onEnable() {
+    public void onLoad() {
         // Registering the vanilla effects
         registerEffects();
 
+        if (RegionBlocker.canUseWG()) {
+            RegionBlocker.setInstance(new DualRegionBlocker());
+            LOGGER.info("WorldGuard found!  Enabling region-based effect management.");
+        } else {
+            RegionBlocker.setInstance(new BasicRegionBlocker());
+            LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
+        }
+    }
+
+    public void onEnable() {
         // Loading the message translator
         new MessageTranslator().loadAll();
 
         // Loading the config
         mainConfig.load();
 
-        // Loading the data manager
-        dataManager.load();
-
         // Applying config updates
         mainConfig.applyUpdates();
-        dataManager.applyUpdates();
+        
+        // Loading the data manager
+        // If no valid data manager is found, disable the plugin
+        dataManager = switch (mainConfig.storageMode().toLowerCase()) {
+            case "h2" -> new H2DataManager(this);
+            case "yaml" -> new YamlDataManager();
+            default -> null;
+        };
 
-        // Initializing the recipe manager
-        new EffectCraftManager(this);
+        if (dataManager == null) {
+            LOGGER.error("Could not read a valid storage type from the config!  Disabling Infuse.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Loading the data manager
+        dataManager.load();
+        dataManager.applyUpdates();
 
         // Registering infuse commands
         this.registerCommands();
@@ -146,7 +172,7 @@ public class Infuse extends JavaPlugin {
             }
 
             // Setting the control mode for the player
-            dataManager.setControlMode(player.getUniqueId(), choice);
+            dataManager.setControlMode(player, choice);
             player.addAttachment(this, "ability.use", choice.equals("command"));
             return true;
         });
@@ -183,6 +209,7 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityDropItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EntityPickupItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(hitTracker, this);
+        Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ItemDespawnListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);

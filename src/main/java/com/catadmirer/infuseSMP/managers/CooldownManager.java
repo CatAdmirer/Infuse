@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CooldownManager {
     private static final Map<UUID, Map<String, Long>> cooldowns = new ConcurrentHashMap<>();
     private static final Map<UUID, Map<String, Long>> durations = new ConcurrentHashMap<>();
-    public static final Map<String, String> displayNames = new ConcurrentHashMap<>();
 
     public static void setTimes(UUID playerUUID, String key, long durationSeconds, long cooldownSeconds) {
         setCooldown(playerUUID, key, cooldownSeconds + durationSeconds);
@@ -75,7 +74,7 @@ public class CooldownManager {
         }
     }
 
-    public static void cleanupAllExpiredCooldowns() {
+    public static void cleanupExpiredCooldowns() {
         long currentTime = System.currentTimeMillis();
 
         for (UUID playerUUID : cooldowns.keySet()) {

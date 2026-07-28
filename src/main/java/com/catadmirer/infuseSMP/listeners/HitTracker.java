@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class HitTracker implements Listener {
     private final Infuse plugin;
     private final Map<UUID,Integer> hitTracker = new HashMap<>();
-    Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
+    final Queue<Runnable> decayQueue = new ConcurrentLinkedQueue<>();
 
     public HitTracker(Infuse plugin) {
         this.plugin = plugin;
@@ -32,6 +32,9 @@ public class HitTracker implements Listener {
      */
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
+        // Making sure the event isn't cancelled before going through with the event
+        if (event.isCancelled()) return;
+
         // Making sure both entities are players
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!(event.getEntity() instanceof Player target)) return;
@@ -102,7 +105,7 @@ public class HitTracker implements Listener {
                 decayQueue.remove();
                 decayTask.run();
             }
-        }, hitCounterDecaySeconds * 20);
+        }, hitCounterDecaySeconds * 20L);
     }
 
     /**

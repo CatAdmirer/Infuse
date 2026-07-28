@@ -12,11 +12,18 @@ val minecraftVersion: String by project
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://maven.enginehub.org/repo/")
+
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
     compileOnly(libs.placeholderapi)
+    compileOnly(libs.h2)
+    compileOnly(libs.worldguard)
+    compileOnly(libs.guava)
+    compileOnly(libs.gson)
+
     paperweight.paperDevBundle("${minecraftVersion}+")
 }
 
@@ -41,7 +48,8 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
     val props = mapOf("version" to version,
-        "mcVersion" to minecraftVersion)
+        "mcVersion" to minecraftVersion,
+        "h2Version" to libs.versions.h2.get())
     filesMatching("plugin.yml") {
         expand(props)
     }
@@ -50,6 +58,7 @@ tasks.processResources {
 tasks.register("resetAndRun") {
     delete("run/plugins/$rootProject.name")
     finalizedBy("runServer")
+    description = "Resets the plugin's data directory and then runs a server"
 }
 
 publishing {
