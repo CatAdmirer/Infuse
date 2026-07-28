@@ -48,29 +48,35 @@ public class RecipeManager {
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (!isRecipeEnabled(effect)) continue;
+            if (isRecipeEnabled(effect)) continue;
             ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
-            
+
             Bukkit.addRecipe(recipe);
         }
     }
 
     public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getKey() + ".enabled", false);
+        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getKey();
+        String baseKey = mapping.getPlainKey();
         NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
 
         effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
+
         ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection(baseKey + ".ingredients");
         if (ingredientsConfig == null) return effectRecipe;
 
         for (String key : ingredientsConfig.getKeys(false)) {
             char ingredientLabel = key.charAt(0);
+
             String materialName = ingredientsConfig.getString(key);
+            if (materialName == null) {
+                Infuse.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
+            }
+
             Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());
             effectRecipe.setIngredient(ingredientLabel, ingredientMaterial);
         }
@@ -99,20 +105,20 @@ public class RecipeManager {
     }
 
     public NamespacedKey getRecipeKey(InfuseEffect effect) {
-        return new NamespacedKey(plugin, effect.getKey());
+        return new NamespacedKey(plugin, effect.getPlainKey());
     }
 
     /**
      * Gets the item to craft from an official Infuse recipe.
      * This makes it easier to determine whether an infuse recipe should craft an augmented or regular effect.
-     * 
+     *
      * @param recipe The infuse {@link Recipe} to determine the result for.
-     * 
+     *
      * @return The corresponding {@link ItemStack} for the recipe, or null if the craft limit has been reached or the recipe is not an infuse recipe.
      */
     public ItemStack getItemToCraft(Recipe recipe) {
         ItemStack item = recipe.getResult();
-        
+
         // The returned EffectMapping should always be the regular form
         InfuseEffect effect = InfuseEffect.fromItem(item);
         if (effect == null) return null;

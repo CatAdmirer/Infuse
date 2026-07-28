@@ -16,6 +16,7 @@ import java.util.List;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -36,32 +37,28 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jspecify.annotations.Nullable;
 
 public class EffectCraftManager implements Listener {
-    private final Infuse plugin;
+    private final Infuse plugin = Infuse.getInstance();
     private static BossBar ritualBossBar;
     private static EnderCrystal ritualBeam;
 
-    public EffectCraftManager(Infuse plugin) {
-        this.plugin = plugin;
-
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    public static boolean isRitual() {
+        return ritualBossBar != null;
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (ritualBossBar == null) return;
-        event.getPlayer().showBossBar(ritualBossBar);
+    @Nullable
+    public static BossBar getBar() {
+        return ritualBossBar;
     }
 
     private void sendToDiscord(String webhookUrl, String message) {
@@ -91,10 +88,9 @@ public class EffectCraftManager implements Listener {
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         // Safe to assume the crafted item is the correct augmented/regular form due to the PrepareItemCraftEvent Listener
-        ItemStack craftedItem = event.getInventory().getResult();
-        InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
-        HumanEntity player = event.getWhoClicked();
-
+        final ItemStack craftedItem = event.getInventory().getResult();
+        final InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
+        final HumanEntity player = event.getWhoClicked();
         // Making sure the item being crafted is an Infuse effect
         if (effect == null) return;
 
@@ -106,12 +102,9 @@ public class EffectCraftManager implements Listener {
         }
 
         // Making sure the brewing stand is still placed
-        Location brewerLocation = event.getInventory().getLocation();
-        if (brewerLocation == null) {
-            return;
-        }
-
-        if (brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
+        final Location brewerLocation = event.getInventory().getLocation();
+        if (brewerLocation == null || brewerLocation.getBlock().getType() != Material.BREWING_STAND) {
+            player.sendMessage(new Message(MessageType.EFFECT_NO_BREWING).toComponent());
             event.setCancelled(true);
             return;
         }
@@ -148,7 +141,7 @@ public class EffectCraftManager implements Listener {
             formattedMessage.applyPlaceholder("y", brewerLocation.getBlockY());
             formattedMessage.applyPlaceholder("z", brewerLocation.getBlockZ());
             formattedMessage.applyPlaceholder("dimension", worldName);
-            
+
             Bukkit.broadcast(formattedMessage.toComponent());
             return;
         }
@@ -167,14 +160,13 @@ public class EffectCraftManager implements Listener {
         player.closeInventory();
 
         // Cancelling the event
-        event.setCancelled(true);        
+        event.setCancelled(true);
 
         // Starting the ritual for the augmented effect
         // Creating the bossbar
         Component itemName = effect.getName().toComponent();
-        ritualBossBar = BossBar.bossBar(MiniMessage.miniMessage()
-                .deserialize("🧪 <b>" + effect.getName() + "</b><reset> 🧪").color(itemName.color()), 1,
-                effect.getRitualColor(), BossBar.Overlay.PROGRESS);
+        Component bossbarName = Component.text("🧪 ").append(itemName.decorate(TextDecoration.BOLD)).append(Component.text(" 🧪").decoration(TextDecoration.BOLD, false)).color(itemName.color());
+        ritualBossBar = BossBar.bossBar(bossbarName, 1, effect.getRitualColor(), BossBar.Overlay.PROGRESS);
 
         // Adding every player online to the bossbar
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -195,7 +187,7 @@ public class EffectCraftManager implements Listener {
             startLoc.setY(-100);
             Location targetLoc = brewerLocation.clone().add(0.5, 0, 0.5);
             targetLoc.setY(500);
-            
+
             ritualBeam = (EnderCrystal) brewerLocation.getWorld().spawnEntity(startLoc, EntityType.END_CRYSTAL);
             ritualBeam.setShowingBottom(false);
             ritualBeam.setInvulnerable(true);
@@ -288,16 +280,8 @@ public class EffectCraftManager implements Listener {
     }
 
     public static void removeBeam() {
+        if (!(ritualBeam.isDead())) ritualBeam.remove();
         ritualBeam = null;
-    }
-
-    /** Prevents infuse effects from being crafted in a crafter. */
-    @EventHandler
-    public void onCrafter(CrafterCraftEvent event) {
-        ItemStack result = event.getResult();
-        if (result.getType() == Material.POTION) {
-            event.setCancelled(true);
-        }
     }
 
     /** Consulting the recipe manager to determine what to craft */

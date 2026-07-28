@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.listeners;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -19,30 +19,29 @@ public class PlayerSwapHandItemsListener implements Listener {
     /**
      * Listens for when the player swaps the items in their main and offhand.
      * When they do so, it will be used to activate their left or right spark based on whether they are crouching.
-     * 
+     *
      * @param event The {@link PlayerSwapHandItemsEvent} to process
      */
     @EventHandler
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        String data = dataManager.getControlMode(player);
-        if (data.equals("offhand")) {
-            // Getting the effect equipped in each slot
+        if (!dataManager.getControlMode(player).equals("offhand")) return;
+
+        if (!player.isSneaking()) {
+            // Activating the left effect's spark if the player was not sneaking and the effect wasn't on cooldown.
             InfuseEffect lEffect = dataManager.getEffect(player, "1");
+            if (lEffect == null) return;
+            if (CooldownManager.isOnCooldown(playerUUID, lEffect.getPlainKey())) return;
+            event.setCancelled(true);
+            lEffect.activateSpark(player);
+        } else {
+            // Activating the right effect's spark if the player was sneaking and the effect wasn't on cooldown.
             InfuseEffect rEffect = dataManager.getEffect(player, "2");
-
-            // Activating the left effect's spark if the player was sneaking and the effect wasn't on cooldown.
-            if (lEffect != null && !player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, lEffect.getKey())) {
-                event.setCancelled(true);
-                lEffect.activateSpark(player);
-            }
-
-            // Activating the right effect's spark if the player was not sneaking and the effect wasn't on cooldown.
-            if (rEffect != null && player.isSneaking() && !CooldownManager.isOnCooldown(playerUUID, rEffect.getKey())) {
-                event.setCancelled(true);
-                rEffect.activateSpark(player);
-            }
+            if (rEffect == null) return;
+            if (CooldownManager.isOnCooldown(playerUUID, rEffect.getPlainKey())) return;
+            event.setCancelled(true);
+            rEffect.activateSpark(player);
         }
     }
 }

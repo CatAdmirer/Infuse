@@ -40,7 +40,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect != null) {
                 leftEmoji = effect.getIcon() + "\ue904";
 
-                key = effect.getKey();
+                key = effect.getPlainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     leftEmoji = String.valueOf(effect.getActiveIcon());
 
@@ -59,7 +59,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect != null) {
                 rightEmoji = effect.getIcon() + "\ue904";
 
-                key = effect.getKey();
+                key = effect.getPlainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     rightEmoji = String.valueOf(effect.getActiveIcon());
 
@@ -98,10 +98,9 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect == null) {
                 lSide = " " + placeholder + "\ue904";
             } else {
-                key = effect.getKey();
+                key = effect.getPlainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    
                     lSide = "<b><#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft) + "</b><white> \ue905" + effect.getActiveIcon();
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
@@ -117,7 +116,7 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect == null) {
                 rSide = "<white>" + placeholder + "\ue904 ";
             } else {
-                key = effect.getKey();
+                key = effect.getPlainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
                     rSide = "<white>" + effect.getActiveIcon() + "\ue905 <#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + "><b>" + MessageUtil.formatTime(timeLeft) + "</b>";
@@ -137,7 +136,6 @@ public class ActionBarUpdater extends BukkitRunnable {
             int diff = lSize - rSize;
             Component spacing = Component.text("\ue904\ue904\ue904\ue904".repeat(Math.abs(diff)));
 
-            
             if (diff > 0) {
                 msg = msg.append(spacing);
             } else {

@@ -60,14 +60,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
             return plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
         }
 
-        return "" + (CooldownManager.isEffectActive(uuid, effect.getKey()) ? effect.getActiveIcon() : effect.getIcon());
+        return "" + (CooldownManager.isEffectActive(uuid, effect.getPlainKey()) ? effect.getActiveIcon() : effect.getIcon());
     }
 
     public String getTime(OfflinePlayer player, String slot) {
         UUID uuid = player.getUniqueId();
         InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return "";
-        String key = effect.getKey();
+        String key = effect.getPlainKey();
         if (CooldownManager.isEffectActive(uuid, key)) {
             long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
             return "<#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
@@ -82,14 +82,14 @@ public class InfusePlaceholders extends PlaceholderExpansion {
     public String getEffectRaw(OfflinePlayer player, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect== null) return "";
-        
+
         return PlainTextComponentSerializer.plainText().serialize(effect.getName().toComponent());
     }
 
     public String getEffectName(OfflinePlayer player, String slot) {
         InfuseEffect effect = plugin.getDataManager().getEffect(player, slot);
         if (effect == null) return "";
-        
+
         return effect.getName().toString();
     }
 }

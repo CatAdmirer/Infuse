@@ -2,10 +2,11 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -32,7 +32,6 @@ import java.util.UUID;
 public class Heart extends InfuseEffect {
     public static final NamespacedKey heartBoost = new NamespacedKey("infuse", "heart_boost");
     public static final NamespacedKey heartSparkBoost = new NamespacedKey("infuse", "heart_spark_boost");
-    private final Infuse plugin;
 
     public Heart() {
         this(false);
@@ -40,12 +39,12 @@ public class Heart extends InfuseEffect {
 
     public Heart(boolean augmented) {
         super("heart", EffectIds.HEART, augmented, EffectConstants.potionColor(EffectIds.HEART), EffectConstants.ritualColor(EffectIds.HEART));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
     public void equip(Player owner) {
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
         attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
         owner.heal(10);
@@ -59,13 +58,12 @@ public class Heart extends InfuseEffect {
     }
 
     @Override
-    public void applyPassives(Player owner) {}
-
-    @Override
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "heart")) return;
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -150,6 +148,7 @@ public class Heart extends InfuseEffect {
     public void heartShowTargetHealth(TenHitEvent event) {
         Player attacker = event.getAttacker();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
         this.showAndUpdateHealthAboveEntity(event.getTarget());
     }
@@ -158,6 +157,7 @@ public class Heart extends InfuseEffect {
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         ItemStack item = event.getItem();
         if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
@@ -165,12 +165,5 @@ public class Heart extends InfuseEffect {
         } else {
             player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 600, 0));
         }
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        AttributeInstance maxHealth = event.getPlayer().getAttribute(Attribute.MAX_HEALTH);
-        maxHealth.removeModifier(heartBoost);
-        maxHealth.removeModifier(heartSparkBoost);
     }
 }

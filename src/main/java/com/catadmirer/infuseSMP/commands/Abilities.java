@@ -4,13 +4,13 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 public class Abilities implements CommandExecutor {
     private final Infuse plugin;
 
@@ -44,6 +44,11 @@ public class Abilities implements CommandExecutor {
             msg.applyPlaceholder("slot", slot);
             player.sendMessage(msg.toComponent());
             return true;
+        }
+
+        // Warning the player that they can't use the spark right now
+        if (!RegionBlocker.getInstance().canUseSpark(player) || RegionBlocker.getInstance().isEffectBlocked(player, equippedEffect)) {
+            sender.sendMessage(Message.toComponent("<red>You cannot activate your spark in this area!"));
         }
 
         equippedEffect.activateSpark(player);

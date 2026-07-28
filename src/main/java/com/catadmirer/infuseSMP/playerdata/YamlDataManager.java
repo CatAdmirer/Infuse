@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 
 @NullMarked
 public class YamlDataManager implements DataManager {
-    private final Infuse plugin;
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public YamlDataManager(Infuse plugin) {
-        this.plugin = plugin;
-        this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
+    public YamlDataManager() {
+        this.dataFile = new File(Infuse.getInstance().getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
 
@@ -62,7 +60,7 @@ public class YamlDataManager implements DataManager {
 
     /** Creates the config file. If it doesn't exist, it loads the default config. */
     public void createFile() {
-        plugin.saveResource("config.yml", false);
+        Infuse.getInstance().saveResource("config.yml", false);
     }
 
     @Override
@@ -98,7 +96,7 @@ public class YamlDataManager implements DataManager {
         if (effect == null) {
             config.set(player.getUniqueId() + "." + slot, null);
         } else {
-            config.set(player.getUniqueId() + "." + slot, effect.toString());
+            config.set(player.getUniqueId() + "." + slot, effect.getKey());
         }
         save();
     }

@@ -75,7 +75,7 @@ public class H2DataManager extends AsyncDataManager {
                     UUID player = results.getObject(1, UUID.class);
                     UUID trusted = results.getObject(2, UUID.class);
 
-                    Set<UUID> playerTrusts = cache.allTrusts.computeIfAbsent(player, _ -> new HashSet<>());
+                    Set<UUID> playerTrusts = cache.allTrusts.computeIfAbsent(player, t -> new HashSet<>());
                     playerTrusts.add(trusted);
                     cache.allTrusts.put(player, playerTrusts);
                 }

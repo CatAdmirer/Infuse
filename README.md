@@ -9,16 +9,16 @@ This is a Custom Plugin with different types of effects that provide OP Abilitie
 The brewing stand ui has been replaced with a crafting table!  Use this to craft your effects.  
 Admins can re-enable brewing by adjusting the config.yml.  
 Augmented effects have half the cooldown of regular effects.  
-When an effect is crafted, the coordinates of where it was crafted are broadcasted to the entire server.  
-The first effect of each type to be crafted is an augmented effect.  
+When an effect is crafted, the coordinates of where it was crafted are broadcast to the entire server.  
+The first effect of each type to be crafted is augmented.  
 When augmented effects are crafted, they start a ritual.  
 Rituals last for 10 minutes before the augmented effect is crafted.  
 Players don't need to do anything but be the one to grab the effect when the ritual finishes.  
 
 ## Resource Packs
-Head over to the [InfusePack](https://modrinth.com/resourcepack/infusepack) page and get it there.
+Head over to the [InfusePack](https://modrinth.com/resourcepack/infusepack) page to get it.
 
-## Effect Abiltities:
+## Effect Abilities:
 In-game, run /infuses to see what they do!
 
 ## Commands:
@@ -28,11 +28,11 @@ This changes between using [Command Keys](https://modrinth.com/mod/commandkeys) 
 
 **/lspark, /rspark**
 
-This activates your ability in your first and second slot
+This activates your ability in your first or second slot
 
 **/cleareffects <player>**
 
-This clears the players effects
+This clears the player's effects
 
 **/cooldown <player>**
 
@@ -52,14 +52,14 @@ This can be allowed to preview/take effects
 
 **Optional**
 
-You can use [Command Keys](https://modrinth.com/mod/commandkeys) for custom keybinds (bind /rspark to something and /lspark) but its optional
+You can use [Command Keys](https://modrinth.com/mod/commandkeys) for custom keybinds (bind /rspark to something and /lspark), but it's optional
 
 ## Recipes:
-The first effect crafted starts a ritual and gives an augmented effect, next 3 give a regular one, and then its uncraftable 
+The first effect crafted starts a ritual and gives an augmented effect, the next 3 give a regular one, and then it's uncraftable 
 
 #### Some Notes:
 - The speed effect uses 1 dune and 1 eye armor trim.
-- The heart effect can be crafted with any kind of potion.
+- The heart effect can be crafted with any potion.
 - The frost and regen effects require pearlescent froglights.
 ![Default Recipes](https://cdn.modrinth.com/data/cached_images/cd619d2c9eb42d4368405aba345063aa01d7f5fb.png)
 ![Extra Recipes](https://cdn.modrinth.com/data/cached_images/3c54969c686f29ffcef9fb43d5b1455d4d3d4bba.png)
@@ -82,7 +82,7 @@ The first effect crafted starts a ritual and gives an augmented effect, next 3 g
 
 
 ### Credits
-Thank you to [Jannyboy11](https://github.com/Jannyboy11) for the platform and version classes, and general inspiration for the multi-version support!
+Thank you to [Jannyboy11](https://github.com/Jannyboy11) for the platform and version classes, and for the general inspiration for the multi-version support!
 Thank you to [Lucko](https://github.com/lucko) and [pop4959](https://github.com/pop4959) for inspiring multi-platform support!
 Thank you to the devs at PaperMC for making great guides and having amazing support!
 

@@ -14,7 +14,7 @@ public class AugOrRegChooser implements InventoryHolder {
 
     public AugOrRegChooser(InfuseEffect effect) {
         inventory = Bukkit.createInventory(this, 27, Message.toComponent("<yellow>Choose"));
-        
+
         // Filling the inventory with a filler item.
         InventoryUtils.fillInventory(inventory, InventoryUtils.createNoName(EffectConstants.menuBackgroundColor(effect.getId())));
 

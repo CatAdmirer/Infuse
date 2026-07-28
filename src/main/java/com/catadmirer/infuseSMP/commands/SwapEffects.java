@@ -17,7 +17,7 @@ public class SwapEffects implements CommandExecutor {
     public SwapEffects(Infuse plugin) {
         this.plugin = plugin;
     }
-    
+
     // Defining the command for swapping effects...
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -28,10 +28,15 @@ public class SwapEffects implements CommandExecutor {
         // Getting the equipped effects
         InfuseEffect effect1 = plugin.getDataManager().getEffect(player, "1");
         InfuseEffect effect2 = plugin.getDataManager().getEffect(player, "2");
+        if (effect1 == null && effect2 == null) {
+            player.sendMessage(new Message(MessageType.SWAP_NO_EFFECTS).toComponent());
+            return true;
+        }
 
         // Swapping the effects
         plugin.getDataManager().setEffect(player, "1", effect2);
         plugin.getDataManager().setEffect(player, "2", effect1);
+
         player.sendMessage(new Message(MessageType.SWAP_SUCCESS).toComponent());
         return true;
     }

@@ -2,11 +2,11 @@ package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,20 +30,18 @@ import java.util.UUID;
 public class Thief extends InfuseEffect {
     private static final Map<UUID, DisguiseData> disguisedPlayers = new HashMap<>();
 
-    private final Infuse plugin;
-
     public Thief() {
         this(false);
     }
 
     public Thief(boolean augmented) {
         super("thief", EffectIds.THIEF, augmented, EffectConstants.potionColor(EffectIds.THIEF), EffectConstants.ritualColor(EffectIds.THIEF));
-
-        this.plugin = Infuse.getInstance();
     }
 
     @Override
     public void equip(Player owner) {
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.unlistPlayer(owner);
         }
@@ -52,18 +49,22 @@ public class Thief extends InfuseEffect {
 
     @Override
     public void unequip(Player owner) {
+        if (disguisedPlayers.containsKey(owner.getUniqueId())) {
+            removeDisguise(owner);
+        }
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.listPlayer(owner);
         }
     }
 
     @Override
-    public void applyPassives(Player owner) {}
-
-    @Override
     public void activateSpark(Player owner) {
+        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
+
         UUID playerUUID = owner.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "thief")) return;
+        if (CooldownManager.isOnCooldown(playerUUID, "thief_stolen")) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -106,8 +107,8 @@ public class Thief extends InfuseEffect {
         UUID playerUUID = player.getUniqueId();
 
         // Removing cooldowns from the stolen spark
-        CooldownManager.clearSpecificCooldown(playerUUID, effect.getKey());
-        CooldownManager.clearSpecificDuration(playerUUID, effect.getKey());
+        CooldownManager.clearSpecificCooldown(playerUUID, effect.getPlainKey());
+        CooldownManager.clearSpecificDuration(playerUUID, effect.getPlainKey());
 
         // Applying cooldowns for the thief effect
         long cooldown = plugin.getMainConfig().cooldown(effect);
@@ -190,15 +191,21 @@ public class Thief extends InfuseEffect {
 
     //// Listeners ////
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
-    
-    // Hiding thief effect users from players who recently joined
+
+    /**
+     * Hiding thief effect users from players who recently joined.
+     * <br>
+     * This is one of the few abilities that bypasses the WorldGuard limitations.
+     */
     @EventHandler
     public void hideThievesOnJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        // Hiding thief users when they join
         if (plugin.getDataManager().hasEffect(player, this)) {
             Bukkit.getOnlinePlayers().forEach(p -> p.unlistPlayer(player));
         }
 
+        // Hiding any online thief users from the player that joined.
         for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
             if (!plugin.getDataManager().hasEffect(otherPlayer, this)) continue;
 
@@ -206,32 +213,34 @@ public class Thief extends InfuseEffect {
         }
     }
 
+    /**
+     * Removes a disguised player's disguise.
+     * 
+     * Unaffected by WorldGuard
+     * 
+     * @param event A {@link PlayerDeathEvent}
+     */
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player deadPlayer = event.getEntity();
-        
-        // If a disguised player dies, revert their disguise
-        if (disguisedPlayers.containsKey(deadPlayer.getUniqueId())) removeDisguise(deadPlayer);
-
-        if (!(event.getDamageSource().getCausingEntity() instanceof Player killer)) return;
-
-        // If a player with the thief effect kills someone, they should disguise themselves as the player they kill
-        if (plugin.getDataManager().hasEffect(killer, this)) {
-            disguise(killer, deadPlayer);
-        }
+    public void loseDisguise(PlayerDeathEvent event) {
+        removeDisguise(event.getEntity());
     }
 
     /**
-     * Removing an active disguise if a disguised player leaves.
+     * Disguises a player as the person they kill.
      * 
-     * @param event The {@link PlayerQuitEvent} to handle
+     * @param event A {@link PlayerDeathEvent}
      */
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (disguisedPlayers.containsKey(player.getUniqueId())) {
-            removeDisguise(player);
-        }
+    public void getDisguise(PlayerDeathEvent event) {
+        Player deadPlayer = event.getPlayer();
+        Player killer = deadPlayer.getKiller();
+
+        if (killer == null) return;
+        if (!plugin.getDataManager().hasEffect(killer, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(killer, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(deadPlayer, this)) return;
+
+        disguise(killer, deadPlayer);
     }
 
     @EventHandler
@@ -239,12 +248,14 @@ public class Thief extends InfuseEffect {
         if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
+        if (!RegionBlocker.getInstance().canBeTargetedBySpark(victim)) return;
 
         UUID playerUUID = player.getUniqueId();
         if (!CooldownManager.isEffectActive(playerUUID, "thief")) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
-        InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "1");
-        InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim.getUniqueId(), "2");
+        InfuseEffect leftEffect = plugin.getDataManager().getEffect(victim, "1");
+        InfuseEffect rightEffect = plugin.getDataManager().getEffect(victim, "2");
 
         if (leftEffect != null && rightEffect != null) {
             activateEffect(player, Math.random() > 0.5 ? leftEffect : rightEffect, victim);
