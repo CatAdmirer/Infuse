@@ -1,6 +1,10 @@
 plugins {
+    `java`
     `maven-publish`
-    alias(libs.plugins.blossom)
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -8,20 +12,22 @@ dependencies {
     compileOnly(libs.gson)
     compileOnly(libs.slf4j)
     compileOnly(libs.log4j)
+    compileOnly(libs.jetbrains.annotations)
 }
 
 tasks.withType<Jar>().configureEach {
+    from("../LICENSE.txt")
+    
     archiveFileName.set("infuse-${project.version}.jar")
 }
 
-sourceSets {
-    main {
-        blossom {
-            javaSources {
-                property("version", project.version.toString())
-            }
-        }
-    }
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
+
+configure<JavaPluginExtension> {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 publishing {

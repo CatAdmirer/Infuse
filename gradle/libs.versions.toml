@@ -7,12 +7,13 @@ guava = "33.6.0-jre!!"
 gson = "2.14.0!!"
 slf4j = "1.7.30"
 log4j = "2.14.0"
-blossom = "2.2.0"
+shadow = "9.6.1"
+jetbrains-annotations = "26.0.2-1"
 
 [plugins]
 paperweight = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight" }
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-paper" }
-blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [libraries]
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
@@ -21,3 +22,4 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }

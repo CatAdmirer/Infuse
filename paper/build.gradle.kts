@@ -1,20 +1,23 @@
 plugins {
+    `java`
     `maven-publish`
     alias(libs.plugins.paperweight)
     alias(libs.plugins.run.paper)
+    alias(libs.plugins.shadow)
 }
 
 val javaVersion = (project.property("javaVersion") as String).toInt()
 val minecraftVersion: String by project
 
 repositories {
+    mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
-    compileOnly(project(":common"))
+    implementation(project(":common"))
 
     compileOnly(libs.placeholderapi)
     compileOnly(libs.worldguard)
@@ -35,6 +38,21 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand(props)
     }
+}
+
+tasks.withType<Jar>().configureEach {
+    from("../LICENSE.txt")
+
+    archiveFileName.set("InfuseSMP-${project.name}-${project.version}.jar")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
+
+configure<JavaPluginExtension> {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 publishing {

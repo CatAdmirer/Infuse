@@ -1,5 +1,0 @@
-package com.catadmirer.infuseSMP;
-
-class BuildParameters {
-    public static final String VERSION = "{{ version }}";
-}
