@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+    alias(libs.plugins.blossom)
 }
 
 dependencies {
@@ -11,6 +12,16 @@ dependencies {
 
 tasks.withType<Jar>().configureEach {
     archiveFileName.set("infuse-${project.version}.jar")
+}
+
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("version", project.version.toString())
+            }
+        }
+    }
 }
 
 publishing {

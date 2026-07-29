@@ -26,7 +26,7 @@ public class Infuse {
     private Infuse() {}
 
     public String getVersion() {
-        return getPluginMeta().getVersion();
+        return BuildParameters.VERSION;
     }
 
     /** Checks the modrinth api for any updates to the plugin. */
