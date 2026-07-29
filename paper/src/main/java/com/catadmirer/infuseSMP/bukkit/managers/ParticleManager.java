@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.Ender;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.EffectIds;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.effects.Ender;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -62,7 +62,7 @@ public class ParticleManager {
 
     public static void drawLine(Location start, Location end, int count, DustOptions dustOptions) {
         if (!start.getWorld().equals(end.getWorld())) {
-            Infuse.LOGGER.debug("Cannot draw lines between two worlds!");
+            InfusePlugin.LOGGER.debug("Cannot draw lines between two worlds!");
             return;
         }
 
@@ -76,7 +76,7 @@ public class ParticleManager {
         start.getWorld().spawnParticle(Particle.DUST, end, count, 0, 0, 0, 0, dustOptions);
     }
 
-    public static void dropEffect(Infuse plugin, boolean bottomToTop, @NotNull InfuseEffect effect, Location location) {
+    public static void dropEffect(InfusePlugin plugin, boolean bottomToTop, @NotNull InfuseEffect effect, Location location) {
         final Location base = location.add(0, bottomToTop ? 0 : 2, 0);
         final World world = location.getWorld();
         Color color = Color.fromRGB(effect.getPotionColor().getRGB());

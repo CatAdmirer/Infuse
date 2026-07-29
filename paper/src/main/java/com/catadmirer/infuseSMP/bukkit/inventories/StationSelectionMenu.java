@@ -1,7 +1,7 @@
-package com.catadmirer.infuseSMP.inventories;
+package com.catadmirer.infuseSMP.bukkit.inventories;
 
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.util.InventoryUtils;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

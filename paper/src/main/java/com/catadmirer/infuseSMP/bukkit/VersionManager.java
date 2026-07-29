@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
 import java.util.function.BiFunction;
 
@@ -6,11 +6,11 @@ import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.catadmirer.infuseSMP.version.LegacyVersions;
-import com.catadmirer.infuseSMP.version.MinecraftPlatform;
-import com.catadmirer.infuseSMP.version.MinecraftVersion;
-import com.catadmirer.infuseSMP.version.ServerSoftware;
-import com.catadmirer.infuseSMP.version.SupportedServerSoftware;
+import com.catadmirer.infuseSMP.bukkit.version.LegacyVersions;
+import com.catadmirer.infuseSMP.bukkit.version.MinecraftPlatform;
+import com.catadmirer.infuseSMP.bukkit.version.MinecraftVersion;
+import com.catadmirer.infuseSMP.bukkit.version.ServerSoftware;
+import com.catadmirer.infuseSMP.bukkit.version.SupportedServerSoftware;
 
 public class VersionManager {
     // Loading supported versions

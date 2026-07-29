@@ -1,15 +1,15 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.commands.*;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.listeners.*;
-import com.catadmirer.infuseSMP.managers.*;
-import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
-import com.catadmirer.infuseSMP.util.regions.BasicRegionBlocker;
-import com.catadmirer.infuseSMP.util.regions.DualRegionBlocker;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.commands.*;
+import com.catadmirer.infuseSMP.bukkit.effects.*;
+import com.catadmirer.infuseSMP.bukkit.extraeffects.*;
+import com.catadmirer.infuseSMP.bukkit.listeners.*;
+import com.catadmirer.infuseSMP.bukkit.managers.*;
+import com.catadmirer.infuseSMP.bukkit.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.bukkit.util.regions.BasicRegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.util.regions.DualRegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,7 +29,7 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Infuse extends JavaPlugin {
+public class InfusePlugin extends JavaPlugin {
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
 
     private final DataManager dataManager;
@@ -40,11 +40,11 @@ public class Infuse extends JavaPlugin {
     private final HitTracker hitTracker;
 
     @NonNull
-    public static Infuse getInstance() {
-        return JavaPlugin.getPlugin(Infuse.class);
+    public static InfusePlugin getInstance() {
+        return JavaPlugin.getPlugin(InfusePlugin.class);
     }
 
-    public Infuse() {
+    public InfusePlugin() {
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);

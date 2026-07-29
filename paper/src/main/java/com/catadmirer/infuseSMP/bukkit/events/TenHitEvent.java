@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.events;
+package com.catadmirer.infuseSMP.bukkit.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

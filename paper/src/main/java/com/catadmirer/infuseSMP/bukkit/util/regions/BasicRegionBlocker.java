@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util.regions;
+package com.catadmirer.infuseSMP.bukkit.util.regions;
 
 import java.util.List;
 import java.util.Set;
@@ -9,8 +9,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 
 public class BasicRegionBlocker extends RegionBlocker {
     @Override
@@ -48,7 +48,7 @@ public class BasicRegionBlocker extends RegionBlocker {
             .values()
             .stream()
             .filter(e -> {
-                List<NamespacedKey> worlds = Infuse.getInstance().getMainConfig().getBlacklistedWorlds(e);
+                List<NamespacedKey> worlds = InfusePlugin.getInstance().getMainConfig().getBlacklistedWorlds(e);
 
                 return worlds.contains(loc.getWorld().getKey());
             })
@@ -67,7 +67,7 @@ public class BasicRegionBlocker extends RegionBlocker {
 
     @Override
     public boolean isEffectBlocked(Location loc, InfuseEffect effect) {
-        List<NamespacedKey> worlds = Infuse.getInstance().getMainConfig().getBlacklistedWorlds(effect);
+        List<NamespacedKey> worlds = InfusePlugin.getInstance().getMainConfig().getBlacklistedWorlds(effect);
 
         return worlds.contains(loc.getWorld().getKey());
     }

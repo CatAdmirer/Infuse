@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.inventories;
+package com.catadmirer.infuseSMP.bukkit.inventories;
 
-import com.catadmirer.infuseSMP.EffectConstants;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.InventoryUtils;
+import com.catadmirer.infuseSMP.bukkit.EffectConstants;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

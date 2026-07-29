@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.placeholders;
+package com.catadmirer.infuseSMP.bukkit.placeholders;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.MessageUtil;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.bukkit.util.MessageUtil;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -11,9 +11,9 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class InfusePlaceholders extends PlaceholderExpansion {
-    private Infuse plugin;
+    private InfusePlugin plugin;
 
-    public InfusePlaceholders(Infuse plugin) {
+    public InfusePlaceholders(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

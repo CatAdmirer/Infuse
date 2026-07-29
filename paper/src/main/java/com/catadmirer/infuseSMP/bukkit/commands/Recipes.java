@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.bukkit.commands;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import org.bukkit.command.Command;
@@ -15,9 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class Recipes implements CommandExecutor {
-    private static Infuse plugin;
+    private static InfusePlugin plugin;
 
-    public Recipes(Infuse plugin) {
+    public Recipes(InfusePlugin plugin) {
         Recipes.plugin = plugin;
     }
 

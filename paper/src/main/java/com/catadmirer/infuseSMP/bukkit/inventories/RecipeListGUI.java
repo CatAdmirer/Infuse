@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.inventories;
+package com.catadmirer.infuseSMP.bukkit.inventories;
 
-import com.catadmirer.infuseSMP.commands.Recipes;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.InventoryUtils;
+import com.catadmirer.infuseSMP.bukkit.commands.Recipes;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;

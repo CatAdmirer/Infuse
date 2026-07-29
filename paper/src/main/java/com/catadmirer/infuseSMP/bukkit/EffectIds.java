@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
 public class EffectIds {
     public static final int EMERALD = 1;

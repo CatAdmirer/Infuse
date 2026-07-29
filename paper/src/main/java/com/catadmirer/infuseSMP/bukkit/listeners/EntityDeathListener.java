@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.listeners;
+package com.catadmirer.infuseSMP.bukkit.listeners;
 
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
@@ -6,8 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.managers.DataManager;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.managers.DataManager;
 
 public class EntityDeathListener implements Listener {
     private final DataManager dataManager;

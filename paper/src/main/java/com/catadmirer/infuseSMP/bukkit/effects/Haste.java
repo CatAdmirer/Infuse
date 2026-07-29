@@ -1,13 +1,13 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.bukkit.effects;
 
-import com.catadmirer.infuseSMP.EffectConstants;
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.ItemUtil;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.EffectConstants;
+import com.catadmirer.infuseSMP.bukkit.EffectIds;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.events.EffectUnequipEvent;
+import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.bukkit.util.ItemUtil;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -106,17 +106,17 @@ public class Haste extends InfuseEffect {
 
     @EventHandler
     public void enchantHeldItem(PlayerItemHeldEvent event) {
-        Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent triggered");
+        InfusePlugin.LOGGER.debug("[Haste] PlayerItemHeldEvent triggered");
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
-        Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
+        InfusePlugin.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
 
         ItemStack item = player.getInventory().getItem(event.getNewSlot());
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
-            Infuse.LOGGER.debug("[Haste] Haste user is holding a sword/axe/shove/hoe.  Enchanting with fortune, efficiency and unbreaking.");
+            InfusePlugin.LOGGER.debug("[Haste] Haste user is holding a sword/axe/shove/hoe.  Enchanting with fortune, efficiency and unbreaking.");
 
             ItemUtil.applySpecialEnchantment(item, fortuneKey, Enchantment.FORTUNE, plugin.getMainConfig().hasteFortuneLevel());
             ItemUtil.applySpecialEnchantment(item, efficiencyKey, Enchantment.EFFICIENCY, plugin.getMainConfig().hasteEfficiencyLevel());

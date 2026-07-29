@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.bukkit.util;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.NamespacedKey;

@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,7 +12,7 @@ import java.util.Set;
 public class MessageTranslator {
     public static final Set<String> SUPPORTED_LOCALES = Set.of("en_US", "es");
 
-    private final Infuse plugin = Infuse.getInstance();
+    private final InfusePlugin plugin = InfusePlugin.getInstance();
 
     @Nullable
     public String translate(String key) {
@@ -21,7 +21,7 @@ public class MessageTranslator {
 
         // Defaulting to the en_US locale
         if (!SUPPORTED_LOCALES.contains(locale)) {
-            Infuse.LOGGER.warn("Locale \"{}\" not recognized.  Falling back to en_US.", locale);
+            InfusePlugin.LOGGER.warn("Locale \"{}\" not recognized.  Falling back to en_US.", locale);
             locale = "en_US";
         }
 

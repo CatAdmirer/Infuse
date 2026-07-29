@@ -1,6 +1,6 @@
-package com.catadmirer.infuseSMP.events;
+package com.catadmirer.infuseSMP.bukkit.events;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

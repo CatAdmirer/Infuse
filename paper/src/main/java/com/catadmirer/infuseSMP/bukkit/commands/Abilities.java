@@ -1,10 +1,10 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.bukkit.commands;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class Abilities implements CommandExecutor {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public Abilities(Infuse plugin) {
+    public Abilities(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

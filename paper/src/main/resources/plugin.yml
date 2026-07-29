@@ -1,6 +1,6 @@
 name: Infuse
 version: '$version'
-main: com.catadmirer.infuseSMP.Infuse
+main: com.catadmirer.infuseSMP.bukkit.InfusePlugin
 api-version: '1.21.4'
 authors: [CatAdmirer, TurboJax, duff_mans_jnr]
 softdepend: [PlaceholderAPI, WorldGuard]

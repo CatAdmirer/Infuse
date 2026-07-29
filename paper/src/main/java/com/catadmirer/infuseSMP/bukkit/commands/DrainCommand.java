@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.bukkit.commands;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 public class DrainCommand implements CommandExecutor {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public DrainCommand(Infuse plugin) {
+    public DrainCommand(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

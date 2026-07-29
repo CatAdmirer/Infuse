@@ -1,13 +1,13 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.bukkit.effects;
 
-import com.catadmirer.infuseSMP.EffectConstants;
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.EffectEquipEvent;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.EffectConstants;
+import com.catadmirer.infuseSMP.bukkit.EffectIds;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.bukkit.events.TenHitEvent;
+import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -238,14 +238,14 @@ public class Frost extends InfuseEffect {
 
     @EventHandler
     public void onTenthAttack(TenHitEvent event) {
-        Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
-        Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
-        Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
+        InfusePlugin.LOGGER.debug("[Frost] Recieved TenHitEvent");
+        InfusePlugin.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
+        InfusePlugin.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
 
-        Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
+        InfusePlugin.LOGGER.debug("[Frost] Attacker has frost effect");
 
         (new BukkitRunnable() {
             int ticksElapsed = 0;

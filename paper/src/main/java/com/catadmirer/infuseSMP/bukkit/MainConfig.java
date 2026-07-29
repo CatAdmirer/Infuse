@@ -1,6 +1,6 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,9 +13,9 @@ import java.util.*;
 public class MainConfig {
     public final File file;
     public final FileConfiguration config;
-    public final Infuse plugin;
+    public final InfusePlugin plugin;
 
-    public MainConfig(Infuse plugin) {
+    public MainConfig(InfusePlugin plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "config.yml");
         this.config = YamlConfiguration.loadConfiguration(file);
@@ -36,12 +36,12 @@ public class MainConfig {
         // Loading the config
         try {
             config.load(file);
-            Infuse.LOGGER.info("Successfully loaded {}", file.getName());
+            InfusePlugin.LOGGER.info("Successfully loaded {}", file.getName());
             return true;
         } catch (InvalidConfigurationException e) {
-            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
+            InfusePlugin.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
-            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
+            InfusePlugin.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
             e.printStackTrace();
         }
 
@@ -66,10 +66,10 @@ public class MainConfig {
         // Saving the config
         try {
             config.save(file);
-            Infuse.LOGGER.info("Saved {}", file.getName());
+            InfusePlugin.LOGGER.info("Saved {}", file.getName());
             return true;
         } catch (IOException e) {
-            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
+            InfusePlugin.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
         }
 
         return false;
@@ -158,8 +158,8 @@ public class MainConfig {
         List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
 
         if (craftLimits.size() != 2) {
-            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
-            Infuse.LOGGER.error("Returning default limits");
+            InfusePlugin.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
+            InfusePlugin.LOGGER.error("Returning default limits");
 
             return effect.isAugmented() ? 1 : 3;
         }

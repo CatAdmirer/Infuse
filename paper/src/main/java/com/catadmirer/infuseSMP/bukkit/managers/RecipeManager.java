@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
 import java.io.File;
 
-import com.catadmirer.infuseSMP.effects.Ender;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.effects.Ender;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,14 +13,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 
 public class RecipeManager {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
     private final File recipesFile;
     private final FileConfiguration recipesConfig;
 
-    public RecipeManager(Infuse plugin) {
+    public RecipeManager(InfusePlugin plugin) {
         this.plugin = plugin;
 
         recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
@@ -73,7 +73,7 @@ public class RecipeManager {
 
             String materialName = ingredientsConfig.getString(key);
             if (materialName == null) {
-                Infuse.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
+                InfusePlugin.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
             }
 
             Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());
@@ -108,7 +108,7 @@ public class RecipeManager {
     }
 
     /**
-     * Gets the item to craft from an official Infuse recipe.
+     * Gets the item to craft from an official InfusePlugin recipe.
      * This makes it easier to determine whether an infuse recipe should craft an augmented or regular effect.
      *
      * @param recipe The infuse {@link Recipe} to determine the result for.

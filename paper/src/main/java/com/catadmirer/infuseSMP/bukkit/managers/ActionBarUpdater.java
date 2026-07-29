@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.MessageUtil;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.util.MessageUtil;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -11,9 +11,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarUpdater extends BukkitRunnable {
     private final MiniMessage mm = MiniMessage.miniMessage();
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public ActionBarUpdater(Infuse plugin) {
+    public ActionBarUpdater(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

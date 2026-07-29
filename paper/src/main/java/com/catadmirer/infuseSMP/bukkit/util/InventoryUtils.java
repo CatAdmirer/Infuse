@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.bukkit.util;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;

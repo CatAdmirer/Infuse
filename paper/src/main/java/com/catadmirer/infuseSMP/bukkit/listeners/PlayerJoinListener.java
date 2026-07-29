@@ -1,11 +1,11 @@
-package com.catadmirer.infuseSMP.listeners;
+package com.catadmirer.infuseSMP.bukkit.listeners;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.managers.EffectCraftManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.managers.EffectCraftManager;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,9 +15,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.List;
 
 public class PlayerJoinListener implements Listener {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public PlayerJoinListener(Infuse plugin) {
+    public PlayerJoinListener(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

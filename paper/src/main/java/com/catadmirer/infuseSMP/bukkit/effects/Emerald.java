@@ -1,14 +1,14 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.bukkit.effects;
 
-import com.catadmirer.infuseSMP.EffectConstants;
-import com.catadmirer.infuseSMP.EffectIds;
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.ItemUtil;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.EffectConstants;
+import com.catadmirer.infuseSMP.bukkit.EffectIds;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.events.TenHitEvent;
+import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.bukkit.util.ItemUtil;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
@@ -132,18 +132,18 @@ public class Emerald extends InfuseEffect {
 
     @EventHandler
     public void enchantHeldItem(PlayerItemHeldEvent event) {
-        Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent triggered");
+        InfusePlugin.LOGGER.debug("[Emerald] PlayerItemHeldEvent triggered");
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
-        Infuse.LOGGER.debug("[Emerald] PlayerItemHeldEvent is for an emerald user");
+        InfusePlugin.LOGGER.debug("[Emerald] PlayerItemHeldEvent is for an emerald user");
 
         ItemStack item = player.getInventory().getItem(event.getNewSlot());
         if (!ItemUtil.isSword(item)) return;
 
-        Infuse.LOGGER.debug("[Emerald] Emerald user is holding a sword.  Enchanting with looting.");
+        InfusePlugin.LOGGER.debug("[Emerald] Emerald user is holding a sword.  Enchanting with looting.");
 
         ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().emeraldLootingLevel());
     }
@@ -166,16 +166,16 @@ public class Emerald extends InfuseEffect {
 
     @EventHandler
     public void tenHitEvent(TenHitEvent event) {
-        Infuse.LOGGER.debug("[Emerald] Received TenHitEvent");
-        Infuse.LOGGER.debug("[Emerald] Attacker: {}", event.getAttacker().getName());
-        Infuse.LOGGER.debug("[Emerald] Target: {}", event.getTarget().getName());
+        InfusePlugin.LOGGER.debug("[Emerald] Received TenHitEvent");
+        InfusePlugin.LOGGER.debug("[Emerald] Attacker: {}", event.getAttacker().getName());
+        InfusePlugin.LOGGER.debug("[Emerald] Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
 
-        Infuse.LOGGER.debug("[Emerald] Target has emerald effect");
-        Infuse.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
+        InfusePlugin.LOGGER.debug("[Emerald] Target has emerald effect");
+        InfusePlugin.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
 
         new FoodAndExpLock(plugin, event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
@@ -183,13 +183,13 @@ public class Emerald extends InfuseEffect {
     public static class FoodAndExpLock implements Listener {
         private final Player player;
 
-        public FoodAndExpLock(Infuse plugin, Player player, double durationSeconds) {
+        public FoodAndExpLock(InfusePlugin plugin, Player player, double durationSeconds) {
             this.player = player;
 
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 HandlerList.unregisterAll(this);
-                Infuse.LOGGER.debug("[Emerald] Exp lock for {} has been lifted", player.getName());
+                InfusePlugin.LOGGER.debug("[Emerald] Exp lock for {} has been lifted", player.getName());
             }, (long) (durationSeconds * 20));
         }
 
@@ -309,9 +309,9 @@ public class Emerald extends InfuseEffect {
                 }
                 getEnchantmentList.setAccessible(false);
             } catch (NoSuchMethodException e) {
-                Infuse.LOGGER.error("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
+                InfusePlugin.LOGGER.error("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
             } catch (Exception e) {
-                Infuse.LOGGER.error("Error while calculating enchantments:", e);
+                InfusePlugin.LOGGER.error("Error while calculating enchantments:", e);
             }
         }
     }

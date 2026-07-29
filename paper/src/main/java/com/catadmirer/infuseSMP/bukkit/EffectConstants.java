@@ -1,6 +1,6 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
-import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
+import com.catadmirer.infuseSMP.bukkit.inventories.AugOrRegChooser;
 import java.awt.Color;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Material;

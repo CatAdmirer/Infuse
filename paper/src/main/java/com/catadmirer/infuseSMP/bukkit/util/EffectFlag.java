@@ -1,8 +1,8 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.bukkit.util;
 
 import org.jspecify.annotations.Nullable;
 
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.FlagContext;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;

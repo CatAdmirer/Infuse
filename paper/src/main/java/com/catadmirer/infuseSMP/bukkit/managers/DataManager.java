@@ -1,7 +1,7 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -20,7 +20,7 @@ public class DataManager {
     private final File dataFile;
     private final YamlConfiguration config;
 
-    public DataManager(Infuse plugin) {
+    public DataManager(InfusePlugin plugin) {
         this.dataFile = new File(plugin.getDataFolder(), "data/playerdata.yml");
         this.config = YamlConfiguration.loadConfiguration(dataFile);
     }
@@ -40,12 +40,12 @@ public class DataManager {
         // Loading the config
         try {
             config.load(dataFile);
-            Infuse.LOGGER.info("Successfully loaded {}", dataFile.getName());
+            InfusePlugin.LOGGER.info("Successfully loaded {}", dataFile.getName());
             return true;
         } catch (InvalidConfigurationException err) {
-            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
+            InfusePlugin.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", dataFile.getName());
         } catch (IOException err) {
-            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", dataFile.getName());
+            InfusePlugin.LOGGER.error("Could not find {}.  Check that it exists.", dataFile.getName());
         }
 
         return false;
@@ -66,10 +66,10 @@ public class DataManager {
         // Saving the config
         try {
             config.save(dataFile);
-            Infuse.LOGGER.info("Saved {}", dataFile.getName());
+            InfusePlugin.LOGGER.info("Saved {}", dataFile.getName());
             return true;
         } catch (IOException e) {
-            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", dataFile.getName());
+            InfusePlugin.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", dataFile.getName());
         }
 
         return false;
@@ -89,7 +89,7 @@ public class DataManager {
                 dataFile.getParentFile().mkdirs();
                 dataFile.createNewFile();
             } catch (IOException e) {
-                Infuse.LOGGER.error("Could not create {}.  Make sure the user has the right permissions.", dataFile.getName());
+                InfusePlugin.LOGGER.error("Could not create {}.  Make sure the user has the right permissions.", dataFile.getName());
                 return false;
             }
         }
@@ -152,7 +152,7 @@ public class DataManager {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
         InfuseEffect effect = InfuseEffect.fromString(effectKey);
         if (effectKey != null && effect == null) {
-            Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
+            InfusePlugin.LOGGER.warn("No valid ability found for the equipped effect.");
         }
 
         return effect;

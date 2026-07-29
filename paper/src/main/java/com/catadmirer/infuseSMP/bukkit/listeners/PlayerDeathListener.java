@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.listeners;
+package com.catadmirer.infuseSMP.bukkit.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,14 +8,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.managers.EffectManager.EquipResult;
-import com.catadmirer.infuseSMP.managers.EffectManager.EquipResultType;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.managers.EffectManager.EquipResult;
+import com.catadmirer.infuseSMP.bukkit.managers.EffectManager.EquipResultType;
 
 public class PlayerDeathListener implements Listener {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public PlayerDeathListener(Infuse plugin) {
+    public PlayerDeathListener(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

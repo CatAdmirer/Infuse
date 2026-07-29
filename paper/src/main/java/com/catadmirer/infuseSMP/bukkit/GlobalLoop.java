@@ -1,10 +1,10 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
-import com.catadmirer.infuseSMP.effects.Heart;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.extraeffects.Apophis;
-import com.catadmirer.infuseSMP.managers.ParticleManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.effects.Heart;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.extraeffects.Apophis;
+import com.catadmirer.infuseSMP.bukkit.managers.ParticleManager;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -15,12 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public class GlobalLoop extends BukkitRunnable {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
     private static final HashSet<UUID> lEffectDisabled = new HashSet<>();
     private static final HashSet<UUID> rEffectDisabled = new HashSet<>();
 
-    public GlobalLoop(Infuse plugin) {
+    public GlobalLoop(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

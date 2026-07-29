@@ -1,12 +1,12 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.events.EffectEquipEvent;
-import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.events.EffectEquipEvent;
+import com.catadmirer.infuseSMP.bukkit.events.EffectUnequipEvent;
+import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
@@ -14,9 +14,9 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class EffectManager {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public EffectManager(Infuse plugin) {
+    public EffectManager(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

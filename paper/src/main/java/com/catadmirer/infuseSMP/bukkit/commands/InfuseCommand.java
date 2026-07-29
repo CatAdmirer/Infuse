@@ -1,12 +1,12 @@
-package com.catadmirer.infuseSMP.commands;
+package com.catadmirer.infuseSMP.bukkit.commands;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.inventories.EffectChooser;
-import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
-import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,9 +22,9 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 public class InfuseCommand implements CommandExecutor, TabCompleter {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public InfuseCommand(Infuse plugin) {
+    public InfuseCommand(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 

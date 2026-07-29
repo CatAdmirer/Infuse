@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
 import java.util.function.IntConsumer;
 import org.bukkit.scheduler.BukkitRunnable;

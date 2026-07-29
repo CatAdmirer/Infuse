@@ -1,10 +1,10 @@
-package com.catadmirer.infuseSMP.managers;
+package com.catadmirer.infuseSMP.bukkit.managers;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.inventories.StationSelectionMenu;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.inventories.StationSelectionMenu;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,7 +48,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.Nullable;
 
 public class EffectCraftManager implements Listener {
-    private final Infuse plugin = Infuse.getInstance();
+    private final InfusePlugin plugin = InfusePlugin.getInstance();
     private static BossBar ritualBossBar;
     private static EnderCrystal ritualBeam;
 
@@ -75,14 +75,14 @@ public class EffectCraftManager implements Listener {
             // Checking the response status code
             int status = response.statusCode();
             if (status == 200) {
-                Infuse.LOGGER.info("Message sent to Discord!");
+                InfusePlugin.LOGGER.info("Message sent to Discord!");
             } else {
-                Infuse.LOGGER.info("Error sending message to Discord: " + status);
+                InfusePlugin.LOGGER.info("Error sending message to Discord: " + status);
             }
         } catch (IOException err) {
-            Infuse.LOGGER.error("Could not send webhook message to discord.", err);
+            InfusePlugin.LOGGER.error("Could not send webhook message to discord.", err);
         } catch (InterruptedException err) {
-            Infuse.LOGGER.error("Discord webhook request was interrupted!", err);
+            InfusePlugin.LOGGER.error("Discord webhook request was interrupted!", err);
         }
     }
 
@@ -92,7 +92,7 @@ public class EffectCraftManager implements Listener {
         final ItemStack craftedItem = event.getInventory().getResult();
         final InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
         final HumanEntity player = event.getWhoClicked();
-        // Making sure the item being crafted is an Infuse effect
+        // Making sure the item being crafted is an InfusePlugin effect
         if (effect == null) return;
 
         // Not allowing the player to shift click effects

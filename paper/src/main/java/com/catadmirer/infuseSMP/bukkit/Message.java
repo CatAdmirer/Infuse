@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP;
+package com.catadmirer.infuseSMP.bukkit;
 
 import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;

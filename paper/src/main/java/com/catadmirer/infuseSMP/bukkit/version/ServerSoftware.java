@@ -1,9 +1,9 @@
-package com.catadmirer.infuseSMP.version;
+package com.catadmirer.infuseSMP.bukkit.version;
 
 import org.bukkit.Server;
 
-import static com.catadmirer.infuseSMP.version.MinecraftPlatform.*;
-import static com.catadmirer.infuseSMP.version.MinecraftVersion.*;
+import static com.catadmirer.infuseSMP.bukkit.version.MinecraftPlatform.*;
+import static com.catadmirer.infuseSMP.bukkit.version.MinecraftVersion.*;
 
 import java.lang.reflect.Field;
 import java.util.Objects;

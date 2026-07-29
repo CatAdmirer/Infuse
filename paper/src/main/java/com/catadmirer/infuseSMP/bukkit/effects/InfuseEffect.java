@@ -1,7 +1,7 @@
-package com.catadmirer.infuseSMP.effects;
+package com.catadmirer.infuseSMP.bukkit.effects;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
@@ -32,7 +32,7 @@ public abstract class InfuseEffect implements Listener {
     protected final boolean augmented;
     protected final Color potionColor;
     protected final BossBar.Color ritualColor;
-    protected final Infuse plugin = Infuse.getInstance();
+    protected final InfusePlugin plugin = InfusePlugin.getInstance();
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
         this.key = key;
@@ -48,13 +48,13 @@ public abstract class InfuseEffect implements Listener {
 
     public static boolean register(InfuseEffect effect) {
         if (effect.id > 100) {
-            Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
+            InfusePlugin.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
             return false;
         }
 
         InfuseEffect existing = REGISTERED_EFFECTS.get(effect.id);
         if (existing != null) {
-            Infuse.LOGGER.warn("Effect id {} has already been taken by {}.  Cannot assign it to {}.", effect.id, existing.key, effect.key);
+            InfusePlugin.LOGGER.warn("Effect id {} has already been taken by {}.  Cannot assign it to {}.", effect.id, existing.key, effect.key);
             return false;
         }
 
@@ -141,7 +141,7 @@ public abstract class InfuseEffect implements Listener {
             return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
         }
 
-        Infuse.LOGGER.warn("No effect found for string '{}'.", key);
+        InfusePlugin.LOGGER.warn("No effect found for string '{}'.", key);
         return null;
     }
 
@@ -209,7 +209,7 @@ public abstract class InfuseEffect implements Listener {
      */
     public static InfuseEffect deserialize(int serialized) {
         if (!REGISTERED_EFFECTS.containsKey(serialized % 100)) {
-            Infuse.LOGGER.warn("Could not find an effect registered to id {}", serialized % 100);
+            InfusePlugin.LOGGER.warn("Could not find an effect registered to id {}", serialized % 100);
             return null;
         }
 

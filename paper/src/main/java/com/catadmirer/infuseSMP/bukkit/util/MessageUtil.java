@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.bukkit.util;
 
 public class MessageUtil {
     public static String formatTime(long totalSeconds) {

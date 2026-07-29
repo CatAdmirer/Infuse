@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.version;
+package com.catadmirer.infuseSMP.bukkit.version;
 
 import org.bukkit.Server;
 import org.bukkit.UnsafeValues;

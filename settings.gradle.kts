@@ -4,4 +4,4 @@ plugins {
 
 rootProject.name = "InfuseSMP"
 
-include("paper")
+include("api", "paper")

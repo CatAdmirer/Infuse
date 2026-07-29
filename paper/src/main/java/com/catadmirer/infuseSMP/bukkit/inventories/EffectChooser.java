@@ -1,10 +1,10 @@
-package com.catadmirer.infuseSMP.inventories;
+package com.catadmirer.infuseSMP.bukkit.inventories;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.effects.*;
-import com.catadmirer.infuseSMP.extraeffects.*;
-import com.catadmirer.infuseSMP.util.InventoryUtils;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.effects.*;
+import com.catadmirer.infuseSMP.bukkit.extraeffects.*;
+import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EffectChooser implements InventoryHolder {
     private final Inventory inventory;
 
-    public EffectChooser(Infuse plugin) {
+    public EffectChooser(InfusePlugin plugin) {
         inventory = Bukkit.createInventory(this, 54, Message.toComponent("<b>Infuses"));
 
         // Filling the inventory with decorative glass panes

@@ -1,13 +1,13 @@
-package com.catadmirer.infuseSMP.listeners;
+package com.catadmirer.infuseSMP.bukkit.listeners;
 
-import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.inventories.AugOrRegChooser;
-import com.catadmirer.infuseSMP.inventories.EffectChooser;
-import com.catadmirer.infuseSMP.inventories.RecipeGUI;
-import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.bukkit.inventories.AugOrRegChooser;
+import com.catadmirer.infuseSMP.bukkit.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.bukkit.inventories.RecipeGUI;
+import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
 
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -18,9 +18,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryClickListener implements Listener {
-    private final Infuse plugin;
+    private final InfusePlugin plugin;
 
-    public InventoryClickListener(Infuse plugin) {
+    public InventoryClickListener(InfusePlugin plugin) {
         this.plugin = plugin;
     }
 
