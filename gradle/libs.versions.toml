@@ -5,6 +5,8 @@ run-paper = "3.0.2"
 paperweight = "2.0.0-beta.21"
 guava = "33.6.0-jre!!"
 gson = "2.14.0!!"
+slf4j = "1.7.30"
+log4j = "2.14.0"
 
 [plugins]
 paperweight = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight" }
@@ -15,3 +17,5 @@ placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholder
 worldguard = { module = "com.sk89q.worldguard:worldguard-bukkit", version.ref = "worldguard" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }

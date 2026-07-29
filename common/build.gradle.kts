@@ -5,6 +5,8 @@ plugins {
 dependencies {
     compileOnly(libs.guava)
     compileOnly(libs.gson)
+    compileOnly(libs.slf4j)
+    compileOnly(libs.log4j)
 }
 
 tasks.withType<Jar>().configureEach {

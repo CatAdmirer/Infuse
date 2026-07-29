@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":api"))
+    compileOnly(project(":common"))
 
     compileOnly(libs.placeholderapi)
     compileOnly(libs.worldguard)

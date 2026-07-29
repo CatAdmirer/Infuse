@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.commands.*;
 import com.catadmirer.infuseSMP.bukkit.effects.*;
@@ -30,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfusePlugin extends JavaPlugin {
-    public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
-
     private final DataManager dataManager;
     private final EffectManager effectManager;
     private final MainConfig mainConfig;
@@ -59,10 +58,10 @@ public class InfusePlugin extends JavaPlugin {
 
         if (RegionBlocker.canUseWG()) {
             RegionBlocker.setInstance(new DualRegionBlocker());
-            LOGGER.info("WorldGuard found!  Enabling region-based effect management.");
+            Infuse.LOGGER.info("WorldGuard found!  Enabling region-based effect management.");
         } else {
             RegionBlocker.setInstance(new BasicRegionBlocker());
-            LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
+            Infuse.LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
         }
     }
 
@@ -98,13 +97,13 @@ public class InfusePlugin extends JavaPlugin {
         // Registering the PlaceholderAPI listener if the plugin is installed
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new InfusePlaceholders(this).register();
-            LOGGER.info("Placeholders Enabled!");
+            Infuse.LOGGER.info("Placeholders Enabled!");
         } else {
-            LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
+            Infuse.LOGGER.warn("PlaceholderAPI is not installed, so custom placeholders won't work.");
         }
 
         // Logging the success message
-        LOGGER.info("Infuse Plugin has been enabled!");
+        Infuse.LOGGER.info("Infuse Plugin has been enabled!");
     }
 
     public MainConfig getMainConfig() {
@@ -174,13 +173,13 @@ public class InfusePlugin extends JavaPlugin {
         loop.stop();
 
         // Sending the log message
-        LOGGER.info("Infuse Plugin is disabling...");
+        Infuse.LOGGER.info("Infuse Plugin is disabling...");
 
         // Removing ritual beams
         EffectCraftManager.removeBeam();
 
         // Finalizing the message
-        LOGGER.info("Infuse Plugin has been disabled!");
+        Infuse.LOGGER.info("Infuse Plugin has been disabled!");
     }
 
     private void registerEvents() {
@@ -265,7 +264,7 @@ public class InfusePlugin extends JavaPlugin {
 
             // Handling http error codes
             if (response.statusCode() != 200) {
-                LOGGER.warn("Recieved error code {} from api.modrinth.com", response.statusCode());
+                Infuse.LOGGER.warn("Recieved error code {} from api.modrinth.com", response.statusCode());
                 return null;
             }
 
@@ -275,18 +274,18 @@ public class InfusePlugin extends JavaPlugin {
 
             // If no versions are returned, defaulting to the current version
             if (versions.isEmpty()) {
-                LOGGER.warn("No versions published to modrinth, defaulting to current version");
+                Infuse.LOGGER.warn("No versions published to modrinth, defaulting to current version");
                 return getVersion();
             }
 
             JsonObject latestVersion = versions.get(0).getAsJsonObject();
             return latestVersion.get("verson_number").getAsString();
         } catch (JsonSyntaxException err) {
-            LOGGER.error("Could not parse the json given by modrinth.", err);
+            Infuse.LOGGER.error("Could not parse the json given by modrinth.", err);
         } catch (InterruptedException err) {
-            LOGGER.error("Version request was interrupted", err);
+            Infuse.LOGGER.error("Version request was interrupted", err);
         } catch (IOException err) {
-            LOGGER.error("Could not get versions from modrinth", err);
+            Infuse.LOGGER.error("Could not get versions from modrinth", err);
         }
 
         return null;
