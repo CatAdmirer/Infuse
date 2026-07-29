@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.effects;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.EffectConstants;
 import com.catadmirer.infuseSMP.bukkit.EffectIds;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
@@ -238,14 +239,14 @@ public class Frost extends InfuseEffect {
 
     @EventHandler
     public void onTenthAttack(TenHitEvent event) {
-        InfusePlugin.LOGGER.debug("[Frost] Recieved TenHitEvent");
-        InfusePlugin.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
-        InfusePlugin.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
 
-        InfusePlugin.LOGGER.debug("[Frost] Attacker has frost effect");
+        Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
 
         (new BukkitRunnable() {
             int ticksElapsed = 0;

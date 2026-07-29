@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.managers;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 import com.catadmirer.infuseSMP.bukkit.Message;
 import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
@@ -75,14 +76,14 @@ public class EffectCraftManager implements Listener {
             // Checking the response status code
             int status = response.statusCode();
             if (status == 200) {
-                InfusePlugin.LOGGER.info("Message sent to Discord!");
+                Infuse.LOGGER.info("Message sent to Discord!");
             } else {
-                InfusePlugin.LOGGER.info("Error sending message to Discord: " + status);
+                Infuse.LOGGER.info("Error sending message to Discord: " + status);
             }
         } catch (IOException err) {
-            InfusePlugin.LOGGER.error("Could not send webhook message to discord.", err);
+            Infuse.LOGGER.error("Could not send webhook message to discord.", err);
         } catch (InterruptedException err) {
-            InfusePlugin.LOGGER.error("Discord webhook request was interrupted!", err);
+            Infuse.LOGGER.error("Discord webhook request was interrupted!", err);
         }
     }
 

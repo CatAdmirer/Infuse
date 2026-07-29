@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.listeners;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.effects.Thunder;
@@ -42,12 +43,12 @@ public class HitTracker implements Listener {
         // Skipping the hit if the attacker trusts the target
         if (plugin.getDataManager().isTrusted(attacker, target)) return;
 
-        InfusePlugin.LOGGER.debug("{} has hit {}", attacker.getName(), target.getName());
+        Infuse.LOGGER.debug("{} has hit {}", attacker.getName(), target.getName());
 
         // Making sure it counts as a normal hit
         // Vanilla attack cooldown needs to be at 84.8% to be a normal hit.
         if (attacker.getAttackCooldown() < 0.85) {
-            InfusePlugin.LOGGER.debug("Hit ignored due to being under attack cooldown threshold.");
+            Infuse.LOGGER.debug("Hit ignored due to being under attack cooldown threshold.");
             return;
         }
 
@@ -60,13 +61,13 @@ public class HitTracker implements Listener {
             hits += 1;
         }
 
-        InfusePlugin.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), hits);
+        Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), hits);
 
         if (hits >= 10) {
             // Calling the TenHitEvent
             TenHitEvent tenHit = new TenHitEvent(attacker, target);
             tenHit.callEvent();
-            InfusePlugin.LOGGER.debug("Called TenHitEvent");
+            Infuse.LOGGER.debug("Called TenHitEvent");
 
             hitTracker.put(attacker.getUniqueId(), 0);
 
@@ -75,7 +76,7 @@ public class HitTracker implements Listener {
                 if (decayQueue.isEmpty()) continue;
                 decayQueue.remove();
             }
-            InfusePlugin.LOGGER.debug("Removed items from queue.");
+            Infuse.LOGGER.debug("Removed items from queue.");
             return;
         }
 
@@ -86,15 +87,15 @@ public class HitTracker implements Listener {
         int hitCounterDecaySeconds = plugin.getMainConfig().hitCounterDecaySeconds();
         if (hitCounterDecaySeconds < 1) return;
 
-        InfusePlugin.LOGGER.debug("Adding item to decay queue");
+        Infuse.LOGGER.debug("Adding item to decay queue");
         decayQueue.add(() -> {
             // Skipping if the attacker has left the game
             if (!attacker.isConnected()) return;
 
-            InfusePlugin.LOGGER.debug("Decrementing hit counter");
+            Infuse.LOGGER.debug("Decrementing hit counter");
             int curHits = hitTracker.get(attacker.getUniqueId());
 
-            InfusePlugin.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
+            Infuse.LOGGER.debug("{}'s hit counter is {}.", attacker.getName(), curHits - 1);
             hitTracker.put(attacker.getUniqueId(), curHits - 1);
         });
 

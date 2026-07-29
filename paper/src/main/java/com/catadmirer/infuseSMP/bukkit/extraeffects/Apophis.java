@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.extraeffects;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.EffectConstants;
 import com.catadmirer.infuseSMP.bukkit.EffectIds;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
@@ -308,7 +309,7 @@ public class Apophis extends InfuseEffect {
             writer.flush();
             writer.close();
         } catch (IOException err) {
-            InfusePlugin.LOGGER.error("Failed to write to {}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
+            Infuse.LOGGER.error("Failed to write to {}.  Make sure it can be created and edited by the user running the server.", disguiseFile.getPath());
         }
     }
 
@@ -487,18 +488,18 @@ public class Apophis extends InfuseEffect {
 
     @EventHandler
     public void enchantHeldItem(PlayerItemHeldEvent event) {
-        InfusePlugin.LOGGER.debug("[Apophis] PlayerItemHeldEvent triggered");
+        Infuse.LOGGER.debug("[Apophis] PlayerItemHeldEvent triggered");
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
-        InfusePlugin.LOGGER.debug("[Apophis] PlayerItemHeldEvent is for an apophis user");
+        Infuse.LOGGER.debug("[Apophis] PlayerItemHeldEvent is for an apophis user");
 
         ItemStack item = player.getInventory().getItem(event.getNewSlot());
         if (!ItemUtil.isSword(item)) return;
 
-        InfusePlugin.LOGGER.debug("[Apophis] Apophis user is holding a sword.  Enchanting with looting.");
+        Infuse.LOGGER.debug("[Apophis] Apophis user is holding a sword.  Enchanting with looting.");
 
         ItemUtil.applySpecialEnchantment(item, LOOTING_KEY, Enchantment.LOOTING, plugin.getMainConfig().apophisLootingLevel());
     }
@@ -521,16 +522,16 @@ public class Apophis extends InfuseEffect {
 
     @EventHandler
     public void tenHitEvent(TenHitEvent event) {
-        InfusePlugin.LOGGER.debug("[Apophis] Received TenHitEvent");
-        InfusePlugin.LOGGER.debug("[Apophis] Attacker: {}", event.getAttacker().getName());
-        InfusePlugin.LOGGER.debug("[Apophis] Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Apophis] Received TenHitEvent");
+        Infuse.LOGGER.debug("[Apophis] Attacker: {}", event.getAttacker().getName());
+        Infuse.LOGGER.debug("[Apophis] Target: {}", event.getTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
 
-        InfusePlugin.LOGGER.debug("[Apophis] Target has apophis effect");
-        InfusePlugin.LOGGER.debug("[Apophis] Locking attacker's food and Exp");
+        Infuse.LOGGER.debug("[Apophis] Target has apophis effect");
+        Infuse.LOGGER.debug("[Apophis] Locking attacker's food and Exp");
 
         new FoodAndExpLock(plugin, event.getAttacker(), plugin.getMainConfig().apophisLockDurationSeconds());
     }
@@ -627,9 +628,9 @@ public class Apophis extends InfuseEffect {
                 }
                 getEnchantmentList.setAccessible(false);
             } catch (NoSuchMethodException e) {
-                InfusePlugin.LOGGER.error("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
+                Infuse.LOGGER.error("Could not find the \"getEnchantmentList\" method in the EnchantmentMenu class");
             } catch (Exception e) {
-                InfusePlugin.LOGGER.error("Error while calculating enchantments:", e);
+                Infuse.LOGGER.error("Error while calculating enchantments:", e);
             }
         }
     }

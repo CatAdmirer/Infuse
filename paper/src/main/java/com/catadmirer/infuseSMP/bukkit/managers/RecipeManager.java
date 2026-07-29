@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.bukkit.managers;
 
 import java.io.File;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.effects.Ender;
 import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.Bukkit;
@@ -73,7 +74,7 @@ public class RecipeManager {
 
             String materialName = ingredientsConfig.getString(key);
             if (materialName == null) {
-                InfusePlugin.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
+                Infuse.LOGGER.error("The infuse effect '%s' has failed to register its recipe, A ingredient has not be defined properly.".formatted(baseKey));
             }
 
             Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());

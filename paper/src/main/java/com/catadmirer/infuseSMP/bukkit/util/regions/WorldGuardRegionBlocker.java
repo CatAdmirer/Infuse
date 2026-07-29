@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.util.regions;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.util.EffectFlag;
@@ -37,11 +38,11 @@ public class WorldGuardRegionBlocker extends RegionBlocker {
                 try {
                     registry.register(flag);
                 } catch (FlagConflictException err) {
-                    InfusePlugin.LOGGER.warn("Another plugin has already registered the flag \"{}\".  Cannot register the flag.", flag.getName());
+                    Infuse.LOGGER.warn("Another plugin has already registered the flag \"{}\".  Cannot register the flag.", flag.getName());
                 }
             });
 
-        InfusePlugin.LOGGER.info("[InfusePlugin] Successfully hooked into WorldGuard and registered the custom flags.");
+        Infuse.LOGGER.info("[InfusePlugin] Successfully hooked into WorldGuard and registered the custom flags.");
     }
 
     @Override

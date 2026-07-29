@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.effects;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 import com.catadmirer.infuseSMP.bukkit.Message;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -48,13 +49,13 @@ public abstract class InfuseEffect implements Listener {
 
     public static boolean register(InfuseEffect effect) {
         if (effect.id > 100) {
-            InfusePlugin.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
+            Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
             return false;
         }
 
         InfuseEffect existing = REGISTERED_EFFECTS.get(effect.id);
         if (existing != null) {
-            InfusePlugin.LOGGER.warn("Effect id {} has already been taken by {}.  Cannot assign it to {}.", effect.id, existing.key, effect.key);
+            Infuse.LOGGER.warn("Effect id {} has already been taken by {}.  Cannot assign it to {}.", effect.id, existing.key, effect.key);
             return false;
         }
 
@@ -141,7 +142,7 @@ public abstract class InfuseEffect implements Listener {
             return augmented ? effect.getAugmentedVersion() : effect.getRegularVersion();
         }
 
-        InfusePlugin.LOGGER.warn("No effect found for string '{}'.", key);
+        Infuse.LOGGER.warn("No effect found for string '{}'.", key);
         return null;
     }
 
@@ -209,7 +210,7 @@ public abstract class InfuseEffect implements Listener {
      */
     public static InfuseEffect deserialize(int serialized) {
         if (!REGISTERED_EFFECTS.containsKey(serialized % 100)) {
-            InfusePlugin.LOGGER.warn("Could not find an effect registered to id {}", serialized % 100);
+            Infuse.LOGGER.warn("Could not find an effect registered to id {}", serialized % 100);
             return null;
         }
 

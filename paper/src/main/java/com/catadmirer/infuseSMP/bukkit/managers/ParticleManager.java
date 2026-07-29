@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.managers;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.EffectIds;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
 import com.catadmirer.infuseSMP.bukkit.effects.Ender;
@@ -62,7 +63,7 @@ public class ParticleManager {
 
     public static void drawLine(Location start, Location end, int count, DustOptions dustOptions) {
         if (!start.getWorld().equals(end.getWorld())) {
-            InfusePlugin.LOGGER.debug("Cannot draw lines between two worlds!");
+            Infuse.LOGGER.debug("Cannot draw lines between two worlds!");
             return;
         }
 

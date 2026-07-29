@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit;
 
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -36,12 +37,12 @@ public class MainConfig {
         // Loading the config
         try {
             config.load(file);
-            InfusePlugin.LOGGER.info("Successfully loaded {}", file.getName());
+            Infuse.LOGGER.info("Successfully loaded {}", file.getName());
             return true;
         } catch (InvalidConfigurationException e) {
-            InfusePlugin.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
+            Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
-            InfusePlugin.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
+            Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName());
             e.printStackTrace();
         }
 
@@ -66,10 +67,10 @@ public class MainConfig {
         // Saving the config
         try {
             config.save(file);
-            InfusePlugin.LOGGER.info("Saved {}", file.getName());
+            Infuse.LOGGER.info("Saved {}", file.getName());
             return true;
         } catch (IOException e) {
-            InfusePlugin.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
+            Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
         }
 
         return false;
@@ -158,8 +159,8 @@ public class MainConfig {
         List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
 
         if (craftLimits.size() != 2) {
-            InfusePlugin.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
-            InfusePlugin.LOGGER.error("Returning default limits");
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
+            Infuse.LOGGER.error("Returning default limits");
 
             return effect.isAugmented() ? 1 : 3;
         }

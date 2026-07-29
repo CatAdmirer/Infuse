@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit;
 
+import com.catadmirer.infuseSMP.Infuse;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jspecify.annotations.NullMarked;
@@ -21,7 +22,7 @@ public class MessageTranslator {
 
         // Defaulting to the en_US locale
         if (!SUPPORTED_LOCALES.contains(locale)) {
-            InfusePlugin.LOGGER.warn("Locale \"{}\" not recognized.  Falling back to en_US.", locale);
+            Infuse.LOGGER.warn("Locale \"{}\" not recognized.  Falling back to en_US.", locale);
             locale = "en_US";
         }
 
