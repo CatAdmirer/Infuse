@@ -1,5 +1,13 @@
 package com.catadmirer.infuseSMP;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,30 +15,33 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-public class Infuse {
-    private static final Infuse instance = new Infuse();
+public abstract class Infuse {
     public static final Logger LOGGER = LoggerFactory.getLogger("Infuse");
 
+    private static Infuse instance;
+
     public static Infuse getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Infuse has not been loaded yet.  This is likely a plugin issue, so please make a ticket on github.");
+        }
+
         return instance;
     }
 
-    private Infuse() {}
+    public static void setInstance(Infuse instance) {
+        if (Infuse.instance != null) {
+            throw new IllegalStateException("Infuse has already been loaded.  Don't try loading it twice.");
+        }
 
-    public String getVersion() {
-        return BuildParameters.VERSION;
+        Infuse.instance = instance;
     }
 
+    public abstract File infuseDir();
+
+    public abstract String getVersion();
+
     /** Checks the modrinth api for any updates to the plugin. */
-    private String getLatestVersion() {
+    public String getLatestVersion() {
         HttpRequest request = HttpRequest.newBuilder()
             .GET()
             .header("User-Agent", "Infuse/" + getVersion())
