@@ -7,14 +7,6 @@ import com.catadmirer.infuseSMP.platform.Player;
 import java.awt.Color;
 
 public interface InfuseEffect {
-    // public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor) {
-    //     this.key = key;
-    //     this.id = id;
-    //     this.augmented = augmented;
-    //     this.potionColor = potionColor;
-    //     this.ritualColor = ritualColor;
-    // }
-
     public int id();
     public String plainKey();
     public String key();
