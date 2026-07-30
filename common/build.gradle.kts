@@ -13,6 +13,7 @@ dependencies {
     compileOnly(libs.slf4j)
     compileOnly(libs.log4j)
     compileOnly(libs.jetbrains.annotations)
+    compileOnly(libs.adventure)
 }
 
 tasks.withType<Jar>().configureEach {
