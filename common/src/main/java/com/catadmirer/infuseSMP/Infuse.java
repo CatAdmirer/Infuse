@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ public abstract class Infuse {
 
     private static Infuse instance;
 
+    @NonNull
     public static Infuse getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Infuse has not been loaded yet.  This is likely a plugin issue, so please make a ticket on github.");
@@ -39,6 +41,8 @@ public abstract class Infuse {
     public abstract File infuseDir();
 
     public abstract String getVersion();
+
+    public abstract String getLocale();
 
     /** Checks the modrinth api for any updates to the plugin. */
     public String getLatestVersion() {

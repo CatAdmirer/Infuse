@@ -1,10 +1,10 @@
 package com.catadmirer.infuseSMP.bukkit;
 
 import com.catadmirer.infuseSMP.bukkit.effects.Heart;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.bukkit.managers.ParticleManager;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;

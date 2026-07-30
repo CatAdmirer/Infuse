@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.bukkit;
+package com.catadmirer.infuseSMP;
 
 import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
@@ -12,12 +12,11 @@ public class Message {
     // Text serializers
     public static final MiniMessage mm = MiniMessage.miniMessage();
 
-    private static final MessageTranslator translator = new MessageTranslator();
-
     private String message;
     private final List<String> placeholders;
 
     public Message(MessageType messageType) {
+        MessageTranslator translator = new MessageTranslator();
         this.message = translator.translate(messageType.name().toLowerCase());
         this.placeholders = new ArrayList<>(messageType.placeholders);
     }
@@ -42,8 +41,8 @@ public class Message {
         }
 
         return Stream.of(message.split("\n"))
-            .map(e -> "<i:false>" + e)
-            .map(mm::deserialize).toList();
+                .map(e -> "<i:false>" + e)
+                .map(mm::deserialize).toList();
     }
 
     public Component toComponent() {

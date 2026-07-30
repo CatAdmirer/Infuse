@@ -1,16 +1,15 @@
 package com.catadmirer.infuseSMP.bukkit.extraeffects;
 
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.bukkit.EffectConstants;
-import com.catadmirer.infuseSMP.bukkit.EffectIds;
-import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.bukkit.effects.Emerald.FoodAndExpLock;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.events.TenHitEvent;
-import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
 import com.catadmirer.infuseSMP.bukkit.util.ItemUtil;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
@@ -195,7 +194,7 @@ public class Apophis extends InfuseEffect {
     }
 
     @Override
-    public Message getLore() {
+    public Message lore() {
         return new Message(augmented ? Message.MessageType.AUG_APOPHIS_LORE : Message.MessageType.APOPHIS_LORE);
     }
 
@@ -547,7 +546,7 @@ public class Apophis extends InfuseEffect {
         int amount = orb.getExperience();
 
         double multiplier = plugin.getMainConfig().apophisXpMultiplierStandard();
-        if (CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) {
+        if (CooldownManager.isEffectActive(player.getUniqueId(), plainKey())) {
             multiplier = plugin.getMainConfig().apophisXpMultiplierSpark();
         }
 
@@ -673,7 +672,7 @@ public class Apophis extends InfuseEffect {
 
         // Getting the chance for the item to not be consumed
         double chance = 0.5;
-        if (CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) chance = 0.75;
+        if (CooldownManager.isEffectActive(player.getUniqueId(), plainKey())) chance = 0.75;
 
         // Rolling the dice
         if (Math.random() > chance) return;
@@ -690,7 +689,7 @@ public class Apophis extends InfuseEffect {
     @EventHandler
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        if (!CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) return;
+        if (!CooldownManager.isEffectActive(player.getUniqueId(), plainKey())) return;
         if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         for (OfflinePlayer trusted : plugin.getDataManager().getTrusted(player)) {

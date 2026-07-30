@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.bukkit.inventories;
 
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
 import com.catadmirer.infuseSMP.bukkit.effects.*;
 import com.catadmirer.infuseSMP.bukkit.extraeffects.*;
 import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;

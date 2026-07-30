@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.bukkit.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -99,11 +99,11 @@ public class DataManager {
     }
 
     public int getExistingCount(InfuseEffect effect) {
-        return config.getInt("existing-effects." + effect.getPlainKey(), 0);
+        return config.getInt("existing-effects." + effect.plainKey(), 0);
     }
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
-        config.set("existing-effects." + effect.getPlainKey(), crafted);
+        config.set("existing-effects." + effect.plainKey(), crafted);
 
         save();
     }
@@ -180,7 +180,7 @@ public class DataManager {
             return effect.equals(equippedEffect);
         }
 
-        return effect.getId() == equippedEffect.getId();
+        return effect.id() == equippedEffect.id();
     }
 
     public void removeEffect(UUID playerUUID, String slot) {

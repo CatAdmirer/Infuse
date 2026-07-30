@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class DualRegionBlocker extends RegionBlocker {
     private final BasicRegionBlocker basic = new BasicRegionBlocker();

@@ -1,9 +1,9 @@
 package com.catadmirer.infuseSMP.bukkit.commands;
 
 import com.catadmirer.infuseSMP.bukkit.inventories.EffectChooser;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

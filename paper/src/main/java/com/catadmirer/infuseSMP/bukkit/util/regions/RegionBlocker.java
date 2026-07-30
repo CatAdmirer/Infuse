@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.bukkit.util.regions;
 
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
-
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

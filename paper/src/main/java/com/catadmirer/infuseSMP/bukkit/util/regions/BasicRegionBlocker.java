@@ -10,7 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 public class BasicRegionBlocker extends RegionBlocker {
     @Override
@@ -50,7 +50,7 @@ public class BasicRegionBlocker extends RegionBlocker {
             .filter(e -> {
                 List<NamespacedKey> worlds = InfusePlugin.getInstance().getMainConfig().getBlacklistedWorlds(e);
 
-                return worlds.contains(loc.getWorld().getKey());
+                return worlds.contains(loc.getWorld().key());
             })
             .collect(Collectors.toSet());
     }

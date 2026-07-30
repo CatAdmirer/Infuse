@@ -1,9 +1,8 @@
 package com.catadmirer.infuseSMP.bukkit.util.regions;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.util.EffectFlag;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -98,7 +97,7 @@ public class WorldGuardRegionBlocker extends RegionBlocker {
 
     private boolean isEffectBlocked(Location loc, RegionAssociable assoc, InfuseEffect effect) {
         return getBlockedEffects(loc, assoc).stream()
-            .filter(e -> e.getId() == effect.getId())
+            .filter(e -> e.id() == effect.id())
             .findAny()
             .isPresent();
     }

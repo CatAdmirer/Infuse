@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.effects.Ender;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -58,11 +58,11 @@ public class RecipeManager {
     }
 
     public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
+        return recipesConfig.getBoolean(mapping.plainKey() + ".enabled", false);
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getPlainKey();
+        String baseKey = mapping.plainKey();
         NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
 
@@ -105,7 +105,7 @@ public class RecipeManager {
     }
 
     public NamespacedKey getRecipeKey(InfuseEffect effect) {
-        return new NamespacedKey(plugin, effect.getPlainKey());
+        return new NamespacedKey(plugin, effect.plainKey());
     }
 
     /**
@@ -122,7 +122,7 @@ public class RecipeManager {
         // The returned EffectMapping should always be the regular form
         InfuseEffect effect = InfuseEffect.fromItem(item);
         if (effect == null) return null;
-        if (effect.isAugmented()) return null;
+        if (effect.augmented()) return null;
 
         // Checking if the augmented limit has been reached
         InfuseEffect augEffect = effect.getAugmentedVersion();

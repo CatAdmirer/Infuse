@@ -1,8 +1,8 @@
 package com.catadmirer.infuseSMP.bukkit.inventories;
 
 import com.catadmirer.infuseSMP.bukkit.commands.Recipes;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.util.InventoryUtils;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
@@ -21,7 +21,7 @@ public class RecipeListGUI implements InventoryHolder {
 
         int i = 0;
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (effect.isAugmented()) continue;
+            if (effect.augmented()) continue;
 
             ItemStack potion = Recipes.createPotionWithModifiedLore(effect);
             inventory.setItem(customSlots[i], potion);

@@ -1,12 +1,12 @@
 package com.catadmirer.infuseSMP.bukkit.extraeffects;
 
-import com.catadmirer.infuseSMP.bukkit.EffectConstants;
-import com.catadmirer.infuseSMP.bukkit.EffectIds;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -91,7 +91,7 @@ public class Thief extends InfuseEffect {
     }
 
     @Override
-    public Message getLore() {
+    public Message lore() {
         return new Message(augmented ? MessageType.AUG_THIEF_LORE : MessageType.THIEF_LORE);
     }
 
@@ -107,8 +107,8 @@ public class Thief extends InfuseEffect {
         UUID playerUUID = player.getUniqueId();
 
         // Removing cooldowns from the stolen spark
-        CooldownManager.clearSpecificCooldown(playerUUID, effect.getPlainKey());
-        CooldownManager.clearSpecificDuration(playerUUID, effect.getPlainKey());
+        CooldownManager.clearSpecificCooldown(playerUUID, effect.plainKey());
+        CooldownManager.clearSpecificDuration(playerUUID, effect.plainKey());
 
         // Applying cooldowns for the thief effect
         long cooldown = plugin.getMainConfig().cooldown(effect);

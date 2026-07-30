@@ -1,12 +1,11 @@
 package com.catadmirer.infuseSMP.bukkit.listeners;
 
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 
 public class PlayerQuitListener implements Listener {
     private final InfusePlugin plugin;

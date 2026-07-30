@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.bukkit.managers;
+package com.catadmirer.infuseSMP.managers;
 
 import java.util.Map;
 import java.util.UUID;

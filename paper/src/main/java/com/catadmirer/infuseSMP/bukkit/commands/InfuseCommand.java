@@ -1,12 +1,12 @@
 package com.catadmirer.infuseSMP.bukkit.commands;
 
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
-import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +94,7 @@ public class InfuseCommand implements CommandExecutor, TabCompleter {
                 target.getInventory().addItem(effect.createItem());
 
                 msg = new Message(MessageType.INFUSE_GIVEEFFECT_SUCCESS);
-                msg.applyPlaceholder("effect_color", "<#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xffffff) + ">");
+                msg.applyPlaceholder("effect_color", "<#" + Integer.toHexString(effect.potionColor().getRGB() & 0xffffff) + ">");
                 msg.applyPlaceholder("effect_name", effect.getName());
                 target.sendMessage(msg.toComponent());
                 break;

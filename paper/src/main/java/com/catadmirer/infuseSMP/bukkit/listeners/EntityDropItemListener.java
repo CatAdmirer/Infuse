@@ -1,14 +1,13 @@
 package com.catadmirer.infuseSMP.bukkit.listeners;
 
+import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
+import com.catadmirer.infuseSMP.bukkit.managers.ParticleManager;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.ItemStack;
-
-import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.bukkit.managers.ParticleManager;
 
 public class EntityDropItemListener implements Listener {
     private final InfusePlugin plugin;

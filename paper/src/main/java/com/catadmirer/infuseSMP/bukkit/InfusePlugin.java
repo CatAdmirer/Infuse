@@ -1,7 +1,9 @@
 package com.catadmirer.infuseSMP.bukkit;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.MessageTranslator;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.commands.*;
 import com.catadmirer.infuseSMP.bukkit.effects.*;
 import com.catadmirer.infuseSMP.bukkit.extraeffects.*;
@@ -11,6 +13,7 @@ import com.catadmirer.infuseSMP.bukkit.placeholders.InfusePlaceholders;
 import com.catadmirer.infuseSMP.bukkit.util.regions.BasicRegionBlocker;
 import com.catadmirer.infuseSMP.bukkit.util.regions.DualRegionBlocker;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -27,8 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InfusePlugin extends JavaPlugin {
     private final DataManager dataManager;

@@ -1,11 +1,11 @@
 package com.catadmirer.infuseSMP.bukkit.managers;
 
 import com.catadmirer.infuseSMP.Infuse;
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.inventories.StationSelectionMenu;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -124,7 +124,7 @@ public class EffectCraftManager implements Listener {
         plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
 
         // If the effect is not augmented, just craft it
-        if (!effect.isAugmented())  {
+        if (!effect.augmented())  {
             // Announcing the effect being crafted if the config is enabled
             if (!plugin.getMainConfig().regularBroadcast()) return;
 
@@ -170,7 +170,7 @@ public class EffectCraftManager implements Listener {
         // Creating the bossbar
         Component itemName = effect.getName().toComponent();
         Component bossbarName = Component.text("🧪 ").append(itemName.decorate(TextDecoration.BOLD)).append(Component.text(" 🧪").decoration(TextDecoration.BOLD, false)).color(itemName.color());
-        ritualBossBar = BossBar.bossBar(bossbarName, 1, effect.getRitualColor(), BossBar.Overlay.PROGRESS);
+        ritualBossBar = BossBar.bossBar(bossbarName, 1, effect.ritualColor(), BossBar.Overlay.PROGRESS);
 
         // Adding every player online to the bossbar
         for (Player p : Bukkit.getOnlinePlayers()) {

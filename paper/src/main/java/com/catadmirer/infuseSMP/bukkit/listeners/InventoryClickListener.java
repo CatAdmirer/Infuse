@@ -1,14 +1,13 @@
 package com.catadmirer.infuseSMP.bukkit.listeners;
 
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.inventories.AugOrRegChooser;
 import com.catadmirer.infuseSMP.bukkit.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.bukkit.inventories.RecipeGUI;
 import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
-
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;

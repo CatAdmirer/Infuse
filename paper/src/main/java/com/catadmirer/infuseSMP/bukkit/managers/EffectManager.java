@@ -1,12 +1,12 @@
 package com.catadmirer.infuseSMP.bukkit.managers;
 
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.bukkit.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;

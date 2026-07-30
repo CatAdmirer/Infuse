@@ -1,12 +1,11 @@
 package com.catadmirer.infuseSMP.bukkit.listeners;
 
+import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.Message.MessageType;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.managers.EffectCraftManager;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
-
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

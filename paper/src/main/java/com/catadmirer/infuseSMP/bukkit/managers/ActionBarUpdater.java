@@ -1,8 +1,10 @@
 package com.catadmirer.infuseSMP.bukkit.managers;
 
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.util.MessageUtil;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
+
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -40,12 +42,12 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect != null) {
                 leftEmoji = effect.getIcon() + "\ue904";
 
-                key = effect.getPlainKey();
+                key = effect.plainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     leftEmoji = String.valueOf(effect.getActiveIcon());
 
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    leftTime = "<#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
+                    leftTime = "<#" + Integer.toHexString(effect.potionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
                     rightPad = getSpaceTimeStr(mm.stripTags(leftTime));
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
@@ -59,12 +61,12 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect != null) {
                 rightEmoji = effect.getIcon() + "\ue904";
 
-                key = effect.getPlainKey();
+                key = effect.plainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     rightEmoji = String.valueOf(effect.getActiveIcon());
 
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    rightTime = "<#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
+                    rightTime = "<#" + Integer.toHexString(effect.potionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft);
                     leftPad = getSpaceTimeStr(mm.stripTags(rightTime));
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
@@ -98,10 +100,10 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect == null) {
                 lSide = " " + placeholder + "\ue904";
             } else {
-                key = effect.getPlainKey();
+                key = effect.plainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    lSide = "<b><#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft) + "</b><white> \ue905" + effect.getActiveIcon();
+                    lSide = "<b><#" + Integer.toHexString(effect.potionColor().getRGB() & 0xFFFFFF) + ">" + MessageUtil.formatTime(timeLeft) + "</b><white> \ue905" + effect.getActiveIcon();
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
                     lSide = "<b><white>" + MessageUtil.formatTime(timeLeft) + "</b> " + effect.getIcon() + "\ue904";
@@ -116,10 +118,10 @@ public class ActionBarUpdater extends BukkitRunnable {
             if (effect == null) {
                 rSide = "<white>" + placeholder + "\ue904 ";
             } else {
-                key = effect.getPlainKey();
+                key = effect.plainKey();
                 if (CooldownManager.isEffectActive(uuid, key)) {
                     long timeLeft = CooldownManager.getEffectTimeLeft(uuid, key) / 1000L;
-                    rSide = "<white>" + effect.getActiveIcon() + "\ue905 <#" + Integer.toHexString(effect.getPotionColor().getRGB() & 0xFFFFFF) + "><b>" + MessageUtil.formatTime(timeLeft) + "</b>";
+                    rSide = "<white>" + effect.getActiveIcon() + "\ue905 <#" + Integer.toHexString(effect.potionColor().getRGB() & 0xFFFFFF) + "><b>" + MessageUtil.formatTime(timeLeft) + "</b>";
                 } else if (CooldownManager.isOnCooldown(uuid, key)) {
                     long timeLeft = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000L;
                     rSide = "<white>" + effect.getIcon() + "\ue904 <b>" + MessageUtil.formatTime(timeLeft) + "</b>";

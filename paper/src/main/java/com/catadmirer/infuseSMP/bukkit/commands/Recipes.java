@@ -1,9 +1,9 @@
 package com.catadmirer.infuseSMP.bukkit.commands;
 
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.inventories.RecipeListGUI;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import org.bukkit.command.Command;
@@ -40,7 +40,7 @@ public class Recipes implements CommandExecutor {
      */
     public static ItemStack createPotionWithModifiedLore(InfuseEffect effect) {
         // Only regular effects should be put here
-        if (effect.isAugmented()) return null;
+        if (effect.augmented()) return null;
 
         // Creating the potion from the effect
         ItemStack potionItem = effect.createItem();

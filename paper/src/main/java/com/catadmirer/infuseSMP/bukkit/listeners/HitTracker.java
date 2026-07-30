@@ -2,9 +2,9 @@ package com.catadmirer.infuseSMP.bukkit.listeners;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.bukkit.effects.Thunder;
 import com.catadmirer.infuseSMP.bukkit.events.TenHitEvent;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;

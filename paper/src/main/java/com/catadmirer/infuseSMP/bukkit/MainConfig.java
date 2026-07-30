@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.bukkit;
 
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.bukkit.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -77,7 +77,7 @@ public class MainConfig {
     }
 
     public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
-        return config.getStringList(effect.getPlainKey() + ".blacklisted-worlds")
+        return config.getStringList(effect.plainKey() + ".blacklisted-worlds")
             .stream()
             .filter(Objects::nonNull)
             .map(NamespacedKey::fromString)
@@ -156,16 +156,16 @@ public class MainConfig {
      * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
      */
     public int getCraftLimit(InfuseEffect effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.plainKey());
 
         if (craftLimits.size() != 2) {
-            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.plainKey());
             Infuse.LOGGER.error("Returning default limits");
 
-            return effect.isAugmented() ? 1 : 3;
+            return effect.augmented() ? 1 : 3;
         }
 
-        return craftLimits.get(effect.isAugmented() ? 0 : 1);
+        return craftLimits.get(effect.augmented() ? 0 : 1);
     }
 
     public double emeraldLockDurationSeconds() {
@@ -181,11 +181,11 @@ public class MainConfig {
     }
 
     public long cooldown(InfuseEffect effect) {
-        return config.getLong(effect.getPlainKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.plainKey() + ".cooldown." + (effect.augmented() ? "augmented" : "default"));
     }
 
     public long duration(InfuseEffect effect) {
-        return config.getLong(effect.getPlainKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+        return config.getLong(effect.plainKey() + ".duration." + (effect.augmented() ? "augmented" : "default"));
     }
 
     public int speedDashMultiplier() {

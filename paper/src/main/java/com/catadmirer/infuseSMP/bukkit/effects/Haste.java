@@ -1,14 +1,14 @@
 package com.catadmirer.infuseSMP.bukkit.effects;
 
+import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.bukkit.EffectConstants;
-import com.catadmirer.infuseSMP.bukkit.EffectIds;
-import com.catadmirer.infuseSMP.bukkit.InfusePlugin;
-import com.catadmirer.infuseSMP.bukkit.Message;
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.bukkit.events.EffectUnequipEvent;
-import com.catadmirer.infuseSMP.bukkit.managers.CooldownManager;
 import com.catadmirer.infuseSMP.bukkit.util.ItemUtil;
 import com.catadmirer.infuseSMP.bukkit.util.regions.RegionBlocker;
+import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -98,7 +98,7 @@ public class Haste extends InfuseEffect {
     }
 
     @Override
-    public Message getLore() {
+    public Message lore() {
         return new Message(augmented ? Message.MessageType.AUG_HASTE_LORE : Message.MessageType.HASTE_LORE);
     }
 
