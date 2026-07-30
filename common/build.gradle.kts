@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.log4j)
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.adventure)
+    compileOnly(libs.snakeyaml)
 }
 
 tasks.withType<Jar>().configureEach {
