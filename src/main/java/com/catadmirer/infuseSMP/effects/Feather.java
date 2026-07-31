@@ -6,7 +6,7 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
-import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -54,7 +54,7 @@ public class Feather extends InfuseEffect {
 
         if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
         if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
         ParticleManager.spawnEffectCloud(owner, Color.fromRGB(0xBEA3CA));
@@ -104,7 +104,7 @@ public class Feather extends InfuseEffect {
 
         if (!player.isOnGround()) return;
         if (!CooldownManager.isEffectActive(player.getUniqueId(), "feathermace")) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         CooldownManager.setDuration(player.getUniqueId(), "feathermace", 0L);
         Location loc = player.getLocation();
@@ -112,7 +112,7 @@ public class Feather extends InfuseEffect {
 
         for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof LivingEntity target)) continue;
-            if (!RegionBlocker.getInstance().isEffectAllowed(target, this)) continue;
+            if (RegionBlocker.getInstance().isEffectBlocked(target, this)) continue;
             if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
             if (target instanceof Player targetPlayer && plugin.getDataManager().isTrusted(player, targetPlayer)) continue;
 
@@ -145,7 +145,7 @@ public class Feather extends InfuseEffect {
         Player target = event.getAttacker();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
         Location chargeLocation = player.getLocation().add(0, 1, 0);
@@ -162,7 +162,7 @@ public class Feather extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         event.setCancelled(true);
     }
@@ -171,7 +171,7 @@ public class Feather extends InfuseEffect {
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(player, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType() != Material.WIND_CHARGE) return;
@@ -197,7 +197,7 @@ public class Feather extends InfuseEffect {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(attacker, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
         double fallDistance = attacker.getFallDistance();
         if (fallDistance < 7) return;

@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.commands;
 
+import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -39,7 +40,7 @@ public class DrawCommand {
         try {
             start = loc1.resolve(ctx.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException err) {
-            sender.sendMessage(err.componentMessage());
+            sender.sendMessage(Message.mcs.deserialize(err.getRawMessage()));
             return 1;
         }
         
@@ -47,7 +48,7 @@ public class DrawCommand {
         try {
             end = loc2.resolve(ctx.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException err) {
-            sender.sendMessage(err.componentMessage());
+            sender.sendMessage(Message.mcs.deserialize(err.getRawMessage()));
             return 1;
         }
 

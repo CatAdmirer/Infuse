@@ -1,4 +1,4 @@
-package com.catadmirer.infuseSMP.util;
+package com.catadmirer.infuseSMP.util.regions;
 
 import java.util.List;
 import java.util.Set;
@@ -32,44 +32,44 @@ public class BasicRegionBlocker extends RegionBlocker {
     }
 
     @Override
-    public Set<InfuseEffect> getAllowedEffects(Entity entity) {
-        return getAllowedEffects(entity.getLocation());
+    public Set<InfuseEffect> getBlockedEffects(Entity entity) {
+        return getBlockedEffects(entity.getLocation());
         
     }
 
     @Override
-    public Set<InfuseEffect> getAllowedEffects(Player player) {
-        return getAllowedEffects(player.getLocation());
+    public Set<InfuseEffect> getBlockedEffects(Player player) {
+        return getBlockedEffects(player.getLocation());
     }
 
     @Override
-    public Set<InfuseEffect> getAllowedEffects(Location loc) {
+    public Set<InfuseEffect> getBlockedEffects(Location loc) {
         return InfuseEffect.getRegisteredEffects()
             .values()
             .stream()
             .filter(e -> {
                 List<NamespacedKey> worlds = Infuse.getInstance().getMainConfig().getBlacklistedWorlds(e);
 
-                return !worlds.contains(loc.getWorld().getKey());
+                return worlds.contains(loc.getWorld().getKey());
             })
             .collect(Collectors.toSet());
     }
 
     @Override
-    public boolean isEffectAllowed(Entity entity, InfuseEffect effect) {
-        return isEffectAllowed(entity.getLocation(), effect);
+    public boolean isEffectBlocked(Entity entity, InfuseEffect effect) {
+        return isEffectBlocked(entity.getLocation(), effect);
     }
 
     @Override
-    public boolean isEffectAllowed(Player player, InfuseEffect effect) {
-        return isEffectAllowed(player.getLocation(), effect);
+    public boolean isEffectBlocked(Player player, InfuseEffect effect) {
+        return isEffectBlocked(player.getLocation(), effect);
     }
 
     @Override
-    public boolean isEffectAllowed(Location loc, InfuseEffect effect) {
+    public boolean isEffectBlocked(Location loc, InfuseEffect effect) {
         List<NamespacedKey> worlds = Infuse.getInstance().getMainConfig().getBlacklistedWorlds(effect);
 
-        return !worlds.contains(loc.getWorld().getKey());
+        return worlds.contains(loc.getWorld().getKey());
     }
     
 }

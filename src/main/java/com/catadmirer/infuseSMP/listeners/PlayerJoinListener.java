@@ -5,7 +5,8 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.EffectCraftManager;
-import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -60,10 +61,10 @@ public class PlayerJoinListener implements Listener {
 
         // Enabling each effect
         InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), "1");
-        if (effect != null && !RegionBlocker.getInstance().isEffectAllowed(player, effect)) effect.equip(player);
+        if (effect != null && !RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
 
         effect = plugin.getDataManager().getEffect(player.getUniqueId(), "2");
-        if (effect != null && !RegionBlocker.getInstance().isEffectAllowed(player, effect)) effect.equip(player);
+        if (effect != null && !RegionBlocker.getInstance().isEffectBlocked(player, effect)) effect.equip(player);
     }
 
     @EventHandler

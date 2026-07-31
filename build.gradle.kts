@@ -20,6 +20,8 @@ repositories {
 dependencies {
     compileOnly(libs.placeholderapi)
     compileOnly(libs.worldguard)
+    compileOnly(libs.guava)
+    compileOnly(libs.gson)
 
     paperweight.paperDevBundle("${minecraftVersion}+")
 }

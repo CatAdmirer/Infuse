@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.EffectIds;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.RegionBlocker;
+import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -29,7 +29,7 @@ public class Ocean extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
         
         owner.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, -1, 0, false, false));
         owner.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, -1, 0, false, false));
@@ -44,7 +44,7 @@ public class Ocean extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         // Boosting the strength and damage of the passive drowning if the spark is active
-        if (!RegionBlocker.getInstance().isEffectAllowed(owner, this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         int drownStrength = plugin.getMainConfig().oceanPassiveDrownStrength();
         int drownDamage = plugin.getMainConfig().oceanPassiveDrownDamage();
@@ -56,7 +56,7 @@ public class Ocean extends InfuseEffect {
         // TODO: Make this use packets for air bubbles
         for (Player otherPlayer : owner.getWorld().getPlayers()) {
             if (otherPlayer.equals(owner)) continue;
-            if (!RegionBlocker.getInstance().isEffectAllowed(otherPlayer, this)) continue;
+            if (RegionBlocker.getInstance().isEffectBlocked(otherPlayer, this)) continue;
             if (otherPlayer.getLocation().distance(owner.getLocation()) > 5) continue;
 
             int newAir = Math.max(otherPlayer.getRemainingAir() - drownStrength, -20);
@@ -73,7 +73,7 @@ public class Ocean extends InfuseEffect {
 
         if (CooldownManager.isOnCooldown(playerUUID, "ocean")) return;
         if (!RegionBlocker.getInstance().canUseSpark(caster)) return;
-        if (!RegionBlocker.getInstance().isEffectAllowed(caster, Ocean.this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(caster, Ocean.this)) return;
 
         caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -128,7 +128,7 @@ public class Ocean extends InfuseEffect {
                     if (plugin.getDataManager().isTrusted(caster, p)) continue;
                     if (p.getLocation().distance(holderLoc) > radius) continue;
                     if (!RegionBlocker.getInstance().canBeTargetedBySpark(p)) continue;
-                    if (!RegionBlocker.getInstance().isEffectAllowed(p, Ocean.this)) continue;
+                    if (RegionBlocker.getInstance().isEffectBlocked(p, Ocean.this)) continue;
 
                     Vector direction = holderLoc.toVector().subtract(p.getLocation().toVector());
                     if (direction.lengthSquared() > 0.0001) {

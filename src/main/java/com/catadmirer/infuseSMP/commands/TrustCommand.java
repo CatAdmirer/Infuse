@@ -46,7 +46,7 @@ public class TrustCommand {
         try {
             targets = resolver.resolve(ctx.getSource());
         } catch (CommandSyntaxException err) {
-            sender.sendMessage(err.componentMessage());
+            sender.sendMessage(Message.mcs.deserialize(err.getRawMessage()));
             return 1;
         }
 
