@@ -1,6 +1,8 @@
 package com.catadmirer.infuseSMP;
 
 import java.util.stream.Stream;
+
+import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.TagPattern;
@@ -11,6 +13,7 @@ import java.util.List;
 public class Message {
     // Text serializers
     public static final MiniMessage mm = MiniMessage.miniMessage();
+    public static final MessageComponentSerializer mcs = MessageComponentSerializer.message();
 
     private static final MessageTranslator translator = new MessageTranslator();
 
@@ -103,6 +106,7 @@ public class Message {
         CONTROLS_INVALID_PARAM,
         INFUSE_INVALID_PARAM,
         INFUSE_INVALID_SLOT("slot"),
+        INFUSE_HELP,
         INFUSE_CONTROLS_USAGE,
         INFUSE_CONTROLS_SUCCESS("control_mode"),
         INFUSE_SETEFFECT_USAGE,

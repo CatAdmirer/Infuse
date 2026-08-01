@@ -7,6 +7,7 @@ import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -18,7 +19,9 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class InfuseEffect implements Listener {
@@ -44,6 +47,25 @@ public abstract class InfuseEffect implements Listener {
 
     public static boolean isRegistered(InfuseEffect effect) {
         return REGISTERED_EFFECTS.containsKey(effect.id);
+    }
+
+    public static boolean isRegistered(String key) {
+        if (key == null) return false;
+
+        // Checking if the effect is augmented
+        boolean augmented = key.startsWith("aug_");
+        if (augmented) {
+            key = key.substring(4);
+        }
+
+        // Searching for a matching registered effect
+        for (InfuseEffect effect : REGISTERED_EFFECTS.values()) {
+            if (!effect.getKey().equals(key)) continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean register(InfuseEffect effect) {
@@ -168,6 +190,31 @@ public abstract class InfuseEffect implements Listener {
         }
 
         return item;
+    }
+
+    @Nullable
+    public ItemStack createItemWithLimits() {
+        // Only regular effects should be put here
+        if (isAugmented()) return null;
+
+        // Creating the potion from the effect
+        ItemStack potionItem = createItem();
+
+        // Getting an instance of the plugin to read configs
+        Infuse plugin = Infuse.getInstance();
+        if (plugin == null) return null;
+
+        int augLeft = plugin.getMainConfig().getCraftLimit(getAugmentedVersion()) - plugin.getDataManager().getExistingCount(getAugmentedVersion());
+        int regLeft = plugin.getMainConfig().getCraftLimit(getRegularVersion()) - plugin.getDataManager().getExistingCount(getRegularVersion());
+
+        potionItem.editMeta(meta -> {
+            List<Component> lore = new ArrayList<>();
+            lore.add(Message.toComponent("<gray>Augmented Limit: <aqua>" + augLeft));
+            lore.add(Message.toComponent("<gray>Regular Limit: <aqua>" + regLeft));
+            meta.lore(lore);
+        });
+
+        return potionItem;
     }
 
     /**

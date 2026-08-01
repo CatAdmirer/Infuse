@@ -5,49 +5,45 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
-
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
-public class Abilities implements CommandExecutor {
+public class SparkCommand {
     private final Infuse plugin;
+    private final String slot;
 
-    public Abilities(Infuse plugin) {
-        this.plugin = plugin;
+    public static LiteralCommandNode<CommandSourceStack> build(Infuse plugin, boolean lSpark) {
+        SparkCommand cmd = new SparkCommand(plugin, lSpark ? "1" : "2");
+
+        return Commands.literal(lSpark ? "lspark" : "rspark").executes(cmd::activateSpark).build();
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    private SparkCommand(Infuse plugin, String slot) {
+        this.plugin = plugin;
+        this.slot = slot;
+    }
+
+    public int activateSpark(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
         if (!(sender instanceof Player player)) {
             sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
-            return true;
-        }
-
-        final UUID playerUUID = player.getUniqueId();
-
-        // Finding which slot to activate the spark for.
-        String slot;
-        if (label.contains("lspark")) {
-            slot = "1";
-        } else if (label.contains("rspark")) {
-            slot = "2";
-        } else {
-            sender.sendMessage(new Message(MessageType.ERROR_INVALID_COMMAND).toComponent());
-            return true;
+            return 1;
         }
 
         // Getting the name of the equipped effect.
-        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(playerUUID, slot);
+        InfuseEffect equippedEffect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
 
         // Handling if the slot is empty.
         if (equippedEffect == null) {
             Message msg = new Message(MessageType.SLOT_EMPTY);
             msg.applyPlaceholder("slot", slot);
             player.sendMessage(msg.toComponent());
-            return true;
+            return 1;
         }
 
         // Warning the player that they can't use the spark right now
@@ -57,6 +53,6 @@ public class Abilities implements CommandExecutor {
 
         equippedEffect.activateSpark(player);
 
-        return true;
+        return 1;
     }
 }

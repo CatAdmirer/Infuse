@@ -1,12 +1,12 @@
 package com.catadmirer.infuseSMP;
 
-import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.commands.*;
 import com.catadmirer.infuseSMP.effects.*;
 import com.catadmirer.infuseSMP.extraeffects.*;
 import com.catadmirer.infuseSMP.listeners.*;
 import com.catadmirer.infuseSMP.managers.*;
 import com.catadmirer.infuseSMP.placeholders.InfusePlaceholders;
+import com.catadmirer.infuseSMP.util.GUI;
 import com.catadmirer.infuseSMP.util.regions.BasicRegionBlocker;
 import com.catadmirer.infuseSMP.util.regions.DualRegionBlocker;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
@@ -14,16 +14,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.List;
-import java.util.stream.Stream;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -117,55 +115,21 @@ public class Infuse extends JavaPlugin {
 
     /** Registers the commands for the plugin. */
     private void registerCommands() {
-        getCommand("trust").setExecutor(new TrustCommand(dataManager));
-        getCommand("untrust").setExecutor(new TrustCommand(dataManager));
-        getCommand("recipes").setExecutor(new Recipes(this));
-        getCommand("swap").setExecutor(new SwapEffects(this));
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, e -> {
+            e.registrar().register(SparkCommand.build(this, true));
+            e.registrar().register(SparkCommand.build(this, false));
 
-        getCommand("infuse").setExecutor(new InfuseCommand(this));
-        getCommand("infuse").setTabCompleter(new InfuseCommand(this));
+            e.registrar().register(TrustCommand.build(dataManager, true));
+            e.registrar().register(TrustCommand.build(dataManager, false));
 
-        getCommand("ldrain").setExecutor(new DrainCommand(this));
-        getCommand("rdrain").setExecutor(new DrainCommand(this));
+            e.registrar().register(SwapCommand.build(this));
 
-        getCommand("rspark").setExecutor(new Abilities(this));
-        getCommand("lspark").setExecutor(new Abilities(this));
+            e.registrar().register(InfuseCommand.build(this));
+            
+            e.registrar().register(DrainCommand.build(this, true));
+            e.registrar().register(DrainCommand.build(this, false));
 
-        getCommand("draw").setExecutor(new Draw());
-
-        getCommand("controls").setExecutor((sender, a, b, args) -> {
-            // Making sure only players can run the command
-            if (!(sender instanceof Player player)) {
-                sender.sendMessage(new Message(MessageType.ERROR_NOT_PLAYER).toComponent());
-                return true;
-            }
-
-            // Making sure the command has an argument
-            if (args.length != 1) {
-                player.sendMessage(new Message(MessageType.CONTROLS_USAGE).toComponent());
-                return true;
-            }
-
-            // Getting the selected control mode
-            String choice = args[0].toLowerCase();
-
-            // Validating the control mode string
-            if (!choice.equals("offhand") && !choice.equals("command")) {
-                player.sendMessage(new Message(MessageType.CONTROLS_INVALID_PARAM).toComponent());
-                return true;
-            }
-
-            // Setting the control mode for the player
-            dataManager.setControlMode(player.getUniqueId(), choice);
-            player.addAttachment(this, "ability.use", choice.equals("command"));
-            return true;
-        });
-        getCommand("controls").setTabCompleter((a, b, c, args) -> {
-            if (args.length == 1) {
-                return Stream.of("command", "offhand").filter(opt -> opt.startsWith(args[0])).toList();
-            }
-
-            return List.of();
+            e.registrar().register(DrawCommand.build());
         });
     }
 
@@ -188,6 +152,8 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(hitTracker, this);
 
         // Registering events for all the listeners
+        Bukkit.getPluginManager().registerEvents(new GUI(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new CrafterCraftListener(), this);
         Bukkit.getPluginManager().registerEvents(new EntityDeathListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new EntityDropItemListener(this), this);
