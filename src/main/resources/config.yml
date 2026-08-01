@@ -240,7 +240,7 @@ regen:
   blacklisted-worlds:
 
 speed:
-  dashMultiplier: 20
+  dashMultiplier: 2
   playerVelocityMultiplier: 2
   cooldown:
     default: 21

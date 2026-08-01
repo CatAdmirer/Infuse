@@ -154,6 +154,7 @@ public class Feather extends InfuseEffect {
         Vector direction = targetLocation.toVector().subtract(chargeLocation.toVector()).normalize();
         windCharge.setVelocity(direction.multiply(1));
         windCharge.setShooter(player);
+
         player.setVelocity(new Vector(0, 0.5, 0));
     }
 
@@ -208,6 +209,7 @@ public class Feather extends InfuseEffect {
         Location particleLoc = event.getDamager().getLocation();
         world.spawnParticle(Particle.GUST_EMITTER_SMALL, particleLoc, 1, 0, 0, 0, 0);
         attacker.setVelocity(new Vector(0, 1.8, 0));
+
         double multiplier = 1.1;
         event.setDamage(event.getDamage() * multiplier);
     }
