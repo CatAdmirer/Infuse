@@ -86,7 +86,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -103,7 +103,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -167,7 +167,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -208,7 +208,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -246,7 +246,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -278,7 +278,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
@@ -314,7 +314,7 @@ public class InfuseCommand {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(sender instanceof Player player)) {
-            // TODO: Better logging
+            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
             return 1;
         }
 
