@@ -156,7 +156,7 @@ public class EffectManager {
 
     /**
      * Unequips an effect from a player.
-     * Fails if the {@link EffectUnequipEvent} was canceled or if the player's inventory was full.
+     * Fails if the {@link EffectUnequipEvent} was canceled or if there was no effect in the slot.
      *
      * @param player The {@link Player} to remove an effect from.
      * @param slot The slot to remove the effect from.
