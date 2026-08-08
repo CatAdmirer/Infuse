@@ -8,6 +8,8 @@ import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.EffectManager;
+import com.catadmirer.infuseSMP.managers.EffectManager.EquipResult;
+import com.catadmirer.infuseSMP.managers.EffectManager.EquipResultType;
 import com.catadmirer.infuseSMP.util.CustomArgumentTypes;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -138,11 +140,25 @@ public class InfuseCommand {
 
         EffectManager manager = plugin.getEffectManager();
 
-        targets.forEach(p -> {
+        // Looping over the players
+        for (Player p : targets) {
             manager.removeEffects(p);
-            manager.giveJoinEffect(p);
+            EquipResult result = manager.giveJoinEffect(p);
+            if (result.type() == EquipResultType.FAIL) {
+                sender.sendMessage(Component.text("There are no join effects in the config.", NamedTextColor.RED));
+                return 1;
+            } else if (result.type() == EquipResultType.CANCELLED) {
+                sender.sendMessage(Component.text("giveJoinEffects was cancelled for player " + p.getName(), NamedTextColor.RED));
+            }
             p.getPersistentDataContainer().set(Infuse.JOIN_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
-        });
+        }
+
+        // Sending feedback
+        if (targets.size() == 1) {
+            sender.sendMessage(Component.text("Rerolled " + targets.getFirst() + "'s join effect."));
+        } else {
+            sender.sendMessage(Component.text("Rerolled " + targets.size() + " player's join effects."));
+        }
 
         return 1;
     }
