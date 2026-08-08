@@ -43,6 +43,7 @@ infuse_help:
   - "<aqua>/infuse"
   - "<aqua> |- gui<white>: Opens the effect browser."
   - "<aqua> |- reload<white>: Reloads the config and localization files."
+  - "<aqua> |- reroll <gold>\\[target]<white>: Removes any existing effects and adds a random one from the join_effects config."
   - "<aqua> |- recipes<white>: Opens the recipe browser."
   - "<aqua> |- giveeffect <gold>\\<target> \\<effect><white>: Gives the target an effect potion"
   - "<aqua> |- seteffect <gold>\\<target> \\<effect> \\<slot><white>: Sets the effect a target has equipped in a specific slot."
