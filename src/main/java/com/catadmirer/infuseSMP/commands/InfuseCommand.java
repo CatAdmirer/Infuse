@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.inventories.EffectChooser;
 import com.catadmirer.infuseSMP.inventories.RecipeListGUI;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
+import com.catadmirer.infuseSMP.managers.EffectManager;
 import com.catadmirer.infuseSMP.util.CustomArgumentTypes;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -15,8 +16,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 public class InfuseCommand {
     private final Infuse plugin;
@@ -27,6 +34,12 @@ public class InfuseCommand {
         return Commands.literal("infuse")
             .then(Commands.literal("gui").executes(cmd::gui))
             .then(Commands.literal("reload").executes(cmd::reload))
+            .then(Commands.literal("reroll")
+                .executes(c -> cmd.reroll(c, null))
+                .then(Commands.argument("target", ArgumentTypes.players())
+                    .executes(c -> cmd.reroll(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
+                )
+            )
             .then(Commands.literal("recipes").executes(InfuseCommand::recipes))
             .then(Commands.literal("giveeffect")
                 .then(Commands.argument("target", ArgumentTypes.player())
@@ -100,6 +113,37 @@ public class InfuseCommand {
         plugin.getMainConfig().load();
         plugin.getRecipeManager().reload();
         player.sendMessage("Infuse configs reloaded");
+        return 1;
+    }
+
+    public int reroll(CommandContext<CommandSourceStack> ctx, @Nullable PlayerSelectorArgumentResolver resolver) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        List<Player> targets;
+        if (resolver == null) {
+            if (sender instanceof Player p) {
+                targets = List.of(p);
+            } else {
+                sender.sendMessage(Component.text("Invalid target.  Please specify a player to reroll.", NamedTextColor.RED));
+                return 1;
+            }
+        } else {
+            try {
+                targets = resolver.resolve(ctx.getSource());
+            } catch (CommandSyntaxException e) {
+                sender.sendMessage(Message.mcs.deserialize(e.getRawMessage()));
+                return 1;
+            }
+        }
+
+        EffectManager manager = plugin.getEffectManager();
+
+        targets.forEach(p -> {
+            manager.removeEffects(p);
+            manager.giveJoinEffect(p);
+            p.getPersistentDataContainer().set(Infuse.JOIN_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
+        });
+
         return 1;
     }
 
