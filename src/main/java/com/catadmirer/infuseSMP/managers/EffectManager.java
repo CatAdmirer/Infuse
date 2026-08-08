@@ -7,10 +7,11 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
-
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 @NullMarked
 public class EffectManager {
@@ -18,6 +19,21 @@ public class EffectManager {
 
     public EffectManager(Infuse plugin) {
         this.plugin = plugin;
+    }
+
+
+    /**
+     * Gives a player a join effect
+     * 
+     * @param player The {@link Player} to give an effect to
+     * @return An {@link EquipResult} object.  Fails if no join effects were found or there was an effect already in slot 1.  Cancelled if the PlayerEquipEvent call was cancelled.
+     */
+    public EquipResult giveJoinEffect(Player player) {
+        List<InfuseEffect> effects = plugin.getMainConfig().joinEffects();
+        if (effects.isEmpty()) return new EquipResult(EquipResultType.FAIL);
+
+        InfuseEffect effect = effects.get((int) (Math.random() * effects.size()));
+        return equipEffect(player, effect, "1", false);
     }
 
     /**
