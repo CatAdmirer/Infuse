@@ -34,16 +34,27 @@ public class InfuseCommand {
         InfuseCommand cmd = new InfuseCommand(plugin);
 
         return Commands.literal("infuse")
-            .then(Commands.literal("gui").executes(cmd::gui))
-            .then(Commands.literal("reload").executes(cmd::reload))
+            .then(Commands.literal("gui")
+                .requires(c -> c.getExecutor().hasPermission("infuse.gui") && (c.getExecutor() instanceof Player))
+                .executes(cmd::gui)
+            )
+            .then(Commands.literal("reload")
+                .requires(c -> c.getExecutor().hasPermission("infuse.reload") )
+                .executes(cmd::reload)
+            )
             .then(Commands.literal("reroll")
+                .requires(c -> c.getExecutor().hasPermission("infuse.reroll"))
                 .executes(c -> cmd.reroll(c, null))
                 .then(Commands.argument("target", ArgumentTypes.players())
                     .executes(c -> cmd.reroll(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
                 )
             )
-            .then(Commands.literal("recipes").executes(InfuseCommand::recipes))
+            .then(Commands.literal("recipes")
+                .requires(c -> c.getExecutor().hasPermission("infuse.recipes"))
+                .executes(InfuseCommand::recipes)
+            )
             .then(Commands.literal("giveeffect")
+                .requires(c -> c.getExecutor().hasPermission("infuse.giveeffect"))
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
                         .executes(c -> cmd.giveEffect(c, c.getArgument("target", PlayerSelectorArgumentResolver.class), c.getArgument("effect", InfuseEffect.class)))
@@ -51,6 +62,7 @@ public class InfuseCommand {
                 )
             )
             .then(Commands.literal("seteffect")
+                .requires(c -> c.getExecutor().hasPermission("infuse.seteffect"))
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("effect", CustomArgumentTypes.INFUSE_EFFECT)
                         .then(Commands.argument("slot", CustomArgumentTypes.SLOT)
@@ -60,21 +72,28 @@ public class InfuseCommand {
                 )
             )
             .then(Commands.literal("cleareffects")
+                .requires(c -> c.getExecutor().hasPermission("infuse.cleareffects"))
+                .executes(c -> cmd.clearEffects(c, null))
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .executes(c -> cmd.clearEffects(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
                 )
             )
             .then(Commands.literal("cooldown")
+                .requires(c -> c.getExecutor().hasPermission("infuse.cooldown"))
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .executes(c -> cmd.cooldown(c, c.getArgument("target", PlayerSelectorArgumentResolver.class)))
                 )
             )
             .then(Commands.literal("controls")
+                .requires(c -> c.getExecutor().hasPermission("infuse.controls") && c.getExecutor() instanceof Player)
                 .then(Commands.argument("choice", CustomArgumentTypes.CONTROL_MODE)
                     .executes(c -> cmd.controls(c, c.getArgument("choice", String.class)))
                 )
             )
-            .then(Commands.literal("help").executes(cmd::help))
+            .then(Commands.literal("help")
+                .requires(c -> c.getExecutor().hasPermission("infuse.help"))
+                .executes(cmd::help)
+            )
             .build();
     }
 
@@ -90,11 +109,6 @@ public class InfuseCommand {
             return 1;
         }
 
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
-
         player.openInventory(new EffectChooser(plugin).getInventory());
         return 1;
     }
@@ -102,19 +116,9 @@ public class InfuseCommand {
     public int reload(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
-            return 1;
-        }
-
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
-
         plugin.getMainConfig().load();
         plugin.getRecipeManager().reload();
-        player.sendMessage("Infuse configs reloaded");
+        sender.sendMessage("Infuse configs reloaded");
         return 1;
     }
 
@@ -166,16 +170,6 @@ public class InfuseCommand {
     public int giveEffect(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver, InfuseEffect effect) {
         CommandSender sender = ctx.getSource().getSender();
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
-            return 1;
-        }
-
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
-
         Player target;
         try {
             target = resolver.resolve(ctx.getSource()).getFirst();
@@ -185,12 +179,12 @@ public class InfuseCommand {
         }
 
         if (target == null || !target.isOnline()) {
-            player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
+            sender.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
             return 1;
         }
 
         if (effect == null) {
-            player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
+            sender.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
             return 1;
         }
 
@@ -207,16 +201,6 @@ public class InfuseCommand {
     public int setEffect(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver, InfuseEffect effect, String slot) {
         CommandSender sender = ctx.getSource().getSender();
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
-            return 1;
-        }
-
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
-
         Player target;
         
         try {
@@ -227,7 +211,7 @@ public class InfuseCommand {
         }
         
         if (effect == null) {
-            player.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
+            sender.sendMessage(new Message(MessageType.INFUSE_INVALID_PARAM).toComponent());
             return 1;
         }
         
@@ -237,55 +221,41 @@ public class InfuseCommand {
         msg.applyPlaceholder("slot", slot);
         msg.applyPlaceholder("player_name", target.getName());
         msg.applyPlaceholder("effect_name", effect.getName());
-        player.sendMessage(msg.toComponent());
+        sender.sendMessage(msg.toComponent());
 
         return 1;
     }
     
-    public int clearEffects(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
+    public int clearEffects(CommandContext<CommandSourceStack> ctx, @Nullable PlayerSelectorArgumentResolver resolver) {
         CommandSender sender = ctx.getSource().getSender();
-
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
-            return 1;
-        }
-
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
 
         // Getting the player and making sure they are online
         Player target;
         try {
             target = resolver.resolve(ctx.getSource()).getFirst();
-        } catch (CommandSyntaxException err) {
-            sender.sendMessage(Message.mcs.deserialize(err.getRawMessage()));
+        } catch (CommandSyntaxException e) {
+            sender.sendMessage(Message.mcs.deserialize(e.getRawMessage()));
             return 1;
+        } catch (NullPointerException e) {
+            if (sender instanceof Player p) {
+                target = p;
+            } else {
+                sender.sendMessage(Component.text("Invalid target.  Please specify a player.", NamedTextColor.RED));
+                return 1;
+            }
         }
 
         // Removing the effects from the player
-        plugin.getEffectManager().unequipEffect(target, "1");
-        plugin.getEffectManager().unequipEffect(target, "2");
+        plugin.getEffectManager().removeEffects(target);
         Message msg = new Message(MessageType.INFUSE_CLEAREFFECTS_SUCCESS);
         msg.applyPlaceholder("player_name", target.getName());
-        player.sendMessage(msg.toComponent());
+        sender.sendMessage(msg.toComponent());
 
         return 1;
     }
     
     public int cooldown(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver) {
         CommandSender sender = ctx.getSource().getSender();
-
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Only players can use this command", NamedTextColor.RED));
-            return 1;
-        }
-
-        if (!player.isOp()) {
-            player.sendMessage(new Message(MessageType.ERROR_NOT_OP).toComponent());
-            return 1;
-        }
 
         // Getting the player and making sure they are online
         Player target;
@@ -297,7 +267,7 @@ public class InfuseCommand {
         }
 
         if (target == null || !target.isOnline()) {
-            player.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
+            sender.sendMessage(new Message(MessageType.ERROR_TARGET_NOT_FOUND).toComponent());
             return 1;
         }
 
@@ -305,7 +275,7 @@ public class InfuseCommand {
         CooldownManager.removeAllCooldowns(target.getUniqueId());
         Message msg = new Message(MessageType.INFUSE_COOLDOWN_SUCCESS);
         msg.applyPlaceholder("player_name", target.getName());
-        player.sendMessage(msg.toComponent());
+        sender.sendMessage(msg.toComponent());
 
         return 1;
     }
@@ -323,11 +293,11 @@ public class InfuseCommand {
 
         // Assigning the permission for offhand use if the user chose offhand mode
         boolean offhandEnabled = choice.equalsIgnoreCase("offhand");
-        player.addAttachment(plugin, "ability.use", !offhandEnabled);
+        sender.addAttachment(plugin, "ability.use", !offhandEnabled);
 
         Message msg = new Message(MessageType.INFUSE_CONTROLS_SUCCESS);
         msg.applyPlaceholder("control_mode", choice);
-        player.sendMessage(msg.toComponent());
+        sender.sendMessage(msg.toComponent());
 
         return 1;
     }
