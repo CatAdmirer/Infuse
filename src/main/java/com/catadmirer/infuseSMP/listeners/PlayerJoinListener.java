@@ -11,8 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.util.List;
+import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerJoinListener implements Listener {
     private final Infuse plugin;
@@ -50,12 +49,9 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player their starting effects if they haven't joined before
-        if (plugin.getMainConfig().joinEffectsEnabled() && !player.hasPlayedBefore()) {
-            List<InfuseEffect> effects = plugin.getMainConfig().joinEffects();
-            if (effects.isEmpty()) return;
-
-            InfuseEffect effect = effects.get((int) (Math.random() * effects.size()));
-            plugin.getEffectManager().equipEffect(player, effect, "1", false);
+        if (plugin.getMainConfig().joinEffectsEnabled() && !player.getPersistentDataContainer().has(Infuse.JOIN_EFFECT_KEY)) {
+            plugin.getEffectManager().giveJoinEffect(player);
+            player.getPersistentDataContainer().set(Infuse.JOIN_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
             return;
         }
 
