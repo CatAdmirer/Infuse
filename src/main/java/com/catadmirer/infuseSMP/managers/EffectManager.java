@@ -67,6 +67,34 @@ public class EffectManager {
     }
 
     /**
+     * Forcefully removes all effects from a player.
+     * Does not make event calls, does not fail, does not give the player their items.
+     * 
+     * @param player The {@link Player} to remove effects from
+     */
+    public void removeEffects(Player player) {
+        removeEffect(player, "1");
+        removeEffect(player, "2");
+    }
+
+    /**
+     * Forcefully removes an effect from a player.
+     * Does not make event calls, does not fail, does not give the player their items.
+     * 
+     * @param player The {@link Player} to remove an effect from.
+     * @param slot The slot to remove an effect from.
+     */
+    public void removeEffect(Player player, String slot) {
+        // Getting the effect
+        InfuseEffect effect = plugin.getDataManager().getEffect(player.getUniqueId(), slot);
+        if (effect == null) return;
+
+        // Removing the effect
+        effect.unequip(player);
+        plugin.getDataManager().removeEffect(player.getUniqueId(), slot);
+    }
+
+    /**
      * Drains an effect from a player.
      * Sends feedback messages to the player and gives them the effect item.
      * Fails if the player's inventory is full or if they don't have an effect equipped.
