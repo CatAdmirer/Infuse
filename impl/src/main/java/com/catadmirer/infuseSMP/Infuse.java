@@ -15,6 +15,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -45,6 +47,10 @@ public class Infuse extends JavaPlugin {
     }
 
     public Infuse() {
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        String name = "i";
+        MethodType type = MethodType.methodType(void.class, String.class);
         this.mainConfig = new MainConfig(this);
         this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);

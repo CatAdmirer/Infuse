@@ -18,6 +18,7 @@ public class DrainCommand {
         DrainCommand cmd = new DrainCommand(plugin, left ? "1" : "2");
 
         return Commands.literal(left ? "ldrain" : "rdrain")
+            .requires(c -> c.getSender().hasPermission("infuse.commands.drain") && (c.getSender() instanceof Player))
             .executes(cmd::drain)
             .build();
     }

@@ -16,6 +16,7 @@ public class ActionBarUpdater extends BukkitRunnable {
         this.plugin = plugin;
     }
 
+
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
