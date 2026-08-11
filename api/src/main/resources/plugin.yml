@@ -1,0 +1,68 @@
+name: Infuse
+version: '$version'
+main: com.catadmirer.infuseSMP.Infuse
+api-version: '1.21.4'
+authors: [CatAdmirer, TurboJax, duff_mans_jnr]
+softdepend: [PlaceholderAPI, WorldGuard]
+commands:
+  infuse:
+    description: Base command for Infuse
+    usage: /infuse help
+  lspark:
+    description: Activates the first ability.
+    usage: /lspark
+  rspark:
+    description: Activates the second ability.
+    usage: /rspark
+  ldrain:
+    description: Drains the first ability.
+    usage: /ldrain
+  rdrain:
+    description: Drains the second ability.
+    usage: /rdrain
+  swap:
+    description: Swaps the effects between slots 1 and 2.
+    usage: /swap
+  trust:
+    description: Trust a player
+    usage: /trust <player>
+  untrust:
+    description: Untrust a player
+    usage: /untrust <player>
+  draw:
+    description: Draws a line between two coordinates
+    usage: /draw <x1> <y1> <z1> <x2> <y2> <z2>
+permissions:
+  infuse.gui:
+    description: Allows players to use `/infuse gui`
+    default: op
+  infuse.reload:
+    description: Allows players to use `/infuse reload`
+    default: op
+  infuse.reroll:
+    description: Allows players to use `/infuse reroll`
+    default: op
+  infuse.recipes:
+    description: Allows players to use `/infuse recipes`
+    default: true
+  infuse.giveeffect:
+    description: Allows players to use `/infuse giveeffect`
+    default: op
+  infuse.seteffect:
+    description: Allows players to use `/infuse seteffect`
+    default: op
+  infuse.cleareffects:
+    description: Allows players to use `/infuse cleareffects`
+    default: op
+  infuse.cooldown:
+    description: Allows players to use `/infuse cooldown`
+    default: op
+  infuse.controls:
+    description: Allows players to use `/infuse controls`
+    default: true
+  infuse.help:
+    description: Allows players to use `/infuse help`
+    default: true
+  ability.use:
+    description: Allows the player to use abilities.
+    default: false
