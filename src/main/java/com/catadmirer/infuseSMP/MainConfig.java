@@ -2,12 +2,17 @@ package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class MainConfig {
@@ -28,10 +33,7 @@ public class MainConfig {
      */
     public boolean load() {
         // Creating the file if it doesn't exist.
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            plugin.saveResource(file.getName(), true);
-        }
+        createFile();
 
         // Loading the config
         try {
@@ -54,13 +56,7 @@ public class MainConfig {
      */
     public boolean save() {
         // Creating the file if it doesn't exist.
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                return false;
-            }
-        }
+        createFile();
 
         // Saving the config
         try {
@@ -74,8 +70,20 @@ public class MainConfig {
         return false;
     }
 
+    public void createFile() {
+        plugin.saveResource(file.getName(), false);
+    }
+
+    public void backupConfig() {
+        try {
+            Files.copy(file.toPath(), Paths.get(file.getPath() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            Infuse.LOGGER.error("Could not backup config {}", file.getName(), e);
+        }
+    }
+
     public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
-        return config.getStringList(effect.getPlainKey() + ".blacklisted-worlds")
+        return config.getStringList(effect.getPlainKey() + ".blacklisted_worlds")
             .stream()
             .filter(Objects::nonNull)
             .map(NamespacedKey::fromString)
@@ -203,23 +211,23 @@ public class MainConfig {
     }
 
     public int speedDashMultiplier() {
-        return config.getInt("speed.dashMultiplier");
+        return config.getInt("speed.spark.dash_multiplier");
     }
 
     public int speedPlayerVelocityMultiplier() {
-        return config.getInt("speed.playerVelocityMultiplier");
+        return config.getInt("speed.spark.player_velocity_multiplier");
     }
 
     public int oceanPullInterval() {
-        return config.getInt("ocean_pulling.pull.interval");
+        return config.getInt("ocean.pull_interval");
     }
 
     public int oceanPullRadius() {
-        return config.getInt("ocean_pulling.pull.radius");
+        return config.getInt("ocean.pull_radius");
     }
 
     public double oceanPullStrength() {
-        return config.getDouble("ocean_pulling.pull.strength");
+        return config.getDouble("ocean.pull_strength");
     }
 
     public int hitCounterDecaySeconds() {
@@ -227,35 +235,35 @@ public class MainConfig {
     }
 
     public int emeraldExpPerHit() {
-        return config.getInt("emerald.xp_stolen_per_hit");
+        return config.getInt("emerald.passive.xp_stolen_per_hit");
     }
 
     public float emeraldExpPercent() {
-        return Math.clamp((float) config.getDouble("emerald.xp_stolen_percent"), 0, 1);
+        return Math.clamp((float) config.getDouble("emerald.passive.xp_stolen_percent"), 0, 1);
     }
 
     public float emeraldPercentExpToShare() {
-        return Math.clamp((float) config.getDouble("emerald.percent_xp_to_share"), 0, 1);
+        return Math.clamp((float) config.getDouble("emerald.passive.percent_xp_to_share"), 0, 1);
     }
 
     public int apophisExpPerHit() {
-        return config.getInt("apophis.xp_stolen_per_hit");
+        return config.getInt("apophis.passive.xp_stolen_per_hit");
     }
 
     public float apophisExpPercent() {
-        return Math.clamp((float) config.getDouble("apophis.xp_stolen_percent"), 0, 1);
+        return Math.clamp((float) config.getDouble("apophis.passive.xp_stolen_percent"), 0, 1);
     }
 
     public float apophisPercentExpToShare() {
-        return Math.clamp((float) config.getDouble("apophis.percent_xp_to_share"), 0, 1);
+        return Math.clamp((float) config.getDouble("apophis.passive.percent_xp_to_share"), 0, 1);
     }
 
     public double apophisLockDurationSeconds() {
-        return config.getDouble("apophis.lock_duration_seconds", 10);
+        return config.getDouble("apophis.passive.lock_duration_seconds", 10);
     }
 
     public int apophisLootingLevel() {
-        return config.getInt("apophis.enchantment.looting_level");
+        return config.getInt("apophis.passive.looting_level");
     }
 
     public double apophisSparkRadius() {
@@ -263,22 +271,22 @@ public class MainConfig {
     }
 
     public double apophisSparkExplosionRadius() {
-        return config.getDouble("apophis.spark.explosion-radius", 5);
+        return config.getDouble("apophis.spark.explosion_radius", 5);
     }
 
     public double apophisLavaWalkSpeed() {
-        return config.getDouble("apophis.passive.walk-speed", 0.6);
+        return config.getDouble("apophis.passive.lava_walk_speed", 0.6);
     }
 
     public int apophisXpMultiplierStandard() {
-        return config.getInt("apophis.multiplier-xp.standard", 2);
+        return config.getInt("apophis.passive.multiplier_xp", 2);
     }
     public int apophisXpMultiplierSpark() {
-        return config.getInt("apophis.multiplier-xp.use-effect", 4);
+        return config.getInt("apophis.spark.multiplier_xp", 4);
     }
 
     public int emeraldLootingLevel() {
-        return config.getInt("emerald.enchantment.looting_level");
+        return config.getInt("emerald.passive.looting_level");
     }
 
     public int hasteFortuneLevel() {
@@ -294,11 +302,11 @@ public class MainConfig {
     }
 
     public double emeraldMultiplierStandard() {
-        return config.getDouble("emerald.multiplier-xp.standard");
+        return config.getDouble("emerald.passive.xp_multiplier");
     }
 
     public double emeraldMultiplierUseEffect() {
-        return config.getDouble("emerald.multiplier-xp.use-effect");
+        return config.getDouble("emerald.spark.xp_multiplier");
     }
 
     public double enderPassiveRadius() {
@@ -306,7 +314,7 @@ public class MainConfig {
     }
 
     public int enderSparkMaxDistance() {
-        return config.getInt("ender.spark.max-distance");
+        return config.getInt("ender.spark.max_distance");
     }
 
     public double featherLandRadius() {
@@ -318,7 +326,7 @@ public class MainConfig {
     }
 
     public double firePassiveWalkSpeed() {
-        return config.getDouble("fire.passive.walk-speed");
+        return config.getDouble("fire.passive.lava_walk_speed");
     }
 
     public double fireSparkRadius() {
@@ -326,15 +334,15 @@ public class MainConfig {
     }
 
     public double fireSparkExplosionRadius() {
-        return config.getDouble("fire.spark.explosion-radius");
+        return config.getDouble("fire.spark.explosion_radius");
     }
 
     public int frostPassiveSnowChangingRadius() {
-        return config.getInt("frost.passive.snow-changing-radius");
+        return config.getInt("frost.passive.snow_changing_radius");
     }
 
     public double frostPassiveWalkSpeed() {
-        return config.getDouble("frost.passive.walk-speed");
+        return config.getDouble("frost.passive.powdered_snow_walk_speed");
     }
 
     public double frostSparkRadius() {
@@ -342,120 +350,167 @@ public class MainConfig {
     }
 
     public int oceanPassiveDrownStrength() {
-        return config.getInt("ocean.passive.drown-strength");
+        return config.getInt("ocean.passive.drown_strength");
     }
 
     public int oceanPassiveDrownDamage() {
-        return config.getInt("ocean.passive.drown-damage");
+        return config.getInt("ocean.passive.drown_damage");
     }
 
     public int oceanSparkDrownStrength() {
-        return config.getInt("ocean.spark.drown-strength");
+        return config.getInt("ocean.spark.drown_strength");
     }
 
     public int oceanSparkDrownDamage() {
-        return config.getInt("ocean.spark.drown-damage");
+        return config.getInt("ocean.spark.drown_damage");
     }
 
     public double regenSparkHealTrustedRadius() {
-        return config.getDouble("regen.spark.heal-trusted-radius");
+        return config.getDouble("regen.spark.heal_trusted_radius");
     }
 
     public double thunderSparkBaseRadius() {
-        return config.getDouble("thunder.spark.base-radius");
+        return config.getDouble("thunder.spark.base_radius");
     }
 
     public double thunderSparkPerPlayerBoostRadius() {
-        return config.getDouble("thunder.spark.per-player-boost-radius");
+        return config.getDouble("thunder.spark.per_player_boost_radius");
+    }
+
+    public void changeConfigValue(String old, String key) {
+        if (config.get(key) == null) config.set(key, config.get(old));
+        config.set(old, null);
+
+        final Configuration defaults = config.getDefaults();
+        if (defaults != null) defaults.set(old, null);
+
+        // very scuffed method for removing the old path, but oh well it works
+        String current = old;
+        while (current.contains(".")) {
+            final String path = current.substring(0, current.lastIndexOf("."));
+            final ConfigurationSection section = config.getConfigurationSection(path);
+
+            if (section != null && section.getKeys(false).isEmpty()) {
+                config.set(path, null);
+                if (defaults != null) defaults.set(path, null);
+                current = path;
+            } else {
+                break;
+            }
+        }
+    }
+
+    public void copyConfig(String oldKey, String newKey, FileConfiguration oldConfig, FileConfiguration newConfig) {
+        if (oldConfig.get(oldKey) == null) return;
+
+        newConfig.set(newKey, oldConfig.get(oldKey));
     }
 
     public void applyUpdates() {
-        if (!config.contains("drop_on_natural_death")) config.set("drop_on_natural_death", true);
+        if (this.config.getString("config_version") == null) {
+            // Backing up the old config and loading the new one
+            backupConfig();
+            createFile();
 
-        if (!config.contains("betterteams.enabled")) {
-            config.set("betterteams.enabled", false);
-            config.set("betterteams.trust_allies", false);
+            // Creating a second instance of MainConfig to put modified values into
+            MainConfig newMainConfig = new MainConfig(plugin);
+            newMainConfig.load();
+
+            FileConfiguration newConfig = newMainConfig.config;
+
+            Infuse.LOGGER.info("Old configuration version has been found, updating configuration. This may take a minute.");
+
+            // Copying old configs
+            newConfig.getKeys(true).forEach(key -> {
+                // Skipping keys with more children
+                if (newConfig.isConfigurationSection(key)) return;
+
+                // Copying values from the old config
+                newConfig.set(key, config.get(key));
+            });
+
+            // Copying old configs whose keys changed
+            copyConfig("ritual_duration", "rituals.duration", config, newConfig);
+            copyConfig("ritual_duration_ender", "rituals.ender_duration", config, newConfig);
+            copyConfig("regular_effect_broadcast", "rituals.broadcast_regular", config, newConfig);
+            copyConfig("ritual_beacon", "rituals.beacon", config, newConfig);
+            copyConfig("enable_discord_broadcasts", "rituals.send_webhooks", config, newConfig);
+            copyConfig("discord_webhook_url", "rituals.webhook_url", config, newConfig);
+
+            // effect_drops changed what it interprets, so this helps remap it.
+            String oldDrops = config.getString("effect_drops", "");
+            switch (oldDrops.toLowerCase()) {
+                case "1" -> newConfig.set("effect_drops", "prefer_1");
+                case "2" -> newConfig.set("effect_drops", "prefer_2");
+                case "none", "prefer_1", "prefer_2", "only_1", "only_2" -> newConfig.set("effect_drops", oldDrops.toLowerCase());
+            }
+
+            copyConfig("apophis.xp_stolen_per_hit", "apophis.passive.xp_stolen_per_hit", config, newConfig);
+            copyConfig("apophis.xp_stolen_percent", "apophis.passive.xp_stolen_percent", config, newConfig);
+            copyConfig("apophis.percent_xp_to_share", "apophis.passive.percent_xp_to_share", config, newConfig);
+            copyConfig("apophis.lock_duration_seconds", "apophis.passive.lock_duration_seconds", config, newConfig);
+            copyConfig("apophis.spark.explosion-radius", "apophis.spark.explosion_radius", config, newConfig);
+            copyConfig("apophis.passive.walk-speed", "apophis.passive.lava_walk_speed", config, newConfig);
+            copyConfig("apophis.enchantment.looting_level", "apophis.passive.looting_level", config, newConfig);
+            copyConfig("apophis.multipler-xp.standard", "apophis.passive.xp_multiplier", config, newConfig);
+            copyConfig("apophis.multipler-xp.use_effect", "apophis.spark.xp_multiplier", config, newConfig);
+            copyConfig("apophis.blacklisted-worlds", "apophis.blacklisted_worlds", config, newConfig);
+
+            copyConfig("emerald.lock_duration_seconds", "emerald.passive.lock_duration_seconds", config, newConfig);
+            copyConfig("emerald.xp_stolen_per_hit", "emerald.passive.xp_stolen_per_hit", config, newConfig);
+            copyConfig("emerald.xp_stolen_percent", "emerald.passive.xp_stolen_percent", config, newConfig);
+            copyConfig("emerald.percent_xp_to_share", "emerald.passive.percent_xp_to_share", config, newConfig);
+            copyConfig("emerald.enchantment.looting_level", "emerald.passive.looting_level", config, newConfig);
+            copyConfig("emerald.blacklisted-worlds", "emerald.blacklisted_worlds", config, newConfig);
+            copyConfig("emerald.multipler-xp.standard", "emerald.passive.xp_multiplier", config, newConfig);
+            copyConfig("emerald.multipler-xp.use_effect", "emerald.spark.xp_multiplier", config, newConfig);
+
+            copyConfig("ender.spark.max-distance", "ender.spark.max_distance", config, newConfig);
+            copyConfig("ender.blacklisted-worlds", "ender.blacklisted_worlds", config, newConfig);
+
+            copyConfig("feather.blacklisted-worlds", "feather.blacklisted_worlds", config, newConfig);
+
+            copyConfig("fire.passive.walk-speed", "fire.passive.lava_walk_speed", config, newConfig);
+            copyConfig("fire.spark.explosion-radius", "fire.spark.explosion_radius", config, newConfig);
+            copyConfig("fire.blacklisted-worlds", "fire.blacklisted_worlds", config, newConfig);
+
+            copyConfig("frost.passive.snow-changing-radius", "frost.passive.snow_changing_radius", config, newConfig);
+            copyConfig("frost.passive.walk-speed", "frost.passive.powdered_snow_walk_speed", config, newConfig);
+            copyConfig("frost.blacklisted-worlds", "frost.blacklisted_worlds", config, newConfig);
+
+            copyConfig("haste.enchantment.fortune_level", "haste.passive.fortune_level", config, newConfig);
+            copyConfig("haste.enchantment.efficiency_level", "haste.passive.efficiency_level", config, newConfig);
+            copyConfig("haste.enchantment.unbreaking_level", "haste.passive.unbreaking_level", config, newConfig);
+            copyConfig("haste.blacklisted-worlds", "haste.blacklisted_worlds", config, newConfig);
+
+            copyConfig("heart.blacklisted-worlds", "heart.blacklisted_worlds", config, newConfig);
+
+            copyConfig("invis.blacklisted-worlds", "invis.blacklisted_worlds", config, newConfig);
+
+            copyConfig("ocean_pulling.pull.interval", "ocean.spark.pull_interval", config, newConfig);
+            copyConfig("ocean_pulling.pull.radius", "ocean.spark.pull_radius", config, newConfig);
+            copyConfig("ocean_pulling.pull.strength", "ocean.spark.pull_strength", config, newConfig);
+            copyConfig("ocean.passive.drown-strength", "ocean.passive.drown_strength", config, newConfig);
+            copyConfig("ocean.passive.drown-damage", "ocean.passive.drown_damage", config, newConfig);
+            copyConfig("ocean.spark.drown-strength", "ocean.spark.drown_strength", config, newConfig);
+            copyConfig("ocean.spark.drown-damage", "ocean.spark.drown_damage", config, newConfig);
+            copyConfig("ocean.blacklisted-worlds", "ocean.blacklisted_worlds", config, newConfig);
+
+            copyConfig("regen.spark.heal-trusted-radius", "regen.spark.heal_trusted_radius", config, newConfig);
+            copyConfig("regen.blacklisted-worlds", "regen.blacklisted_worlds", config, newConfig);
+
+            copyConfig("speed.dashMultiplier", "speed.spark.dash_multiplier", config, newConfig);
+            copyConfig("speed.playerVelocityMultiplier", "speed.spark.player_velocity_multiplier", config, newConfig);
+            copyConfig("speed.blacklisted-worlds", "speed.blacklisted_worlds", config, newConfig);
+
+            copyConfig("strength.blacklisted-worlds", "strength.blacklisted_worlds", config, newConfig);
+
+            copyConfig("thunder.spark.base-radius", "thunder.spark.base_radius", config, newConfig);
+            copyConfig("thunder.spark.per-player-boost-radius", "thunder.spark.per_player_boost_radius", config, newConfig);
+            copyConfig("thunder.blacklisted-worlds", "thunder.blacklisted_worlds", config, newConfig);
+
+            copyConfig("thief.blacklisted-worlds", "thief.blacklisted_worlds", config, newConfig);
         }
-
-        if (config.contains("ritual_duration")) {
-            config.set("rituals.duration", config.get("ritual_duration"));
-            config.set("rituals.ender_duration", config.get("ritual_duration_ender"));
-            config.set("rituals.broadcast_regular", config.get("regular_effect_broadcast"));
-            config.set("rituals.send_webhooks", config.get("enable_discord_broadcasts"));
-            config.set("rituals.webhook_url", config.get("discord_webhook_url"));
-            config.set("rituals.beacon", config.get("ritual_beacon"));
-            config.set("rituals.immortal_brewing_stands", true);
-        }
-
-        if (!config.contains("invis_deaths")) config.set("invis_deaths", null);
-        if (!config.contains("invis.hide_kills")) config.set("invis.hide_kills", false);
-        if (!config.contains("invis.hide_deaths")) config.set("invis.hide_deaths", false);
-
-        if (!config.contains("haste.enchantment.looting_level")) config.set("haste.enchantment.looting_level", 5);
-        if (!config.contains("haste.enchantment.fortune_level")) config.set("haste.enchantment.fortune_level", 5);
-        if (!config.contains("haste.enchantment.efficiency_level")) config.set("haste.enchantment.efficiency_level", 10);
-        if (!config.contains("haste.enchantment.unbreaking_level")) config.set("haste.enchantment.unbreaking_level", 5);
-
-        if (!config.contains("hit_counter_decay_seconds")) config.set("hit_counter_decay_seconds", 15);
-
-        if (!config.contains("emerald.xp_stolen_per_hit")) config.set("emerald.xp_stolen_per_hit", 15);
-        if (!config.contains("emerald.xp_stolen_percent")) config.set("emerald.xp_stolen_percent", 1);
-        if (!config.contains("emerald.percent_xp_to_share")) config.set("emerald.percent_xp_to_share", 0.5);
-
-        if (!config.contains("apophis.percent_xp_to_share")) config.set("apophis.percent_xp_to_share", 0.5);
-        if (!config.contains("apophis.xp_stolen_per_hit")) config.set("apophis.xp_stolen_per_hit", 15);
-        if (!config.contains("apophis.xp_stolen_percent")) config.set("apophis.xp_stolen_percent", 1);
-        if (!config.contains("apophis.enchantment.looting_level")) config.set("apophis.enchantment.looting_level", 5);
-        if (!config.contains("apophis.lock_duration_seconds")) config.set("apophis.lock_duration_seconds", 10);
-
-        if (!config.contains("emerald.multiplier-xp.standard")) config.set("emerald.multiplier.standard", 2);
-        if (!config.contains("emerald.multiplier-xp.use-effect")) config.set("emerald.multiplier.use-effect", 4);
-
-        if (!config.contains("ender.passive.radius")) config.set("ender.passive.radius", 10);
-        if (!config.contains("ender.spark.max-distance")) config.set("ender.spark.max-distance", 15);
-
-        if (!config.contains("feather.land.radius")) config.set("feather.land.radius", 4);
-        if (!config.contains("feather.land.damage")) config.set("feather.land.damage", 8);
-
-        if (!config.contains("fire.passive.walk-speed")) config.set("fire.passive.walk-speed", 0.6);
-        if (!config.contains("fire.spark.radius")) config.set("fire.spark.radius", 5);
-        if (!config.contains("fire.spark.explosion-radius")) config.set("fire.spark.explosion-radius", 5);
-
-        if (!config.contains("frost.passive.snow-changing-radius")) config.set("frost.passive.snow-changing-radius", 3);
-        if (!config.contains("frost.passive.walk-speed")) config.set("frost.passive.walk-speed", 0.6);
-        if (!config.contains("frost.spark.radius")) config.set("frost.spark.radius", 5);
-
-        if (!config.contains("ocean.passive.drown-strength")) config.set("ocean.passive.drown-strength", 5);
-        if (!config.contains("ocean.passive.drown-damage")) config.set("ocean.passive.drown-damage", 1);
-        if (!config.contains("ocean.spark.drown-strength")) config.set("ocean.spark.drown-strength", 20);
-        if (!config.contains("ocean.spark.drown-damage")) config.set("ocean.spark.drown-damage", 2);
-
-        if (!config.contains("regen.spark.heal-trusted-radius")) config.set("regen.spark.heal-trusted-radius", 5);
-
-        if (!config.contains("thunder.spark.base-radius")) config.set("thunder.spark.base-radius", 10);
-        if (!config.contains("thunder.spark.per-player-boost-radius")) config.set("thunder.spark.per-player-boost-radius", 0.3);
-
-        if (!config.contains("apophis.spark.radius")) config.set("apophis.spark.radius", 5);
-        if (!config.contains("apophis.spark.explosion-radius")) config.set("apophis.spark.explosion-radius", 5);
-        if (!config.contains("apophis.passive.walk-speed")) config.set("apophis.passive.walk-speed", 0.6);
-        if (!config.contains("apophis.multiplier-xp.standard")) config.set("apophis.multiplier-xp.standard", 2);
-        if (!config.contains("apophis.multiplier-xp.use-effect")) config.set("apophis.multiplier-xp.use-effect", 4);
-
-        if (!config.contains("apophis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("thief.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("emerald.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("ender.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("feather.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("fire.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("frost.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("haste.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("heart.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("invis.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("ocean.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("regen.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("speed.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("strength.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
-        if (!config.contains("thunder.blacklisted-worlds")) config.set("apophis.blacklisted-worlds", List.of());
 
         save();
     }

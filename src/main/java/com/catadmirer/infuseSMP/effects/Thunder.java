@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -64,10 +65,9 @@ public class Thunder extends InfuseEffect {
         final double baseRadius = plugin.getMainConfig().thunderSparkBaseRadius();
         final double radiusBoostPerPlayer = plugin.getMainConfig().thunderSparkPerPlayerBoostRadius();
 
-        final long period = 20;
         // Starting the lightning storm
         new BukkitRunnable() {
-            long ticksElapsed = 0;
+            int ticksElapsed = 0;
 
             public void run() {
                 if (this.ticksElapsed >= durationTicks) {
@@ -85,20 +85,18 @@ public class Thunder extends InfuseEffect {
                     radius = tmp;
                 }
 
-                // TODO: Spawn particles in a ring around the radius
-
                 // Striking all players within the radius
                 for (Entity entity : world.getNearbyEntities(owner.getLocation(), radius, radius, radius)) {
                     if (!(entity instanceof Player target)) continue;
-                    if (plugin.getTrustManager().doesTrust(owner, target)) continue;
+                    if (plugin.getDataManager().doesTrust(target, owner)) continue;
                     if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
 
                     strikeLighting(target, owner);
                 }
 
-                this.ticksElapsed += period;
+                this.ticksElapsed += 20;
             }
-        }.runTaskTimer(plugin, 0L, period);
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class Thunder extends InfuseEffect {
         for (Entity entity : targets.getLast().getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof Player target)) continue;
             if (targets.contains(target)) continue;
-            if (plugin.getTrustManager().doesTrust(attacker, target)) continue;
+            if (plugin.getDataManager().doesTrust(attacker, target)) continue;
             if (RegionBlocker.getInstance().isEffectBlocked(entity, this)) return;
 
             // Target found!  Striking them then searching for the next target after 1 second.
@@ -211,7 +209,7 @@ public class Thunder extends InfuseEffect {
 
         // Only summoning lightning if the target is a living entity
         if (!(event.getEntity() instanceof LivingEntity target)) return;
-        if (target instanceof Player p && plugin.getTrustManager().doesTrust(attacker, p)) return;
+        if (target instanceof Player p && plugin.getDataManager().doesTrust(attacker, p)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
 
         strikeLighting(target, attacker);

@@ -76,7 +76,7 @@ public class Infuse extends JavaPlugin {
 
         if (ExpansionHelper.canUseWorldGuard()) {
             RegionBlocker.setInstance(new DualRegionBlocker());
-            LOGGER.info("WorldGuard found!  Enabling region-based effect management.");
+            LOGGER.info("WorldGuard found! Enabling region-based effect management.");
         } else {
             RegionBlocker.setInstance(new BasicRegionBlocker());
             LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");

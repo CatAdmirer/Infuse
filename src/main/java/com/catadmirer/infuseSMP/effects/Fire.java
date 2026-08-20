@@ -6,25 +6,26 @@ import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.CookingRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 public class Fire extends InfuseEffect {
@@ -228,4 +229,23 @@ public class Fire extends InfuseEffect {
 
         event.getTarget().setFireTicks(100);
     }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
+
+        // TODO: ask turbo if we really need this or not, probably not
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+
+        final Iterator<Recipe> recipes = Bukkit.recipeIterator();
+        while (recipes.hasNext()) {
+            if (!(recipes.next() instanceof CookingRecipe<?> recipe) || !(recipe.getInputChoice().test(ItemStack.of(event.getBlock().getType())))) continue;
+
+            event.setDropItems(false);
+            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation().add(new Vector(0.5, 0.5, 0.5)), recipe.getResult());
+
+            return;
+        }
+    }
+
 }
