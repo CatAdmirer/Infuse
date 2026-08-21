@@ -57,19 +57,20 @@ public class EffectCraftManager implements Listener {
             return;
         }
 
+        int numCrafted = plugin.getDataManager().getExistingCount(effect);
+
         // Checking craft limits
         if (!plugin.getMainConfig().allowInfiniteEffects()) {
             int craftLimit = plugin.getMainConfig().getCraftLimit(effect);
-            int numCrafted = plugin.getDataManager().getExistingCount(effect);
             if (craftLimit != -1 && numCrafted == craftLimit) {
                 player.sendMessage(Component.text("The max number of ").append(effect.getName().toComponent()).append(Component.text("effects has been reached", NamedTextColor.WHITE)));
                 event.setCancelled(true);
                 return;
             }
-
-            // Incrementing the number of effects crafted.
-            plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
         }
+
+        // Incrementing the number of effects crafted.
+        plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
 
         // If the effect is not augmented, just craft it
         if (!effect.isAugmented())  {
