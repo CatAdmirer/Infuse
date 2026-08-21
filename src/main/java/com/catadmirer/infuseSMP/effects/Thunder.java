@@ -25,6 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,10 +65,12 @@ public class Thunder extends InfuseEffect {
 
         final double baseRadius = plugin.getMainConfig().thunderSparkBaseRadius();
         final double radiusBoostPerPlayer = plugin.getMainConfig().thunderSparkPerPlayerBoostRadius();
+        final int maxHits = plugin.getMainConfig().thunderSparkStrikesPerPlayer();
 
         // Starting the lightning storm
         new BukkitRunnable() {
             int ticksElapsed = 0;
+            HashMap<Integer, Integer> hitCount = new HashMap<>();
 
             public void run() {
                 if (this.ticksElapsed >= durationTicks) {
@@ -90,6 +93,10 @@ public class Thunder extends InfuseEffect {
                     if (!(entity instanceof Player target)) continue;
                     if (plugin.getDataManager().doesTrust(target, owner)) continue;
                     if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
+
+                    // Incrementing the hit count for this entity and making sure they aren't hit too many times
+                    int count = hitCount.merge(entity.getEntityId(), 1, Integer::sum);
+                    if (count > maxHits) continue;
 
                     strikeLighting(target, owner);
                 }
