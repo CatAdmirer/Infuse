@@ -83,23 +83,23 @@ jobs:
           distribution: temurin
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v6
-      - name: Modifying gradle.properties
+      - name: Prepping 1.21.11 build
         run: |
           sed -i "s/javaVersion=.*/javaVersion=21/" gradle.properties
           sed -i "s/minecraftVersion=.*/minecraftVersion=1.21.11/" gradle.properties
-      - name: "Building for 1.21.11"
+      - name: Building for 1.21.11
         run: ./gradlew build
-      - name: Modifying gradle.properties
+      - name: Prepping 26.1 build
         run: |
           sed -i "s/javaVersion=.*/javaVersion=25/" gradle.properties
           sed -i "s/minecraftVersion=.*/minecraftVersion=26.1/" gradle.properties
-      - name: "Building for 26.1"
+      - name: Building for 26.1
         run: ./gradlew build
-      - name: Modifying gradle.properties
+      - name: Prepping 26.2 build
         run: |
           sed -i "s/javaVersion=.*/javaVersion=25/" gradle.properties
           sed -i "s/minecraftVersion=.*/minecraftVersion=26.2/" gradle.properties
-      - name: "Building for 26.2"
+      - name: Building for 26.2
         run: ./gradlew build
   # Tagging the latest version
   tag-release:
