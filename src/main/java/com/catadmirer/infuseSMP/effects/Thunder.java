@@ -1,7 +1,6 @@
 package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
-import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
@@ -70,7 +69,7 @@ public class Thunder extends InfuseEffect {
         // Starting the lightning storm
         new BukkitRunnable() {
             int ticksElapsed = 0;
-            HashMap<Integer, Integer> hitCount = new HashMap<>();
+            final HashMap<Integer, Integer> hitCount = new HashMap<>();
 
             public void run() {
                 if (this.ticksElapsed >= durationTicks) {
