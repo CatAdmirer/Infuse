@@ -2,8 +2,6 @@ package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,10 +26,8 @@ public class MainConfig {
 
     /**
      * Reloads the configuration.
-     *
-     * @return Whether the configuration was loaded successfully or not.
      */
-    public boolean load() {
+    public void load() {
         // Creating the file if it doesn't exist.
         createFile();
 
@@ -39,22 +35,17 @@ public class MainConfig {
         try {
             config.load(file);
             Infuse.LOGGER.info("Successfully loaded {}", file.getName());
-            return true;
         } catch (InvalidConfigurationException e) {
             Infuse.LOGGER.warn("{} contains an invalid YAML configuration.  Verify the contents of the file.", file.getName());
         } catch (IOException e) {
             Infuse.LOGGER.error("Could not find {}.  Check that it exists.", file.getName(), e);
         }
-
-        return false;
     }
 
     /**
      * Writes the config to the file.
-     *
-     * @return Whether the config was successfully written or not.
      */
-    public boolean save() {
+    public void save() {
         // Creating the file if it doesn't exist.
         createFile();
 
@@ -62,18 +53,23 @@ public class MainConfig {
         try {
             config.save(file);
             Infuse.LOGGER.info("Saved {}", file.getName());
-            return true;
         } catch (IOException e) {
             Infuse.LOGGER.warn("Could not save {}.  Make sure the user has write permissions.", file.getName());
         }
-
-        return false;
     }
 
+    /**
+     * Creates the default config file.<br>
+     * Does not override any existing config.
+     */
     public void createFile() {
         plugin.saveResource(file.getName(), false);
     }
 
+    /**
+     * Creates a backup of the config file.<br>
+     * Just adds ".bak" to the end of the file name.
+     */
     public void backupConfig() {
         try {
             Files.copy(file.toPath(), Paths.get(file.getPath() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
@@ -82,330 +78,22 @@ public class MainConfig {
         }
     }
 
-    public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
-        return config.getStringList(effect.getPlainKey() + ".blacklisted_worlds")
-            .stream()
-            .filter(Objects::nonNull)
-            .map(NamespacedKey::fromString)
-            .toList();
-    }
-
-    public String lang() {
-        return config.getString("lang", "en_US");
-    }
-
-    public boolean allowInfiniteEffects() {
-        return config.getBoolean("allow_infinite_effects");
-    }
-
-    public boolean emptyEffectIcon() {
-        return config.getBoolean("empty_effect_icon");
-    }
-
-    public boolean playerHeadDrops() {
-        return config.getBoolean("player_head_drops");
-    }
-
-    public int ritualDuration() {
-        return config.getInt("rituals.duration", 600);
-    }
-
-    public int ritualDurationEnder() {
-        return config.getInt("rituals.ender_duration", 3600);
-    }
-
-    public boolean regularBroadcast() {
-        return config.getBoolean("rituals.broadcast_regular", true);
-    }
-
-    public boolean enableDiscordBroadcasts() {
-        return config.getBoolean("rituals.send_webhooks", false);
-    }
-
-    public String discordWebhookUrl() {
-        return config.getString("rituals.webhook_url", "");
-    }
-
-    public boolean ritualBeacon() {
-        return config.getBoolean("rituals.beacon", true);
-    }
-
-    public boolean useImmortalBrewers() {
-        return config.getBoolean("rituals.immortal_brewing_stands", true);
-    }
-
-    public boolean brewingGui() {
-        return config.getBoolean("brewing_gui");
-    }
-
-    public String effectDrops() {
-        return config.getString("effect_drops");
-    }
-
-    public boolean joinEffectsEnabled() {
-        return config.getBoolean("join_effects_enabled");
-    }
-
-    public boolean dropOnNaturalDeath() {
-        return config.getBoolean("drop_on_natural_death", true);
-    }
-
-    public List<InfuseEffect> joinEffects() {
-        return config.getStringList("join_effects").stream().map(InfuseEffect::fromString).filter(Objects::nonNull).toList();
-    }
-
-    public boolean enableBetterTeams() {
-        return config.getBoolean("betterteams.enabled", false);
-    }
-
-    public boolean betterTeamsTrustAllies() {
-        return config.getBoolean("betterteams.trust_allies", false);
-    }
-
-    public boolean enableApophis() {
-        return config.getBoolean("extra_effects.Apophis");
-    }
-
-    public boolean enableThief() {
-        return config.getBoolean("extra_effects.Thief");
-    }
-
     /**
-     * Gets the amount of each effect that can be crafted
+     * Copies a config value from one config to another.<br>
+     * If the old config doesn't have the key, nothing happens.
      *
-     * @param effect The effect to check
-     *
-     * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
+     * @param oldKey The key of oldConfig to copy the value from.
+     * @param newKey The key of newConfig to copy the value into.
+     * @param oldConfig The config to copy the value from.
+     * @param newConfig The config to copy the value into.
      */
-    public int getCraftLimit(InfuseEffect effect) {
-        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
-
-        if (craftLimits.size() != 2) {
-            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
-            Infuse.LOGGER.error("Returning default limits");
-
-            return effect.isAugmented() ? 1 : 3;
-        }
-
-        return craftLimits.get(effect.isAugmented() ? 0 : 1);
-    }
-
-    public double emeraldLockDurationSeconds() {
-        return config.getDouble("emerald.lock_duration_seconds", 10);
-    }
-
-    public boolean invisHideKills() {
-        return config.getBoolean("invis.hide_kills");
-    }
-
-    public boolean invisHideDeaths() {
-        return config.getBoolean("invis.hide_deaths");
-    }
-
-    public long cooldown(InfuseEffect effect) {
-        return config.getLong(effect.getPlainKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
-    }
-
-    public long duration(InfuseEffect effect) {
-        return config.getLong(effect.getPlainKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
-    }
-
-    public int speedDashMultiplier() {
-        return config.getInt("speed.spark.dash_multiplier");
-    }
-
-    public int speedPlayerVelocityMultiplier() {
-        return config.getInt("speed.spark.player_velocity_multiplier");
-    }
-
-    public int oceanPullInterval() {
-        return config.getInt("ocean.pull_interval");
-    }
-
-    public int oceanPullRadius() {
-        return config.getInt("ocean.pull_radius");
-    }
-
-    public double oceanPullStrength() {
-        return config.getDouble("ocean.pull_strength");
-    }
-
-    public int hitCounterDecaySeconds() {
-        return config.getInt("hit_counter_decay_seconds");
-    }
-
-    public int emeraldExpPerHit() {
-        return config.getInt("emerald.passive.xp_stolen_per_hit");
-    }
-
-    public float emeraldExpPercent() {
-        return Math.clamp((float) config.getDouble("emerald.passive.xp_stolen_percent"), 0, 1);
-    }
-
-    public float emeraldPercentExpToShare() {
-        return Math.clamp((float) config.getDouble("emerald.passive.percent_xp_to_share"), 0, 1);
-    }
-
-    public int apophisExpPerHit() {
-        return config.getInt("apophis.passive.xp_stolen_per_hit");
-    }
-
-    public float apophisExpPercent() {
-        return Math.clamp((float) config.getDouble("apophis.passive.xp_stolen_percent"), 0, 1);
-    }
-
-    public float apophisPercentExpToShare() {
-        return Math.clamp((float) config.getDouble("apophis.passive.percent_xp_to_share"), 0, 1);
-    }
-
-    public double apophisLockDurationSeconds() {
-        return config.getDouble("apophis.passive.lock_duration_seconds", 10);
-    }
-
-    public int apophisLootingLevel() {
-        return config.getInt("apophis.passive.looting_level");
-    }
-
-    public double apophisSparkRadius() {
-        return config.getDouble("apophis.spark.radius", 5);
-    }
-
-    public double apophisSparkExplosionRadius() {
-        return config.getDouble("apophis.spark.explosion_radius", 5);
-    }
-
-    public double apophisLavaWalkSpeed() {
-        return config.getDouble("apophis.passive.lava_walk_speed", 0.6);
-    }
-
-    public int apophisXpMultiplierStandard() {
-        return config.getInt("apophis.passive.multiplier_xp", 2);
-    }
-    public int apophisXpMultiplierSpark() {
-        return config.getInt("apophis.spark.multiplier_xp", 4);
-    }
-
-    public int emeraldLootingLevel() {
-        return config.getInt("emerald.passive.looting_level");
-    }
-
-    public int hasteFortuneLevel() {
-        return config.getInt("haste.enchantment.fortune_level");
-    }
-
-    public int hasteEfficiencyLevel() {
-        return config.getInt("haste.enchantment.efficiency_level");
-    }
-
-    public int hasteUnbreakingLevel() {
-        return config.getInt("haste.enchantment.unbreaking_level");
-    }
-
-    public double emeraldMultiplierStandard() {
-        return config.getDouble("emerald.passive.xp_multiplier");
-    }
-
-    public double emeraldMultiplierUseEffect() {
-        return config.getDouble("emerald.spark.xp_multiplier");
-    }
-
-    public double enderPassiveRadius() {
-        return config.getDouble("ender.passive.radius");
-    }
-
-    public int enderSparkMaxDistance() {
-        return config.getInt("ender.spark.max_distance");
-    }
-
-    public double featherLandRadius() {
-        return config.getDouble("feather.land.radius");
-    }
-
-    public double featherLandDamage() {
-        return config.getDouble("feather.land.damage");
-    }
-
-    public double firePassiveWalkSpeed() {
-        return config.getDouble("fire.passive.lava_walk_speed");
-    }
-
-    public double fireSparkRadius() {
-        return config.getDouble("fire.spark.radius");
-    }
-
-    public double fireSparkExplosionRadius() {
-        return config.getDouble("fire.spark.explosion_radius");
-    }
-
-    public int frostPassiveSnowChangingRadius() {
-        return config.getInt("frost.passive.snow_changing_radius");
-    }
-
-    public double frostPassiveWalkSpeed() {
-        return config.getDouble("frost.passive.powdered_snow_walk_speed");
-    }
-
-    public double frostSparkRadius() {
-        return config.getDouble("frost.spark.radius");
-    }
-
-    public int oceanPassiveDrownStrength() {
-        return config.getInt("ocean.passive.drown_strength");
-    }
-
-    public int oceanPassiveDrownDamage() {
-        return config.getInt("ocean.passive.drown_damage");
-    }
-
-    public int oceanSparkDrownStrength() {
-        return config.getInt("ocean.spark.drown_strength");
-    }
-
-    public int oceanSparkDrownDamage() {
-        return config.getInt("ocean.spark.drown_damage");
-    }
-
-    public double regenSparkHealTrustedRadius() {
-        return config.getDouble("regen.spark.heal_trusted_radius");
-    }
-
-    public double thunderSparkBaseRadius() {
-        return config.getDouble("thunder.spark.base_radius");
-    }
-
-    public double thunderSparkPerPlayerBoostRadius() {
-        return config.getDouble("thunder.spark.per_player_boost_radius");
-    }
-
-    public void changeConfigValue(String old, String key) {
-        if (config.get(key) == null) config.set(key, config.get(old));
-        config.set(old, null);
-
-        final Configuration defaults = config.getDefaults();
-        if (defaults != null) defaults.set(old, null);
-
-        // very scuffed method for removing the old path, but oh well it works
-        String current = old;
-        while (current.contains(".")) {
-            final String path = current.substring(0, current.lastIndexOf("."));
-            final ConfigurationSection section = config.getConfigurationSection(path);
-
-            if (section != null && section.getKeys(false).isEmpty()) {
-                config.set(path, null);
-                if (defaults != null) defaults.set(path, null);
-                current = path;
-            } else {
-                break;
-            }
-        }
-    }
-
     public void copyConfig(String oldKey, String newKey, FileConfiguration oldConfig, FileConfiguration newConfig) {
         if (oldConfig.get(oldKey) == null) return;
 
         newConfig.set(newKey, oldConfig.get(oldKey));
     }
 
+    /** Applies changes to the config and carries across old settings. */
     public void applyUpdates() {
         if (this.config.getString("config_version") == null) {
             // Backing up the old config and loading the new one
@@ -444,17 +132,6 @@ public class MainConfig {
                 case "2" -> newConfig.set("effect_drops", "prefer_2");
                 case "none", "prefer_1", "prefer_2", "only_1", "only_2" -> newConfig.set("effect_drops", oldDrops.toLowerCase());
             }
-
-            copyConfig("apophis.xp_stolen_per_hit", "apophis.passive.xp_stolen_per_hit", config, newConfig);
-            copyConfig("apophis.xp_stolen_percent", "apophis.passive.xp_stolen_percent", config, newConfig);
-            copyConfig("apophis.percent_xp_to_share", "apophis.passive.percent_xp_to_share", config, newConfig);
-            copyConfig("apophis.lock_duration_seconds", "apophis.passive.lock_duration_seconds", config, newConfig);
-            copyConfig("apophis.spark.explosion-radius", "apophis.spark.explosion_radius", config, newConfig);
-            copyConfig("apophis.passive.walk-speed", "apophis.passive.lava_walk_speed", config, newConfig);
-            copyConfig("apophis.enchantment.looting_level", "apophis.passive.looting_level", config, newConfig);
-            copyConfig("apophis.multipler-xp.standard", "apophis.passive.xp_multiplier", config, newConfig);
-            copyConfig("apophis.multipler-xp.use_effect", "apophis.spark.xp_multiplier", config, newConfig);
-            copyConfig("apophis.blacklisted-worlds", "apophis.blacklisted_worlds", config, newConfig);
 
             copyConfig("emerald.lock_duration_seconds", "emerald.passive.lock_duration_seconds", config, newConfig);
             copyConfig("emerald.xp_stolen_per_hit", "emerald.passive.xp_stolen_per_hit", config, newConfig);
@@ -509,9 +186,402 @@ public class MainConfig {
             copyConfig("thunder.spark.per-player-boost-radius", "thunder.spark.per_player_boost_radius", config, newConfig);
             copyConfig("thunder.blacklisted-worlds", "thunder.blacklisted_worlds", config, newConfig);
 
+            copyConfig("extra_effects.Apophis", "apophis.enabled", config, newConfig);
+            copyConfig("apophis.xp_stolen_per_hit", "apophis.passive.xp_stolen_per_hit", config, newConfig);
+            copyConfig("apophis.xp_stolen_percent", "apophis.passive.xp_stolen_percent", config, newConfig);
+            copyConfig("apophis.percent_xp_to_share", "apophis.passive.percent_xp_to_share", config, newConfig);
+            copyConfig("apophis.lock_duration_seconds", "apophis.passive.lock_duration_seconds", config, newConfig);
+            copyConfig("apophis.spark.explosion-radius", "apophis.spark.explosion_radius", config, newConfig);
+            copyConfig("apophis.passive.walk-speed", "apophis.passive.lava_walk_speed", config, newConfig);
+            copyConfig("apophis.enchantment.looting_level", "apophis.passive.looting_level", config, newConfig);
+            copyConfig("apophis.multipler-xp.standard", "apophis.passive.xp_multiplier", config, newConfig);
+            copyConfig("apophis.multipler-xp.use_effect", "apophis.spark.xp_multiplier", config, newConfig);
+            copyConfig("apophis.blacklisted-worlds", "apophis.blacklisted_worlds", config, newConfig);
+
+            copyConfig("extra_effects.Thief", "thief.enabled", config, newConfig);
             copyConfig("thief.blacklisted-worlds", "thief.blacklisted_worlds", config, newConfig);
         }
 
         save();
+    }
+
+    //
+    // General Configs
+    //
+
+    public String lang() {
+        return config.getString("lang", "en_US");
+    }
+
+    public boolean allowInfiniteEffects() {
+        return config.getBoolean("allow_infinite_effects", false);
+    }
+
+    public boolean emptyEffectIcon() {
+        return config.getBoolean("empty_effect_icon", true);
+    }
+
+    public boolean playerHeadDrops() {
+        return config.getBoolean("player_head_drops", true);
+    }
+
+    public boolean brewingGui() {
+        return config.getBoolean("brewing_gui", true);
+    }
+
+    public boolean dropOnNaturalDeath() {
+        return config.getBoolean("drop_on_natural_death", true);
+    }
+
+    //
+    // Ritual Configs
+    //
+
+    public int ritualDuration() {
+        return config.getInt("rituals.duration", 600);
+    }
+
+    public int ritualDurationEnder() {
+        return config.getInt("rituals.ender_duration", 3600);
+    }
+
+    public boolean regularBroadcast() {
+        return config.getBoolean("rituals.broadcast_regular", true);
+    }
+
+    public boolean enableDiscordBroadcasts() {
+        return config.getBoolean("rituals.send_webhooks", false);
+    }
+
+    public String discordWebhookUrl() {
+        return config.getString("rituals.webhook_url", "");
+    }
+
+    public boolean ritualBeacon() {
+        return config.getBoolean("rituals.beacon", true);
+    }
+
+    public boolean useImmortalBrewers() {
+        return config.getBoolean("rituals.immortal_brewing_stands", true);
+    }
+
+    //
+    // General Configs part 2
+    //
+
+    public String effectDrops() {
+        return config.getString("effect_drops", "random");
+    }
+
+    public int hitCounterDecaySeconds() {
+        return config.getInt("hit_counter_decay_seconds", 15);
+    }
+
+    public boolean joinEffectsEnabled() {
+        return config.getBoolean("join_effects_enabled", false);
+    }
+
+    public List<InfuseEffect> joinEffects() {
+        return config.getStringList("join_effects").stream().map(InfuseEffect::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public boolean enableBetterTeams() {
+        return config.getBoolean("betterteams.enabled", false);
+    }
+
+    public boolean betterTeamsTrustAllies() {
+        return config.getBoolean("betterteams.trust_allies", false);
+    }
+
+    //
+    // Generic Effect Configs
+    //
+
+    /**
+     * Gets the amount of each effect that can be crafted
+     *
+     * @param effect The effect to check
+     *
+     * @return The number of effects that can be crafted of the specified {@link InfuseEffect}.
+     */
+    public int getCraftLimit(InfuseEffect effect) {
+        List<Integer> craftLimits = config.getIntegerList("craft_limits." + effect.getPlainKey());
+
+        if (craftLimits.size() != 2) {
+            Infuse.LOGGER.error("Craft limits are required to be a list of 2 integers.  Found {} entries for effect {}", craftLimits.size(), effect.getPlainKey());
+            Infuse.LOGGER.error("Returning default limits");
+
+            return effect.isAugmented() ? 1 : 3;
+        }
+
+        return craftLimits.get(effect.isAugmented() ? 0 : 1);
+    }
+
+    public List<NamespacedKey> getBlacklistedWorlds(InfuseEffect effect) {
+        return config.getStringList(effect.getPlainKey() + ".blacklisted_worlds")
+                .stream()
+                .filter(Objects::nonNull)
+                .map(NamespacedKey::fromString)
+                .toList();
+    }
+
+    public long cooldown(InfuseEffect effect) {
+        return config.getLong(effect.getPlainKey() + ".cooldown." + (effect.isAugmented() ? "augmented" : "default"));
+    }
+
+    public long duration(InfuseEffect effect) {
+        return config.getLong(effect.getPlainKey() + ".duration." + (effect.isAugmented() ? "augmented" : "default"));
+    }
+
+    //
+    // Emerald Configs
+    //
+
+    public double emeraldLockDurationSeconds() {
+        return config.getDouble("emerald.lock_duration_seconds", 10);
+    }
+
+    public int emeraldExpPerHit() {
+        return config.getInt("emerald.passive.xp_stolen_per_hit", 15);
+    }
+
+    public float emeraldExpPercent() {
+        return Math.clamp((float) config.getDouble("emerald.passive.xp_stolen_percent", 1), 0, 1);
+    }
+
+    public float emeraldPercentExpToShare() {
+        return Math.clamp((float) config.getDouble("emerald.passive.percent_xp_to_share", 0.5), 0, 1);
+    }
+
+    public int emeraldLootingLevel() {
+        return config.getInt("emerald.passive.looting_level", 5);
+    }
+
+    public double emeraldMultiplierStandard() {
+        return config.getDouble("emerald.passive.xp_multiplier", 2);
+    }
+
+    public double emeraldMultiplierUseEffect() {
+        return config.getDouble("emerald.spark.xp_multiplier", 4);
+    }
+
+    //
+    // Ender Configs
+    //
+
+    public double enderPassiveRadius() {
+        return config.getDouble("ender.passive.radius", 10);
+    }
+
+    public int enderSparkMaxDistance() {
+        return config.getInt("ender.spark.max_distance", 15);
+    }
+
+    //
+    // Feather Configs
+    //
+
+    public double featherLandRadius() {
+        return config.getDouble("feather.land.radius", 4);
+    }
+
+    public double featherLandDamage() {
+        return config.getDouble("feather.land.damage", 8);
+    }
+
+    //
+    // Fire Configs
+    //
+
+    public double firePassiveWalkSpeed() {
+        return config.getDouble("fire.passive.lava_walk_speed", 0.6);
+    }
+
+    public double fireSparkRadius() {
+        return config.getDouble("fire.spark.radius", 5);
+    }
+
+    public double fireSparkExplosionRadius() {
+        return config.getDouble("fire.spark.explosion_radius", 5);
+    }
+
+    //
+    // Frost Configs
+    //
+
+    public int frostPassiveSnowChangingRadius() {
+        return config.getInt("frost.passive.snow_changing_radius", 3);
+    }
+
+    public double frostPassiveWalkSpeed() {
+        return config.getDouble("frost.passive.powdered_snow_walk_speed", 0.6);
+    }
+
+    public double frostSparkRadius() {
+        return config.getDouble("frost.spark.radius", 5);
+    }
+
+    //
+    // Haste Configs
+    //
+
+    public int hasteFortuneLevel() {
+        return config.getInt("haste.enchantment.fortune_level", 5);
+    }
+
+    public int hasteEfficiencyLevel() {
+        return config.getInt("haste.enchantment.efficiency_level", 10);
+    }
+
+    public int hasteUnbreakingLevel() {
+        return config.getInt("haste.enchantment.unbreaking_level", 5);
+    }
+
+    //
+    // Heart Configs
+    //
+
+    // Nothing to configure :(
+
+    //
+    // Invis Configs
+    //
+
+    public boolean invisHideKills() {
+        return config.getBoolean("invis.hide_kills", false);
+    }
+
+    public boolean invisHideDeaths() {
+        return config.getBoolean("invis.hide_deaths", false);
+    }
+
+    //
+    // Ocean Configs
+    //
+
+    public int oceanPullInterval() {
+        return config.getInt("ocean.spark.pull_interval", 20);
+    }
+
+    public int oceanPullRadius() {
+        return config.getInt("ocean.spark.pull_radius", 5);
+    }
+
+    public double oceanPullStrength() {
+        return config.getDouble("ocean.spark.pull_strength", 0.3);
+    }
+
+    public int oceanPassiveDrownStrength() {
+        return config.getInt("ocean.passive.drown_strength", 5);
+    }
+
+    public int oceanPassiveDrownDamage() {
+        return config.getInt("ocean.passive.drown_damage", 1);
+    }
+
+    public int oceanSparkDrownStrength() {
+        return config.getInt("ocean.spark.drown_strength", 20);
+    }
+
+    public int oceanSparkDrownDamage() {
+        return config.getInt("ocean.spark.drown_damage", 2);
+    }
+
+    //
+    // Regen Configs
+    //
+
+    public double regenSparkHealTrustedRadius() {
+        return config.getDouble("regen.spark.heal_trusted_radius", 5);
+    }
+
+    //
+    // Speed Configs
+    //
+
+    public int speedDashMultiplier() {
+        return config.getInt("speed.spark.dash_multiplier", 2);
+    }
+
+    public int speedPlayerVelocityMultiplier() {
+        return config.getInt("speed.spark.player_velocity_multiplier", 2);
+    }
+
+    //
+    // Strength Configs
+    //
+
+    // Nothing to configure :(
+
+    //
+    // Thunder Configs
+    //
+
+    public double thunderSparkBaseRadius() {
+        return config.getDouble("thunder.spark.base_radius", 10);
+    }
+
+    public double thunderSparkPerPlayerBoostRadius() {
+        return config.getDouble("thunder.spark.per_player_boost_radius", 0.3);
+    }
+
+    public int thunderSparkStrikesPerPlayer() {
+        return config.getInt("thunder.spark.strikes_per_player", 3);
+    }
+
+    //
+    // Apophis Configs
+    //
+
+    public boolean enableApophis() {
+        return config.getBoolean("apophis.enabled", false);
+    }
+
+    public int apophisExpPerHit() {
+        return config.getInt("apophis.passive.xp_stolen_per_hit", 15);
+    }
+
+    public float apophisExpPercent() {
+        return Math.clamp((float) config.getDouble("apophis.passive.xp_stolen_percent", 1), 0, 1);
+    }
+
+    public float apophisPercentExpToShare() {
+        return Math.clamp((float) config.getDouble("apophis.passive.percent_xp_to_share", 0.5), 0, 1);
+    }
+
+    public double apophisLockDurationSeconds() {
+        return config.getDouble("apophis.passive.lock_duration_seconds", 10);
+    }
+
+    public int apophisLootingLevel() {
+        return config.getInt("apophis.passive.looting_level", 5);
+    }
+
+    public double apophisLavaWalkSpeed() {
+        return config.getDouble("apophis.passive.lava_walk_speed", 0.6);
+    }
+
+    public int apophisXpMultiplierStandard() {
+        return config.getInt("apophis.passive.multiplier_xp", 2);
+    }
+
+    public double apophisSparkRadius() {
+        return config.getDouble("apophis.spark.radius", 5);
+    }
+
+    public double apophisSparkExplosionRadius() {
+        return config.getDouble("apophis.spark.explosion_radius", 5);
+    }
+
+    public int apophisXpMultiplierSpark() {
+        return config.getInt("apophis.spark.multiplier_xp", 4);
+    }
+
+    //
+    // Thief Configs
+    //
+
+    public boolean enableThief() {
+        return config.getBoolean("thief.enabled", false);
     }
 }
