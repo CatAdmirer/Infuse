@@ -45,9 +45,9 @@ public class Heart extends InfuseEffect {
         if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
 
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
-        attribute.addModifier(new AttributeModifier(heartBoost, 20, Operation.ADD_NUMBER));
+        attribute.addModifier(new AttributeModifier(heartBoost, 10, Operation.ADD_NUMBER));
 
-        owner.heal(20);
+        owner.heal(10);
     }
 
     @Override
@@ -68,8 +68,8 @@ public class Heart extends InfuseEffect {
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         AttributeInstance attribute = owner.getAttribute(Attribute.MAX_HEALTH);
-        attribute.addModifier(new AttributeModifier(heartSparkBoost, 20, Operation.ADD_NUMBER));
-        owner.heal(20);
+        attribute.addModifier(new AttributeModifier(heartSparkBoost, 10, Operation.ADD_NUMBER));
+        owner.heal(attribute.getValue());
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
