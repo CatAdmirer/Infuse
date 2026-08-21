@@ -270,6 +270,7 @@ thunder:
   blacklisted_worlds: []
 
 apophis:
+  enabled: false
   cooldown:
     default: 125
     augmented: 75
@@ -291,14 +292,11 @@ apophis:
   blacklisted_worlds: []
 
 thief:
+  enabled: false
   cooldown:
     default: 300
     augmented: 150
   blacklisted_worlds: []
-
-extra_effects:
-  Apophis: false
-  Thief: false
 
 # Do not change this option, changing/deleting this option may lead to your configuration being wiped fresh.
 config_version: 1.0
