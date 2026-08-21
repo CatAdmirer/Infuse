@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsTakenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
@@ -28,6 +28,7 @@ import org.bukkit.craftbukkit.inventory.view.CraftEnchantmentView;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -164,31 +165,24 @@ public class Emerald extends InfuseEffect {
     }
 
     @EventHandler
-    public void tenHitEvent(TenHitEvent event) {
-        Infuse.LOGGER.debug("[Emerald] Received TenHitEvent");
-        Infuse.LOGGER.debug("[Emerald] Attacker: {}", event.getAttacker().getName());
-        Infuse.LOGGER.debug("[Emerald] Target: {}", event.getTarget().getName());
+    public void tenHitEvent(TenHitsTakenEvent event) {
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastAttacker(), this)) return;
 
-        if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
 
-        Infuse.LOGGER.debug("[Emerald] Target has emerald effect");
-        Infuse.LOGGER.debug("[Emerald] Locking attacker's food and Exp");
-
-        new FoodAndExpLock(plugin, event.getAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
+        new FoodAndExpLock(plugin, event.getLastAttacker(), plugin.getMainConfig().emeraldLockDurationSeconds());
     }
 
     public static class FoodAndExpLock implements Listener {
-        private final Player player;
+        private final LivingEntity player;
 
-        public FoodAndExpLock(Infuse plugin, Player player, double durationSeconds) {
+        public FoodAndExpLock(Infuse plugin, LivingEntity player, double durationSeconds) {
             this.player = player;
 
             Bukkit.getPluginManager().registerEvents(this, plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 HandlerList.unregisterAll(this);
-                Infuse.LOGGER.debug("[Emerald] Exp lock for {} has been lifted", player.getName());
             }, (long) (durationSeconds * 20));
         }
 

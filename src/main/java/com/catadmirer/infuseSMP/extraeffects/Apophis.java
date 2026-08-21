@@ -5,7 +5,8 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.effects.Emerald.FoodAndExpLock;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
+import com.catadmirer.infuseSMP.events.TenHitsTakenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
@@ -452,22 +453,22 @@ public class Apophis extends InfuseEffect {
     }
 
     @EventHandler
-    public void apophisCombustTarget(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void apophisCombustTarget(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastTarget(), this)) return;
 
-        event.getTarget().setFireTicks(100);
+        event.getLastTarget().setFireTicks(100);
     }
 
     @EventHandler
-    public void apophisShowTargetHealth(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void apophisShowTargetHealth(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
-        this.showAndUpdateHealthAboveEntity(event.getTarget());
+        this.showAndUpdateHealthAboveEntity(event.getLastTarget());
     }
 
     @EventHandler
@@ -519,19 +520,19 @@ public class Apophis extends InfuseEffect {
     }
 
     @EventHandler
-    public void tenHitEvent(TenHitEvent event) {
+    public void tenHitEvent(TenHitsTakenEvent event) {
         Infuse.LOGGER.debug("[Apophis] Received TenHitEvent");
-        Infuse.LOGGER.debug("[Apophis] Attacker: {}", event.getAttacker().getName());
-        Infuse.LOGGER.debug("[Apophis] Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Apophis] Attacker: {}", event.getLastAttacker().getName());
+        Infuse.LOGGER.debug("[Apophis] Target: {}", event.getPlayer().getName());
 
-        if (!plugin.getDataManager().hasEffect(event.getTarget(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Apophis] Target has apophis effect");
         Infuse.LOGGER.debug("[Apophis] Locking attacker's food and Exp");
 
-        new FoodAndExpLock(plugin, event.getAttacker(), plugin.getMainConfig().apophisLockDurationSeconds());
+        new FoodAndExpLock(plugin, event.getLastAttacker(), plugin.getMainConfig().apophisLockDurationSeconds());
     }
 
     @EventHandler

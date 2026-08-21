@@ -4,7 +4,7 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.destroystokyo.paper.MaterialSetTag;
@@ -236,13 +236,13 @@ public class Frost extends InfuseEffect {
     }
 
     @EventHandler
-    public void onTenthAttack(TenHitEvent event) {
+    public void onTenthAttack(TenHitsGivenEvent event) {
         Infuse.LOGGER.debug("[Frost] Recieved TenHitEvent");
-        Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getAttacker().getName());
-        Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getTarget().getName());
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Attacker: {}", event.getPlayer().getName());
+        Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getLastTarget().getName());
 
-        if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
 
         Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
 
@@ -252,11 +252,11 @@ public class Frost extends InfuseEffect {
 
             public void run() {
                 if (this.ticksElapsed >= freezeDuration) {
-                    event.getTarget().setFreezeTicks(0);
+                    event.getLastTarget().setFreezeTicks(0);
                     this.cancel();
                 } else {
-                    int currentFreezeTicks = event.getTarget().getFreezeTicks();
-                    event.getTarget().setFreezeTicks(currentFreezeTicks + 2);
+                    int currentFreezeTicks = event.getLastTarget().getFreezeTicks();
+                    event.getLastTarget().setFreezeTicks(currentFreezeTicks + 2);
                     this.ticksElapsed += 2;
                 }
             }

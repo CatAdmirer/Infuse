@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
@@ -155,8 +155,8 @@ public class Strength extends InfuseEffect {
     }
 
     @EventHandler
-    public void strengthTenHitEvent(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void strengthTenHitEvent(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
 
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;

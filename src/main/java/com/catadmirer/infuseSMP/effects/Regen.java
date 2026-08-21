@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
@@ -140,13 +140,14 @@ public class Regen extends InfuseEffect {
     }
 
     @EventHandler
-    public void onTenthAttack(TenHitEvent event) {
-        if (!plugin.getDataManager().hasEffect(event.getAttacker(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getAttacker(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
+    public void onTenthAttack(TenHitsGivenEvent event) {
+        if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (!(event.getLastTarget() instanceof Player target)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
 
-        int currentFood = event.getTarget().getFoodLevel();
-        event.getTarget().setFoodLevel(currentFood - 2);
+        int currentFood = target.getFoodLevel();
+        target.setFoodLevel(currentFood - 2);
     }
 
     @EventHandler

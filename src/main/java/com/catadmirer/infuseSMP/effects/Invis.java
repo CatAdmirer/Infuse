@@ -3,7 +3,7 @@ package com.catadmirer.infuseSMP.effects;
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
@@ -16,6 +16,8 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -154,7 +156,7 @@ public class Invis extends InfuseEffect {
         return new Message(augmented ? MessageType.AUG_INVIS_LORE : MessageType.INVIS_LORE);
     }
 
-    private void spawnBlackParticles(final Player target, final int durationInSeconds) {
+    private void spawnBlackParticles(final Entity target, final int durationInSeconds) {
         (new BukkitRunnable() {
             int ticksElapsed = 0;
             final int maxTicks = durationInSeconds * 20;
@@ -216,12 +218,12 @@ public class Invis extends InfuseEffect {
     }
 
     @EventHandler
-    public void onTenHits(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void onTenHits(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
-        Player target = event.getTarget();
+        LivingEntity target = event.getLastTarget();
         if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
         target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0, false, false));
         this.spawnBlackParticles(target, 4);

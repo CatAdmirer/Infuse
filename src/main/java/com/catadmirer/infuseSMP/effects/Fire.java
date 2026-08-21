@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
@@ -221,13 +221,13 @@ public class Fire extends InfuseEffect {
     }
 
     @EventHandler
-    public void fireCombustTarget(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void fireCombustTarget(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getTarget(), this)) return;
+        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastTarget(), this)) return;
 
-        event.getTarget().setFireTicks(100);
+        event.getLastTarget().setFireTicks(100);
     }
 
     @EventHandler

@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
@@ -185,15 +185,15 @@ public class Thunder extends InfuseEffect {
     /**
      * Strikes a player with lightning and chains it
      *
-     * @param event A {@link TenHitEvent}.
+     * @param event A {@link TenHitsGivenEvent}.
      */
     @EventHandler
-    public void onTenHitEvent(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void onTenHitEvent(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
-        Player target = event.getTarget();
+        if (!(event.getLastTarget() instanceof Player target)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
 
         // Striking the attacked player

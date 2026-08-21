@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
@@ -145,12 +145,12 @@ public class Heart extends InfuseEffect {
     //// These are only registered once, so they need to be able to handle being used for every player, no matter what effects they actually have
 
     @EventHandler
-    public void heartShowTargetHealth(TenHitEvent event) {
-        Player attacker = event.getAttacker();
+    public void heartShowTargetHealth(TenHitsGivenEvent event) {
+        Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
         if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
 
-        this.showAndUpdateHealthAboveEntity(event.getTarget());
+        this.showAndUpdateHealthAboveEntity(event.getLastTarget());
     }
 
     @EventHandler
