@@ -76,6 +76,7 @@ betterteams:
 
 
 # First number is the augmented limit, the second is the regular limit
+# Set to -1 to disable the limit
 craft_limits:
   emerald:  [1, 3]
   ender:    [1, 3]
