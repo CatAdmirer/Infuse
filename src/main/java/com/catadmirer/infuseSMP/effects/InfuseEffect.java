@@ -152,11 +152,11 @@ public abstract class InfuseEffect implements Listener {
     public abstract Message getLore();
 
     public char getIcon() {
-        return (char) Integer.parseInt("E" + (augmented ? 2 : 0) + String.format("%02d", id), 16);
+        return (char) Integer.parseInt("E" + (augmented ? 2 : 0) + String.format("%02d", id + 1), 16);
     }
 
     public char getActiveIcon() {
-        return (char) Integer.parseInt("E" + (augmented ? 3 : 1) + String.format("%02d", id), 16);
+        return (char) Integer.parseInt("E" + (augmented ? 3 : 1) + String.format("%02d", id + 1), 16);
     }
 
     public static InfuseEffect fromString(@Nullable String key) {
