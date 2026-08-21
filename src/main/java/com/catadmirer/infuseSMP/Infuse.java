@@ -63,7 +63,7 @@ public class Infuse extends JavaPlugin {
         this.hitTracker = new HitTracker(this);
         this.ritualManager = new RitualManager();
 
-        if (ExpansionHelper.canUseBetterTeams()) {
+        if (ExpansionHelper.canUseBetterTeams() && mainConfig.enableBetterTeams()) {
             trustManager = new MultiTrustManager(new BetterTeamsTrustManager(), dataManager);
         } else {
             trustManager = dataManager;
