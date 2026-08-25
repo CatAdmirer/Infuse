@@ -55,15 +55,10 @@ public class RecipeManager {
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (!(isRecipeEnabled(effect))) continue;
             ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
 
             Bukkit.addRecipe(recipe);
         }
-    }
-
-    public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
