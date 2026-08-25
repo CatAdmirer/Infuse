@@ -91,10 +91,11 @@ public class InventoryClickListener implements Listener {
         HumanEntity player = event.getWhoClicked();
 
         // Erroring out if the recipe is not enabled
-        if (!plugin.getRecipeManager().isRecipeEnabled(effect)) {
-            player.sendMessage(new Message(MessageType.RECIPE_DISABLED).toComponent());
-            return;
-        }
+        // TODO: Check bukkit api, not the recipe manager
+        //if (!plugin.getRecipeManager().isRecipeEnabled(effect)) {
+        //    player.sendMessage(new Message(MessageType.RECIPE_DISABLED).toComponent());
+        //    return;
+        //}
 
         if (plugin.getRecipeManager().getRecipe(effect).getChoiceMap().isEmpty()) {
             player.sendMessage(new Message(MessageType.RECIPE_NOT_FOUND).toComponent());
