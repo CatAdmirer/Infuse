@@ -31,8 +31,6 @@ import org.bukkit.inventory.MenuType;
 public class EffectCraftManager implements Listener {
     private final Infuse plugin = Infuse.getInstance();
 
-
-
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         // Safe to assume the crafted item is the correct augmented/regular form due to the PrepareItemCraftEvent Listener
@@ -67,11 +65,18 @@ public class EffectCraftManager implements Listener {
                 event.setCancelled(true);
                 return;
             }
+
+            // Updating the recipe if needed
+            // Recipes are only updated when infinite effects aren't used.
+            if (numCrafted + 1 == craftLimit) {
+                Bukkit.removeRecipe(plugin.getRecipeManager().getRecipeKey(effect);
+                Bukkit.addRecipe(plugin.getRecipeManager().getRecipe(effect.getRegularVersion()));
+            }
         }
 
         // Incrementing the number of effects crafted.
         plugin.getDataManager().setExistingCount(effect, numCrafted + 1);
-
+        
         // If the effect is not augmented, just craft it
         if (!effect.isAugmented())  {
             // Calling the EffectCraftEvent
@@ -120,17 +125,6 @@ public class EffectCraftManager implements Listener {
 
         // Cancelling the event
         event.setCancelled(true);
-    }
-
-    /** Consulting the recipe manager to determine what to craft */
-    @EventHandler
-    public void onPrepareCraft(PrepareItemCraftEvent event) {
-        // Ignoring non-infuse items
-        if (event.getRecipe() == null) return;
-        if (InfuseEffect.fromItem(event.getRecipe().getResult()) == null) return;
-
-        ItemStack toCraft = plugin.getRecipeManager().getItemToCraft(event.getRecipe());
-        event.getInventory().setResult(toCraft);
     }
 
     public static final Component effectCraftingMenu = Component.text("Effect Crafting");
