@@ -104,11 +104,11 @@ public class DataManager implements TrustManager {
     }
 
     public int getExistingCount(InfuseEffect effect) {
-        return config.getInt("existing-effects." + effect.getPlainKey(), 0);
+        return config.getInt("existing-effects." + effect.getKey(), 0);
     }
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
-        config.set("existing-effects." + effect.getPlainKey(), crafted);
+        config.set("existing-effects." + effect.getKey(), crafted);
 
         save();
     }
