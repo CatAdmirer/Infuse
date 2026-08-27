@@ -7,12 +7,15 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @NullMarked
 public class MessageTranslator {
     public static final Set<String> SUPPORTED_LOCALES = Set.of("en_US", "es");
 
     private final Infuse plugin = Infuse.getInstance();
+    public static final Pattern CONFIG_PATTERN = Pattern.compile("<config:([a-zA-Z0-9_.-]+)>");
 
     @Nullable
     public String translate(String key) {
@@ -28,11 +31,21 @@ public class MessageTranslator {
         // Getting the translation
         FileConfiguration conf = getLocale(locale);
 
-        if (conf.isString(key.toLowerCase())) {
-            return conf.getString(key.toLowerCase());
-        } else {
-            return String.join("\n", conf.getStringList(key.toLowerCase()));
+        // Getting the sentence from the config
+        final String result = conf.isString(key.toLowerCase()) ? conf.getString(key.toLowerCase()) : String.join("\n", conf.getStringList(key.toLowerCase()));
+        if (result == null) return null;
+
+        final Matcher matcher = CONFIG_PATTERN.matcher(result);
+        final StringBuilder buffer = new StringBuilder();
+
+        while (matcher.find()) {
+            final String value = plugin.getMainConfig().config.get(matcher.group(1)).toString();
+            if (value == null || value.isEmpty()) continue;
+
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(value));
         }
+
+        return matcher.appendTail(buffer).toString();
     }
 
     public void loadAll() {
