@@ -62,8 +62,8 @@ public class RecipeManager {
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getPlainKey();
-        NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
+        String baseKey = mapping.getKey();
+        NamespacedKey recipeKey = new NamespacedKey(plugin, mapping.getPlainKey());
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
 
         effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
