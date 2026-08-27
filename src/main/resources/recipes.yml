@@ -56,7 +56,7 @@ ender:
   ingredients:
     R: DRAGON_HEAD
     A: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
-    P: ENDER_EYE
+    E: ENDER_EYE
 
 frost:
   type: shaped
