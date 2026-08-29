@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectUnequipEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -51,7 +50,7 @@ public class Haste extends InfuseEffect {
     @Override
     public void applyPassives(Player owner) {
         //todo: Move to PlayerItemHeldEvent listener
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         ItemStack item = owner.getInventory().getItemInMainHand();
         if (ItemUtil.isPickaxe(item) || ItemUtil.isAxe(item) || ItemUtil.isShovel(item) || ItemUtil.isHoe(item)) {
@@ -66,8 +65,8 @@ public class Haste extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "haste")) return;
-        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -109,7 +108,7 @@ public class Haste extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         Infuse.LOGGER.debug("[Haste] PlayerItemHeldEvent is for an haste user");
 
@@ -169,7 +168,7 @@ public class Haste extends InfuseEffect {
         if (!player.isBlocking()) return;
         // TODO: Handle if player blocks with main hand
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!ItemUtil.isAxe(attacker.getInventory().getItemInMainHand())) return;
 

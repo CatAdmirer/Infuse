@@ -6,7 +6,6 @@ import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.EffectEquipEvent;
 import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,7 +47,7 @@ public class Frost extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
         changeToSnow(owner);
     }
 
@@ -57,7 +56,7 @@ public class Frost extends InfuseEffect {
 
     @Override
     public void applyPassives(Player owner) {
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         if (!(owner.getVelocity().lengthSquared() < 0.01)) {
             if (owner.isInPowderedSnow()) {
@@ -76,8 +75,8 @@ public class Frost extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "frost")) return;
-        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
@@ -98,8 +97,8 @@ public class Frost extends InfuseEffect {
             if (player.equals(owner)) continue;
             if (plugin.getTrustManager().doesTrust(owner, player)) continue;
             if (player.getLocation().distance(center) > radius) continue;
-            if (!RegionBlocker.getInstance().canBeTargetedBySpark(player)) continue;
-            if (RegionBlocker.getInstance().isEffectBlocked(player, Frost.this)) continue;
+            if (!plugin.getRegionBlocker().canBeTargetedBySpark(player)) continue;
+            if (plugin.getRegionBlocker().isEffectBlocked(player, Frost.this)) continue;
 
             affectedPlayers.add(player);
             AttributeInstance jumpAttribute = player.getAttribute(Attribute.JUMP_STRENGTH);
@@ -144,7 +143,7 @@ public class Frost extends InfuseEffect {
     }
 
     public void changeToSnow(Player player) {
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         final int frostSnowRadius = plugin.getMainConfig().frostPassiveSnowChangingRadius();
         Location center = player.getLocation();
@@ -162,7 +161,7 @@ public class Frost extends InfuseEffect {
                     if (powderSnowBlock.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
 
                     // Skipping if the block's location is in a blocked region.
-                    if (RegionBlocker.getInstance().isEffectBlocked(powderSnowBlock.getLocation(), this)) return;
+                    if (plugin.getRegionBlocker().isEffectBlocked(powderSnowBlock.getLocation(), this)) return;
 
                     // Changing the block to regular snow
                     powderSnowBlock.setType(Material.SNOW_BLOCK);
@@ -198,7 +197,7 @@ public class Frost extends InfuseEffect {
         if (event.isGliding()) return;
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         if (player.isInPowderedSnow()) {
             event.setCancelled(true);
@@ -209,7 +208,7 @@ public class Frost extends InfuseEffect {
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         boolean inFrost = player.getLocation().getBlock().getType() == Material.POWDER_SNOW;
         Vector direction = player.getLocation().getDirection().normalize();
@@ -229,7 +228,7 @@ public class Frost extends InfuseEffect {
         ItemStack item = player.getInventory().getItemInMainHand();
 
         if (item.getType() != Material.WIND_CHARGE) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         if (player.getFreezeTicks() <= 1) return;
 
         event.setCancelled(true);
@@ -242,7 +241,7 @@ public class Frost extends InfuseEffect {
         Infuse.LOGGER.debug("[Frost] TenHitEvent Target: {}", event.getLastTarget().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getPlayer(), this)) return;
 
         Infuse.LOGGER.debug("[Frost] Attacker has frost effect");
 
@@ -277,7 +276,7 @@ public class Frost extends InfuseEffect {
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!attacker.hasPotionEffect(PotionEffectType.UNLUCK)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(attacker, this)) return;
         PotionEffect effect = attacker.getPotionEffect(PotionEffectType.UNLUCK);
         if (effect.getAmplifier() >= 0 && frozenAttackers.contains(attacker.getUniqueId()) && event.getEntity() instanceof Player target) {
             target.setFreezeTicks(200);

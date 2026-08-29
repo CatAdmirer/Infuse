@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -50,7 +49,7 @@ public class SparkCommand {
         }
 
         // Warning the player that they can't use the spark right now
-        if (!RegionBlocker.getInstance().canUseSpark(player) || RegionBlocker.getInstance().isEffectBlocked(player, equippedEffect)) {
+        if (!plugin.getRegionBlocker().canUseSpark(player) || plugin.getRegionBlocker().isEffectBlocked(player, equippedEffect)) {
             sender.sendMessage(Message.toComponent("<red>You cannot activate your spark in this area!"));
         }
 

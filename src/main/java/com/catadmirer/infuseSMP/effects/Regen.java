@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.FoodProperties;
@@ -33,7 +32,7 @@ public class Regen extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, -1, 0, false, false));
     }
 
@@ -46,8 +45,8 @@ public class Regen extends InfuseEffect {
     public void activateSpark(Player owner) {
         UUID playerUUID = owner.getUniqueId();
         if (CooldownManager.isOnCooldown(playerUUID, "regen")) return;
-        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
@@ -85,14 +84,14 @@ public class Regen extends InfuseEffect {
     public void regenRegenerateOnHit(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false));
         if (CooldownManager.isEffectActive(player.getUniqueId(), "regen")) {
             final double radius = plugin.getMainConfig().regenSparkHealTrustedRadius();
             for (Entity loopentity : player.getNearbyEntities(radius, radius, radius)) {
                 if (loopentity instanceof Player otherplayer) {
-                    if (plugin.getTrustManager().doesTrust(player, otherplayer) && !RegionBlocker.getInstance().isEffectBlocked(otherplayer, this)) {
+                    if (plugin.getTrustManager().doesTrust(player, otherplayer) && !plugin.getRegionBlocker().isEffectBlocked(otherplayer, this)) {
                         otherplayer.heal(event.getDamage() / 2);
                     }
                 }
@@ -104,7 +103,7 @@ public class Regen extends InfuseEffect {
     public void consume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         float sat = player.getSaturation();
         player.setSaturation(sat + 6);
@@ -127,7 +126,7 @@ public class Regen extends InfuseEffect {
         if (item.getType().getDefaultData(DataComponentTypes.FOOD).canAlwaysEat()) return;
 
         // Making the food always edible only if the player has the regen effect.  Makes food not always edible otherwise
-        if (plugin.getDataManager().hasEffect(player, this) && !RegionBlocker.getInstance().isEffectBlocked(player, this)) {
+        if (plugin.getDataManager().hasEffect(player, this) && !plugin.getRegionBlocker().isEffectBlocked(player, this)) {
             FoodProperties properties = item.getData(DataComponentTypes.FOOD);
 
             // Ignoring null error because we know the item is edible.
@@ -142,9 +141,9 @@ public class Regen extends InfuseEffect {
     @EventHandler
     public void onTenthAttack(TenHitsGivenEvent event) {
         if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getPlayer(), this)) return;
         if (!(event.getLastTarget() instanceof Player target)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(target, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(target, this)) return;
 
         int currentFood = target.getFoodLevel();
         target.setFoodLevel(currentFood - 2);
@@ -154,7 +153,7 @@ public class Regen extends InfuseEffect {
     public void regenPreserveHunger(FoodLevelChangeEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         event.setFoodLevel(20);
     }

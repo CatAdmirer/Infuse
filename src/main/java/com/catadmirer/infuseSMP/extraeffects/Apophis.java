@@ -9,7 +9,6 @@ import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.events.TenHitsTakenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.util.ItemUtil;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
@@ -96,7 +95,7 @@ public class Apophis extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         // Applying the potion effect to the player
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, -1, 0));
@@ -141,8 +140,8 @@ public class Apophis extends InfuseEffect {
 
         // Stopping if the spark is on cooldown
         if (CooldownManager.isOnCooldown(playerUUID, "apophis")) return;
-        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
@@ -164,8 +163,8 @@ public class Apophis extends InfuseEffect {
         for (Entity entity : owner.getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof LivingEntity)) continue;
             if (entity == owner) continue;
-            if (!RegionBlocker.getInstance().canBeTargetedBySpark(entity)) continue;
-            if (RegionBlocker.getInstance().isEffectBlocked(entity, this)) continue;
+            if (!plugin.getRegionBlocker().canBeTargetedBySpark(entity)) continue;
+            if (plugin.getRegionBlocker().isEffectBlocked(entity, this)) continue;
 
             entity.setFireTicks(100);
         }
@@ -225,8 +224,8 @@ public class Apophis extends InfuseEffect {
                     for (Player target : world.getPlayers()) {
                         if (target.equals(caster)) continue;
                         if (target.getLocation().distance(center) > 5) continue;
-                        if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
-                        if (RegionBlocker.getInstance().isEffectBlocked(target, Apophis.this)) continue;
+                        if (!plugin.getRegionBlocker().canBeTargetedBySpark(target)) continue;
+                        if (plugin.getRegionBlocker().isEffectBlocked(target, Apophis.this)) continue;
                         target.damage(8, caster);
                     }
                 }
@@ -421,7 +420,7 @@ public class Apophis extends InfuseEffect {
 
         if (!player.isInLava()) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
 
         double boostStrength = plugin.getMainConfig().apophisLavaWalkSpeed();
@@ -433,7 +432,7 @@ public class Apophis extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
             projectile.setFireTicks(100);
@@ -445,7 +444,7 @@ public class Apophis extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         Material blockType = player.getLocation().getBlock().getType();
         if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
             event.setCancelled(true);
@@ -456,8 +455,8 @@ public class Apophis extends InfuseEffect {
     public void apophisCombustTarget(TenHitsGivenEvent event) {
         Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastTarget(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(attacker, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getLastTarget(), this)) return;
 
         event.getLastTarget().setFireTicks(100);
     }
@@ -466,7 +465,7 @@ public class Apophis extends InfuseEffect {
     public void apophisShowTargetHealth(TenHitsGivenEvent event) {
         Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(attacker, this)) return;
 
         this.showAndUpdateHealthAboveEntity(event.getLastTarget());
     }
@@ -475,7 +474,7 @@ public class Apophis extends InfuseEffect {
     public void onPlayerEat(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         ItemStack item = event.getItem();
         if (item.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
@@ -491,7 +490,7 @@ public class Apophis extends InfuseEffect {
 
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         Infuse.LOGGER.debug("[Apophis] PlayerItemHeldEvent is for an apophis user");
 
@@ -526,8 +525,8 @@ public class Apophis extends InfuseEffect {
         Infuse.LOGGER.debug("[Apophis] Target: {}", event.getPlayer().getName());
 
         if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastAttacker(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getPlayer(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getLastAttacker(), this)) return;
 
         Infuse.LOGGER.debug("[Apophis] Target has apophis effect");
         Infuse.LOGGER.debug("[Apophis] Locking attacker's food and Exp");
@@ -540,7 +539,7 @@ public class Apophis extends InfuseEffect {
         Player player = event.getPlayer();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         ExperienceOrb orb = event.getExperienceOrb();
         int amount = orb.getExperience();
@@ -568,7 +567,7 @@ public class Apophis extends InfuseEffect {
         // Making sure the enchanter has the apophis effect
         Player player = event.getEnchanter();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         EnchantmentOffer[] offers = event.getOffers();
         Random random = new Random(player.getEnchantmentSeed());
@@ -640,8 +639,8 @@ public class Apophis extends InfuseEffect {
         if (!(event.getDamageSource().getCausingEntity() instanceof Player attacker)) return;
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
 
-        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(damaged, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(attacker, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(damaged, this)) return;
 
         // Getting configs
         int exp = damaged.getTotalExperience();
@@ -663,7 +662,7 @@ public class Apophis extends InfuseEffect {
 
         // Making sure the player has the apophis effect
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         ItemStack consumedItem = event.getItem();
 
@@ -690,13 +689,13 @@ public class Apophis extends InfuseEffect {
     public void expShare(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
         if (!CooldownManager.isEffectActive(player.getUniqueId(), getPlainKey())) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         for (OfflinePlayer trusted : plugin.getTrustManager().getTrusted(player)) {
             Player trustedPlayer = trusted.getPlayer();
 
             if (trustedPlayer == null) continue;
-            if (RegionBlocker.getInstance().isEffectBlocked(trustedPlayer, this)) continue;
+            if (plugin.getRegionBlocker().isEffectBlocked(trustedPlayer, this)) continue;
 
             int toGain = (int) (event.getAmount() * plugin.getMainConfig().apophisPercentExpToShare());
             trustedPlayer.setTotalExperience(trustedPlayer.getTotalExperience() + toGain);

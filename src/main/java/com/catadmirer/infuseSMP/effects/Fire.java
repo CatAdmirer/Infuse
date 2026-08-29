@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.events.TenHitsGivenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -39,7 +38,7 @@ public class Fire extends InfuseEffect {
 
     @Override
     public void equip(Player owner) {
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
         owner.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, -1, 0, false, false));
     }
 
@@ -53,8 +52,8 @@ public class Fire extends InfuseEffect {
         UUID playerUUID = owner.getUniqueId();
 
         if (CooldownManager.isOnCooldown(playerUUID, "fire")) return;
-        if (!RegionBlocker.getInstance().canUseSpark(owner)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(owner, this)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
         owner.getWorld().playSound(owner.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
 
@@ -62,8 +61,8 @@ public class Fire extends InfuseEffect {
         for (Entity entity : owner.getNearbyEntities(radius, radius, radius)) {
             if (!(entity instanceof LivingEntity)) continue;
             if (entity == owner) continue;
-            if (!RegionBlocker.getInstance().canBeTargetedBySpark(entity)) continue;
-            if (RegionBlocker.getInstance().isEffectBlocked(entity, this)) continue;
+            if (!plugin.getRegionBlocker().canBeTargetedBySpark(entity)) continue;
+            if (plugin.getRegionBlocker().isEffectBlocked(entity, this)) continue;
 
             entity.setFireTicks(100);
         }
@@ -129,8 +128,8 @@ public class Fire extends InfuseEffect {
                     for (Player target : world.getPlayers()) {
                         if (target.equals(caster)) continue;
                         if (target.getLocation().distance(center) > 5) continue;
-                        if (!RegionBlocker.getInstance().canBeTargetedBySpark(target)) continue;
-                        if (RegionBlocker.getInstance().isEffectBlocked(target, Fire.this)) continue;
+                        if (!plugin.getRegionBlocker().canBeTargetedBySpark(target)) continue;
+                        if (plugin.getRegionBlocker().isEffectBlocked(target, Fire.this)) continue;
                         target.damage(8, caster);
                     }
                 }
@@ -189,7 +188,7 @@ public class Fire extends InfuseEffect {
 
         if (!player.isInLava()) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
 
         double boostStrength = plugin.getMainConfig().firePassiveWalkSpeed();
@@ -201,7 +200,7 @@ public class Fire extends InfuseEffect {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         if (event.getForce() >= 1 && event.getProjectile() instanceof Projectile projectile) {
             projectile.setFireTicks(100);
@@ -213,7 +212,7 @@ public class Fire extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
         Material blockType = player.getLocation().getBlock().getType();
         if (blockType == Material.LAVA || blockType == Material.LAVA_CAULDRON) {
             event.setCancelled(true);
@@ -224,8 +223,8 @@ public class Fire extends InfuseEffect {
     public void fireCombustTarget(TenHitsGivenEvent event) {
         Player attacker = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(attacker, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getLastTarget(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(attacker, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getLastTarget(), this)) return;
 
         event.getLastTarget().setFireTicks(100);
     }
@@ -235,7 +234,7 @@ public class Fire extends InfuseEffect {
         if (!plugin.getDataManager().hasEffect(event.getPlayer(), this)) return;
 
         // TODO: ask turbo if we really need this or not, probably not
-        if (RegionBlocker.getInstance().isEffectBlocked(event.getPlayer(), this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(event.getPlayer(), this)) return;
 
         final Iterator<Recipe> recipes = Bukkit.recipeIterator();
         while (recipes.hasNext()) {

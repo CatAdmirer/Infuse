@@ -4,7 +4,6 @@ import com.catadmirer.infuseSMP.effects.Heart;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.extraeffects.Apophis;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
-import com.catadmirer.infuseSMP.util.regions.RegionBlocker;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -44,7 +43,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (lEffect != null) {
-                final boolean shouldBlock = RegionBlocker.getInstance().isEffectBlocked(player, lEffect);
+                final boolean shouldBlock = plugin.getRegionBlocker().isEffectBlocked(player, lEffect);
                 boolean isBlocked = lEffectDisabled.contains(player.getUniqueId());
 
                 if (shouldBlock && !isBlocked) {
@@ -62,7 +61,7 @@ public class GlobalLoop extends BukkitRunnable {
 
             // Applying passive effects to the player
             if (rEffect != null) {
-                final boolean shouldBlock = RegionBlocker.getInstance().isEffectBlocked(player, rEffect);
+                final boolean shouldBlock = plugin.getRegionBlocker().isEffectBlocked(player, rEffect);
                 boolean isBlocked = rEffectDisabled.contains(player.getUniqueId());
                 if (shouldBlock && !isBlocked) {
                     rEffect.unequip(player);

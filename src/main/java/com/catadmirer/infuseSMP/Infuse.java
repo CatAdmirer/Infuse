@@ -44,7 +44,8 @@ public class Infuse extends JavaPlugin {
     private final RecipeManager recipeManager;
     private final HitTracker hitTracker;
     private final RitualManager ritualManager;
-    private final TrustManager trustManager;
+    private TrustManager trustManager;
+    private RegionBlocker regionBlocker;
 
     @NonNull
     public static Infuse getInstance() {
@@ -59,7 +60,7 @@ public class Infuse extends JavaPlugin {
         this.dataManager = new DataManager(this);
         this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
-        this.recipeManager = new RecipeManager(this);
+        this.recipeManager = new RecipeManager();
         this.hitTracker = new HitTracker(this);
         this.ritualManager = new RitualManager();
 
@@ -75,10 +76,10 @@ public class Infuse extends JavaPlugin {
         registerEffects();
 
         if (ExpansionHelper.canUseWorldGuard()) {
-            RegionBlocker.setInstance(new DualRegionBlocker());
+            regionBlocker = new DualRegionBlocker();
             LOGGER.info("WorldGuard found! Enabling region-based effect management.");
         } else {
-            RegionBlocker.setInstance(new BasicRegionBlocker());
+            regionBlocker = new BasicRegionBlocker();
             LOGGER.info("WorldGuard is not installed! Using blacklisted-worlds configs");
         }
     }
@@ -294,5 +295,9 @@ public class Infuse extends JavaPlugin {
 
     public TrustManager getTrustManager() {
         return trustManager;
+    }
+
+    public RegionBlocker getRegionBlocker() {
+        return regionBlocker;
     }
 }
