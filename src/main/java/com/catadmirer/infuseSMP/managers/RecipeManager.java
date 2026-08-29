@@ -7,6 +7,7 @@ import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,8 +21,8 @@ public class RecipeManager {
     private final File recipesFile;
     private final FileConfiguration recipesConfig;
 
-    public RecipeManager(Infuse plugin) {
-        this.plugin = plugin;
+    public RecipeManager() {
+        this.plugin = Infuse.getInstance();
 
         recipesFile = new File(plugin.getDataFolder(), "recipes.yml");
         if (!recipesFile.exists()) {
@@ -62,7 +63,8 @@ public class RecipeManager {
     }
 
     public boolean isRecipeEnabled(InfuseEffect mapping) {
-        return recipesConfig.getBoolean(mapping.getPlainKey() + ".enabled", false);
+        NamespacedKey key = getRecipeKey(mapping);
+        return Bukkit.getRecipe(key) != null;
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
@@ -78,10 +80,22 @@ public class RecipeManager {
 
             String materialName = ingredientsConfig.getString(key);
             if (materialName == null) {
-                Infuse.LOGGER.error("The infuse effect '{}' has failed to register its recipe, A ingredient has not been defined properly.", baseKey);
+                Infuse.LOGGER.error("Failed to get a recipe for the '{}' effect.  An ingredient key has no value.", baseKey);
+                continue;
             }
 
-            Material ingredientMaterial = Material.valueOf(materialName.toUpperCase());
+            NamespacedKey matKey = NamespacedKey.fromString(materialName.toLowerCase());
+            if (matKey == null) {
+                Infuse.LOGGER.error("Failed to get a recipe for the '{}' effect.  '{}' is an invalid material.", baseKey, materialName);
+                continue;
+            }
+
+            Material ingredientMaterial = Registry.MATERIAL.get(matKey);
+            if (ingredientMaterial == null) {
+                Infuse.LOGGER.error("Failed to get a recipe for the '{}' effect.  The material '{}' could not be found.", baseKey, materialName);
+                continue;
+            }
+
             effectRecipe.setIngredient(ingredientLabel, ingredientMaterial);
         }
 
@@ -94,15 +108,29 @@ public class RecipeManager {
             Bukkit.removeRecipe(enderRecipe.getKey(), true);
 
             String matName = recipesConfig.getString("ender.egg_replacement");
-            Material eggReplacement = Material.valueOf(matName.toUpperCase());
-
-            ConfigurationSection ingredientsConfig = recipesConfig.getConfigurationSection("ender.ingredients");
-            for (String key : ingredientsConfig.getKeys(false)) {
-                char ingredientLabel = key.charAt(0);
-                if (!ingredientsConfig.getString(key).equals("DRAGON_EGG")) continue;
-
-                enderRecipe.setIngredient(ingredientLabel, eggReplacement);
+            if (matName == null) {
+                Infuse.LOGGER.info("Did not find a replacement for the dragon egg.  Skipping recipe update.");
+                return;
             }
+
+            NamespacedKey matKey = NamespacedKey.fromString(matName);
+            if (matKey == null) {
+                Infuse.LOGGER.error("Failed to get the dragon egg replacement for the ender effect.  '{}' is an invalid material.", matName);
+                return;
+            }
+
+            Material eggReplacement = Registry.MATERIAL.get(matKey);
+            if (eggReplacement == null) {
+                Infuse.LOGGER.error("Failed to get the dragon egg replacement for the ender effect.  '{}' is not a registered material.", matName);
+                return;
+            }
+
+            ItemStack egg = new ItemStack(Material.DRAGON_EGG);
+            enderRecipe.getChoiceMap().forEach((key, value) -> {
+                if (value.test(egg)) {
+                    enderRecipe.setIngredient(key, eggReplacement);
+                }
+            });
 
             Bukkit.addRecipe(enderRecipe);
         }
