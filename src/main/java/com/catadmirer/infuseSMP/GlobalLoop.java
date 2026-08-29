@@ -30,6 +30,7 @@ public class GlobalLoop extends BukkitRunnable {
         this.cancel();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -77,14 +78,18 @@ public class GlobalLoop extends BukkitRunnable {
             }
 
             // Making sure the apophis boost has been removed
-            if (!plugin.getDataManager().hasEffect(player, new Apophis())) {
+            Apophis apophis = (Apophis) InfuseEffect.getEffect(EffectConstants.Id.APOPHIS);
+            if (apophis != null && !plugin.getDataManager().hasEffect(player, apophis)) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
+                assert playerHealth != null;
                 playerHealth.removeModifier(Apophis.APOPHIS_BOOST);
             }
 
             // Making sure the heart boost has been removed
-            if (!plugin.getDataManager().hasEffect(player, new Heart())) {
+            Heart heart = (Heart) InfuseEffect.getEffect(EffectConstants.Id.HEART);
+            if (heart != null && !plugin.getDataManager().hasEffect(player, heart)) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
+                assert playerHealth != null;
                 playerHealth.removeModifier(Heart.heartBoost);
             }
         }
