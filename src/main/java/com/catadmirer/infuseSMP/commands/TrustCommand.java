@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.commands;
 
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
-import com.catadmirer.infuseSMP.managers.DataManager;
 import com.catadmirer.infuseSMP.util.trust.TrustManager;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

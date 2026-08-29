@@ -63,7 +63,16 @@ public class MainConfig {
      * Does not override any existing config.
      */
     public void createFile() {
-        plugin.saveResource(file.getName(), false);
+        createFile(false);
+    }
+
+    /**
+     * Creates the default config file.<br>
+     * 
+     * @param override If true, any old config is replaced with the new version.
+     */
+    public void createFile(boolean override) {
+        plugin.saveResource(file.getName(), override);
     }
 
     /**
@@ -98,7 +107,7 @@ public class MainConfig {
         if (this.config.getString("config_version") == null) {
             // Backing up the old config and loading the new one
             backupConfig();
-            createFile();
+            createFile(true);
 
             // Creating a second instance of MainConfig to put modified values into
             MainConfig newMainConfig = new MainConfig(plugin);

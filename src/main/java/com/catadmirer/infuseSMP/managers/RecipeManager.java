@@ -2,7 +2,6 @@ package com.catadmirer.infuseSMP.managers;
 
 import java.io.File;
 
-import com.catadmirer.infuseSMP.effects.Ender;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,8 +10,6 @@ import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import com.catadmirer.infuseSMP.Infuse;
 
@@ -56,9 +53,27 @@ public class RecipeManager {
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
-            ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
+            if (plugin.getMainConfig().allowInfiniteEffects()) {
+                Bukkit.addRecipe(getRecipe(effect.getAugmentedVersion()));
+                return;
+            }
 
-            Bukkit.addRecipe(recipe);
+            effect = effect.getAugmentedVersion();
+            int craftLimit = plugin.getMainConfig().getCraftLimit(effect);
+            int crafted = plugin.getDataManager().getExistingCount(effect);
+
+            // If augmented limit is reached, check regular limit.
+            if (craftLimit == crafted) {
+                effect = effect.getRegularVersion();
+
+                craftLimit = plugin.getMainConfig().getCraftLimit(effect);
+                crafted = plugin.getDataManager().getExistingCount(effect);
+
+                // If regular limit is reached, don't register the recipe.
+                if (craftLimit == crafted) continue;
+            }
+            
+            Bukkit.addRecipe(getRecipe(effect));
         }
     }
 
@@ -68,9 +83,9 @@ public class RecipeManager {
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getPlainKey();
-        NamespacedKey recipeKey = new NamespacedKey(plugin, baseKey);
-        ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.getRegularVersion().createItem());
+        String baseKey = mapping.getKey();
+        NamespacedKey recipeKey = getRecipeKey(mapping);
+        ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.createItem());
 
         effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
 
@@ -102,72 +117,7 @@ public class RecipeManager {
         return effectRecipe;
     }
 
-    public void updateEnderRecipe() {
-        if (plugin.getDataManager().getExistingCount(new Ender(true)) > 0) {
-            ShapedRecipe enderRecipe = getRecipe(new Ender(false));
-            Bukkit.removeRecipe(enderRecipe.getKey(), true);
-
-            String matName = recipesConfig.getString("ender.egg_replacement");
-            if (matName == null) {
-                Infuse.LOGGER.info("Did not find a replacement for the dragon egg.  Skipping recipe update.");
-                return;
-            }
-
-            NamespacedKey matKey = NamespacedKey.fromString(matName);
-            if (matKey == null) {
-                Infuse.LOGGER.error("Failed to get the dragon egg replacement for the ender effect.  '{}' is an invalid material.", matName);
-                return;
-            }
-
-            Material eggReplacement = Registry.MATERIAL.get(matKey);
-            if (eggReplacement == null) {
-                Infuse.LOGGER.error("Failed to get the dragon egg replacement for the ender effect.  '{}' is not a registered material.", matName);
-                return;
-            }
-
-            ItemStack egg = new ItemStack(Material.DRAGON_EGG);
-            enderRecipe.getChoiceMap().forEach((key, value) -> {
-                if (value.test(egg)) {
-                    enderRecipe.setIngredient(key, eggReplacement);
-                }
-            });
-
-            Bukkit.addRecipe(enderRecipe);
-        }
-    }
-
     public NamespacedKey getRecipeKey(InfuseEffect effect) {
         return new NamespacedKey(plugin, effect.getPlainKey());
-    }
-
-    /**
-     * Gets the item to craft from an official Infuse recipe.
-     * This makes it easier to determine whether an infuse recipe should craft an augmented or regular effect.
-     *
-     * @param recipe The infuse {@link Recipe} to determine the result for.
-     *
-     * @return The corresponding {@link ItemStack} for the recipe, or null if the craft limit has been reached or the recipe is not an infuse recipe.
-     */
-    public ItemStack getItemToCraft(Recipe recipe) {
-        ItemStack item = recipe.getResult();
-
-        // The returned EffectMapping should always be the regular form
-        InfuseEffect effect = InfuseEffect.getEffect(item);
-        if (effect == null) return null;
-        if (effect.isAugmented()) return null;
-
-        // Checking if the augmented limit has been reached
-        InfuseEffect augEffect = effect.getAugmentedVersion();
-        if (plugin.getMainConfig().getCraftLimit(augEffect) > plugin.getDataManager().getExistingCount(augEffect)) {
-            return augEffect.createItem();
-        }
-
-        // Checking if the regular limit has been reached
-        if (plugin.getMainConfig().getCraftLimit(effect) > plugin.getDataManager().getExistingCount(effect)) {
-            return effect.createItem();
-        }
-
-        // Craft limits have been reached, return null
-        return null;
     }
 }

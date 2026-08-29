@@ -48,7 +48,7 @@ public class EffectFlag extends Flag<InfuseEffect> {
     }
 
     @Override
-    public InfuseEffect unmarshal(Object o) {
+    public InfuseEffect unmarshal(@javax.annotation.Nullable Object o) {
         if (!(o instanceof String key)) return null;
 
         return InfuseEffect.getEffect(key);

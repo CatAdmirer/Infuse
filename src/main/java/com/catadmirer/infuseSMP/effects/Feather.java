@@ -2,7 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Message;
-import com.catadmirer.infuseSMP.events.TenHitEvent;
+import com.catadmirer.infuseSMP.events.TenHitsTakenEvent;
 import com.catadmirer.infuseSMP.managers.CooldownManager;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
 import org.bukkit.Bukkit;
@@ -135,12 +135,12 @@ public class Feather extends InfuseEffect {
     }
 
     @EventHandler
-    public void onTenthHit(TenHitEvent event) {
-        Player player = event.getTarget();
-        Player target = event.getAttacker();
+    public void onTenthHit(TenHitsTakenEvent event) {
+        Player player = event.getPlayer();
+        LivingEntity target = event.getLastAttacker();
 
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 2));
         Location chargeLocation = player.getLocation().add(0, 1, 0);
@@ -158,7 +158,7 @@ public class Feather extends InfuseEffect {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getCause() != DamageCause.FALL) return;
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         event.setCancelled(true);
     }
@@ -167,7 +167,7 @@ public class Feather extends InfuseEffect {
     public void onPlayerRightClickWindcharge(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!plugin.getDataManager().hasEffect(player, this)) return;
-        if (RegionBlocker.getInstance().isEffectBlocked(player, this)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(player, this)) return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType() != Material.WIND_CHARGE) return;

@@ -51,7 +51,7 @@ public class ItemUtil {
 
         // Removing the old enchantment and applying the new one
         item.removeEnchantment(enchantment);
-        item.addEnchantment(enchantment, newLevel);
+        item.addUnsafeEnchantment(enchantment, newLevel);
     }
 
     public static void removeSpecialEnchant(ItemStack item, NamespacedKey key, Enchantment enchantment) {
@@ -66,6 +66,7 @@ public class ItemUtil {
         item.editPersistentDataContainer(c -> c.remove(key));
 
         item.removeEnchantment(enchantment);
+        if (oldLevel == 0) return;
         item.addEnchantment(enchantment, oldLevel);
     }
 }

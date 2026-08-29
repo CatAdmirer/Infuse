@@ -218,9 +218,6 @@ public class RitualManager {
         // Dropping the item
         location.getWorld().dropItem(location.add(0, 1, 0), effect.createItem());
 
-        // Updating the ender effect recipe
-        if (effect.getId() == EffectConstants.Id.ENDER.value()) plugin.getRecipeManager().updateEnderRecipe();
-
         // Finalizing the ritual ending
         stopRitual();
     }
