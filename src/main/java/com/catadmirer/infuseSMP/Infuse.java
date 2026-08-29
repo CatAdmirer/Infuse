@@ -64,16 +64,16 @@ public class Infuse extends JavaPlugin {
         this.hitTracker = new HitTracker(this);
         this.ritualManager = new RitualManager();
 
+        // Registering the vanilla effects
+        registerEffects();
+    }
+
+    public void onLoad() {
         if (ExpansionHelper.canUseBetterTeams() && mainConfig.enableBetterTeams()) {
             trustManager = new MultiTrustManager(new BetterTeamsTrustManager(), dataManager);
         } else {
             trustManager = dataManager;
         }
-    }
-
-    public void onLoad() {
-        // Registering the vanilla effects
-        registerEffects();
 
         if (ExpansionHelper.canUseWorldGuard()) {
             regionBlocker = new DualRegionBlocker();
@@ -177,7 +177,6 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityDeathListener(dataManager), this);
         Bukkit.getPluginManager().registerEvents(new EntityDropItemListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EntityPickupItemListener(this), this);
-        Bukkit.getPluginManager().registerEvents(hitTracker, this);
         Bukkit.getPluginManager().registerEvents(new EffectCraftManager(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ItemDespawnListener(dataManager), this);
@@ -186,32 +185,6 @@ public class Infuse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(dataManager), this);
-
-        // Registering events for all the effects
-        // TODO: Figure out a better way to do this.  Maybe something in an EffectRegistrationEvent
-        Bukkit.getPluginManager().registerEvents(new Emerald(), this);
-        Bukkit.getPluginManager().registerEvents(new Ender(), this);
-        Bukkit.getPluginManager().registerEvents(new Feather(), this);
-        Bukkit.getPluginManager().registerEvents(new Fire(), this);
-        Bukkit.getPluginManager().registerEvents(new Frost(), this);
-        Bukkit.getPluginManager().registerEvents(new Haste(), this);
-        Bukkit.getPluginManager().registerEvents(new Heart(), this);
-        Bukkit.getPluginManager().registerEvents(new Invis(), this);
-        Bukkit.getPluginManager().registerEvents(new Ocean(), this);
-        Bukkit.getPluginManager().registerEvents(new Regen(), this);
-        Bukkit.getPluginManager().registerEvents(new Speed(), this);
-        Bukkit.getPluginManager().registerEvents(new Strength(), this);
-        Bukkit.getPluginManager().registerEvents(new Thunder(), this);
-
-        // Enabling apophis listeners if the config allows
-        if (mainConfig.enableApophis()) {
-            getServer().getPluginManager().registerEvents(new Apophis(), this);
-        }
-
-        // Enabling thief listeners if the config allows
-        if (mainConfig.enableThief()) {
-            getServer().getPluginManager().registerEvents(new Thief(), this);
-        }
     }
 
     private void registerEffects() {

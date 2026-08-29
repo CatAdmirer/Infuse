@@ -13,11 +13,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public class ParticleManager {
-    public static void spawnEffectParticles(Player player, InfuseEffect effect) {
-        if (effect == null)
-            return;
+    public static void spawnEffectParticles(Player player, @Nullable InfuseEffect effect) {
+        if (effect == null) return;
 
         // Handling special particles for ender effect
         // TODO: Decide whether or not to keep this

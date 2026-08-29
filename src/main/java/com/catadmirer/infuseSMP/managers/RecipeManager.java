@@ -44,7 +44,7 @@ public class RecipeManager {
         }
 
         // Removing all the infuse recipes
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
+        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
             Bukkit.removeRecipe(getRecipeKey(effect), true);
         }
 
@@ -54,8 +54,7 @@ public class RecipeManager {
 
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects().values()) {
-            if (!(isRecipeEnabled(effect))) continue;
+        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
             ShapedRecipe recipe = getRecipe(effect.getRegularVersion());
 
             Bukkit.addRecipe(recipe);
@@ -125,7 +124,7 @@ public class RecipeManager {
         ItemStack item = recipe.getResult();
 
         // The returned EffectMapping should always be the regular form
-        InfuseEffect effect = InfuseEffect.fromItem(item);
+        InfuseEffect effect = InfuseEffect.getEffect(item);
         if (effect == null) return null;
         if (effect.isAugmented()) return null;
 

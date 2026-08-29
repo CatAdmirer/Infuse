@@ -282,7 +282,7 @@ public class MainConfig {
     }
 
     public List<InfuseEffect> joinEffects() {
-        return config.getStringList("join_effects").stream().map(InfuseEffect::fromString).filter(Objects::nonNull).toList();
+        return config.getStringList("join_effects").stream().map(InfuseEffect::getEffect).filter(Objects::nonNull).toList();
     }
 
     public boolean enableBetterTeams() {

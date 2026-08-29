@@ -29,7 +29,7 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
             throw ERROR_NO_EFFECT_FOUND.create(key);
         }
         
-        InfuseEffect effect = InfuseEffect.fromString(key);
+        InfuseEffect effect = InfuseEffect.getEffect(key);
 
         if (effect == null) throw ERROR_NO_EFFECT_FOUND.create(key);
 
@@ -38,7 +38,7 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        InfuseEffect.getRegisteredEffects().values()
+        InfuseEffect.getRegisteredEffects()
             .stream()
             .flatMap(e -> Stream.of(e.getRegularVersion(), e.getAugmentedVersion()))
             .map(InfuseEffect::toString)

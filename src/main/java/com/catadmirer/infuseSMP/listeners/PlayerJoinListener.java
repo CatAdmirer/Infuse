@@ -23,7 +23,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player all the infuse recipes
-        InfuseEffect.getRegisteredEffects().values().stream().map(plugin.getRecipeManager()::getRecipeKey).forEach(player::discoverRecipe);
+        InfuseEffect.getRegisteredEffects().stream().map(plugin.getRecipeManager()::getRecipeKey).forEach(player::discoverRecipe);
     }
 
     @EventHandler

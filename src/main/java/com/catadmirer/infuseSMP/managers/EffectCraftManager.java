@@ -37,7 +37,7 @@ public class EffectCraftManager implements Listener {
     public void onCraft(CraftItemEvent event) {
         // Safe to assume the crafted item is the correct augmented/regular form due to the PrepareItemCraftEvent Listener
         final ItemStack craftedItem = event.getInventory().getResult();
-        final InfuseEffect effect = InfuseEffect.fromItem(craftedItem);
+        final InfuseEffect effect = InfuseEffect.getEffect(craftedItem);
         final HumanEntity player = event.getWhoClicked();
         // Making sure the item being crafted is an Infuse effect
         if (effect == null) return;
@@ -127,7 +127,7 @@ public class EffectCraftManager implements Listener {
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         // Ignoring non-infuse items
         if (event.getRecipe() == null) return;
-        if (InfuseEffect.fromItem(event.getRecipe().getResult()) == null) return;
+        if (InfuseEffect.getEffect(event.getRecipe().getResult()) == null) return;
 
         ItemStack toCraft = plugin.getRecipeManager().getItemToCraft(event.getRecipe());
         event.getInventory().setResult(toCraft);
