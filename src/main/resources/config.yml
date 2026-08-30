@@ -294,6 +294,9 @@ apophis:
 
 thief:
   enabled: false
+  duration: 
+    default: 10
+    augmented: 10
   cooldown:
     default: 300
     augmented: 150
