@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.util;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.StringReader;
@@ -29,11 +30,11 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
         
         Key effectKey = Key.key("infuse", key);
 
-        if (!InfuseEffect.isRegistered(effectKey)) {
+        if (!EffectRegistry.has(effectKey)) {
             throw ERROR_NO_EFFECT_FOUND.create(key);
         }
         
-        InfuseEffect effect = InfuseEffect.getEffect(effectKey);
+        InfuseEffect effect = EffectRegistry.get(effectKey);
 
         if (effect == null) throw ERROR_NO_EFFECT_FOUND.create(key);
 
@@ -42,7 +43,7 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        InfuseEffect.getRegisteredEffects()
+        EffectRegistry.effects()
             .stream()
             .flatMap(e -> Stream.of(e.getRegularVersion(), e.getAugmentedVersion()))
             .map(InfuseEffect::toString)

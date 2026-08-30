@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
@@ -21,7 +22,7 @@ public class EntityDropItemListener implements Listener {
     public void onDrop(EntityDropItemEvent event) {
         final Item droppedItem = event.getItemDrop();
         ItemStack itemStack = droppedItem.getItemStack();
-        InfuseEffect effect = InfuseEffect.getEffect(itemStack);
+        InfuseEffect effect = EffectRegistry.get(itemStack);
         if (effect == null) return;
         ParticleManager.dropEffect(plugin, false, effect, droppedItem.getLocation());
         droppedItem.setGlowing(true);

@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.extraeffects;
 
 import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -149,7 +150,7 @@ public class Thief extends InfuseEffect {
         if (lastUnderscore > 6) stolenKey = stolenKey.substring(6, lastUnderscore);  
 
         // Parsing the stolen key
-        InfuseEffect stolen = InfuseEffect.getEffect(Key.key("infuse", stolenKey));
+        InfuseEffect stolen = EffectRegistry.get(Key.key("infuse", stolenKey));
         if (stolen == null) {
             Infuse.LOGGER.error("{} stole an invalid effect '{}'!", user.getName(), stolenKey);
             return super.getIcon(user, slot);

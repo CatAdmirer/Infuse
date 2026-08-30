@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -31,7 +32,7 @@ public class PlayerItemConsumeListener implements Listener {
         ItemStack item = event.getItem();
 
         // Getting the effect from the item
-        InfuseEffect effect = InfuseEffect.getEffect(item);
+        InfuseEffect effect = EffectRegistry.get(item);
 
         // Skipping if the effect is not found.
         if (effect == null) return;

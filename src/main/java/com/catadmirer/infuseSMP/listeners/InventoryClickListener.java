@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -36,7 +37,7 @@ public class InventoryClickListener implements Listener {
         event.setCancelled(true);
 
         ItemStack item = event.getCurrentItem();
-        InfuseEffect effect = InfuseEffect.getEffect(item);
+        InfuseEffect effect = EffectRegistry.get(item);
 
         // Ignoring if the player clicked on something other than an effect.
         if (effect == null) return;
@@ -85,7 +86,7 @@ public class InventoryClickListener implements Listener {
 
         // Getting the clicked item and opening the recipe menu for the item.
         ItemStack clickedItem = event.getCurrentItem();
-        InfuseEffect effect = InfuseEffect.getEffect(clickedItem);
+        InfuseEffect effect = EffectRegistry.get(clickedItem);
         if (effect == null) return;
 
         HumanEntity player = event.getWhoClicked();

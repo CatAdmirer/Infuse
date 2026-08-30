@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.DataManager;
 
@@ -21,7 +22,7 @@ public class EntityDeathListener implements Listener {
         if (!(event.getEntity() instanceof Item itemEntity)) return;
 
         ItemStack item = itemEntity.getItemStack();
-        InfuseEffect effect = InfuseEffect.getEffect(item);
+        InfuseEffect effect = EffectRegistry.get(item);
         if (effect == null) return;
 
         // Decrementing the number of crafted effects

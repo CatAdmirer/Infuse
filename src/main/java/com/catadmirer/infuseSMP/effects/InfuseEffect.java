@@ -11,27 +11,20 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public abstract class InfuseEffect implements Listener, Keyed {
-    private static final Map<Key,InfuseEffect> REGISTERED = new HashMap<>();
-
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
     public static final NamespacedKey AUG_KEY = new NamespacedKey("infuse", "aug");
 
@@ -50,75 +43,6 @@ public abstract class InfuseEffect implements Listener, Keyed {
         this.potionColor = potionColor;
         this.ritualColor = ritualColor;
         this.backgroundMaterial = backgroundMaterial;
-    }
-
-    public static boolean isRegistered(InfuseEffect effect) {
-        return isRegistered(effect.key());
-    }
-
-    public static boolean isRegistered(Key key) {
-        return REGISTERED.containsKey(key);
-    }
-
-    public static boolean register(InfuseEffect effect) {
-        effect = effect.getRegularVersion();
-
-        // Enforcing the id limit
-        if (effect.id > 100) {
-            Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key());
-            return false;
-        }
-
-        if (isRegistered(effect.key())) {
-            InfuseEffect existing = REGISTERED.get(effect.key());
-            Infuse.LOGGER.warn("Effect key {} has already been taken by {}.  Cannot assign it to {}.", effect.key(), existing.key(), effect.key());
-            return false;
-        }
-
-        // Attempting to register the effect
-        REGISTERED.put(effect.getRegularVersion().key(), effect);
-        REGISTERED.put(effect.getAugmentedVersion().key(), effect);
-
-        // Registering event listeners in the effect
-        Bukkit.getPluginManager().registerEvents(effect, Infuse.getInstance());
-
-        return true;
-    }
-
-    /**
-     * Gets a registered effect.
-     * 
-     * @param key The key of the effect.
-     * 
-     * @return The registered effect or null if no effect is registered under the specified key.
-     */
-    @Nullable
-    public static InfuseEffect getEffect(Key key) {
-        return REGISTERED.get(key);
-    }
-
-    /**
-     * Gets a registered effect.
-     * 
-     * @param item An item created by an effect.
-     * 
-     * @return The registered effect or null if the item does not come from a registered effect.
-     */
-    public static InfuseEffect getEffect(@Nullable ItemStack item) {
-        if (item == null) return null;
-        if (item.getType() != Material.POTION) return null;
-
-        String key = item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING);
-        if (key == null) return null;
-
-        return getEffect(Key.key(key));
-    }
-
-    /** Gets the list of registered effects. */
-    @NonNull
-    @Unmodifiable
-    public static List<InfuseEffect> getRegisteredEffects() {
-        return List.copyOf(REGISTERED.values());
     }
 
     public int getId() {

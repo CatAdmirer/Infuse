@@ -186,22 +186,22 @@ public class Infuse extends JavaPlugin {
     }
 
     private void registerEffects() {
-        InfuseEffect.register(new Emerald());
-        InfuseEffect.register(new Ender());
-        InfuseEffect.register(new Feather());
-        InfuseEffect.register(new Fire());
-        InfuseEffect.register(new Frost());
-        InfuseEffect.register(new Haste());
-        InfuseEffect.register(new Heart());
-        InfuseEffect.register(new Invis());
-        InfuseEffect.register(new Ocean());
-        InfuseEffect.register(new Regen());
-        InfuseEffect.register(new Speed());
-        InfuseEffect.register(new Strength());
-        InfuseEffect.register(new Thunder());
+        EffectRegistry.register(new Emerald());
+        EffectRegistry.register(new Ender());
+        EffectRegistry.register(new Feather());
+        EffectRegistry.register(new Fire());
+        EffectRegistry.register(new Frost());
+        EffectRegistry.register(new Haste());
+        EffectRegistry.register(new Heart());
+        EffectRegistry.register(new Invis());
+        EffectRegistry.register(new Ocean());
+        EffectRegistry.register(new Regen());
+        EffectRegistry.register(new Speed());
+        EffectRegistry.register(new Strength());
+        EffectRegistry.register(new Thunder());
 
-        if (mainConfig.enableApophis()) InfuseEffect.register(new Apophis());
-        if (mainConfig.enableThief()) InfuseEffect.register(new Thief());
+        if (mainConfig.enableApophis()) EffectRegistry.register(new Apophis());
+        if (mainConfig.enableThief()) EffectRegistry.register(new Thief());
     }
 
     public String getVersion() {

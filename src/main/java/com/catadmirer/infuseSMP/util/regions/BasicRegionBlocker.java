@@ -9,6 +9,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 
@@ -44,7 +45,7 @@ public class BasicRegionBlocker extends RegionBlocker {
 
     @Override
     public Set<InfuseEffect> getBlockedEffects(Location loc) {
-        return InfuseEffect.getRegisteredEffects()
+        return EffectRegistry.effects()
             .stream()
             .filter(e -> {
                 List<NamespacedKey> worlds = Infuse.getInstance().getMainConfig().getBlacklistedWorlds(e);

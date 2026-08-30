@@ -5,6 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.managers.ParticleManager;
@@ -19,7 +20,7 @@ public class EntityPickupItemListener implements Listener {
     @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
-        InfuseEffect effect = InfuseEffect.getEffect(item);
+        InfuseEffect effect = EffectRegistry.get(item);
         if (effect == null) return;
         ParticleManager.dropEffect(plugin, true, effect, event.getItem().getLocation());
     }

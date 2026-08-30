@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.inventories;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
@@ -19,7 +20,7 @@ public class RecipeListGUI implements InventoryHolder {
         int[] customSlots = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
 
         int i = 0;
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
+        for (InfuseEffect effect : EffectRegistry.effects()) {
             if (effect.isAugmented()) continue;
 
             ItemStack potion = effect.createItemWithLimits();

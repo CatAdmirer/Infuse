@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.trust.TrustManager;
@@ -158,7 +159,7 @@ public class DataManager implements TrustManager {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
         if (effectKey == null) return null;
 
-        InfuseEffect effect = InfuseEffect.getEffect(Key.key("infuse", effectKey));
+        InfuseEffect effect = EffectRegistry.get(Key.key("infuse", effectKey));
         if (effect == null) {
             Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
         }

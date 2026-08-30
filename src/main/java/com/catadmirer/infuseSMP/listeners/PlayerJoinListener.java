@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -23,7 +24,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // Giving the player all the infuse recipes
-        InfuseEffect.getRegisteredEffects().stream().map(plugin.getRecipeManager()::getRecipeKey).forEach(player::discoverRecipe);
+        EffectRegistry.effects().stream().map(plugin.getRecipeManager()::getRecipeKey).forEach(player::discoverRecipe);
     }
 
     @EventHandler

@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.managers;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import com.catadmirer.infuseSMP.Message.MessageType;
@@ -34,7 +35,7 @@ public class EffectCraftManager implements Listener {
     public void onCraft(CraftItemEvent event) {
         // Safe to assume the crafted item is the correct augmented/regular form due to the PrepareItemCraftEvent Listener
         final ItemStack craftedItem = event.getInventory().getResult();
-        final InfuseEffect effect = InfuseEffect.getEffect(craftedItem);
+        final InfuseEffect effect = EffectRegistry.get(craftedItem);
         final HumanEntity player = event.getWhoClicked();
         // Making sure the item being crafted is an Infuse effect
         if (effect == null) return;

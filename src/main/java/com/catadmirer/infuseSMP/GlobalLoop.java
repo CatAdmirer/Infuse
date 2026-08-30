@@ -78,7 +78,7 @@ public class GlobalLoop extends BukkitRunnable {
             }
 
             // Making sure the apophis boost has been removed
-            Apophis apophis = (Apophis) InfuseEffect.getEffect(EffectConstants.Keys.APOPHIS);
+            Apophis apophis = (Apophis) EffectRegistry.get(EffectConstants.Keys.APOPHIS);
             if (apophis != null && !plugin.getDataManager().hasEffect(player, apophis)) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
                 assert playerHealth != null;
@@ -86,7 +86,7 @@ public class GlobalLoop extends BukkitRunnable {
             }
 
             // Making sure the heart boost has been removed
-            Heart heart = (Heart) InfuseEffect.getEffect(EffectConstants.Keys.HEART);
+            Heart heart = (Heart) EffectRegistry.get(EffectConstants.Keys.HEART);
             if (heart != null && !plugin.getDataManager().hasEffect(player, heart)) {
                 AttributeInstance playerHealth = player.getAttribute(Attribute.MAX_HEALTH);
                 assert playerHealth != null;

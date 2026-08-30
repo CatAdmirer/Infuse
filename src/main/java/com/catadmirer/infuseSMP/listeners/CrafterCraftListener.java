@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,7 +12,7 @@ public class CrafterCraftListener implements Listener {
     @EventHandler
     public void onCrafterCraft(CrafterCraftEvent event) {
         ItemStack item = event.getResult();
-        InfuseEffect effect = InfuseEffect.getEffect(item);
+        InfuseEffect effect = EffectRegistry.get(item);
         if (effect == null) return;
 
         event.setCancelled(true);

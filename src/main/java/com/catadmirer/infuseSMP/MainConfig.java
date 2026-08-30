@@ -299,7 +299,7 @@ public class MainConfig {
     }
 
     public List<InfuseEffect> joinEffects() {
-        return config.getStringList("join_effects").stream().map(v -> Key.key("infuse", v)).map(InfuseEffect::getEffect).filter(Objects::nonNull).toList();
+        return config.getStringList("join_effects").stream().map(v -> Key.key("infuse", v)).map(EffectRegistry::get).filter(Objects::nonNull).toList();
     }
 
     public boolean enableBetterTeams() {

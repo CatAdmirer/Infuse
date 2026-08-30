@@ -1,5 +1,6 @@
 package com.catadmirer.infuseSMP.util;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.FlagContext;
@@ -40,7 +41,7 @@ public class EffectFlag extends Flag<InfuseEffect> {
     @Override
     public InfuseEffect parseInput(FlagContext context) throws InvalidFlagFormat {
         String key = context.getUserInput();
-        InfuseEffect effect = InfuseEffect.getEffect(Key.key("infuse", key));
+        InfuseEffect effect = EffectRegistry.get(Key.key("infuse", key));
 
         if (effect != null) return effect;
         
@@ -51,7 +52,7 @@ public class EffectFlag extends Flag<InfuseEffect> {
     public InfuseEffect unmarshal(@javax.annotation.Nullable Object o) {
         if (!(o instanceof String key)) return null;
 
-        return InfuseEffect.getEffect(Key.key("infuse", key));
+        return EffectRegistry.get(Key.key("infuse", key));
     }
 
     @Override

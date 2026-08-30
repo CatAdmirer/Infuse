@@ -1,7 +1,7 @@
 package com.catadmirer.infuseSMP.listeners;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
 import com.catadmirer.infuseSMP.Infuse;
-import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.effects.Thunder;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +96,7 @@ public class HitTracker implements Listener {
         int hits = trackedHitsGiven.merge(attacker.getUniqueId(), 1, Integer::sum);
 
         // Incrementing by 2 if the thunder effect is registered, the attacker has it, and if they are in the rain.
-        if (InfuseEffect.isRegistered(thunder.key()) && plugin.getDataManager().hasEffect(attacker, thunder) && attacker.isInRain()) hits++;
+        if (EffectRegistry.has(thunder.key()) && plugin.getDataManager().hasEffect(attacker, thunder) && attacker.isInRain()) hits++;
 
         // Handling when 10 hits are reached
         if (hits >= 10) {

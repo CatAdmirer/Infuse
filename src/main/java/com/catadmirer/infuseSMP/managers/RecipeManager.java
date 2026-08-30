@@ -2,6 +2,8 @@ package com.catadmirer.infuseSMP.managers;
 
 import java.io.File;
 
+import com.catadmirer.infuseSMP.EffectRegistry;
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,7 +13,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ShapedRecipe;
-import com.catadmirer.infuseSMP.Infuse;
 
 public class RecipeManager {
     private final Infuse plugin;
@@ -42,7 +43,7 @@ public class RecipeManager {
         }
 
         // Removing all the infuse recipes
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
+        for (InfuseEffect effect : EffectRegistry.effects()) {
             Bukkit.removeRecipe(getRecipeKey(effect), true);
         }
 
@@ -52,7 +53,7 @@ public class RecipeManager {
 
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
-        for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
+        for (InfuseEffect effect : EffectRegistry.effects()) {
             if (effect.isAugmented()) continue;
             
             if (plugin.getMainConfig().allowInfiniteEffects()) {
