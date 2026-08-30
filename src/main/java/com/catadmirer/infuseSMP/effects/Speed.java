@@ -64,10 +64,10 @@ public class Speed extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID playerUUID = owner.getUniqueId();
 
-        if (CooldownManager.isOnCooldown(playerUUID, "speed")) return;
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
 
@@ -87,7 +87,7 @@ public class Speed extends InfuseEffect {
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(playerUUID, "speed", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
     }
 
     @Override
@@ -108,6 +108,20 @@ public class Speed extends InfuseEffect {
     @Override
     public Message getLore() {
         return new Message(augmented ? Message.MessageType.AUG_SPEED_LORE : Message.MessageType.SPEED_LORE);
+    }
+
+    @Override
+    public char getIcon(Player user, String slot) {
+        UUID uuid = user.getUniqueId();
+
+        String key = String.format("%s_%s", this.plainKey, slot);
+
+        // The speed effect doesn't have a great way to track duration
+        if (CooldownManager.isEffectActive(uuid, key)) {
+            return icon(true, 0);
+        }
+
+        return super.getIcon(user, slot);
     }
 
     public void updateSpeedEffect(Player owner) {

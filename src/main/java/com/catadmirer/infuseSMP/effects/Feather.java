@@ -46,10 +46,10 @@ public class Feather extends InfuseEffect {
     public void unequip(Player owner) {}
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID playerUUID = owner.getUniqueId();
 
-        if (CooldownManager.isOnCooldown(playerUUID, "feather")) return;
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
@@ -64,7 +64,7 @@ public class Feather extends InfuseEffect {
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(playerUUID, "feather", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
 
         owner.getScheduler().runDelayed(plugin, t -> CooldownManager.setDuration(playerUUID, "feathermace", 5L), null, 10);
     }

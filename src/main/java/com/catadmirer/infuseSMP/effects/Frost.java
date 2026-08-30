@@ -71,10 +71,11 @@ public class Frost extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID playerUUID = owner.getUniqueId();
 
-        if (CooldownManager.isOnCooldown(playerUUID, "frost")) return;
+
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
@@ -86,7 +87,7 @@ public class Frost extends InfuseEffect {
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(playerUUID, "frost", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
 
         Location center = owner.getLocation();
         final double radius = plugin.getMainConfig().frostSparkRadius();

@@ -36,11 +36,11 @@ public class Strength extends InfuseEffect {
     public void unequip(Player owner) {}
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID uuid = owner.getUniqueId();
 
         // Skipping players on cooldown
-        if (CooldownManager.isOnCooldown(uuid, "strength")) return;
+        if (CooldownManager.isOnCooldown(uuid, plainKey + "_" + slot)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
 
@@ -51,7 +51,7 @@ public class Strength extends InfuseEffect {
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(uuid, "strength", duration, cooldown);
+        CooldownManager.setTimes(uuid, plainKey + "_" + slot, duration, cooldown);
     }
 
     @Override

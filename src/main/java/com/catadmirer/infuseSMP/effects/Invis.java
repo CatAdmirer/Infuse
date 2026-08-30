@@ -53,10 +53,10 @@ public class Invis extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID playerUUID = owner.getUniqueId();
 
-        if (CooldownManager.isOnCooldown(playerUUID, "invis")) return;
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
@@ -66,7 +66,7 @@ public class Invis extends InfuseEffect {
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(playerUUID, "invis", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
 
         final double radius = 10;
         final long durationTicks = duration * 20;

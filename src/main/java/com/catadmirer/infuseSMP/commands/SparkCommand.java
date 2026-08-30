@@ -53,7 +53,7 @@ public class SparkCommand {
             sender.sendMessage(Message.toComponent("<red>You cannot activate your spark in this area!"));
         }
 
-        equippedEffect.activateSpark(player);
+        equippedEffect.activateSpark(player, slot);
 
         return 1;
     }

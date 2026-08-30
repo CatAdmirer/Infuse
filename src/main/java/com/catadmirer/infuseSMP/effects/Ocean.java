@@ -66,22 +66,22 @@ public class Ocean extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Player caster) {
-        UUID playerUUID = caster.getUniqueId();
+    public void activateSpark(Player owner, String slot) {
+        UUID playerUUID = owner.getUniqueId();
 
-        if (CooldownManager.isOnCooldown(playerUUID, "ocean")) return;
-        if (!plugin.getRegionBlocker().canUseSpark(caster)) return;
-        if (plugin.getRegionBlocker().isEffectBlocked(caster, Ocean.this)) return;
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
+        if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
+        if (plugin.getRegionBlocker().isEffectBlocked(owner, Ocean.this)) return;
 
-        caster.playSound(caster.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
+        owner.playSound(owner.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
         final double radius = 5;
-        final World world = caster.getWorld();
+        final World world = owner.getWorld();
         // Applying cooldowns and durations for the effect
         long cooldown = plugin.getMainConfig().cooldown(this);
         long duration = plugin.getMainConfig().duration(this);
 
-        CooldownManager.setTimes(playerUUID, "ocean", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
 
         final long durationTicks = duration * 20L;
 
@@ -96,9 +96,9 @@ public class Ocean extends InfuseEffect {
 
                 for (int angle = 0; angle < 360; angle += 10) {
                     double rad = Math.toRadians(angle);
-                    double x = caster.getLocation().getX() + radius * Math.cos(rad);
-                    double z = caster.getLocation().getZ() + radius * Math.sin(rad);
-                    Location particleLoc = new Location(world, x, caster.getLocation().getY(), z);
+                    double x = owner.getLocation().getX() + radius * Math.cos(rad);
+                    double z = owner.getLocation().getZ() + radius * Math.sin(rad);
+                    Location particleLoc = new Location(world, x, owner.getLocation().getY(), z);
                     world.spawnParticle(Particle.FALLING_WATER, particleLoc, 1);
                 }
 
@@ -111,19 +111,19 @@ public class Ocean extends InfuseEffect {
             @Override
             public void run() {
                 // Stopping when the spark has run out
-                if (!CooldownManager.isEffectActive(caster.getUniqueId(), "ocean")) {
+                if (!CooldownManager.isEffectActive(owner.getUniqueId(), "ocean")) {
                     cancel();
                     return;
                 }
 
-                World world = caster.getWorld();
-                Location holderLoc = caster.getLocation();
+                World world = owner.getWorld();
+                Location holderLoc = owner.getLocation();
                 double radius = plugin.getMainConfig().oceanPullRadius();
                 double strength = plugin.getMainConfig().oceanPullStrength();
 
                 for (Player p : world.getPlayers()) {
-                    if (p.equals(caster)) continue;
-                    if (plugin.getTrustManager().doesTrust(caster, p)) continue;
+                    if (p.equals(owner)) continue;
+                    if (plugin.getTrustManager().doesTrust(owner, p)) continue;
                     if (p.getLocation().distance(holderLoc) > radius) continue;
                     if (!plugin.getRegionBlocker().canBeTargetedBySpark(p)) continue;
                     if (plugin.getRegionBlocker().isEffectBlocked(p, Ocean.this)) continue;

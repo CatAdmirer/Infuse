@@ -2,6 +2,7 @@ package com.catadmirer.infuseSMP.effects;
 
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
+import com.catadmirer.infuseSMP.managers.CooldownManager;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class InfuseEffect implements Listener, Keyed {
     private static final Map<Key,InfuseEffect> REGISTERED = new HashMap<>();
@@ -165,7 +167,7 @@ public abstract class InfuseEffect implements Listener, Keyed {
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated()
     public void applyPassives(Player owner) {}
-    public abstract void activateSpark(Player owner);
+    public abstract void activateSpark(Player owner, String slot);
 
     public abstract InfuseEffect getRegularVersion();
     public abstract InfuseEffect getAugmentedVersion();
@@ -173,12 +175,59 @@ public abstract class InfuseEffect implements Listener, Keyed {
     public abstract Message getName();
     public abstract Message getLore();
 
-    public char getIcon() {
-        return (char) Integer.parseInt("E" + (augmented ? 2 : 0) + String.format("%02d", id + 1), 16);
+    /**
+     * Calculates the character for the effect's icon based on a player's cooldown/duration.
+     * 
+     * @param user The player who is being shown the icon.
+     * @param slot The slot the effect is equipped in.
+     */
+    public char getIcon(Player user, String slot) {
+        UUID uuid = user.getUniqueId();
+
+        String key = String.format("%s_%s", this.plainKey, slot);
+
+        if (CooldownManager.isEffectActive(uuid, key)) {
+            long maxDuration = plugin.getMainConfig().duration(this);
+            long duration = CooldownManager.getEffectTimeLeft(uuid, key) / 1000;
+
+            return icon(true, (float) duration / maxDuration);
+        } else if (CooldownManager.isOnCooldown(uuid, key)) {
+            long maxCooldown = plugin.getMainConfig().cooldown(this);
+            long cooldown = CooldownManager.getCooldownTimeLeft(uuid, key) / 1000;
+
+            return icon(false, (float) cooldown / maxCooldown);
+        }
+
+        return baseIcon();
     }
 
-    public char getActiveIcon() {
-        return (char) Integer.parseInt("E" + (augmented ? 3 : 1) + String.format("%02d", id + 1), 16);
+    /**
+     * Calculates the character for the effect's icon.
+     * 
+     * @param active If true, it will apply the glowing border to the icon.
+     * @param fill Between 0 and 1.  0 is no darkness, 1 is completely dark
+     * 
+     * @return The unicode char for the effect's icon.
+     */
+    public char icon(boolean active, float fill) {
+        fill = Math.clamp(fill, 0, 1);
+
+        // Getting the 
+        char icon = baseIcon();
+
+        icon += ((int) (fill * 21) << 11);
+        if (active) icon += (1 << 9);
+
+        return icon;
+    }
+
+    /**
+     * Gives the base icon for an effect.
+     * 
+     * The icon is for an inactive effect with no cooldown.
+     */
+    public char baseIcon() {
+        return (char) (((augmented ? 1 : 0) << 10) + id + 1);
     }
 
     /**

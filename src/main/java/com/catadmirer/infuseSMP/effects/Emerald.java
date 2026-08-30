@@ -86,11 +86,11 @@ public class Emerald extends InfuseEffect {
     }
 
     @Override
-    public void activateSpark(Player owner) {
+    public void activateSpark(Player owner, String slot) {
         UUID playerUUID = owner.getUniqueId();
 
         // Making sure the player isn't on cooldown
-        if (CooldownManager.isOnCooldown(playerUUID, "emerald")) return;
+        if (CooldownManager.isOnCooldown(playerUUID, plainKey + "_" + slot)) return;
         if (!plugin.getRegionBlocker().canUseSpark(owner)) return;
         if (plugin.getRegionBlocker().isEffectBlocked(owner, this)) return;
 
@@ -103,7 +103,7 @@ public class Emerald extends InfuseEffect {
 
         owner.addPotionEffect(new PotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE, (int) duration * 20, 4));
 
-        CooldownManager.setTimes(playerUUID, "emerald", duration, cooldown);
+        CooldownManager.setTimes(playerUUID, plainKey + "_" + slot, duration, cooldown);
     }
 
     @Override
