@@ -3,6 +3,7 @@ package com.catadmirer.infuseSMP.managers;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
 import com.catadmirer.infuseSMP.util.trust.TrustManager;
+import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -104,11 +105,11 @@ public class DataManager implements TrustManager {
     }
 
     public int getExistingCount(InfuseEffect effect) {
-        return config.getInt("existing-effects." + effect.getKey(), 0);
+        return config.getInt("existing-effects." + effect.key().asString(), 0);
     }
 
     public void setExistingCount(InfuseEffect effect, int crafted) {
-        config.set("existing-effects." + effect.getKey(), crafted);
+        config.set("existing-effects." + effect.key().asString(), crafted);
 
         save();
     }
@@ -149,7 +150,7 @@ public class DataManager implements TrustManager {
         if (effect == null) {
             config.set(key, null);
         } else {
-            config.set(key, effect.toString());
+            config.set(key, effect.key().asString());
         }
         save();
     }
@@ -157,8 +158,10 @@ public class DataManager implements TrustManager {
     @Nullable
     public InfuseEffect getEffect(UUID playerUUID, String slot) {
         String effectKey = config.getString(playerUUID.toString() + "." + slot, null);
-        InfuseEffect effect = InfuseEffect.getEffect(effectKey);
-        if (effectKey != null && effect == null) {
+        if (effectKey == null) return null;
+
+        InfuseEffect effect = InfuseEffect.getEffect(Key.key("infuse", effectKey));
+        if (effect == null) {
             Infuse.LOGGER.warn("No valid ability found for the equipped effect.");
         }
 

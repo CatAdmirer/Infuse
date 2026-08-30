@@ -15,6 +15,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
+import net.kyori.adventure.key.Key;
+
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -24,12 +26,14 @@ public class InfuseEffectArgumentType implements CustomArgumentType<InfuseEffect
     @Override
     public InfuseEffect parse(StringReader reader) throws CommandSyntaxException {
         String key = reader.readUnquotedString();
+        
+        Key effectKey = Key.key("infuse", key);
 
-        if (!InfuseEffect.isRegistered(key)) {
+        if (!InfuseEffect.isRegistered(effectKey)) {
             throw ERROR_NO_EFFECT_FOUND.create(key);
         }
         
-        InfuseEffect effect = InfuseEffect.getEffect(key);
+        InfuseEffect effect = InfuseEffect.getEffect(effectKey);
 
         if (effect == null) throw ERROR_NO_EFFECT_FOUND.create(key);
 

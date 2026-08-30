@@ -53,6 +53,8 @@ public class RecipeManager {
     /** Registers the recipe for each effect. */
     public void registerRecipes() {
         for (InfuseEffect effect : InfuseEffect.getRegisteredEffects()) {
+            if (effect.isAugmented()) continue;
+            
             if (plugin.getMainConfig().allowInfiniteEffects()) {
                 Bukkit.addRecipe(getRecipe(effect.getAugmentedVersion()));
                 return;
@@ -83,9 +85,13 @@ public class RecipeManager {
     }
 
     public ShapedRecipe getRecipe(InfuseEffect mapping) {
-        String baseKey = mapping.getKey();
+        String baseKey = mapping.key().value();
         NamespacedKey recipeKey = getRecipeKey(mapping);
         ShapedRecipe effectRecipe = new ShapedRecipe(recipeKey, mapping.createItem());
+
+        if (mapping.isAugmented() && !recipesConfig.contains(baseKey)) {
+            baseKey = mapping.getPlainKey();
+        }
 
         effectRecipe.shape(recipesConfig.getStringList(baseKey + ".shape").toArray(String[]::new));
 

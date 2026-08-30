@@ -38,14 +38,10 @@ public class Haste extends InfuseEffect {
     }
 
     @Override
-    public void equip(Player owner) {
-
-    }
+    public void equip(Player owner) {}
 
     @Override
-    public void unequip(Player owner) {
-
-    }
+    public void unequip(Player owner) {}
 
     @Override
     public void applyPassives(Player owner) {

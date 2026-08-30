@@ -7,6 +7,8 @@ import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.PotionContents;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -25,14 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class InfuseEffect implements Listener {
-    private static final Map<Integer,InfuseEffect> REGISTERED_BY_ID = new HashMap<>();
-    private static final Map<String,InfuseEffect> REGISTERED_BY_KEY = new HashMap<>();
+public abstract class InfuseEffect implements Listener, Keyed {
+    private static final Map<Key,InfuseEffect> REGISTERED = new HashMap<>();
 
     public static final NamespacedKey EFFECT_KEY = new NamespacedKey("infuse", "effect_key");
     public static final NamespacedKey AUG_KEY = new NamespacedKey("infuse", "aug");
 
-    protected final String key;
+    protected final String plainKey;
     protected final int id;
     protected final boolean augmented;
     protected final Color potionColor;
@@ -41,7 +42,7 @@ public abstract class InfuseEffect implements Listener {
     protected final Infuse plugin = Infuse.getInstance();
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor, Material backgroundMaterial) {
-        this.key = key;
+        this.plainKey = key;
         this.id = id;
         this.augmented = augmented;
         this.potionColor = potionColor;
@@ -50,39 +51,31 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public static boolean isRegistered(InfuseEffect effect) {
-        return isRegistered(effect.id);
+        return isRegistered(effect.key());
     }
 
-    public static boolean isRegistered(int id) {
-        return REGISTERED_BY_ID.containsKey(id);
-    }
-
-    public static boolean isRegistered(String key) {
-        return REGISTERED_BY_KEY.containsKey(key);
+    public static boolean isRegistered(Key key) {
+        return REGISTERED.containsKey(key);
     }
 
     public static boolean register(InfuseEffect effect) {
+        effect = effect.getRegularVersion();
+
         // Enforcing the id limit
         if (effect.id > 100) {
-            Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key);
+            Infuse.LOGGER.warn("Effect id {} for {} is invalid.  Effect ids cannot be >100.", effect.id, effect.key());
             return false;
         }
 
-        if (isRegistered(effect.id)) {
-            InfuseEffect existing = REGISTERED_BY_ID.get(effect.id);
-            Infuse.LOGGER.warn("Effect id {} has already been taken by {}.  Cannot assign it to {}.", effect.id, existing.key, effect.key);
-            return false;
-        }
-
-        if (isRegistered(effect.key)) {
-            InfuseEffect existing = REGISTERED_BY_KEY.get(effect.key);
-            Infuse.LOGGER.warn("Effect key {} has already been taken by {}.  Cannot assign it to {}.", effect.key, existing.key, effect.key);
+        if (isRegistered(effect.key())) {
+            InfuseEffect existing = REGISTERED.get(effect.key());
+            Infuse.LOGGER.warn("Effect key {} has already been taken by {}.  Cannot assign it to {}.", effect.key(), existing.key(), effect.key());
             return false;
         }
 
         // Attempting to register the effect
-        REGISTERED_BY_ID.put(effect.id, effect);
-        REGISTERED_BY_KEY.put(effect.key, effect);
+        REGISTERED.put(effect.getRegularVersion().key(), effect);
+        REGISTERED.put(effect.getAugmentedVersion().key(), effect);
 
         // Registering event listeners in the effect
         Bukkit.getPluginManager().registerEvents(effect, Infuse.getInstance());
@@ -93,37 +86,13 @@ public abstract class InfuseEffect implements Listener {
     /**
      * Gets a registered effect.
      * 
-     * @param id The id of the effect.
-     * 
-     * @return The registered effect or null if no effect is registered under the specified id.
-     */
-    @Nullable
-    public static InfuseEffect getEffect(int id) {
-        return REGISTERED_BY_ID.get(id);
-    }
-
-    /**
-     * Gets a registered effect.
-     * 
-     * @param id The id of the effect.
-     * 
-     * @return The registered effect or null if no effect is registered under the specified id.
-     */
-    @Nullable
-    public static InfuseEffect getEffect(EffectConstants.Id id) {
-        return REGISTERED_BY_ID.get(id.value());
-    }
-
-    /**
-     * Gets a registered effect.
-     * 
      * @param key The key of the effect.
      * 
      * @return The registered effect or null if no effect is registered under the specified key.
      */
     @Nullable
-    public static InfuseEffect getEffect(String key) {
-        return REGISTERED_BY_ID.values().stream().filter(e -> e.key.equals(key)).findFirst().orElse(null);
+    public static InfuseEffect getEffect(Key key) {
+        return REGISTERED.get(key);
     }
 
     /**
@@ -140,14 +109,14 @@ public abstract class InfuseEffect implements Listener {
         String key = item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING);
         if (key == null) return null;
 
-        return getEffect(key);
+        return getEffect(Key.key(key));
     }
 
     /** Gets the list of registered effects. */
     @NonNull
     @Unmodifiable
     public static List<InfuseEffect> getRegisteredEffects() {
-        return List.copyOf(REGISTERED_BY_ID.values());
+        return List.copyOf(REGISTERED.values());
     }
 
     public int getId() {
@@ -155,11 +124,11 @@ public abstract class InfuseEffect implements Listener {
     }
 
     public String getPlainKey() {
-        return key;
+        return plainKey;
     }
 
-    public String getKey() {
-        return toString();
+    public Key key() {
+        return Key.key(plugin, toString());
     }
 
     public boolean isAugmented() {
@@ -187,7 +156,7 @@ public abstract class InfuseEffect implements Listener {
 
     @Override
     public String toString() {
-        return (augmented ? "aug_" : "") + key;
+        return (augmented ? "aug_" : "") + plainKey;
     }
 
     public abstract void equip(Player owner);
@@ -223,7 +192,7 @@ public abstract class InfuseEffect implements Listener {
         // Adjusting item data
         item.setData(DataComponentTypes.CUSTOM_NAME, getName().toComponent());
         item.setData(DataComponentTypes.LORE, ItemLore.lore(getLore().toComponentList()));
-        item.editPersistentDataContainer(c -> c.set(EFFECT_KEY, PersistentDataType.STRING, toString()));
+        item.editPersistentDataContainer(c -> c.set(EFFECT_KEY, PersistentDataType.STRING, key().toString()));
 
         item.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.POTION_CONTENTS));
         item.setData(DataComponentTypes.POTION_CONTENTS, PotionContents.potionContents().customColor(org.bukkit.Color.fromARGB(potionColor.getRGB())));
@@ -268,6 +237,6 @@ public abstract class InfuseEffect implements Listener {
         if (item == null) return false;
         if (item.getType() != Material.POTION) return false;
 
-        return key.equals(item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING));
+        return key().equals(Key.key(item.getPersistentDataContainer().get(EFFECT_KEY, PersistentDataType.STRING)));
     }
 }

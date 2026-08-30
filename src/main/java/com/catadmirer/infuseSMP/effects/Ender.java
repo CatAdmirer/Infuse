@@ -44,13 +44,9 @@ public class Ender extends InfuseEffect {
         super("ender", EffectConstants.Id.ENDER, augmented, EffectConstants.PotionColor.ENDER, EffectConstants.RitualColor.ENDER, EffectConstants.BackgroundColor.ENDER);
     }
 
-    public void equip(Player owner) {
+    public void equip(Player owner) {}
 
-    }
-
-    public void unequip(Player owner) {
-
-    }
+    public void unequip(Player owner) {}
 
     @Deprecated()
     public void applyPassives(Player owner) {

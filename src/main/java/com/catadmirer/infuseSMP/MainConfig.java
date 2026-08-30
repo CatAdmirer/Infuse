@@ -1,6 +1,7 @@
 package com.catadmirer.infuseSMP;
 
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -295,7 +296,7 @@ public class MainConfig {
     }
 
     public List<InfuseEffect> joinEffects() {
-        return config.getStringList("join_effects").stream().map(InfuseEffect::getEffect).filter(Objects::nonNull).toList();
+        return config.getStringList("join_effects").stream().map(v -> Key.key("infuse", v)).map(InfuseEffect::getEffect).filter(Objects::nonNull).toList();
     }
 
     public boolean enableBetterTeams() {

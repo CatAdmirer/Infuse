@@ -63,9 +63,6 @@ public class Infuse extends JavaPlugin {
         this.recipeManager = new RecipeManager();
         this.hitTracker = new HitTracker(this);
         this.ritualManager = new RitualManager();
-
-        // Registering the vanilla effects
-        registerEffects();
     }
 
     public void onLoad() {
@@ -106,6 +103,9 @@ public class Infuse extends JavaPlugin {
 
         // Registering event listeners for the plugin
         this.registerEvents();
+
+        // Registering the vanilla effects
+        registerEffects();
 
         // Registering the infuse recipes
         recipeManager.registerRecipes();

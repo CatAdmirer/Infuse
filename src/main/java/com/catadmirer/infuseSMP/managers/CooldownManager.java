@@ -46,7 +46,6 @@ public class CooldownManager {
                 playerDurations.entrySet().removeIf(entry -> entry.getValue() <= currentTime);
             }
         }
-
     }
 
     public static boolean isOnCooldown(UUID playerUUID, String key) {
