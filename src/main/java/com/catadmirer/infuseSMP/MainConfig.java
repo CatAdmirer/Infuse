@@ -125,6 +125,9 @@ public class MainConfig {
                 // Skipping keys with more children
                 if (newConfig.isConfigurationSection(key)) return;
 
+                // Skipping keys not in the old config
+                if (!config.contains(key)) return;
+
                 // Copying values from the old config
                 newConfig.set(key, config.get(key));
             });
