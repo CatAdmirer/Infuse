@@ -72,6 +72,8 @@ public class MainConfig {
      * @param override If true, any old config is replaced with the new version.
      */
     public void createFile(boolean override) {
+        if (file.exists() && !override) return;
+        
         plugin.saveResource(file.getName(), override);
     }
 
