@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -207,29 +205,12 @@ public class DataManager implements TrustManager {
     }
 
     public void applyUpdates() {
-        try {
-            Scanner scanner = new Scanner(dataFile);
-            StringBuilder inputBuffer = new StringBuilder();
-            String line;
-
-            while (scanner.hasNextLine()) {
-                line = scanner.nextLine();
-
-                // Replacing old configs
-                if (line.startsWith("effects-crafted")) {
-                    line = line.replace("effects-crafted", "existing-effects");
-                }
-                inputBuffer.append(line);
-                inputBuffer.append('\n');
-            }
-            scanner.close();
-
-            // Emptying the string buffer back into the file
-            FileOutputStream fileOut = new FileOutputStream(dataFile);
-            fileOut.write(inputBuffer.toString().getBytes());
-            fileOut.close();
-        } catch (IOException e) {
-            Infuse.LOGGER.error("Error while updating player data.", e);
+        Object oldCrafted = config.get("effects-crafted");
+        if (oldCrafted != null) {
+            config.set("existing-effects", oldCrafted);
+            config.set("effects-crafted", null);
         }
+
+        save();
     }
 }
