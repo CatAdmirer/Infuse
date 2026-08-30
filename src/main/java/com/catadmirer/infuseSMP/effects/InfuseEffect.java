@@ -76,8 +76,8 @@ public abstract class InfuseEffect implements Listener, Keyed {
         }
 
         // Attempting to register the effect
-        REGISTERED.put(effect.getRegularVersion().key(), effect);
-        REGISTERED.put(effect.getAugmentedVersion().key(), effect);
+        REGISTERED.put(effect.getRegularVersion().key(), effect.getRegularVersion());
+        REGISTERED.put(effect.getAugmentedVersion().key(), effect.getAugmentedVersion());
 
         // Registering event listeners in the effect
         Bukkit.getPluginManager().registerEvents(effect, Infuse.getInstance());

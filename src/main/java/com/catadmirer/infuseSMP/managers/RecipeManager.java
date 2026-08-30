@@ -1,8 +1,8 @@
 package com.catadmirer.infuseSMP.managers;
 
-import java.io.File;
-
+import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.effects.InfuseEffect;
+import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,7 +11,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ShapedRecipe;
-import com.catadmirer.infuseSMP.Infuse;
 
 public class RecipeManager {
     private final Infuse plugin;
@@ -124,6 +123,6 @@ public class RecipeManager {
     }
 
     public NamespacedKey getRecipeKey(InfuseEffect effect) {
-        return new NamespacedKey(plugin, effect.getPlainKey());
+        return new NamespacedKey(effect.key().namespace(), effect.getPlainKey());
     }
 }
