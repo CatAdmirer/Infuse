@@ -108,7 +108,7 @@ public class Infuse extends JavaPlugin {
         registerEffects();
 
         // Registering the infuse recipes
-        recipeManager.registerRecipes();
+        recipeManager.reload();
 
         // Initializing the action bar updater
         new ActionBarUpdater(this).runTaskTimer(this, 0, 20);
