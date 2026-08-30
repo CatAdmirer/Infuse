@@ -211,9 +211,11 @@ public class MainConfig {
 
             copyConfig("extra_effects.Thief", "thief.enabled", config, newConfig);
             copyConfig("thief.blacklisted-worlds", "thief.blacklisted_worlds", config, newConfig);
-        }
 
-        save();
+            // Overwriting the config
+            newMainConfig.save();
+            load();
+        }
     }
 
     //
