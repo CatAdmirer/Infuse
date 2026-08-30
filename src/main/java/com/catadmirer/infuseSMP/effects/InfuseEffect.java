@@ -1,6 +1,5 @@
 package com.catadmirer.infuseSMP.effects;
 
-import com.catadmirer.infuseSMP.EffectConstants;
 import com.catadmirer.infuseSMP.Infuse;
 import com.catadmirer.infuseSMP.Message;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -40,10 +39,6 @@ public abstract class InfuseEffect implements Listener {
     protected final BossBar.Color ritualColor;
     protected final Material backgroundMaterial;
     protected final Infuse plugin = Infuse.getInstance();
-
-    public InfuseEffect(String key, EffectConstants.Id id, boolean augmented, EffectConstants.PotionColor potionColor, EffectConstants.RitualColor ritualColor, EffectConstants.BackgroundColor backgroundMaterial) {
-        this(key, id.value(), augmented, potionColor.value(), ritualColor.value(), backgroundMaterial.value());
-    }
 
     public InfuseEffect(String key, int id, boolean augmented, Color potionColor, BossBar.Color ritualColor, Material backgroundMaterial) {
         this.key = key;

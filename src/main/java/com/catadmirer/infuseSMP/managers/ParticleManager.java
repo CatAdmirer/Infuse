@@ -21,7 +21,7 @@ public class ParticleManager {
 
         // Handling special particles for ender effect
         // TODO: Decide whether or not to keep this
-        if (effect.getId() == EffectConstants.Id.ENDER.value()) {
+        if (effect.getId() == EffectConstants.Id.ENDER) {
             player.getWorld().spawnParticle(Particle.REVERSE_PORTAL, player.getLocation().add(0, 1, 0), 32, 0.3, 0.5,
                     0.3, 0);
             return;
