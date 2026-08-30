@@ -38,8 +38,6 @@ public class InfusePlaceholders extends PlaceholderExpansion {
         UUID uuid = player.getUniqueId();
 
         return switch (params.toLowerCase()) {
-            case "first_effect" -> getEffectIcon(uuid, "1");
-            case "second_effect" -> getEffectIcon(uuid, "2");
             case "first_time" -> getTime(uuid, "1");
             case "second_time" -> getTime(uuid, "2");
             case "first_effect_raw" -> getEffectRaw(uuid, "1");
@@ -49,17 +47,6 @@ public class InfusePlaceholders extends PlaceholderExpansion {
             case "controls" -> plugin.getDataManager().getControlMode(uuid);
             default -> null;
         };
-
-    }
-
-    public String getEffectIcon(UUID uuid, String slot) {
-        InfuseEffect effect = plugin.getDataManager().getEffect(uuid, slot);
-
-        if (effect == null) {
-            return plugin.getMainConfig().emptyEffectIcon() ? "\uE901" : "";
-        }
-
-        return "" + (CooldownManager.isEffectActive(uuid, effect.getPlainKey()) ? effect.getActiveIcon() : effect.getIcon());
     }
 
     public String getTime(UUID uuid, String slot) {
