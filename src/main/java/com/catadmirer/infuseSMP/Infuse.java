@@ -57,7 +57,15 @@ public class Infuse extends JavaPlugin {
         instance = this;
 
         this.mainConfig = new MainConfig(this);
+
+        mainConfig.load();
+        mainConfig.applyUpdates();
+
         this.dataManager = new DataManager(this);
+
+        dataManager.load();
+        dataManager.applyUpdates();
+
         this.effectManager = new EffectManager(this);
         this.loop = new GlobalLoop(this);
         this.recipeManager = new RecipeManager();
@@ -84,16 +92,6 @@ public class Infuse extends JavaPlugin {
     public void onEnable() {
         // Loading the message translator
         new MessageTranslator().loadAll();
-
-        // Loading the config
-        mainConfig.load();
-
-        // Loading the data manager
-        dataManager.load();
-
-        // Applying config updates
-        mainConfig.applyUpdates();
-        dataManager.applyUpdates();
 
         // Registering infuse commands
         this.registerCommands();
