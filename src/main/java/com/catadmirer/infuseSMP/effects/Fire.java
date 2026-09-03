@@ -238,7 +238,7 @@ public class Fire extends InfuseEffect {
 
         final Iterator<Recipe> recipes = Bukkit.recipeIterator();
         while (recipes.hasNext()) {
-            if (!(recipes.next() instanceof CookingRecipe<?> recipe) || !(recipe.getInputChoice().test(ItemStack.of(event.getBlock().getType())))) continue;
+            if (!(recipes.next() instanceof CookingRecipe<?> recipe) || !(event.getBlock().getType().isItem()) || !(recipe.getInputChoice().test(ItemStack.of(event.getBlock().getType())))) continue;
 
             event.setDropItems(false);
             event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation().add(new Vector(0.5, 0.5, 0.5)), recipe.getResult());
