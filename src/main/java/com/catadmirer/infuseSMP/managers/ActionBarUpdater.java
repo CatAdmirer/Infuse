@@ -24,27 +24,25 @@ public class ActionBarUpdater extends BukkitRunnable {
             // Composing the action bar
             InfuseEffect effect;
 
-            String placeholder = plugin.getMainConfig().emptyEffectIcon() ? "\uffff\ufff2" : "";
+            char placeholder = plugin.getMainConfig().emptyEffectIcon() ? '\uffff' : ' ';
 
-            String leftEmoji = placeholder;
-            String rightEmoji = placeholder;
+            char leftIcon = placeholder;
+            char rightIcon = placeholder;
 
             // Loading info for the first effect
             effect = plugin.getDataManager().getEffect(uuid, "1");
             if (effect != null) {
-                char icon = effect.getIcon(player, "1");
-                leftEmoji = icon + "\ufff2";
+                leftIcon = effect.getIcon(player, "1");
             }
 
             // Loading info for the second effect
             effect = plugin.getDataManager().getEffect(uuid, "2");
             if (effect != null) {
-                char icon = effect.getIcon(player, "2");
-                rightEmoji = icon + "\ufff2";
+                rightIcon = effect.getIcon(player, "2");
             }
 
             // Sending the action bar
-            player.sendActionBar(Component.text(leftEmoji + " " + rightEmoji).font(EFFECTS_FONT));
+            player.sendActionBar(Component.text(leftIcon + " " + rightIcon).font(EFFECTS_FONT));
         });
     }
 }

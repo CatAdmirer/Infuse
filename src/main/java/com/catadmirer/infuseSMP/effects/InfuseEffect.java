@@ -215,8 +215,8 @@ public abstract class InfuseEffect implements Listener, Keyed {
         // Getting the 
         char icon = baseIcon();
 
-        icon += ((int) (fill * 21) << 11);
-        if (active) icon += (1 << 9);
+        icon += ((int) (fill * 21) << 8);
+        if (active) icon += (1 << 6);
 
         return icon;
     }
@@ -227,7 +227,7 @@ public abstract class InfuseEffect implements Listener, Keyed {
      * The icon is for an inactive effect with no cooldown.
      */
     public char baseIcon() {
-        return (char) (((augmented ? 1 : 0) << 10) + id + 1);
+        return (char) (0xe001 + (augmented ? 0x40 : 0x0) + id);
     }
 
     /**
