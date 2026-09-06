@@ -127,31 +127,30 @@ public class Thief extends InfuseEffect {
         Optional<String> cooldownKey = CooldownManager.getCooldowns(uuid).stream().filter(k -> k.startsWith(this.plainKey + "_") && k.endsWith("_" + slot)).findFirst();
         Optional<String> durationKey = CooldownManager.getDurations(uuid).stream().filter(k -> k.startsWith(this.plainKey + "_") && k.endsWith("_" + slot)).findFirst();
 
-        // Cooldown is running while the effect is active.  Check duration first.
-        String stolenKey = null;
+        // Cooldowns run while the effect is active, so check the duration first.
+        String activeKey = null;
         boolean active = false;
         long magnitude = -1;
         if (durationKey.isPresent() && CooldownManager.isEffectActive(uuid, durationKey.get())) {
             active = true;
             magnitude = CooldownManager.getEffectTimeLeft(uuid, durationKey.get()) / 1000;
-            stolenKey = durationKey.get();
+            activeKey = durationKey.get();
         } else if (cooldownKey.isPresent() && CooldownManager.isOnCooldown(uuid, cooldownKey.get())) {
-            active = false;
             magnitude = CooldownManager.getCooldownTimeLeft(uuid, cooldownKey.get()) / 1000;
-            stolenKey = cooldownKey.get();
+            activeKey = cooldownKey.get();
         }
 
         // If the effect is inactive or if the player hasn't stolen an effect, return the regular icon
-        if (stolenKey == null) return super.getIcon(user, slot);
+        if (activeKey == null || activeKey.split("_").length == 2) return super.getIcon(user, slot);
 
-        // Reformatting the stolen key
-        int lastUnderscore = stolenKey.lastIndexOf("_");
-        if (lastUnderscore > 6) stolenKey = stolenKey.substring(6, lastUnderscore);  
+        // Reformatting the active key to get the stolen effect.
+        int lastUnderscore = activeKey.lastIndexOf("_");
+        if (lastUnderscore > 6) activeKey = activeKey.substring(6, lastUnderscore);
 
         // Parsing the stolen key
-        InfuseEffect stolen = InfuseEffect.getEffect(Key.key("infuse", stolenKey));
+        InfuseEffect stolen = InfuseEffect.getEffect(Key.key("infuse", activeKey));
         if (stolen == null) {
-            Infuse.LOGGER.error("{} stole an invalid effect '{}'!", user.getName(), stolenKey);
+            Infuse.LOGGER.error("{} stole an invalid effect '{}'!", user.getName(), activeKey);
             return super.getIcon(user, slot);
         }
 
